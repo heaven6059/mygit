@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.LookupdtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.Lookupdtl" >
+    <id column="SYSTEMID" property="systemid" jdbcType="DECIMAL" />
+    <id column="LOOKUPCODE" property="lookupcode" jdbcType="VARCHAR" />
+    <id column="ITEMVAL" property="itemval" jdbcType="VARCHAR" />
+    <result column="ITEMNAME" property="itemname" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="DECIMAL" />
+    <result column="AUDITSTATUS" property="auditstatus" jdbcType="DECIMAL" />
+    <result column="REMARKS" property="remarks" jdbcType="VARCHAR" />
+    <result column="ITEMVAL" property="itemOld" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="LookupDtlMap" type="com.yougou.logistics.city.common.vo.LookupDtl" >
+    <result column="lookupcode" property="lookupcode" jdbcType="VARCHAR" />
+    <result column="itemval" property="itemvalue" jdbcType="VARCHAR" />
+    <result column="itemname" property="itemname" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    SYSTEMID, LOOKUPCODE, ITEMVAL, ITEMNAME, STATUS, AUDITSTATUS, REMARKS,ITEMVAL as itemOld
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.systemid and ''!=params.systemid">
+		         and SYSTEMID=#{params.systemid,jdbcType=DECIMAL}
+	  </if>
+	  <if test="null!=params.lookupcode and ''!=params.lookupcode">
+		         and LOOKUPCODE=#{params.lookupcode,jdbcType=VARCHAR}
+	  </if>
+	   <if test="null!=params.itemvalue and ''!=params.itemvalue">
+		         and ITEMVAL=#{params.itemvalue,jdbcType=VARCHAR}
+	  </if>
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.LookupdtlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from LOOKUPDTL
+    where SYSTEMID = #{systemid,jdbcType=DECIMAL}
+      and LOOKUPCODE = #{lookupcode,jdbcType=VARCHAR}
+      and ITEMVAL = #{itemval,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from LOOKUPDTL where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from LOOKUPDTL where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from LOOKUPDTL where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <!-- 查询拣货任务分派表的出库类型  -->
+  <select id="selectOutstockDirectExpType" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.Lookupdtl" >
+    select distinct k.itemval,k.itemname　
+    from  LOOKUPDTL  k , BILL_OM_OUTSTOCK_DIRECT  d 
+	where k.status = 1 
+	  and d.status ='10'
+	  and d.exp_type = k.itemval 
+	  and k.lookupcode = #{lookupcode,jdbcType=VARCHAR}
+	  and d.locno = #{locno,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.LookupdtlKey" >
+    delete from LOOKUPDTL
+    where SYSTEMID = #{systemid,jdbcType=DECIMAL}
+      and LOOKUPCODE = #{lookupcode,jdbcType=VARCHAR}
+      and ITEMVAL = #{itemval,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.Lookupdtl" >
+    delete from LOOKUPDTL
+    where SYSTEMID = #{systemid,jdbcType=DECIMAL}
+      and LOOKUPCODE = #{lookupcode,jdbcType=VARCHAR}
+      and ITEMVAL = #{itemval,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.Lookupdtl" >
+    insert into LOOKUPDTL (SYSTEMID, LOOKUPCODE, ITEMVAL, 
+      ITEMNAME, STATUS, AUDITSTATUS, 
+      REMARKS)
+    values (#{systemid,jdbcType=DECIMAL}, #{lookupcode,jdbcType=VARCHAR}, #{itemval,jdbcType=VARCHAR}, 
+      #{itemname,jdbcType=VARCHAR}, #{status,jdbcType=DECIMAL}, #{auditstatus,jdbcType=DECIMAL}, 
+      #{remarks,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.Lookupdtl" >
+    insert into LOOKUPDTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="systemid != null" >
+        SYSTEMID,
+      </if>
+      <if test="lookupcode != null" >
+        LOOKUPCODE,
+      </if>
+      <if test="itemval != null" >
+        ITEMVAL,
+      </if>
+      <if test="itemname != null" >
+        ITEMNAME,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="auditstatus != null" >
+        AUDITSTATUS,
+      </if>
+      <if test="remarks != null" >
+        REMARKS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="systemid != null" >
+        #{systemid,jdbcType=DECIMAL},
+      </if>
+      <if test="lookupcode != null" >
+        #{lookupcode,jdbcType=VARCHAR},
+      </if>
+      <if test="itemval != null" >
+        #{itemval,jdbcType=VARCHAR},
+      </if>
+      <if test="itemname != null" >
+        #{itemname,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=DECIMAL},
+      </if>
+      <if test="auditstatus != null" >
+        #{auditstatus,jdbcType=DECIMAL},
+      </if>
+      <if test="remarks != null" >
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.Lookupdtl" >
+    update LOOKUPDTL
+    <set >
+      <if test="itemval != null" >
+        ITEMVAL = #{itemval,jdbcType=VARCHAR},
+      </if>
+      <if test="itemname != null" >
+        ITEMNAME = #{itemname,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=DECIMAL},
+      </if>
+      <if test="auditstatus != null" >
+        AUDITSTATUS = #{auditstatus,jdbcType=DECIMAL},
+      </if>
+      <if test="remarks != null" >
+        REMARKS = #{remarks,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where SYSTEMID = #{systemid,jdbcType=DECIMAL}
+      and LOOKUPCODE = #{lookupcode,jdbcType=VARCHAR}
+      and ITEMVAL = #{itemOld,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.Lookupdtl" >
+    update LOOKUPDTL
+    set ITEMNAME = #{itemname,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=DECIMAL},
+      AUDITSTATUS = #{auditstatus,jdbcType=DECIMAL},
+      REMARKS = #{remarks,jdbcType=VARCHAR}
+    where SYSTEMID = #{systemid,jdbcType=DECIMAL}
+      and LOOKUPCODE = #{lookupcode,jdbcType=VARCHAR}
+      and ITEMVAL = #{itemval,jdbcType=VARCHAR}
+  </update>
+  <!-- 根据品牌查询 -->
+  <select id="selectLookupdtlBySysNo" resultMap="BaseResultMap" parameterType="map">
+     select A.*
+	 from (select substr(itemval, 1, 2) sysNo,
+	              dtl.itemval,
+	              dtl.itemname
+	         from LOOKUPDTL dtl
+	        inner join LOOKUP t
+	           on t.lookupcode = dtl.lookupcode
+	          and t.systemid = dtl.systemid
+	          and t.brand_no = '00'
+	        where dtl.lookupcode = #{lookupcode,jdbcType=VARCHAR}) A
+	where a.sysNo = #{sysNo,jdbcType=VARCHAR}
+	order by  a.itemval
+  </select>
+  <!-- 根据编码查询-->
+  <select id="selectLookupdtlByCode" resultMap="BaseResultMap" parameterType="map" >
+     select dtl.itemval,dtl.itemname
+	         from LOOKUPDTL dtl
+	        inner join LOOKUP t
+	           on t.lookupcode = dtl.lookupcode
+	          and t.systemid = dtl.systemid
+	          and t.brand_no = '00'
+	        where dtl.lookupcode = #{params.lookupcode,jdbcType=VARCHAR}
+  </select>
+</mapper>

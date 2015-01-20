@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BmContainerLogMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BmContainerLog" >  
+  	<result column="CONTAINER_NO" property="conNo" jdbcType="VARCHAR" />
+  	<result column="SUB_CONTAINER_NO" property="subConNo" jdbcType="VARCHAR" />
+	<result column="LOCNO" property="locNo" jdbcType="VARCHAR" />
+	<result column="SOURCE_NO" property="billNo" jdbcType="VARCHAR" />
+	<result column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+	<result column="CONTAINER_TYPE" property="conType" jdbcType="VARCHAR" />
+	<result column="USE_TYPE" property="userType" jdbcType="VARCHAR" />
+	<result column="IO_FLAG" property="ioFlag" jdbcType="VARCHAR" />
+	<result column="BRAND_NO" property="brandNo" jdbcType="VARCHAR" />
+	<result column="BRAND_NAME" property="brandName" jdbcType="VARCHAR" />
+	<result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+	<result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+	<result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+	<result column="QTY" property="qty" jdbcType="DECIMAL" />
+	<result column="ITEM_TYPE" property="itemType" jdbcType="VARCHAR" />
+	<result column="QUALITY" property="quality" jdbcType="VARCHAR" />
+	<result column="ROW_ID" property="rowId" jdbcType="VARCHAR" />
+	<result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+	<result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+	<result column="CREATORNAME" property="creatorName" jdbcType="VARCHAR" />
+	<result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+	<result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+	<result column="EDITORNAME" property="editorName" jdbcType="VARCHAR" />
+  </resultMap>
+  <!--权限过滤查询条件-->
+  <sql id="i_AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and DTL.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  <sql id="Base_Column_List">
+	  T.LOCNO ,T.SOURCE_NO, T.CONTAINER_NO, T.CONTAINER_TYPE,
+	  T.SUB_CONTAINER_NO, T.CELL_NO, T.USE_TYPE, T.IO_FLAG,
+  	  T.CREATOR, T.CREATETM, T.CREATORNAME, T.EDITOR, T.EDITTM, T.EDITORNAME
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.locNo and ''!=params.locNo" >
+        AND T.LOCNO = #{params.locNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.billNo and ''!=params.billNo" >
+        AND T.SOURCE_NO = #{params.billNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.conType and ''!=params.conType" >
+        AND T.CONTAINER_TYPE = #{params.conType,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.conNo and ''!=params.conNo" >
+        AND T.CONTAINER_NO = #{params.conNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.subConNo and ''!=params.subConNo" >
+        AND T.SUB_CONTAINER_NO = #{params.subConNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ioFlag and ''!=params.ioFlag" >
+        AND T.IO_FLAG = #{params.ioFlag,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.userType and ''!=params.userType" >
+        AND T.USE_TYPE = #{params.userType,jdbcType=VARCHAR}
+      </if>
+     </if>
+  </sql>
+  <sql id="selectContainerLog" >
+  	SELECT <include refid="Base_Column_List" />
+	  FROM CONTAINER_TASK_LOG T 
+	  INNER JOIN (
+	  	SELECT DTL.LOCNO, DTL.SOURCE_NO, DTL.CONTAINER_NO, DTL.USE_TYPE, DTL.IO_FLAG
+	  		FROM CONTAINER_TASK_DTL_LOG DTL
+	 		WHERE DTL.LOCNO = #{params.locNo,jdbcType=VARCHAR}
+	 		<include refid="i_AuthorityCondition" />
+	 		GROUP BY DTL.LOCNO, DTL.SOURCE_NO,DTL.CONTAINER_NO,DTL.USE_TYPE,DTL.IO_FLAG
+	 	)T1
+	  	ON T.LOCNO = T1.LOCNO
+        AND T1.SOURCE_NO = T.SOURCE_NO
+        AND T1.CONTAINER_NO = T.SUB_CONTAINER_NO
+        AND T1.USE_TYPE = T.USE_TYPE
+       	AND T1.IO_FLAG = T.IO_FLAG
+ 	  where 1=1 
+ 	  <include refid="condition" />
+  </sql>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from
+    (<include refid="selectContainerLog" />)
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from
+     (<include refid="selectContainerLog" /> order by CREATETM desc) A 
+    where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <!--明细查询-->
+   <sql id="Base_Column_DtlList">
+   	T.LOCNO,T.SOURCE_NO,T.CONTAINER_NO,T.BRAND_NO,T.ITEM_NO,T.SIZE_NO,T.QTY,
+	T.CREATOR, T.CREATETM, T.CREATORNAME, 
+	T.QUALITY,T.ITEM_TYPE,T.ROW_ID,I.ITEM_NAME,B.BRAND_NAME
+  </sql>
+  <sql id="condition_DtlList" >
+    <if test="null!=params" >
+      <if test="null!=params.locNo and ''!=params.locNo" >
+        AND LOCNO = #{params.locNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.billNo and ''!=params.billNo" >
+        AND SOURCE_NO = #{params.billNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.conNo and ''!=params.conNo" >
+        AND CONTAINER_NO = #{params.conNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.conType and ''!=params.conType" >
+        AND CONTAINER_TYPE = #{params.conType,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.subConNo and ''!=params.subConNo" >
+        AND SUB_CONTAINER_NO = #{params.subConNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ioFlag and ''!=params.ioFlag" >
+        AND IO_FLAG = #{params.ioFlag,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.userType and ''!=params.userType" >
+        AND USE_TYPE = #{params.userType,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.itemNo and ''!=params.itemNo" >
+        AND ITEM_NO = #{params.itemNo,jdbcType=VARCHAR}
+      </if>
+     </if>
+  </sql>
+  <select id="findDtlCount" resultType="java.lang.Integer" >
+    select count(1) as s from CONTAINER_TASK_DTL_LOG T where 1=1 
+    <include refid="condition_DtlList" />
+  </select>
+  <select id="findDtlByPage" resultMap="BaseResultMap" parameterType="map" >
+    SELECT B.* FROM (SELECT A.*,ROWNUM RN FROM( SELECT 
+    <include refid="Base_Column_DtlList" />
+     FROM CONTAINER_TASK_DTL_LOG  T
+     LEFT JOIN ITEM I ON I.ITEM_NO=T.ITEM_NO
+     LEFT JOIN BRAND B ON  B.BRAND_NO = T.BRAND_NO WHERE 1=1
+    <include refid="condition_DtlList" />
+      order by CREATETM desc
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+</mapper>

@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BillStatusLogMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillStatusLog" >
+    <id column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+    <id column="BILL_NO" property="billNo" jdbcType="VARCHAR" />
+    <result column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <result column="BILL_TYPE" property="billType" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="status_name" property="statusName" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+	<result column="SOURCE_NO" property="sourceNo" jdbcType="VARCHAR" />
+    <result column="OPERATOR" property="operator" jdbcType="VARCHAR" />
+    <result column="OPERATETM" property="operatetm" jdbcType="TIMESTAMP" />
+    <result column="OPERATORNAME" property="operatorName" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="BaseResultMapForApi" type="com.yougou.logistics.city.common.api.dto.BillStatusLogDto" >  
+    <id column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+    <id column="BILL_NO" property="billNo" jdbcType="VARCHAR" />
+    <result column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <result column="BILL_TYPE" property="billType" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="status_name" property="statusName" jdbcType="VARCHAR" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="PO_NO" property="poNo" jdbcType="VARCHAR" />
+    <result column="SOURCEEXP_NO" property="sourceExpNo" jdbcType="VARCHAR" />
+    <result column="OPERATOR" property="operator" jdbcType="VARCHAR" />
+    <result column="OPERATETM" property="operatetm" jdbcType="TIMESTAMP" />
+    <result column="OPERATORNAME" property="operatorName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    BILL_NO, ROW_ID, LOCNO, BILL_TYPE, STATUS, DESCRIPTION, OPERATOR, OPERATETM,OPERATORNAME
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+      ${params.queryCondition}
+    </if>
+    <if test="null!=params.locno and ''!=params.locno" >
+		and locno = #{params.locno,jdbcType=VARCHAR}
+	</if>
+	<if test="null!=params.billNo and ''!=params.billNo" >
+		and bill_no = #{params.billNo,jdbcType=VARCHAR}
+	</if>
+	<if test="null!=params.status and ''!=params.status" >
+		and status = #{params.status,jdbcType=VARCHAR}
+	</if>
+  </sql>
+  <sql id="child_condition_im">
+  	<if test="null!=params" >
+      <if test="null!=params.locno and ''!=params.locno" >
+      	and locno = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.instockNo and ''!=params.instockNo" >
+      	and import_no = #{params.billNo,jdbcType=VARCHAR}
+      </if>
+     </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillStatusLogKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_STATUS_LOG
+    where BILL_NO = #{billNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+    <include refid="condition" />
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer">
+    select count(1) as s from BILL_STATUS_LOG where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from BILL_STATUS_LOG where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_STATUS_LOG where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillStatusLogKey" >
+    delete from BILL_STATUS_LOG
+    where BILL_NO = #{billNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillStatusLog" >
+    delete from BILL_STATUS_LOG
+    where BILL_NO = #{billNo,jdbcType=VARCHAR}
+      <if test="null!=rowId and ''!=rowId" >
+      	and ROW_ID = #{rowId,jdbcType=DECIMAL}
+      </if>
+      <if test="null!=status and ''!=status" >
+      	and STATUS = #{status,jdbcType=DECIMAL}
+      </if>
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillStatusLog" >
+    insert into BILL_STATUS_LOG (BILL_NO, ROW_ID, LOCNO, 
+      BILL_TYPE, STATUS, DESCRIPTION, 
+      OPERATOR, OPERATETM, OPERATORNAME)
+    values (#{billNo,jdbcType=VARCHAR}, #{rowId,jdbcType=DECIMAL}, #{locno,jdbcType=VARCHAR}, 
+      #{billType,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{operator,jdbcType=VARCHAR}, #{operatetm,jdbcType=TIMESTAMP}, #{operatorName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillStatusLog" >
+    insert into BILL_STATUS_LOG
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="billNo != null" >
+        BILL_NO,
+      </if>
+      <if test="rowId != null" >
+        ROW_ID,
+      </if>
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="billType != null" >
+        BILL_TYPE,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="description != null" >
+        DESCRIPTION,
+      </if>
+      <if test="operator != null" >
+        OPERATOR,
+      </if>
+      <if test="operatetm != null" >
+        OPERATETM,
+      </if>
+      <if test="operatorName != null" >
+        OPERATORNAME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="billNo != null" >
+        #{billNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rowId != null" >
+        #{rowId,jdbcType=DECIMAL},
+      </if>
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="billType != null" >
+        #{billType,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="operator != null" >
+        #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="operatetm != null" >
+        #{operatetm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operatorName != null" >
+        #{operatorName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillStatusLog" >
+    update BILL_STATUS_LOG
+    <set >
+      <if test="locno != null" >
+        LOCNO = #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="billType != null" >
+        BILL_TYPE = #{billType,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        DESCRIPTION = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="operator != null" >
+        OPERATOR = #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="operatetm != null" >
+        OPERATETM = #{operatetm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operatorName != null" >
+        OPERATORNAME = #{operatorName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where BILL_NO = #{billNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillStatusLog" >
+    update BILL_STATUS_LOG
+    set LOCNO = #{locno,jdbcType=VARCHAR},
+      BILL_TYPE = #{billType,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      DESCRIPTION = #{description,jdbcType=VARCHAR},
+      OPERATOR = #{operator,jdbcType=VARCHAR},
+      OPERATETM = #{operatetm,jdbcType=TIMESTAMP},
+      OPERATORNAME = #{operatorName,jdbcType=VARCHAR}
+    where BILL_NO = #{billNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+   
+  <!--拣货任务分派-调用存储过程，发单-->
+  <select id="procInsertBillStatusLog" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call PKG_COMMON_CITY.PROC_BILL_STATUS_LOG 
+		       (#{v_locno,mode=IN,jdbcType=VARCHAR},
+		    	#{v_bill_no,mode=IN,jdbcType=VARCHAR},
+		    	#{v_bill_type,mode=IN,jdbcType=VARCHAR},
+		    	#{v_status,mode=IN,jdbcType=VARCHAR},
+		    	#{v_description,mode=IN,jdbcType=VARCHAR},
+		    	#{v_operator,mode=IN,jdbcType=VARCHAR},
+		    	#{stroutmsg,mode=OUT,jdbcType=VARCHAR})}
+		]]>  
+  </select> 
+  
+  <!--  -->
+  <!-- IM -->
+  <sql id="selectByPageAuthorityLeftJoinIm" >
+   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+            left join (select import_no
+                         from bill_im_import_dtl                      
+                        where brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+                        <include refid="child_condition_im" />
+                         group by import_no
+                        ) sub1
+             ON sub1.import_no = bsi.bill_no        
+             left join (select import_no
+                         from bill_im_import_dtl 
+                         where 1=1
+                         <include refid="child_condition_im" />     
+                          group by import_no                
+                        ) sub2
+             ON sub2.import_no = bsi.bill_no
+    </if>
+  </sql>
+  <sql id="selectByPageAuthorityConditionIm" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and (sub1.import_no is not null or sub2.import_no is null)
+    </if>
+  </sql>
+  <sql id="conditionByIm" >
+  	<if test="null!=params.locno and ''!=params.locno" >
+		and bsi.locno = #{params.locno,jdbcType=VARCHAR}
+	</if>
+	<if test="null!=params.billNo and ''!=params.billNo" >
+		and bsi.bill_no = #{params.billNo,jdbcType=VARCHAR}
+	</if>
+	<if test="null!=params.sourceNo and ''!=params.sourceNo" >
+		and ii.po_no = #{params.sourceNo,jdbcType=VARCHAR}
+	</if>
+	<if test="null!=params.operatetmBegin and ''!=params.operatetmBegin" >
+       <![CDATA[
+       	 and bsi.operatetm >= to_date('${params.operatetmBegin} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+        ]]>	
+	</if>
+	<if test="null!=params.operatetmEnd and ''!=params.operatetmEnd" >
+        <![CDATA[
+         and bsi.operatetm <= to_date('${params.operatetmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+        ]]>	
+	</if>
+  </sql>
+  <select id="selectCountByIm" resultType="java.lang.Integer">
+  	select count(1) as s
+	  from bill_status_log bsi
+	 inner join bill_im_import ii
+	    on ii.import_no = bsi.bill_no
+	    and ii.locno = bsi.locno
+	    <include refid="selectByPageAuthorityLeftJoinIm" />
+	 where bsi.bill_type = 'IM'
+	 <include refid="conditionByIm" />
+	 <include refid="selectByPageAuthorityConditionIm" />
+  </select>
+  <select id="selectPageByIm" resultMap="BaseResultMap" parameterType="map" >
+  	select A.* from (
+	select bsi.BILL_NO,
+               bsi.ROW_ID,
+               bsi.LOCNO,
+               bsi.BILL_TYPE,
+               bsi.STATUS,
+               bsi.DESCRIPTION,
+               bsi.OPERATOR,
+               bsi.OPERATETM,
+               bsi.OPERATORNAME,
+               ii.po_no as SOURCE_NO,
+               (select ld.itemname
+          from lookupdtl ld
+         where ld.lookupcode = 'CITY_IMPORTOR_STATUS'
+           and ld.itemval = bsi.status) status_name,
+           rownum rn
+	  from bill_status_log bsi
+	 inner join bill_im_import ii
+	    on ii.import_no = bsi.bill_no
+	    and ii.locno = bsi.locno
+	    <include refid="selectByPageAuthorityLeftJoinIm" />
+	 where bsi.bill_type = 'IM'
+	 <include refid="conditionByIm" />
+	 <include refid="selectByPageAuthorityConditionIm" />
+	 order by bsi.bill_no desc,bsi.operatetm desc
+ 	)A where A.rn &gt; #{page.startRowNum} and A.rn &lt; #{page.endRowNum}
+  </select>
+  <!-- IM END -->
+  <!-- OM -->
+  <sql id="child_condition_om">
+  	<if test="null!=params" >
+      <if test="null!=params.locno and ''!=params.locno" >
+      	and locno = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.instockNo and ''!=params.instockNo" >
+      	and exp_no = #{params.billNo,jdbcType=VARCHAR}
+      </if>
+     </if>
+  </sql>
+  <sql id="selectByPageAuthorityLeftJoinOm" >
+   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+            left join (select exp_no
+                         from bill_om_exp_dtl                      
+                        where brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+                        <include refid="child_condition_om" />
+                         group by exp_no
+                        ) sub1
+             ON sub1.exp_no = bsi.bill_no        
+             left join (select exp_no
+                         from bill_om_exp_dtl 
+                         where 1=1
+                         <include refid="child_condition_om" />   
+                         group by  exp_no                  
+                        ) sub2
+             ON sub2.exp_no = bsi.bill_no
+    </if>
+  </sql>
+  <sql id="selectByPageAuthorityConditionOm" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and (sub1.exp_no is not null or sub2.exp_no is null)
+    </if>
+  </sql>
+  <sql id="conditionByOm" >
+  	<if test="null!=params.locno and ''!=params.locno" >
+		and bsi.locno = #{params.locno,jdbcType=VARCHAR}
+	</if>
+	<if test="null!=params.billNo and ''!=params.billNo" >
+		and bsi.bill_no = #{params.billNo,jdbcType=VARCHAR}
+	</if>
+	<if test="null!=params.sourceNo and ''!=params.sourceNo" >
+		and oe.sourceexp_no = #{params.sourceNo,jdbcType=VARCHAR}
+	</if>
+	<if test="null!=params.operatetmBegin and ''!=params.operatetmBegin" >
+       <![CDATA[
+       	 and bsi.operatetm >= to_date('${params.operatetmBegin} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+        ]]>	
+	</if>
+	<if test="null!=params.operatetmEnd and ''!=params.operatetmEnd" >
+        <![CDATA[
+         and bsi.operatetm <= to_date('${params.operatetmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+        ]]>	
+	</if>
+  </sql>
+  <select id="selectCountByOm" resultType="java.lang.Integer">
+  	select count(1) as s
+	  from bill_status_log bsi
+	 inner join bill_om_exp oe
+	    on oe.exp_no = bsi.bill_no
+	    and oe.locno = bsi.locno
+	    <include refid="selectByPageAuthorityLeftJoinOm" />
+	 where bsi.bill_type = 'OM'
+	 <include refid="conditionByOm" />
+	 <include refid="selectByPageAuthorityConditionOm" />
+  </select>
+  <select id="selectPageByOm" resultMap="BaseResultMap" parameterType="map" >
+  	select A.* from (
+	select bsi.BILL_NO,
+               bsi.ROW_ID,
+               bsi.LOCNO,
+               bsi.BILL_TYPE,
+               bsi.STATUS,
+               bsi.DESCRIPTION,
+               bsi.OPERATOR,
+               bsi.OPERATETM,
+               bsi.OPERATORNAME,
+               oe.sourceexp_no as SOURCE_NO,
+               (select ld.itemname
+          from lookupdtl ld
+         where ld.lookupcode = 'CITY_OEM_STATUS'
+           and ld.itemval = bsi.status) status_name,
+           rownum rn
+	  from bill_status_log bsi
+	 inner join bill_om_exp oe
+	    on oe.exp_no = bsi.bill_no
+	    and oe.locno = bsi.locno
+	    <include refid="selectByPageAuthorityLeftJoinOm" />
+	 where bsi.bill_type = 'OM'
+	 <include refid="conditionByOm" />
+	 <include refid="selectByPageAuthorityConditionOm" />
+	 order by bsi.bill_no desc,bsi.operatetm desc
+ 	)A where A.rn &gt; #{page.startRowNum} and A.rn &lt; #{page.endRowNum}
+  </select>
+  <!-- OM END -->
+  <!-- UM -->
+  <sql id="child_condition_um">
+  	<if test="null!=params" >
+      <if test="null!=params.locno and ''!=params.locno" >
+      	and locno = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.instockNo and ''!=params.instockNo" >
+      	and untread_no = #{params.billNo,jdbcType=VARCHAR}
+      </if>
+     </if>
+  </sql>
+  <sql id="selectByPageAuthorityLeftJoinUm" >
+   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+            left join (select untread_no
+                         from bill_um_untread_dtl                      
+                        where brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+                        <include refid="child_condition_um" />
+                        group by  untread_no
+                        ) sub1
+             ON sub1.untread_no = bsi.bill_no        
+             left join (select untread_no
+                         from bill_um_untread_dtl 
+                         where 1=1
+                         <include refid="child_condition_um" />   
+                          group by untread_no                  
+                        ) sub2
+             ON sub2.untread_no = bsi.bill_no
+    </if>
+  </sql>
+  <sql id="selectByPageAuthorityConditionUm" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and (sub1.untread_no is not null or sub2.untread_no is null)
+    </if>
+  </sql>
+  <sql id="conditionByUm" >
+  	<if test="null!=params.locno and ''!=params.locno" >
+		and bsi.locno = #{params.locno,jdbcType=VARCHAR}
+	</if>
+	<if test="null!=params.billNo and ''!=params.billNo" >
+		and bsi.bill_no = #{params.billNo,jdbcType=VARCHAR}
+	</if>
+	<if test="null!=params.sourceNo and ''!=params.sourceNo" >
+		and uu.po_no = #{params.sourceNo,jdbcType=VARCHAR}
+	</if>
+	<if test="null!=params.operatetmBegin and ''!=params.operatetmBegin" >
+       <![CDATA[
+       	 and bsi.operatetm >= to_date('${params.operatetmBegin} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+        ]]>	
+	</if>
+	<if test="null!=params.operatetmEnd and ''!=params.operatetmEnd" >
+        <![CDATA[
+         and bsi.operatetm <= to_date('${params.operatetmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+        ]]>	
+	</if>
+  </sql>
+  <select id="selectCountByUm" resultType="java.lang.Integer">
+  	select count(1) as s
+	  from bill_status_log bsi
+	 inner join bill_um_untread uu
+	    on uu.untread_no = bsi.bill_no
+   		and uu.locno = bsi.locno
+   		<include refid="selectByPageAuthorityLeftJoinUm" />
+ 	where bsi.bill_type = 'UM'
+	 <include refid="conditionByUm" />
+	 <include refid="selectByPageAuthorityConditionUm" />
+  </select>
+  <select id="selectPageByUm" resultMap="BaseResultMap" parameterType="map" >
+  	select A.* from (
+	select  bsi.BILL_NO,
+               bsi.ROW_ID,
+               bsi.LOCNO,
+               bsi.BILL_TYPE,
+               bsi.STATUS,
+               bsi.DESCRIPTION,
+               bsi.OPERATOR,
+               bsi.OPERATETM,
+               bsi.OPERATORNAME,
+               uu.po_no as SOURCE_NO ,
+               (select ld.itemname
+          from lookupdtl ld
+         where ld.lookupcode = 'UMUNTREAD_STATUS'
+           and ld.itemval = bsi.status) status_name,
+           rownum rn
+	  from bill_status_log bsi
+	 inner join bill_um_untread uu
+	    on uu.untread_no = bsi.bill_no
+   		and uu.locno = bsi.locno
+   		<include refid="selectByPageAuthorityLeftJoinUm" />
+ 	where bsi.bill_type = 'UM'
+	 <include refid="conditionByUm" />
+	 <include refid="selectByPageAuthorityConditionUm" />
+	 order by bsi.bill_no desc,bsi.operatetm desc
+ 	)A where A.rn &gt; #{page.startRowNum} and A.rn &lt; #{page.endRowNum}
+  </select>
+  <!-- UM END -->
+  <select id="selectBillStatusLogByPoNo" resultMap="BaseResultMapForApi" parameterType="java.lang.String">
+  	select sl.*,ii.po_no,(select ld.itemname
+          from lookupdtl ld
+         where ld.lookupcode = 'CITY_IMPORTOR_STATUS'
+           and ld.itemval = sl.status) status_name
+	  from bill_status_log sl
+	 inner join bill_im_import ii
+	    on ii.import_no = sl.bill_no
+	   and ii.po_no = #{poNo,jdbcType=VARCHAR}
+	 order by sl.operatetm desc
+  </select>
+  <select id="selectBillStatusLogBySourceExpNo" resultMap="BaseResultMapForApi" parameterType="java.lang.String">
+  	select sl.*,oe.sourceexp_no,
+       (select ld.itemname
+          from lookupdtl ld
+         where ld.lookupcode = 'CITY_OEM_STATUS'
+           and ld.itemval = sl.status) status_name
+	  from bill_status_log sl
+	 inner join bill_om_exp oe
+	    on oe.exp_no = sl.bill_no
+	   and oe.sourceexp_no = #{sourceExpNo,jdbcType=VARCHAR}
+	 order by sl.operatetm desc
+  </select>
+  <!--  -->
+</mapper>

@@ -1,0 +1,1010 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.SplitDepotInOutDtlReportMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.SplitDepotInOutDtlReport" >
+  	<result column="LOCNO" property="locno" jdbcType="VARCHAR" />
+  	<result column="ONWER_NO" property="onwerNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+    <result column="BRAND_NO" property="brandNo" jdbcType="VARCHAR" />
+    <result column="CATE_NO" property="cateNo" jdbcType="VARCHAR" />
+    <result column="YEARS" property="years" jdbcType="VARCHAR" />
+    <result column="QTY" property="qty" jdbcType="DECIMAL" />
+    <result column="CRK_QTY" property="crkQty" jdbcType="DECIMAL" />
+    <result column="CYR_QTY" property="cyrQty" jdbcType="DECIMAL" />
+    <result column="DTH_QTY" property="dthQty" jdbcType="DECIMAL" />
+    <result column="QTRK_QTY" property="qtrkQty" jdbcType="DECIMAL" />
+    <result column="RK_CYTZ_QTY" property="rkCytzQty" jdbcType="DECIMAL" />
+    <result column="CCD_QTY" property="ccdQty" jdbcType="DECIMAL" />
+    <result column="CYC_QTY" property="cycQty" jdbcType="DECIMAL" />
+    <result column="QTCK_QTY" property="qtckQty" jdbcType="DECIMAL" />
+    <result column="PY_QTY" property="pyQty" jdbcType="DECIMAL" />
+    <result column="PK_QTY" property="pkQty" jdbcType="DECIMAL" />
+    <result column="KBMZH_QTY" property="kbmzhQty" jdbcType="DECIMAL" />
+    <result column="CK_CYTZ_QTY" property="ckCytzQty" jdbcType="DECIMAL" />
+    <result column="this_issue_qty" property="thisIssueQty" jdbcType="DECIMAL" />
+    <result column="startContentDate" property="startContentDate" jdbcType="TIMESTAMP" />
+    <result column="endContentDate" property="endContentDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ITEM_NO, QTY, CRK_QTY, CRK_QTY, 
+    DTH_QTY, QTRK_QTY, CCD_QTY,CYC_QTY, QTCK_QTY, PY_QTY, PK_QTY
+  </sql>
+  
+  <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and it.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <sql id="condition_view">
+  			and v.locno = #{params.locno,jdbcType=VARCHAR}
+		<if test="null!=params.itemNo and ''!=params.itemNo">
+			and v.item_no LIKE '%${params.itemNo}%'
+		</if>
+		<if test="null!=params.strItemNo and ''!=params.strItemNo">
+			and v.item_no in (${params.strItemNo})
+		</if>
+		<if test="null!=params.startContentDate and ''!=params.startContentDate">
+				<![CDATA[
+					and v.select_date >= to_date('${params.startContentDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="null!=params.endContentDate and ''!=params.endContentDate">
+				<![CDATA[
+					and v.select_date <= to_date('${params.endContentDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="null!=params.quality and ''!=params.quality">
+			and v.quality = #{params.quality,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.itemType and ''!=params.itemType">
+			and v.item_type = #{params.itemType,jdbcType=VARCHAR}
+		</if>
+	</sql>
+  
+  <sql id="condition">
+		<if test="null!=params.brandNoValues and ''!=params.brandNoValues">
+			<!-- and it.brand_no = #{params.brandNo,jdbcType=VARCHAR} -->
+			and it.brand_no in (${params.brandNoValues})
+		</if>
+		<if test="null!=params.cateCode and ''!=params.cateCode">
+			and it.cate_no in (select cate_no from category where cate_code like '${params.cateCode}%')
+		</if>
+		<choose>
+			<when test="params.cateThreeValues != null">
+				<foreach collection="params.cateThreeValues" item="value" open=" and (" close=")" separator="or">
+					c.search_code like '${value}%'
+				</foreach>
+			</when>
+			<when test="params.cateTwoValues != null">
+				<foreach collection="params.cateTwoValues" item="value" open="and (" close=")" separator="or">
+					c.search_code like '${value}%'
+				</foreach>
+			</when>
+			<when test="params.cateOneValues != null">
+				<foreach collection="params.cateOneValues" item="value" open="and (" close=")" separator="or">
+					c.search_code like '${value}%'
+				</foreach>
+			 </when>
+			 <otherwise>
+			 </otherwise>
+	 	</choose>
+		<if test="null!=params.sysNo and ''!=params.sysNo">
+			and it.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.years and ''!=params.years">
+			and s3.itemname LIKE '%${params.years}%'
+		</if>
+		<!-- <if test="null!=params.season and ''!=params.season">
+			and s1.itemname LIKE '%${params.season}%'
+		</if>
+		<if test="null!=params.gender and ''!=params.gender">
+			and s2.itemname LIKE '%${params.gender}%'
+		</if> -->
+		<if test="null != params.seasonValues">
+		    and it.season in
+		    <foreach collection="params.seasonValues" item="season" open="(" close=")" separator=",">
+				#{season}
+			</foreach>
+		</if>
+		<if test="null != params.genderValues">
+		    and it.gender in 
+		    <foreach collection="params.genderValues" item="gender" open="(" close=")" separator=",">
+				#{gender}
+			</foreach>
+		</if>
+		<include refid="AuthorityCondition" />
+   </sql>
+
+	<sql id="condition2">
+		<if test="null!=params.startContentDate and ''!=params.startContentDate">
+				<![CDATA[
+					and to_char(vf.content_date,'yyyy-mm-dd') = to_char(to_date('${params.startContentDate}','yyyy-mm-dd')-1,'yyyy-mm-dd')
+				]]>
+		</if>
+		<!--  
+		<if test="null!=params.startContentDate and ''!=params.startContentDate">
+				<![CDATA[
+					and vf.content_date <= to_date('${params.startContentDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		-->
+		<if test="null!=params.itemType and ''!=params.itemType">
+			and vf.item_type = #{params.itemType,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.quality and ''!=params.quality">
+			and vf.quality = #{params.quality,jdbcType=VARCHAR}
+		</if>
+		
+	</sql>
+	
+	
+	<sql id="condition_ccm">
+		<if test="null!=params.itemNo and ''!=params.itemNo">
+			and ccm.item_no LIKE '%${params.itemNo}%'
+		</if>
+		<if test="null!=params.strItemNo and ''!=params.strItemNo">
+			and ccm.item_no in (${params.strItemNo})
+		</if>
+		<if test="null!=params.startContentDate and ''!=params.startContentDate">
+				<![CDATA[
+					and ccm.createtm >= to_date('${params.startContentDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="null!=params.endContentDate and ''!=params.endContentDate">
+				<![CDATA[
+					and ccm.createtm <= to_date('${params.endContentDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="null!=params.quality and ''!=params.quality">
+			and ccm.quality = #{params.quality,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.itemType and ''!=params.itemType">
+			and ccm.item_type = #{params.itemType,jdbcType=VARCHAR}
+		</if>
+	</sql>
+	
+	<sql id="condition_icd">
+		<if test="null!=params.itemNo and ''!=params.itemNo">
+			and icd.item_no LIKE '%${params.itemNo}%'
+		</if>
+		<if test="null!=params.strItemNo and ''!=params.strItemNo">
+			and icd.item_no in (${params.strItemNo})
+		</if>
+		<if test="null!=params.startContentDate and ''!=params.startContentDate">
+				<![CDATA[
+					and ic.audittm >= to_date('${params.startContentDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="null!=params.endContentDate and ''!=params.endContentDate">
+				<![CDATA[
+					and ic.audittm <= to_date('${params.endContentDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="null!=params.quality and ''!=params.quality">
+			and icd.quality = #{params.quality,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.itemType and ''!=params.itemType">
+			and icd.item_type = #{params.itemType,jdbcType=VARCHAR}
+		</if>
+	</sql>
+	
+	<sql id="condition_odd">
+		<if test="null!=params.itemNo and ''!=params.itemNo">
+			and odd.item_no LIKE '%${params.itemNo}%'
+		</if>
+		<if test="null!=params.strItemNo and ''!=params.strItemNo">
+			and odd.item_no in (${params.strItemNo})
+		</if>
+		<if test="null!=params.startContentDate and ''!=params.startContentDate">
+				<![CDATA[
+					and od.audittm >= to_date('${params.startContentDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="null!=params.endContentDate and ''!=params.endContentDate">
+				<![CDATA[
+					and od.audittm <= to_date('${params.endContentDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="null!=params.quality and ''!=params.quality">
+			and odd.quality = #{params.quality,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.itemType and ''!=params.itemType">
+			and odd.item_type = #{params.itemType,jdbcType=VARCHAR}
+		</if>
+	</sql>
+	
+	<sql id="condition_kbmzh">
+		<if test="null!=params.itemNo and ''!=params.itemNo">
+			and cd.item_no LIKE '%${params.itemNo}%'
+		</if>
+		<if test="null!=params.strItemNo and ''!=params.strItemNo">
+			and cd.item_no in (${params.strItemNo})
+		</if>
+		<if test="null!=params.startContentDate and ''!=params.startContentDate">
+				<![CDATA[
+					and c.audittm >= to_date('${params.startContentDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="null!=params.endContentDate and ''!=params.endContentDate">
+				<![CDATA[
+					and c.audittm <= to_date('${params.endContentDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="null!=params.quality and ''!=params.quality">
+			and cd.quality = #{params.quality,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.itemType and ''!=params.itemType">
+			and cd.item_type = #{params.itemType,jdbcType=VARCHAR}
+		</if>
+	</sql>
+ 
+  
+  <select id="selectCount" resultType="java.lang.Integer" >
+    	select count(1)
+	          from (select it.item_no,
+	                       it.item_name,
+	                       it.brand_no,
+	                       it.cate_no,
+	                       it.color_no,
+	                       it.years
+	                  from (
+	                  		select  
+							      v.locno,
+							      v.item_no,
+							      v.crk_qty,
+							      v.cyr_qty,
+							      v.dth_qty,
+							      v.qtrk_qty,
+							      v.rk_cytz_qty,
+							      v.ccd_qty,
+							      v.cyc_qty,
+							      v.qtck_qty,
+							      v.kbmzh_qty,
+							      v.ck_cytz_qty,
+							      v.py_qty,
+							      v.pk_qty
+					 		from V_SPLIT_DEPOT_IN_OUT_REPORT v
+					 		where 1=1
+					 		<include refid="condition_view"/>
+	                  ) rep inner join item it on rep.item_no = it.item_no
+	                  		left join category c on it.cate_no=c.cate_no
+					  		left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+					                      from LOOKUPDTL ld
+					                     where ld.lookupcode = 'SEASON') s1
+					            on it.season = s1.itemval
+					        left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+					                      from LOOKUPDTL ld
+					                     where ld.lookupcode = 'GENDER') s2
+					            on it.gender = s2.itemval
+					        left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+					                      from LOOKUPDTL ld
+					                     where ld.lookupcode = 'YEARS') s3
+					            on it.years = s3.itemval
+					      where rep.locno = #{params.locno, jdbcType=VARCHAR} 
+		        		<include refid = "condition" />
+				         group by it.item_no,
+				                  it.item_name,
+				                  it.brand_no,
+				                  it.cate_no,
+				                  it.color_no,
+				                  it.years
+				                  
+				          union all
+				          
+				          select it.item_no,
+				                  it.item_name,
+				                  it.brand_no,
+				                  it.cate_no,
+				                  it.color_no,
+				                  it.years
+					    from con_content_history vf
+					   inner join item it
+					      on it.item_no = vf.item_no
+					    left join category c on it.cate_no=c.cate_no
+					    left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+					                 from LOOKUPDTL ld
+					                where ld.lookupcode = 'SEASON') s1
+					      on it.season = s1.itemval
+					    left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+					                 from LOOKUPDTL ld
+					                where ld.lookupcode = 'GENDER') s2
+					      on it.gender = s2.itemval
+					    left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+					                 from LOOKUPDTL ld
+					                where ld.lookupcode = 'YEARS') s3
+					      on it.years = s3.itemval
+					   where vf.locno = #{params.locno,jdbcType=VARCHAR}
+					   		<if test="null!=params.itemNo and ''!=params.itemNo">
+								and vf.item_no LIKE '%${params.itemNo}%'
+							</if>
+							<if test="null!=params.strItemNo and ''!=params.strItemNo">
+								and vf.item_no in (${params.strItemNo})
+							</if>
+							<include refid="condition2" />
+							<include refid="condition" />
+					     and not exists
+					     (<include refid="content_condition_history" />)
+					   group by it.item_no,
+				                it.item_name,
+				                it.brand_no,
+				                it.cate_no,
+				                it.color_no,
+				                it.years
+						       
+				  )
+  </select>
+  
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from(  
+    	<include refid="Base_Sql" />
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <!-- 汇总 -->
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+		select 
+       		nvl(sum(x.qty), 0) qty,
+			nvl(sum(x.crk_qty), 0) crk_qty,
+			nvl(sum(x.cyr_qty), 0) cyr_qty,
+			nvl(sum(x.dth_qty), 0) dth_qty,
+			nvl(sum(x.qtrk_qty), 0) qtrk_qty,
+			nvl(sum(x.rk_cytz_qty), 0) rk_cytz_qty,
+			nvl(sum(x.ccd_qty), 0) ccd_qty,
+			nvl(sum(x.cyc_qty), 0) cyc_qty,
+			nvl(sum(x.qtck_qty), 0) qtck_qty,
+			nvl(sum(x.kbmzh_qty), 0) kbmzh_qty,
+			nvl(sum(x.ck_cytz_qty), 0) ck_cytz_qty,
+			nvl(sum(x.py_qty), 0) py_qty,
+			nvl(sum(x.pk_qty), 0) pk_qty,
+			nvl(sum(x.this_issue_qty), 0) this_issue_qty
+        from (
+        	<include refid="Base_Sql" />
+        	<!--  
+	        select 
+	       		nvl(sub.qty, 0) qty,
+				nvl(sub.crk_qty, 0) crk_qty,
+				nvl(sub.cyr_qty, 0) cyr_qty,
+				nvl(sub.dth_qty, 0) dth_qty,
+				nvl(sub.qtrk_qty, 0) qtrk_qty,
+				nvl(sub.ccd_qty, 0) ccd_qty,
+				nvl(sub.cyc_qty, 0) cyc_qty,
+				nvl(sub.qtck_qty, 0) qtck_qty,
+				nvl(sub.kbmzh_qty, 0) kbmzh_qty,
+				(case when nvl(sub.pk_qty, 0) + nvl(sub.py_qty, 0) > 0 then nvl(sub.pk_qty, 0) + nvl(sub.py_qty, 0) else 0 end) py_qty,
+				(case when nvl(sub.pk_qty, 0) + nvl(sub.py_qty, 0)&lt;0 then nvl(sub.pk_qty, 0) + nvl(sub.py_qty, 0) else 0 end) pk_qty,
+				nvl(sub.this_issue_qty, 0) this_issue_qty from (
+					<include refid="Base_Sql" />
+			)sub
+			-->
+        ) x
+  </select>
+  
+  
+  <sql id="Base_Sql" >
+   
+   		select it.item_no,
+		       it.item_name,
+		       s3.itemname strYears,
+		       (select br.Brand_Name from Brand br where br.Brand_NO = it.brand_no) as strBrandNo,
+		       (select cg.Cate_Name from Category cg where cg.Cate_NO = it.cate_no) as strCateNo,
+		       (select ci.Color_Name from Color_Info ci where ci.Color_NO = it.color_no) as colorName,
+		       nvl(sum(v.qty), 0) qty,
+		       nvl(sum(rep.crk_qty), 0) crk_qty,
+		       nvl(sum(rep.cyr_qty), 0) cyr_qty,
+		       nvl(sum(rep.dth_qty), 0) dth_qty,
+		       nvl(sum(rep.qtrk_qty), 0) qtrk_qty,
+		       nvl(sum(rep.rk_cytz_qty), 0) rk_cytz_qty,
+		       nvl(sum(rep.ccd_qty), 0) ccd_qty,
+		       nvl(sum(rep.cyc_qty), 0) cyc_qty,
+		       nvl(sum(rep.qtck_qty), 0) qtck_qty,
+		       nvl(sum(rep.kbmzh_qty), 0) kbmzh_qty,
+		       abs(nvl(sum(rep.ck_cytz_qty), 0)) ck_cytz_qty,
+		       <!-- nvl(sum(rep.py_qty), 0) py_qty,
+		       nvl(sum(rep.pk_qty), 0) pk_qty,-->
+		       (case when nvl(sum(rep.pk_qty), 0) + nvl(sum(rep.py_qty), 0) > 0 then nvl(sum(rep.pk_qty), 0) + nvl(sum(rep.py_qty), 0) else 0 end) py_qty,
+			   (case when nvl(sum(rep.pk_qty), 0) + nvl(sum(rep.py_qty), 0)&lt;0 then nvl(sum(rep.pk_qty), 0) + nvl(sum(rep.py_qty), 0) else 0 end) pk_qty,
+		       <!--本期库存=上期库存+厂入库+仓移入+店退货+其他入库—仓出店-仓移出-其他出库+盘赢-盘亏-->
+		       (nvl(sum(v.qty), 0)+nvl(sum(rep.crk_qty), 0)+nvl(sum(rep.cyr_qty), 0)+nvl(sum(rep.dth_qty), 0)+nvl(sum(rep.qtrk_qty), 0)
+		       -nvl(sum(rep.ccd_qty), 0)-nvl(sum(rep.cyc_qty), 0)-nvl(sum(rep.qtck_qty), 0)-nvl(sum(rep.kbmzh_qty), 0)+nvl(sum(rep.py_qty), 0)+nvl(sum(rep.pk_qty), 0)
+		       +nvl(sum(rep.rk_cytz_qty), 0)+nvl(sum(rep.ck_cytz_qty), 0)) AS this_issue_qty		
+		  from (
+		  		select  dtl.locno,
+				        dtl.item_no,
+				        nvl(sum(dtl.crk_qty), 0) crk_qty,
+				        nvl(sum(dtl.cyr_qty), 0) cyr_qty,
+				        nvl(sum(dtl.dth_qty), 0) dth_qty,
+				        nvl(sum(dtl.qtrk_qty), 0) qtrk_qty,
+				        nvl(sum(dtl.rk_cytz_qty), 0) rk_cytz_qty,
+				        nvl(sum(dtl.ccd_qty), 0) ccd_qty,
+				        nvl(sum(dtl.cyc_qty), 0) cyc_qty,
+				        nvl(sum(dtl.qtck_qty), 0) qtck_qty,
+				        nvl(sum(dtl.kbmzh_qty), 0) kbmzh_qty,
+				        nvl(sum(dtl.ck_cytz_qty), 0) ck_cytz_qty,
+				        nvl(sum(dtl.py_qty), 0) py_qty,
+				        nvl(sum(dtl.pk_qty), 0) pk_qty
+				 from (
+						
+				 		select  
+						      v.locno,
+						      v.item_no,
+						      v.crk_qty,
+						      v.cyr_qty,
+						      v.dth_qty,
+						      v.qtrk_qty,
+						      v.rk_cytz_qty,
+						      v.ccd_qty,
+						      v.cyc_qty,
+						      v.qtck_qty,
+						      v.kbmzh_qty,
+						      v.ck_cytz_qty,
+						      v.py_qty,
+						      v.pk_qty
+				 		from V_SPLIT_DEPOT_IN_OUT_REPORT v
+				 		where 1=1
+				 		<include refid="condition_view"/>
+				) dtl group by dtl.locno, dtl.item_no
+				
+		  )rep  inner join item it on rep.item_no = it.item_no
+		  		left join category c on it.cate_no=c.cate_no
+		  		left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+		                      from LOOKUPDTL ld
+		                     where ld.lookupcode = 'SEASON') s1
+		            on it.season = s1.itemval
+		        left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+		                      from LOOKUPDTL ld
+		                     where ld.lookupcode = 'GENDER') s2
+		            on it.gender = s2.itemval
+		        left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+		                      from LOOKUPDTL ld
+		                     where ld.lookupcode = 'YEARS') s3
+		            on it.years = s3.itemval
+		        <!-- 库存前一天 -->
+		        left join (
+		        	select vf.locno,vf.item_no, sum(vf.qty) qty
+		             from con_content_history vf
+		            where vf.locno = #{params.locno,jdbcType=VARCHAR}
+		              <include refid="condition2" />
+		            group by vf.locno,vf.item_no
+		        ) v on v.item_no = it.item_no
+		        where rep.locno = #{params.locno, jdbcType=VARCHAR} 
+		        <include refid = "condition" />
+		    group by it.item_no,
+				     it.item_name,
+				     s3.itemname,
+				     it.brand_no,
+				     it.cate_no,
+				     it.color_no
+		
+		
+		union all
+		<include refid = "con_content_sql" />		     
+		
+  </sql>
+  
+  <!-- 查询有库存变动之外的库存 -->
+  <sql id="con_content_sql">
+  	
+  	select vf.item_no,
+         it.item_name,
+         s3.itemname strYears,
+         (select br.Brand_Name from Brand br where br.Brand_NO = it.brand_no) as strBrandNo,
+         (select cg.Cate_Name from Category cg where cg.Cate_NO = it.cate_no) as strCateNo,
+         (select ci.Color_Name
+            from Color_Info ci
+           where ci.Color_NO = it.color_no) as colorName,
+         sum(vf.qty) as qty,
+         0 as crk_qty,
+         0 as cyr_qty,
+         0 as dth_qty,
+         0 as qtrk_qty,
+         0 as rk_cytz_qty,
+         0 as ccd_qty,
+         0 as cyc_qty,
+         0 as qtck_qty,
+         0 as kbmzh_qty,
+         0 as ck_cytz_qty,
+         0 as py_qty,
+         0 as pk_qty,
+         sum(vf.qty) as this_issue_qty
+    from con_content_history vf
+   inner join item it
+      on it.item_no = vf.item_no
+    left join category c on it.cate_no=c.cate_no
+    left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+                 from LOOKUPDTL ld
+                where ld.lookupcode = 'SEASON') s1
+      on it.season = s1.itemval
+    left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+                 from LOOKUPDTL ld
+                where ld.lookupcode = 'GENDER') s2
+      on it.gender = s2.itemval
+    left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+                 from LOOKUPDTL ld
+                where ld.lookupcode = 'YEARS') s3
+      on it.years = s3.itemval
+   where vf.locno = #{params.locno,jdbcType=VARCHAR}
+   		<if test="null!=params.itemNo and ''!=params.itemNo">
+			and vf.item_no LIKE '%${params.itemNo}%'
+		</if>
+		<if test="null!=params.strItemNo and ''!=params.strItemNo">
+			and vf.item_no in (${params.strItemNo})
+		</if>
+		<include refid="condition2" />
+		<include refid="condition" />
+     and not exists
+     (<include refid="content_condition_history" />)
+   group by vf.item_no,
+            it.item_name,
+            s3.itemname,
+            it.brand_no,
+            it.cate_no,
+            it.color_no
+  
+  </sql>
+  
+  
+  <sql id="content_condition_history">
+  		select 'X'
+            from (select icd.locno, icd.item_no
+                    from bill_im_check ic
+                   inner join bill_im_check_dtl icd
+                      on icd.locno = ic.locno
+                     and icd.owner_no = ic.owner_no
+                     and icd.check_no = ic.check_no
+                   where ic.locno = #{params.locno,jdbcType=VARCHAR}
+						  and ic.status != '10'
+						 <include refid="condition_icd" />
+                     and exists
+                   (select 'X'
+                            from bill_im_receipt_dtl ird
+                           inner join bill_im_import ii
+                              on ii.locno = ird.locno
+                             and ii.owner_no = ird.owner_no
+                             and ii.import_no = ird.import_no
+                           where ii.business_type = '0'
+                             and ird.locno = ic.locno
+                             and ird.owner_no = ic.owner_no
+                             and ird.receipt_no = ic.s_import_no)
+                   group by ic.audittm, icd.item_no, icd.locno
+                   
+                  union all
+                  
+                  select icd.locno, icd.item_no
+                    from bill_im_check ic
+                   inner join bill_im_check_dtl icd
+                      on icd.locno = ic.locno
+                     and icd.owner_no = ic.owner_no
+                     and icd.check_no = ic.check_no
+                   where ic.locno = #{params.locno,jdbcType=VARCHAR}
+						  and ic.status != '10'
+						 <include refid="condition_icd" />
+                     and exists
+                   (select 'X'
+                            from bill_im_receipt_dtl ird
+                           inner join bill_im_import ii
+                              on ii.locno = ird.locno
+                             and ii.owner_no = ird.owner_no
+                             and ii.import_no = ird.import_no
+                           where ii.business_type = '4'
+                             and ird.locno = ic.locno
+                             and ird.owner_no = ic.owner_no
+                             and ird.receipt_no = ic.s_import_no)
+                   group by ic.audittm, icd.item_no, icd.locno
+                   
+                  union all
+                  
+                  select ccm.locno, ccm.item_no
+                    from con_content_move ccm
+                   where ccm.paper_type = 'UC'
+					   and ccm.locno = #{params.locno,jdbcType=VARCHAR}
+					   and ccm.io_flag = 'I'
+					   <include refid="condition_ccm" />
+                   group by ccm.createtm, ccm.item_no, ccm.locno
+                   
+                  union all
+                  
+                  select ccm.locno, ccm.item_no
+                    from con_content_move ccm
+                   where ccm.paper_type = 'OI'
+					   and ccm.locno = #{params.locno,jdbcType=VARCHAR}
+					   and ccm.io_flag = 'I'
+					   <include refid="condition_ccm" />
+                   group by ccm.createtm, ccm.item_no, ccm.locno
+                   
+                  union all
+                  
+                  select odd.locno, odd.item_no
+                    from bill_om_deliver od
+                   inner join bill_om_deliver_dtl odd
+                      on od.locno = odd.locno
+                     and od.owner_no = odd.owner_no
+                     and od.deliver_no = odd.deliver_no
+                   where od.locno = #{params.locno,jdbcType=VARCHAR}
+					   and od.status != '10' 
+					   <include refid="condition_odd" />
+                     and exists (select 'X'
+                            from bill_om_exp oe
+                           where oe.business_type = '1'
+                             and oe.exp_no = odd.exp_no)
+                   group by od.audittm, odd.item_no, odd.locno
+                   
+                  union all
+                  
+                  select odd.locno, odd.item_no
+                    from bill_om_deliver od
+                   inner join bill_om_deliver_dtl odd
+                      on od.locno = odd.locno
+                     and od.owner_no = odd.owner_no
+                     and od.deliver_no = odd.deliver_no
+                   where od.locno = #{params.locno,jdbcType=VARCHAR}
+					   and od.status != '10' 
+					   <include refid="condition_odd" />
+                     and exists (select 'X'
+                            from bill_om_exp oe
+                           where oe.business_type = '4'
+                             and oe.exp_no = odd.exp_no)
+                   group by od.audittm, odd.item_no, odd.locno
+                   
+                  union all
+                  
+                  select ccm.locno, ccm.item_no
+                    from con_content_move ccm
+	                   where ccm.paper_type = 'SW'
+				   and ccm.locno = #{params.locno,jdbcType=VARCHAR}
+				   and ccm.io_flag = 'O'
+				   <include refid="condition_ccm" />
+                   group by ccm.createtm, ccm.item_no, ccm.locno
+                   
+                  union all
+                  
+                  select ccm.locno, ccm.item_no
+                    from con_content_move ccm
+	                   where ccm.paper_type = 'DS'
+				   and ccm.locno = #{params.locno,jdbcType=VARCHAR}
+				   and ccm.io_flag = 'O'
+				   <include refid="condition_ccm" />
+                   group by ccm.createtm, ccm.item_no, ccm.locno
+                   
+                  union all
+                  
+                  select ccm.locno, ccm.item_no
+                    from con_content_move ccm
+                   where ccm.paper_type = 'CP'
+					   and ccm.locno = #{params.locno,jdbcType=VARCHAR}
+					   and ccm.io_flag = 'I'
+					   <include refid="condition_ccm" />
+                   group by ccm.createtm, ccm.item_no, ccm.locno
+                   
+                  union all
+                  
+                  select ccm.locno, ccm.item_no
+                    from con_content_move ccm
+                   where ccm.paper_type = 'CP'
+					   and ccm.locno = #{params.locno,jdbcType=VARCHAR}
+					   and ccm.io_flag = 'O'
+					   <include refid="condition_ccm" />
+                   group by ccm.createtm, ccm.item_no, ccm.locno) dtl
+           where dtl.locno = vf.locno
+             and dtl.item_no = vf.item_no
+           group by dtl.locno, dtl.item_no
+  </sql>
+  
+  
+  <!-- 入库  厂入库sql -->
+  <sql id="Rk_Crk_Base_Sql" >
+  		select 
+			icd.locno,
+			icd.item_no,
+			sum(icd.check_qty) as crk_qty,
+			0 as cyr_qty,
+			0 as dth_qty,
+			0 as qtrk_qty,
+			0 as ccd_qty,
+			0 as cyc_qty,
+			0 as qtck_qty,
+			0 as kbmzh_qty,
+			0 as py_qty,
+			0 as pk_qty
+			  from bill_im_check ic
+			 inner join bill_im_check_dtl icd
+			    on icd.locno = ic.locno
+			   and icd.owner_no = ic.owner_no
+			   and icd.check_no = ic.check_no
+			 where ic.locno = #{params.locno,jdbcType=VARCHAR}
+			   and ic.status != '10'
+			   <include refid="condition_icd" />
+			   and exists (select 'X'
+			          from bill_im_receipt_dtl ird
+			         inner join bill_im_import ii
+			            on ii.locno = ird.locno
+			           and ii.owner_no = ird.owner_no
+			           and ii.import_no = ird.import_no
+			         where ii.business_type = '0'
+			           and ird.locno = ic.locno
+			           and ird.owner_no = ic.owner_no
+			           and ird.receipt_no = ic.s_import_no)
+			 group by ic.audittm,icd.item_no,icd.locno
+  </sql>
+  
+  <!-- 入库  仓移入sql -->
+  <sql id="Rk_Cyr_Base_Sql" >
+  		select 
+			icd.locno,
+			icd.item_no,
+			0 as crk_qty,
+			sum(icd.check_qty) as cyr_qty,
+			0 as dth_qty,
+			0 as qtrk_qty,
+			0 as ccd_qty,
+			0 as cyc_qty,
+			0 as qtck_qty,
+			0 as kbmzh_qty,
+			0 as py_qty,
+			0 as pk_qty		
+			  from bill_im_check ic
+			 inner join bill_im_check_dtl icd
+			    on icd.locno = ic.locno
+			   and icd.owner_no = ic.owner_no
+			   and icd.check_no = ic.check_no
+			 where ic.locno = #{params.locno,jdbcType=VARCHAR}
+			   and ic.status != '10'
+			   <include refid="condition_icd" />
+			   and exists (select 'X'
+			          from bill_im_receipt_dtl ird
+			         inner join bill_im_import ii
+			            on ii.locno = ird.locno
+			           and ii.owner_no = ird.owner_no
+			           and ii.import_no = ird.import_no
+			         where ii.business_type = '4'
+			           and ird.locno = ic.locno
+			           and ird.owner_no = ic.owner_no
+			           and ird.receipt_no = ic.s_import_no)
+			 group by ic.audittm,icd.item_no,icd.locno
+  </sql>
+  
+  <!-- 入库  店退货sql -->
+  <sql id="Rk_Dth_Base_Sql" >
+  		select 
+			ccm.locno,
+			ccm.item_no,
+			0 as crk_qty,
+			0 as cyr_qty,
+			sum(ccm.move_qty) as dth_qty,
+			0 as qtrk_qty,
+			0 as ccd_qty,
+			0 as cyc_qty,
+			0 as qtck_qty,
+			0 as kbmzh_qty,
+			0 as py_qty,
+			0 as pk_qty			
+			  from con_content_move ccm
+			 where ccm.paper_type = 'UC'
+			   and ccm.locno = #{params.locno,jdbcType=VARCHAR}
+			   and ccm.io_flag = 'I'
+			   <include refid="condition_ccm" />
+			group by ccm.createtm,ccm.item_no,ccm.locno
+  </sql>
+  
+  <!-- 入库  其他入库sql -->
+  <sql id="Rk_Qtrk_Base_Sql" >
+  		select 
+			ccm.locno,
+			ccm.item_no,
+			0 as crk_qty,
+			0 as cyr_qty,
+			0 as dth_qty,
+			sum(ccm.move_qty) as qtrk_qty,
+			0 as ccd_qty,
+			0 as cyc_qty,
+			0 as qtck_qty,
+			0 as kbmzh_qty,
+			0 as py_qty,
+			0 as pk_qty
+			 from con_content_move ccm
+			 where ccm.paper_type = 'OI'
+			   and ccm.locno = #{params.locno,jdbcType=VARCHAR}
+			   and ccm.io_flag = 'I'
+			   <include refid="condition_ccm" />
+		group by ccm.createtm,ccm.item_no,ccm.locno
+  </sql>
+  
+  <!-- 出库  仓出店sql -->
+  <sql id="Ck_Ccd_Base_Sql" >
+  		select 
+			odd.locno,
+			odd.item_no,
+			0 as crk_qty,
+			0 as cyr_qty,
+			0 as dth_qty,
+			0 as qtrk_qty,
+			sum(odd.qty) as ccd_qty,
+			0 as cyc_qty,
+			0 as qtck_qty,
+			0 as kbmzh_qty,
+			0 as py_qty,
+			0 as pk_qty
+			  from bill_om_deliver od
+			 inner join bill_om_deliver_dtl odd
+			    on od.locno = odd.locno
+			   and od.owner_no = odd.owner_no
+			   and od.deliver_no = odd.deliver_no
+			 where od.locno = #{params.locno,jdbcType=VARCHAR}
+			   and od.status != '10' 
+			   <include refid="condition_odd" />
+			   and (exists (select 'X'
+                        from bill_om_exp oe
+                       where oe.business_type = '1'
+                         and oe.exp_no = odd.exp_no)      
+	              	OR      
+	              	exists (select 'X'
+	                        from bill_om_recheck_dtl brd
+	                       inner join bill_om_recheck br
+	                          on br.locno = brd.locno
+	                         and br.recheck_no = brd.recheck_no
+	                       inner join con_label cc
+	                          on cc.container_no = brd.container_no
+	                         and cc.locno = brd.locno
+	                       where brd.locno = odd.locno
+	                         and brd.owner_no = odd.owner_no
+	                         and cc.container_no = odd.container_no
+	                         and cc.scan_label_no = odd.box_no
+	                         and br.recheck_type = '1'
+	                         and br.source_type in ('1', '2')))
+			   <!--and exists (select 'X'
+			          from bill_om_exp oe
+			         where oe.business_type = '1'
+			           and oe.exp_no = odd.exp_no)-->
+		group by od.audittm,odd.item_no,odd.locno
+  </sql>
+  
+  
+  <!-- 出库  仓移出sql -->
+  <sql id="Ck_Cyc_Base_Sql" >
+  		select 
+			odd.locno,
+			odd.item_no,
+			0 as crk_qty,
+			0 as cyr_qty,
+			0 as dth_qty,
+			0 as qtrk_qty,
+			0 as ccd_qty,
+			sum(odd.qty) as cyc_qty,
+			0 as qtck_qty,
+			0 as kbmzh_qty,
+			0 as py_qty,
+			0 as pk_qty
+			  from bill_om_deliver od
+			 inner join bill_om_deliver_dtl odd
+			    on od.locno = odd.locno
+			   and od.owner_no = odd.owner_no
+			   and od.deliver_no = odd.deliver_no
+			 where od.locno = #{params.locno,jdbcType=VARCHAR}
+			   and od.status != '10' 
+			   <include refid="condition_odd" />
+			   and exists (select 'X'
+			          from bill_om_exp oe
+			         where oe.business_type = '4'
+			           and oe.exp_no = odd.exp_no)
+			 group by od.audittm,odd.item_no,odd.locno
+  </sql>
+  
+  <!-- 出库 其他出库sql -->
+  <sql id="Ck_Qtck_Base_Sql" >
+  		select
+			ccm.locno,
+			ccm.item_no,
+			0 as crk_qty,
+			0 as cyr_qty,
+			0 as dth_qty,
+			0 as qtrk_qty,
+			0 as ccd_qty,
+			0 as cyc_qty,
+			sum(ccm.move_qty) as qtck_qty,
+			0 as kbmzh_qty,
+			0 as py_qty,
+			0 as pk_qty
+			  from con_content_move ccm
+			 where ccm.paper_type = 'SW'
+			   and ccm.locno = #{params.locno,jdbcType=VARCHAR}
+			   and ccm.io_flag = 'O'
+			   <include refid="condition_ccm" />
+		group by ccm.createtm,ccm.item_no,ccm.locno
+  </sql>
+  
+  <!-- 出库 直接出库sql -->
+  <sql id="Ck_Zjck_Base_Sql" >
+  		select
+			ccm.locno,
+			ccm.item_no,
+			0 as crk_qty,
+			0 as cyr_qty,
+			0 as dth_qty,
+			0 as qtrk_qty,
+			sum(ccm.move_qty) as ccd_qty,
+			0 as cyc_qty,
+			0 as qtck_qty,
+			0 as kbmzh_qty,
+			0 as py_qty,
+			0 as pk_qty
+			  from con_content_move ccm
+			 where ccm.paper_type = 'DS'
+			   and ccm.locno = #{params.locno,jdbcType=VARCHAR}
+			   and ccm.io_flag = 'O'
+			   <include refid="condition_ccm" />
+		group by ccm.locno,ccm.createtm,ccm.item_no
+  </sql>
+  
+  <!-- 出库 跨部门转货sql -->
+  <sql id="Ck_Kbmzh_Base_Sql" >
+  		select
+			ccm.locno,
+			ccm.item_no,
+			0 as crk_qty,
+			0 as cyr_qty,
+			0 as dth_qty,
+			0 as qtrk_qty,
+			0 as ccd_qty,
+			0 as cyc_qty,
+			0 as qtck_qty,
+			sum(ccm.move_qty) as kbmzh_qty,
+			0 as py_qty,
+			0 as pk_qty
+			from con_content_move ccm
+			 where ccm.paper_type = 'CV'
+			   and ccm.locno = #{params.locno,jdbcType=VARCHAR}
+			   and ccm.io_flag = 'O'
+			   <include refid="condition_ccm" />
+		group by ccm.createtm,ccm.item_no,ccm.locno
+  </sql>
+  
+  <!-- 盘点 盘赢sql -->
+  <sql id="Pd_Py_Base_Sql" >
+  		select 
+			ccm.locno,
+			ccm.item_no,
+			0 as crk_qty,
+			0 as cyr_qty,
+			0 as dth_qty,
+			0 as qtrk_qty,
+			0 as ccd_qty,
+			0 as cyc_qty,
+			0 as qtck_qty,
+			0 as kbmzh_qty,
+			sum(ccm.move_qty) as py_qty,
+			0 as pk_qty
+			  from con_content_move ccm
+			 where ccm.paper_type = 'CP'
+			   and ccm.locno = #{params.locno,jdbcType=VARCHAR}
+			   and ccm.io_flag = 'I'
+			   <include refid="condition_ccm" />
+		group by ccm.createtm,ccm.item_no,ccm.locno
+  </sql>
+  
+  <!-- 盘点 盘赢sql -->
+  <sql id="Pd_Pk_Base_Sql" >
+  		select 
+			ccm.locno,
+			ccm.item_no,
+			0 as rk_crk_qty,
+			0 as rk_cyr_qty,
+			0 as rk_dth_qty,
+			0 as rk_qtrk_qty,
+			0 as ck_ccd_qty,
+			0 as ck_cyc_qty,
+			0 as ck_qtck_qty,
+			0 as kbmzh_qty,
+			0 as pd_py_qty,
+			sum(ccm.move_qty) as pd_pk_qty
+			  from con_content_move ccm
+			 where ccm.paper_type = 'CP'
+			   and ccm.locno = #{params.locno,jdbcType=VARCHAR}
+			   and ccm.io_flag = 'O'
+			   <include refid="condition_ccm" />
+		group by ccm.createtm,ccm.item_no,ccm.locno
+  </sql>
+  
+</mapper>

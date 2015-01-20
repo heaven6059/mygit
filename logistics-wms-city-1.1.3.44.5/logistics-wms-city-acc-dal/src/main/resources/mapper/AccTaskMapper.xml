@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.AccTaskMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.AccTask" >
+    <id column="SEQ_ID" property="seqId" jdbcType="DECIMAL" />
+    <result column="BILL_NO" property="billNo" jdbcType="VARCHAR" />
+    <result column="BILL_TYPE" property="billType" jdbcType="VARCHAR" />
+    <result column="IO_FLAG" property="ioFlag" jdbcType="VARCHAR" />
+    <result column="ACC_TYPE" property="accType" jdbcType="VARCHAR" />
+    <result column="DETAIL_ROWID" property="detailRowid" jdbcType="DECIMAL" />
+    <result column="CREATE_DATE" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="ACC_FLAG" property="accFlag" jdbcType="VARCHAR" />
+    <result column="ACC_DATE" property="accDate" jdbcType="TIMESTAMP" />
+    <result column="ACC_BEGIN_TIME" property="accBeginTime" jdbcType="TIMESTAMP" />
+    <result column="ACC_END_TIME" property="accEndTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    SEQ_ID, BILL_NO, BILL_TYPE, IO_FLAG, ACC_TYPE, DETAIL_ROWID, CREATE_DATE, CREATE_TIME, 
+    ACC_FLAG, ACC_DATE, ACC_BEGIN_TIME, ACC_END_TIME
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.billNo and ''!=params.billNo" >
+        and BILL_NO=#{params.billNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.billType and ''!=params.billType" >
+        and BILL_TYPE=#{params.billType,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ioFlag and ''!=params.ioFlag" >
+        and IO_FLAG=#{params.ioFlag,jdbcType=VARCHAR}
+      </if>   
+      <if test="null!=params.accFlag and ''!=params.accFlag" >
+        and ACC_FLAG=#{params.accFlag,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.accType and ''!=params.accType" >
+        and ACC_TYPE=#{params.accType,jdbcType=VARCHAR}
+      </if>
+            
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM ACC_TASK
+    WHERE SEQ_ID = #{seqId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    SELECT COUNT(1) as s FROM ACC_TASK WHERE 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    SELECT B.* from (SELECT A.*,ROWNUM rn FROM( SELECT 
+    <include refid="Base_Column_List" />
+     FROM ACC_TASK WHERE 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      ORDER BY ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A WHERE ROWNUM &lt; #{page.endRowNum}) B WHERE rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+     FROM ACC_TASK WHERE 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectLatestOneByParams" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+     FROM ACC_TASK WHERE SEQ_ID=(
+       select min(SEQ_ID) from ACC_TASK
+		where 1=1
+    	<include refid="condition" />
+    	) 
+  </select>
+  <select id="selectLatestListByAccType" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+     FROM ACC_TASK WHERE SEQ_ID=(
+       select min(SEQ_ID) from ACC_TASK
+		where ACC_FLAG='N' and ACC_TYPE='0'
+    	) 
+   union all
+    SELECT 
+   	 <include refid="Base_Column_List" />
+   	 FROM ACC_TASK WHERE ACC_FLAG='N' and ACC_TYPE='1'
+  </select>
+  
+  <select id="selectByBillPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.AccTask" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM ACC_TASK
+    WHERE BILL_NO = #{billNo,jdbcType=VARCHAR}
+      AND BILL_TYPE = #{billType,jdbcType=VARCHAR}
+      AND IO_FLAG = #{ioFlag,jdbcType=VARCHAR}
+  </select>  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    DELETE FROM ACC_TASK
+    WHERE SEQ_ID = #{seqId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.AccTask" >
+    DELETE FROM ACC_TASK
+    WHERE SEQ_ID = #{seqId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.AccTask" >
+    INSERT INTO ACC_TASK (SEQ_ID, BILL_NO, BILL_TYPE, 
+      IO_FLAG, ACC_TYPE, DETAIL_ROWID, 
+      CREATE_DATE, CREATE_TIME, ACC_FLAG, 
+      ACC_DATE, ACC_BEGIN_TIME, ACC_END_TIME
+      )
+    VALUES (#{seqId,jdbcType=DECIMAL}, #{billNo,jdbcType=VARCHAR}, #{billType,jdbcType=VARCHAR}, 
+      #{ioFlag,jdbcType=VARCHAR}, #{accType,jdbcType=VARCHAR}, #{detailRowid,jdbcType=DECIMAL}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{accFlag,jdbcType=VARCHAR}, 
+      #{accDate,jdbcType=TIMESTAMP}, #{accBeginTime,jdbcType=TIMESTAMP}, #{accEndTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.AccTask" >
+    INSERT INTO ACC_TASK
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="seqId != null" >
+        SEQ_ID,
+      </if>
+      <if test="billNo != null" >
+        BILL_NO,
+      </if>
+      <if test="billType != null" >
+        BILL_TYPE,
+      </if>
+      <if test="ioFlag != null" >
+        IO_FLAG,
+      </if>
+      <if test="accType != null" >
+        ACC_TYPE,
+      </if>
+      <if test="detailRowid != null" >
+        DETAIL_ROWID,
+      </if>
+      <if test="createDate != null" >
+        CREATE_DATE,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="accFlag != null" >
+        ACC_FLAG,
+      </if>
+      <if test="accDate != null" >
+        ACC_DATE,
+      </if>
+      <if test="accBeginTime != null" >
+        ACC_BEGIN_TIME,
+      </if>
+      <if test="accEndTime != null" >
+        ACC_END_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="seqId != null" >
+        #{seqId,jdbcType=DECIMAL},
+      </if>
+      <if test="billNo != null" >
+        #{billNo,jdbcType=VARCHAR},
+      </if>
+      <if test="billType != null" >
+        #{billType,jdbcType=VARCHAR},
+      </if>
+      <if test="ioFlag != null" >
+        #{ioFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="accType != null" >
+        #{accType,jdbcType=VARCHAR},
+      </if>
+      <if test="detailRowid != null" >
+        #{detailRowid,jdbcType=DECIMAL},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="accFlag != null" >
+        #{accFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="accDate != null" >
+        #{accDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="accBeginTime != null" >
+        #{accBeginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="accEndTime != null" >
+        #{accEndTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.AccTask" >
+    UPDATE ACC_TASK
+    <set >
+      <if test="billNo != null" >
+        BILL_NO = #{billNo,jdbcType=VARCHAR},
+      </if>
+      <if test="billType != null" >
+        BILL_TYPE = #{billType,jdbcType=VARCHAR},
+      </if>
+      <if test="ioFlag != null" >
+        IO_FLAG = #{ioFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="accType != null" >
+        ACC_TYPE = #{accType,jdbcType=VARCHAR},
+      </if>
+      <if test="detailRowid != null" >
+        DETAIL_ROWID = #{detailRowid,jdbcType=DECIMAL},
+      </if>
+      <if test="createDate != null" >
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="accFlag != null" >
+        ACC_FLAG = #{accFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="accDate != null" >
+        ACC_DATE = #{accDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="accBeginTime != null" >
+        ACC_BEGIN_TIME = #{accBeginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="accEndTime != null" >
+        ACC_END_TIME = #{accEndTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    WHERE SEQ_ID = #{seqId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.AccTask" >
+    UPDATE ACC_TASK
+    SET BILL_NO = #{billNo,jdbcType=VARCHAR},
+      BILL_TYPE = #{billType,jdbcType=VARCHAR},
+      IO_FLAG = #{ioFlag,jdbcType=VARCHAR},
+      ACC_TYPE = #{accType,jdbcType=VARCHAR},
+      DETAIL_ROWID = #{detailRowid,jdbcType=DECIMAL},
+      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      ACC_FLAG = #{accFlag,jdbcType=VARCHAR},
+      ACC_DATE = #{accDate,jdbcType=TIMESTAMP},
+      ACC_BEGIN_TIME = #{accBeginTime,jdbcType=TIMESTAMP},
+      ACC_END_TIME = #{accEndTime,jdbcType=TIMESTAMP}
+    WHERE SEQ_ID = #{seqId,jdbcType=DECIMAL}
+  </update>
+  
+  <update id="updateLockForAccTask" parameterType="com.yougou.logistics.city.common.model.AccTask" >
+    UPDATE ACC_TASK
+    SET 
+      ACC_BEGIN_TIME = #{accBeginTime,jdbcType=TIMESTAMP},	
+      ACC_FLAG = #{accFlag,jdbcType=VARCHAR}
+    WHERE SEQ_ID = #{seqId,jdbcType=DECIMAL}
+  </update>
+</mapper>

@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.OsCustBufferMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.OsCustBuffer" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="STORE_NO" property="storeNo" jdbcType="VARCHAR" />
+    <id column="WARE_NO" property="wareNo" jdbcType="VARCHAR" />
+    <id column="AREA_NO" property="areaNo" jdbcType="VARCHAR" />
+    <id column="STOCK_NO" property="stockNo" jdbcType="VARCHAR" />
+    <id column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+    <result column="A_STOCK_NO" property="aStockNo" jdbcType="VARCHAR" />
+    <result column="BUFFER_NAME" property="bufferName" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="CHAR" />
+    <result column="USE_VOLUMN" property="useVolumn" jdbcType="DECIMAL" />
+    <result column="USE_WEIGHT" property="useWeight" jdbcType="DECIMAL" />
+    <result column="USE_BOXNUM" property="useBoxnum" jdbcType="DECIMAL" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATORNAME" property="creatorName" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="EDITORNAME" property="editorName" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    
+    <result column="store_name" property="storeName" jdbcType="VARCHAR" />
+    <result column="ware_name" property="wareName" jdbcType="VARCHAR" />
+    <result column="area_name" property="areaName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, STORE_NO, WARE_NO, AREA_NO, STOCK_NO, CELL_NO, A_STOCK_NO, BUFFER_NAME, STATUS, 
+    USE_VOLUMN, USE_WEIGHT, USE_BOXNUM, CREATOR, CREATETM, EDITOR, EDITTM,CREATORNAME,EDITORNAME
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno">
+		 and b1.LOCNO=#{params.locno,jdbcType=VARCHAR}
+	  </if>
+      <if test="null!=params.storeNo and ''!=params.storeNo">
+		 and b1.store_No like '%${params.storeNo}%'
+	  </if>
+	  <if test="null!=params.storeName and ''!=params.storeName">
+		 and s1.store_name like '%${params.storeName}%'
+	  </if>
+	  <if test="null!=params.sysNo and ''!=params.sysNo">
+		 and s1.sys_no=#{params.sysNo,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.status and ''!=params.status">
+		 and b1.status=#{params.status,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.wareNo and ''!=params.wareNo">
+		 and b1.WARE_NO=#{params.wareNo,jdbcType=VARCHAR}
+	  </if>
+      <if test="null!=params.areaNo and ''!=params.areaNo">
+		 and b1.AREA_NO=#{params.areaNo,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.stockNo and ''!=params.stockNo">
+		 and b1.STOCK_NO=#{params.stockNo,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.cellNo and ''!=params.cellNo">
+		 and b1.CELL_NO=#{params.cellNo,jdbcType=VARCHAR}
+	  </if>
+    </if>
+  </sql>
+  
+  <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and sys_no in (select sys_no from brand b where  b.brand_no 
+       in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+       union all select '00' from dual
+       ) 
+    </if>
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.OsCustBufferKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from OS_CUST_BUFFER
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and STORE_NO = #{storeNo,jdbcType=VARCHAR}
+      and WARE_NO = #{wareNo,jdbcType=VARCHAR}
+      and AREA_NO = #{areaNo,jdbcType=VARCHAR}
+      and STOCK_NO = #{stockNo,jdbcType=VARCHAR}
+      and CELL_NO = #{cellNo,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from OS_CUST_BUFFER b1
+          left join cm_defware c1
+            on c1.ware_no = b1.ware_no
+           and c1.locno = b1.locno
+          left join cm_defarea a1
+            on a1.area_no = b1.area_no
+           and a1.locno = b1.locno
+           and a1.ware_no = b1.ware_no
+          Left join store s1
+            on s1.store_type in ('11','22')
+           and s1.store_no = b1.store_no
+    where 1 = 1
+    <include refid="condition" />
+     <include refid="AuthorityCondition" />
+    	<if test="null!=params.circleNo and ''!=params.circleNo">
+		 and s1.CIRCLE_NO=#{params.circleNo,jdbcType=VARCHAR}
+	  	</if>
+  </select>
+  
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    		b1.LOCNO, b1.Store_No,s1.sys_no,
+            s1.store_name, b1.WARE_NO,
+            c1.ware_name,  b1.AREA_NO,
+            a1.area_name, b1.STOCK_NO,
+            b1.CELL_NO, b1.A_STOCK_NO,
+            b1.BUFFER_NAME, b1.STATUS,
+            b1.USE_VOLUMN, b1.USE_WEIGHT,
+            b1.USE_BOXNUM, b1.CREATOR,
+            b1.CREATETM, b1.EDITOR,
+            b1.EDITTM,b1.CREATORNAME,
+            b1.EDITORNAME
+     from OS_CUST_BUFFER b1
+          left join cm_defware c1
+            on c1.ware_no = b1.ware_no
+           and c1.locno = b1.locno
+          left join cm_defarea a1
+            on a1.area_no = b1.area_no
+           and a1.locno = b1.locno
+           and a1.ware_no = b1.ware_no
+          Left join store s1
+            on s1.store_type in ('11','22')
+           and s1.store_no = b1.store_no
+    where 1 = 1
+    <include refid="condition" />
+     <include refid="AuthorityCondition" />
+    	<if test="null!=params.circleNo and ''!=params.circleNo">
+		 and s1.CIRCLE_NO=#{params.circleNo,jdbcType=VARCHAR}
+	  	</if>
+    
+    <choose>
+	    <when test="orderByField != null and ''!=orderByField">
+			order by ${orderByField}
+			<if test="orderByField">
+			${orderBy}
+			</if>
+		</when>
+		<otherwise>
+			order by WARE_NO, AREA_NO, STOCK_NO, CELL_NO, STORE_NO
+		</otherwise>
+	  </choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from OS_CUST_BUFFER b1 where 1=1 
+    <include refid="condition" />
+  </select>
+  <!-- 根据品牌库查询线路(暂存区名称) -->
+  <select id="selectBufferBySys" parameterType="map" resultType="com.yougou.logistics.city.common.model.BillUmLabelFullPrint">
+  		select ocb.buffer_name bufferName
+		  from os_cust_buffer ocb
+		 inner join store s
+		    on ocb.store_no = s.store_no
+		 where s.store_type = #{params.storeType,jdbcType=VARCHAR}
+		   and s.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+		   and ocb.locno = #{params.locno,jdbcType=VARCHAR}
+		   and ocb.buffer_name is not null
+		 group by ocb.buffer_name order by ocb.buffer_name
+  </select>
+  <!-- 获取完整打印店铺信息的总数量 -->
+  <select id="selectFullPrintCount" parameterType="map" resultType="java.lang.Integer">
+				select 
+	  				count(1) as s
+			  from store s
+			 inner join os_cust_buffer ocb
+			    on ocb.store_no = s.store_no
+			    and ocb.locno = #{params.locno,jdbcType=VARCHAR}
+			 where 1=1
+			 	<if test="params.storeType != null and params.storeType != ''">
+			 	 and s.store_type = #{params.storeType,jdbcType=VARCHAR}
+			 	</if>
+			 	<if test="params.sysNo != null and params.sysNo != ''">
+				 and s.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+				 </if>
+				 <if test="params.storeNo != null and params.storeNo != ''">
+				 and s.store_no like '%${params.storeNo}%'
+				 </if>
+				 <if test="params.storeName != null and params.storeName != ''">
+				 and s.store_name like '%${params.storeName}%'
+				 </if>
+				 <if test="params.bufferName != null and params.bufferName != ''">
+				 and ocb.buffer_name = #{params.bufferName,jdbcType=VARCHAR}
+				 </if>
+  </select>
+  <!-- 获取完整打印店铺信息 -->
+  <select id="selectFullPrintByPage" parameterType="map" resultType="com.yougou.logistics.city.common.model.BillUmLabelFullPrint">
+  		select B.* from (select A.*,rownum rn from(
+				select 
+	  			s.store_no storeNo, 
+	  			s.store_name storeName, 
+	  			s.address, 
+	  			ocb.buffer_name bufferName, 
+	  			s.sys_no sysNo
+			  from store s
+			 inner join os_cust_buffer ocb
+			    on ocb.store_no = s.store_no
+			    and ocb.locno = #{params.locno,jdbcType=VARCHAR}
+			 where 1=1
+			 	<if test="params.storeType != null and params.storeType != ''">
+			 	 and s.store_type = #{params.storeType,jdbcType=VARCHAR}
+			 	</if>
+			 	<if test="params.sysNo != null and params.sysNo != ''">
+				 and s.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+				 </if>
+				 <if test="params.storeNo != null and params.storeNo != ''">
+				 and s.store_no like '%${params.storeNo}%'
+				 </if>
+				 <if test="params.storeName != null and params.storeName != ''">
+				 and s.store_name like '%${params.storeName}%'
+				 </if>
+				 <if test="params.bufferName != null and params.bufferName != ''">
+				 and ocb.buffer_name = #{params.bufferName,jdbcType=VARCHAR}
+				 </if>
+				 order by s.store_no
+			) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.OsCustBufferKey" >
+    delete from OS_CUST_BUFFER
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and STORE_NO = #{storeNo,jdbcType=VARCHAR}
+      and WARE_NO = #{wareNo,jdbcType=VARCHAR}
+      and AREA_NO = #{areaNo,jdbcType=VARCHAR}
+      and STOCK_NO = #{stockNo,jdbcType=VARCHAR}
+      and CELL_NO = #{cellNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.OsCustBuffer" >
+    delete from OS_CUST_BUFFER
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and STORE_NO = #{storeNo,jdbcType=VARCHAR}
+      and WARE_NO = #{wareNo,jdbcType=VARCHAR}
+      and AREA_NO = #{areaNo,jdbcType=VARCHAR}
+      and STOCK_NO = #{stockNo,jdbcType=VARCHAR}
+      and CELL_NO = #{cellNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.OsCustBuffer" >
+    insert into OS_CUST_BUFFER (LOCNO, STORE_NO, WARE_NO, 
+      AREA_NO, STOCK_NO, CELL_NO, 
+      A_STOCK_NO, BUFFER_NAME, STATUS, 
+      USE_VOLUMN, USE_WEIGHT, USE_BOXNUM, 
+      CREATOR, CREATORNAME,CREATETM, EDITOR, 
+      EDITORNAME,EDITTM)
+    values (#{locno,jdbcType=VARCHAR}, #{storeNo,jdbcType=VARCHAR}, #{wareNo,jdbcType=VARCHAR}, 
+      #{areaNo,jdbcType=VARCHAR}, #{stockNo,jdbcType=VARCHAR}, #{cellNo,jdbcType=VARCHAR}, 
+      #{aStockNo,jdbcType=VARCHAR}, #{bufferName,jdbcType=VARCHAR}, #{status,jdbcType=CHAR}, 
+      #{useVolumn,jdbcType=DECIMAL}, #{useWeight,jdbcType=DECIMAL}, #{useBoxnum,jdbcType=DECIMAL}, 
+      #{creator,jdbcType=VARCHAR}, #{creatorName,jdbcType=VARCHAR},#{createtm,jdbcType=TIMESTAMP}, 
+      #{editor,jdbcType=VARCHAR}, #{editorName,jdbcType=VARCHAR}, #{edittm,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.OsCustBuffer" >
+    insert into OS_CUST_BUFFER
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO,
+      </if>
+      <if test="wareNo != null" >
+        WARE_NO,
+      </if>
+      <if test="areaNo != null" >
+        AREA_NO,
+      </if>
+      <if test="stockNo != null" >
+        STOCK_NO,
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO,
+      </if>
+      <if test="aStockNo != null" >
+        A_STOCK_NO,
+      </if>
+      <if test="bufferName != null" >
+        BUFFER_NAME,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="useVolumn != null" >
+        USE_VOLUMN,
+      </if>
+      <if test="useWeight != null" >
+        USE_WEIGHT,
+      </if>
+      <if test="useBoxnum != null" >
+        USE_BOXNUM,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="creatorName != null" >
+        CREATORNAME,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="editorName != null" >
+        EDITORNAME,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo != null" >
+        #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="wareNo != null" >
+        #{wareNo,jdbcType=VARCHAR},
+      </if>
+      <if test="areaNo != null" >
+        #{areaNo,jdbcType=VARCHAR},
+      </if>
+      <if test="stockNo != null" >
+        #{stockNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="aStockNo != null" >
+        #{aStockNo,jdbcType=VARCHAR},
+      </if>
+      <if test="bufferName != null" >
+        #{bufferName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=CHAR},
+      </if>
+      <if test="useVolumn != null" >
+        #{useVolumn,jdbcType=DECIMAL},
+      </if>
+      <if test="useWeight != null" >
+        #{useWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="useBoxnum != null" >
+        #{useBoxnum,jdbcType=DECIMAL},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorName != null" >
+        #{creatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null" >
+        #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.OsCustBuffer" >
+    update OS_CUST_BUFFER
+    <set >
+      <if test="aStockNo != null" >
+        A_STOCK_NO = #{aStockNo,jdbcType=VARCHAR},
+      </if>
+      <if test="bufferName != null" >
+        BUFFER_NAME = #{bufferName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=CHAR},
+      </if>
+      <if test="useVolumn != null" >
+        USE_VOLUMN = #{useVolumn,jdbcType=DECIMAL},
+      </if>
+      <if test="useWeight != null" >
+        USE_WEIGHT = #{useWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="useBoxnum != null" >
+        USE_BOXNUM = #{useBoxnum,jdbcType=DECIMAL},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorName != null" >
+        CREATORNAME = #{creatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null" >
+        EDITORNAME = #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and STORE_NO = #{storeNo,jdbcType=VARCHAR}
+      and WARE_NO = #{wareNo,jdbcType=VARCHAR}
+      and AREA_NO = #{areaNo,jdbcType=VARCHAR}
+      and STOCK_NO = #{stockNo,jdbcType=VARCHAR}
+      and CELL_NO = #{cellNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.OsCustBuffer" >
+    update OS_CUST_BUFFER
+    set A_STOCK_NO = #{aStockNo,jdbcType=VARCHAR},
+      BUFFER_NAME = #{bufferName,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=CHAR},
+      USE_VOLUMN = #{useVolumn,jdbcType=DECIMAL},
+      USE_WEIGHT = #{useWeight,jdbcType=DECIMAL},
+      USE_BOXNUM = #{useBoxnum,jdbcType=DECIMAL},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATORNAME = #{creatorName,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITORNAME = #{editorName,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and STORE_NO = #{storeNo,jdbcType=VARCHAR}
+      and WARE_NO = #{wareNo,jdbcType=VARCHAR}
+      and AREA_NO = #{areaNo,jdbcType=VARCHAR}
+      and STOCK_NO = #{stockNo,jdbcType=VARCHAR}
+      and CELL_NO = #{cellNo,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="insertBatch" parameterType="java.util.List" >
+		insert into os_cust_buffer
+		(locno,
+		store_no,
+		ware_no,
+		area_no,
+		stock_no,
+		a_stock_no,
+		buffer_name,
+		cell_no,
+		status,
+		use_volumn,
+		use_weight,
+		use_boxnum,
+		creator,
+		creatorName,
+		createtm,
+		editor,
+		editorName,
+		edittm)
+		<foreach collection="list" item="item" index="index" separator="union all">
+			select
+			#{item.locno,jdbcType=VARCHAR},
+			#{item.storeNo,jdbcType=VARCHAR},
+			#{item.wareNo,jdbcType=VARCHAR},
+			#{item.areaNo,jdbcType=VARCHAR},
+			#{item.stockNo,jdbcType=VARCHAR},
+			#{item.aStockNo,jdbcType=VARCHAR},
+			#{item.bufferName,jdbcType=VARCHAR},
+			#{item.cellNo,jdbcType=VARCHAR},
+			#{item.status,jdbcType=VARCHAR},
+			#{item.useVolumn,jdbcType=DECIMAL},
+			#{item.useWeight,jdbcType=DECIMAL},
+			#{item.useBoxnum,jdbcType=DECIMAL},
+			#{item.creator,jdbcType=VARCHAR},
+			#{item.creatorName,jdbcType=VARCHAR},
+			sysdate,
+			#{item.editor,jdbcType=VARCHAR},
+			#{item.editorName,jdbcType=VARCHAR},
+			sysdate
+			from DUAL
+		</foreach>
+  </select>
+  
+</mapper>

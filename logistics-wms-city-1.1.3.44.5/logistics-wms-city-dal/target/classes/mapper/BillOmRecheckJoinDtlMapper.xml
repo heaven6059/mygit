@@ -1,0 +1,973 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillOmRecheckJoinDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillOmRecheckDtl" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="RECHECK_NO" property="recheckNo" jdbcType="VARCHAR" />
+    <id column="CONTAINER_NO" property="containerNo" jdbcType="VARCHAR" />
+    <id column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+    <result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+    <result column="ITEM_QTY" property="itemQty" jdbcType="DECIMAL" />
+    <result column="REAL_QTY" property="realQty" jdbcType="DECIMAL" />
+    <result column="ADD_FLAG" property="addFlag" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="ASSIGN_NAME" property="assignName" jdbcType="VARCHAR" />
+    <result column="RECHECK_NAME" property="recheckName" jdbcType="VARCHAR" />
+    <result column="RECHECK_DATE" property="recheckDate" jdbcType="TIMESTAMP" />
+    <result column="EXP_NO" property="expNo" jdbcType="VARCHAR" />
+    <result column="EXP_TYPE" property="expType" jdbcType="VARCHAR" />
+    <result column="EXP_DATE" property="expDate" jdbcType="TIMESTAMP" />
+    <result column="PACK_QTY" property="packQty" jdbcType="DECIMAL" />
+    <result column="RECHECK_NAME2" property="recheckName2" jdbcType="VARCHAR" />
+    <result column="JOIN_NAME" property="joinName" jdbcType="VARCHAR" />
+    <result column="JOIN_DATE" property="joinDate" jdbcType="TIMESTAMP" />
+    <result column="statusStr" property="statusStr" jdbcType="VARCHAR" />
+    
+    <result column="store_no" property="storeNo" jdbcType="VARCHAR" />
+    <result column="store_name" property="storeName" jdbcType="VARCHAR" />
+    <result column="brandNo" property="brandNo" jdbcType="VARCHAR" />
+    <result column="edittm" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="recheckStart" property="recheckStart" jdbcType="TIMESTAMP" />
+    <result column="recheckEnd" property="recheckEnd" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <resultMap id="BillOmRecheckJoinDtoMap" type="com.yougou.logistics.city.common.dto.BillOmRecheckJoinDto" >
+  	 <result column="locno" property="locno" jdbcType="VARCHAR" />
+  	 <result column="RECHECK_NO" property="recheckNo" jdbcType="VARCHAR" />
+  	 <result column="SCAN_LABEL_NO" property="scanLabelNo" jdbcType="VARCHAR" />
+  	 <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+  	 <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+  	 <result column="COLOR_NAME" property="colorName" jdbcType="VARCHAR" />
+  	 <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+  	 <result column="REAL_QTY" property="realQty" jdbcType="VARCHAR" />
+  	 <result column="EDITTM" property="edittm" jdbcType="VARCHAR" />
+  	 <result column="style_no" property="styleNo" jdbcType="VARCHAR" />
+  	 <result column="JOIN_NAME" property="joinName" jdbcType="VARCHAR" />
+  	 <result column="JOINNAMECH" property="joinnamech" jdbcType="VARCHAR" />
+     <result column="JOIN_DATE" property="joinDate" jdbcType="TIMESTAMP" />
+     <result column="deliver_no" property="deliverNo" jdbcType="VARCHAR" />
+     <result column="status" property="status" jdbcType="VARCHAR" />
+     <result column="statusName" property="statusName" jdbcType="VARCHAR" />
+     <result column="recheckStart" property="recheckStart" jdbcType="TIMESTAMP" />
+     <result column="recheckEnd" property="recheckEnd" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, RECHECK_NO, CONTAINER_NO, ROW_ID, OWNER_NO, ITEM_NO, ITEM_ID, ITEM_QTY, REAL_QTY, 
+    ADD_FLAG, STATUS, ASSIGN_NAME, RECHECK_NAME, RECHECK_DATE, EXP_NO, EXP_TYPE, EXP_DATE, 
+    PACK_QTY, RECHECK_NAME2, JOIN_NAME, JOIN_DATE
+  </sql>
+   <sql id="Exend_Column_List" >
+    d.LOCNO, d.RECHECK_NO, d.CONTAINER_NO, ROW_ID, OWNER_NO, 
+	ITEM_NO, ITEM_ID, ITEM_QTY, REAL_QTY, ADD_FLAG, d.STATUS, 
+	ASSIGN_NAME, RECHECK_NAME, RECHECK_DATE, EXP_NO, EXP_TYPE, 
+	d.EXP_DATE, PACK_QTY, RECHECK_NAME2,JOIN_NAME, JOIN_DATE
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+    <!--箱号-->
+      <if test="null!=params.labelNo and ''!=params.labelNo" >
+         and c.SCAN_LABEL_NO=#{params.labelNo,jdbcType=VARCHAR}
+      </if>
+       <!--商品编号-->
+      <if test="null!=params.itemNo and ''!=params.itemNo" >
+         and d.ITEM_NO=#{params.itemNo,jdbcType=VARCHAR}
+      </if>
+       <!--复核时间-->
+       <if test="null!=params.recheckDateStart and ''!=params.recheckDateStart" >
+		<![CDATA[
+         and d.RECHECK_DATE >=#{params.recheckDateStart,jdbcType=TIMESTAMP}
+		]]>	
+      </if>
+      <if test="null!=params.recheckDateEnd and ''!=params.recheckDateEnd" >
+      	<![CDATA[
+       	 and d.RECHECK_DATE <=#{params.recheckDateEnd,jdbcType=TIMESTAMP}
+        ]]>	
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillOmRecheckDtlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_OM_RECHECK_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RECHECK_NO = #{recheckNo,jdbcType=VARCHAR}
+      and CONTAINER_NO = #{containerNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_OM_RECHECK_DTL  where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+		b.RECHECK_NO,C.SCAN_LABEL_NO,i.ITEM_NO,i.ITEM_NAME,b.ITEM_QTY,i.STYLE_NO,co.COLOR_NAME,i.
+			from BILL_OM_RECHECK_DTL b 
+			left outer join item i 
+     		inner join CON_LABEL c
+     		inner join COLOR_INFO co on co.color_no = i.color_no
+     		where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+
+<!--根据箱号和商品编号统计单号信息-->
+  
+  <select id="selectRecheckNoCountByConLabel" resultType="java.lang.Integer" parameterType="map" >
+	SELECT count(1)
+	FROM BILL_OM_RECHECK S 
+    <include refid="selectRecheckNoAuthorityLeftJoin" />
+	INNER JOIN 
+	(
+		SELECT  
+			COUNT(DISTINCT D.CONTAINER_NO) CONTAINERNOCOUNT,
+			SUM(D.REAL_QTY) REALQTYCOUNT,
+			D.RECHECK_NO,D.LOCNO  
+		FROM   BILL_OM_RECHECK_DTL  D
+		WHERE  D.RECHECK_NO  IN
+		(
+			SELECT DISTINCT B.RECHECK_NO
+             	FROM BILL_OM_RECHECK R
+                INNER JOIN BILL_OM_RECHECK_DTL B
+                ON R.LOCNO=B.LOCNO AND R.RECHECK_NO=B.RECHECK_NO
+                INNER JOIN CON_LABEL C ON C.CONTAINER_NO=B.CONTAINER_NO AND C.LOCNO=B.LOCNO
+                where 1=1
+			<!--箱号-->
+			<if test="null!=params.labelNo and ''!=params.labelNo" >
+				and C.SCAN_LABEL_NO = #{params.labelNo,jdbcType=VARCHAR}
+			</if>
+	       <!--商品编号-->
+			<if test="null!=params.itemNo and ''!=params.itemNo" >
+				AND  B.ITEM_NO = #{params.itemNo,jdbcType=VARCHAR} 
+			</if>
+	       <!--复核时间-->
+			<if test="null!=params.recheckDateStart and ''!=params.recheckDateStart" >
+			<![CDATA[
+			 	and R.EDITTM >=to_date('${params.recheckDateStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+			]]>	
+			</if>
+			<if test="null!=params.recheckDateEnd and ''!=params.recheckDateEnd" >
+			<![CDATA[
+			 	and R.EDITTM <=to_date('${params.recheckDateEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			]]>	
+			</if>
+			<if test="null!=params.status and ''!=params.status" >
+				and R.STATUS =#{params.status,jdbcType=VARCHAR}
+			</if>
+		) GROUP BY D.RECHECK_NO,D.LOCNO
+	) TEMP  ON TEMP.RECHECK_NO = S.RECHECK_NO and TEMP.LOCNO=S.LOCNO
+	where S.LOCNO = #{params.locno,jdbcType=VARCHAR}
+    <include refid="selectRecheckNoAuthorityCondition" />
+  </select>  	
+	
+  <!--权限过滤左连接子查询-->
+  <sql id="selectRecheckNoAuthorityLeftJoin" >
+   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+            left join (select locno, owner_no, recheck_no
+                         from BILL_OM_RECHECK_DTL                         
+                        where 
+                        locno = #{params.locno,jdbcType=VARCHAR}
+                        and brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+                        group by  locno, owner_no, recheck_no
+                        ) sub1
+              on sub1.locno = S.locno
+             and sub1.recheck_no = S.recheck_no
+    </if>
+  </sql>
+  <!--权限过滤查询条件-->
+  <sql id="selectRecheckNoAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and sub1.recheck_no is not null
+    </if>
+  </sql>
+
+  <select id="selectRecheckNoByConLabel" resultType="java.util.Map" parameterType="map" >
+	select B.* from (select A.*,rownum rn from(SELECT 
+		S.RECHECK_NO,
+		S.STATUS,
+		TEMP.CONTAINERNOCOUNT,
+		TEMP.REALQTYCOUNT 
+	FROM BILL_OM_RECHECK S 
+	<include refid="selectRecheckNoAuthorityLeftJoin" />
+	INNER JOIN 
+	(
+		SELECT  
+			COUNT(DISTINCT D.CONTAINER_NO) CONTAINERNOCOUNT,
+			SUM(D.REAL_QTY) REALQTYCOUNT,
+			D.RECHECK_NO,D.LOCNO  
+		FROM   BILL_OM_RECHECK_DTL  D
+		WHERE  D.RECHECK_NO  IN
+		(
+			SELECT DISTINCT B.RECHECK_NO
+             	FROM BILL_OM_RECHECK R
+                INNER JOIN BILL_OM_RECHECK_DTL B
+                ON R.LOCNO=B.LOCNO AND R.RECHECK_NO=B.RECHECK_NO
+                INNER JOIN CON_LABEL C ON C.CONTAINER_NO=B.CONTAINER_NO AND C.LOCNO=B.LOCNO
+                where 1=1
+			<!--箱号-->
+			<if test="null!=params.labelNo and ''!=params.labelNo" >
+				and C.SCAN_LABEL_NO = #{params.labelNo,jdbcType=VARCHAR}
+			</if>
+	       <!--商品编号-->
+			<if test="null!=params.itemNo and ''!=params.itemNo" >
+				AND  B.ITEM_NO = #{params.itemNo,jdbcType=VARCHAR} 
+			</if>
+	       <!--复核时间-->
+			<if test="null!=params.recheckDateStart and ''!=params.recheckDateStart" >
+			<![CDATA[
+			 	and R.EDITTM >=to_date('${params.recheckDateStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+			]]>	
+			</if>
+			<if test="null!=params.recheckDateEnd and ''!=params.recheckDateEnd" >
+			<![CDATA[
+			 	and R.EDITTM <=to_date('${params.recheckDateEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			]]>	
+			</if>
+			<if test="null!=params.status and ''!=params.status" >
+				and R.STATUS =#{params.status,jdbcType=VARCHAR}
+			</if>
+		) GROUP BY D.RECHECK_NO,D.LOCNO
+	) TEMP  ON TEMP.RECHECK_NO = S.RECHECK_NO and TEMP.LOCNO=S.LOCNO
+	where S.LOCNO = #{params.locno,jdbcType=VARCHAR}
+    <include refid="selectRecheckNoAuthorityCondition" />
+	) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  
+  
+  <!--根据商品编号统计单号信息-->
+   <select id="selectRecheckNoCountByItemNo" resultType="java.lang.Integer" parameterType="map" >
+    SELECT count(1)
+	FROM BILL_OM_RECHECK S 
+    <include refid="selectRecheckNoAuthorityLeftJoin" />
+	INNER JOIN 
+	(
+		SELECT  
+			COUNT(DISTINCT D.CONTAINER_NO) CONTAINERNOCOUNT,
+			SUM(D.REAL_QTY) REALQTYCOUNT,
+			D.RECHECK_NO,D.LOCNO
+			FROM   BILL_OM_RECHECK_DTL  D
+			WHERE  D.RECHECK_NO  IN
+			(
+				SELECT DISTINCT B.RECHECK_NO
+             	FROM BILL_OM_RECHECK R
+                INNER JOIN BILL_OM_RECHECK_DTL B
+                ON R.LOCNO=B.LOCNO AND R.RECHECK_NO=B.RECHECK_NO
+                INNER JOIN CON_LABEL C ON C.CONTAINER_NO=B.CONTAINER_NO AND C.LOCNO=B.LOCNO
+                where 1=1
+			       <!--商品编号-->
+			      <if test="null!=params.itemNo and ''!=params.itemNo" >
+			          AND  B.ITEM_NO = #{params.itemNo,jdbcType=VARCHAR} 
+			      </if>
+			       <!--复核时间-->
+			       <if test="null!=params.recheckDateStart and ''!=params.recheckDateStart" >
+					<![CDATA[
+			         and R.EDITTM >=to_date('${params.recheckDateStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+					]]>	
+			      </if>
+			      <if test="null!=params.recheckDateEnd and ''!=params.recheckDateEnd" >
+			      	<![CDATA[
+			       	 and R.EDITTM <=to_date('${params.recheckDateEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			        ]]>	
+			      </if>
+			      <if test="null!=params.status and ''!=params.status" >
+			         and R.STATUS =#{params.status,jdbcType=TIMESTAMP}
+				  </if>
+				  <if test="null!=params.labelNo and ''!=params.labelNo" >
+			         and C.SCAN_LABEL_NO = #{params.labelNo,jdbcType=VARCHAR}
+				  </if>
+			)
+		GROUP BY D.RECHECK_NO,D.LOCNO
+	) TEMP  ON TEMP.RECHECK_NO = S.RECHECK_NO AND S.LOCNO=TEMP.LOCNO
+	WHERE S.LOCNO=#{params.locno,jdbcType=VARCHAR}
+    <include refid="selectRecheckNoAuthorityCondition" />
+  </select>
+  
+  <select id="selectRecheckNoByItemNo" resultType="java.util.Map" parameterType="map" >
+   select B.* from (select A.*,rownum rn from(SELECT 
+		S.RECHECK_NO,
+		S.STATUS,
+		TEMP.CONTAINERNOCOUNT,
+		TEMP.REALQTYCOUNT 
+	FROM BILL_OM_RECHECK S 
+    <include refid="selectRecheckNoAuthorityLeftJoin" />
+	INNER JOIN 
+	(
+		SELECT  
+			COUNT(DISTINCT D.CONTAINER_NO) CONTAINERNOCOUNT,
+			SUM(D.REAL_QTY) REALQTYCOUNT,
+			D.RECHECK_NO,D.LOCNO
+			FROM   BILL_OM_RECHECK_DTL  D
+			WHERE  D.RECHECK_NO  IN
+			(
+				SELECT DISTINCT B.RECHECK_NO
+             	FROM BILL_OM_RECHECK R
+                INNER JOIN BILL_OM_RECHECK_DTL B
+                ON R.LOCNO=B.LOCNO AND R.RECHECK_NO=B.RECHECK_NO
+                INNER JOIN CON_LABEL C ON C.CONTAINER_NO=B.CONTAINER_NO AND C.LOCNO=B.LOCNO
+                where 1=1
+			        <!--商品编号-->
+			      <if test="null!=params.itemNo and ''!=params.itemNo" >
+			          AND  B.ITEM_NO = #{params.itemNo,jdbcType=VARCHAR} 
+			      </if>
+			       <!--复核时间-->
+			       <if test="null!=params.recheckDateStart and ''!=params.recheckDateStart" >
+					<![CDATA[
+			         and R.EDITTM >=to_date('${params.recheckDateStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+					]]>	
+			      </if>
+			      <if test="null!=params.recheckDateEnd and ''!=params.recheckDateEnd" >
+			      	<![CDATA[
+			       	 and R.EDITTM <=to_date('${params.recheckDateEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			        ]]>	
+			      </if>
+			      <if test="null!=params.status and ''!=params.status" >
+			         and R.STATUS = #{params.status,jdbcType=TIMESTAMP}
+				  </if>
+				  <if test="null!=params.labelNo and ''!=params.labelNo" >
+			         and C.SCAN_LABEL_NO = #{params.labelNo,jdbcType=VARCHAR}
+				  </if>
+				  
+			)
+		GROUP BY D.RECHECK_NO,D.LOCNO
+	) TEMP  ON TEMP.RECHECK_NO = S.RECHECK_NO AND S.LOCNO=TEMP.LOCNO
+	WHERE S.LOCNO=#{params.locno,jdbcType=VARCHAR} 
+	<include refid="selectRecheckNoAuthorityCondition" />
+	order by s.RECHECK_NO desc
+	 )A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  
+  <!--权限过滤左连接子查询-->
+  <sql id="selectNoReCheckAuthorityLeftJoin" >
+   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+            left join (select locno, owner_no, recheck_no
+                         from BILL_OM_RECHECK_DTL                         
+                        where 
+                        locno = #{params.locno,jdbcType=VARCHAR}
+                        and brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+                         group by locno, owner_no, recheck_no
+                        ) sub1
+              on sub1.locno = r.locno
+             and sub1.recheck_no = r.recheck_no
+    </if>
+  </sql>
+  <!--权限过滤查询条件-->
+  <sql id="selectNoReCheckAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and sub1.recheck_no is not null 
+    </if>
+  </sql>
+  
+  <!-- 查询未交接的数量-->
+  <select id="selectNoReCheckCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(1) from (
+			<include refid="sqlNoReCheck" />
+		)
+	</select>
+  <!-- 查询未交接的箱号-->
+	<select id="selectNoReCheck" resultType="java.util.Map">
+		select B.* from (select A.*,rownum rn from(
+			<include refid="sqlNoReCheck" />
+		) A where rownum &lt; #{params.endRowNum}) B where rn &gt; #{params.startRowNum}
+	</select>
+	
+	<sql id="sqlNoReCheck" >
+		select d.RECHECK_NO, c.SCAN_LABEL_NO labelNo,
+			r.store_no, 
+			<!-- r.status, -->
+			(select ld.ITEMNAME from LOOKUPDTL ld where r.status = ld.itemval and ld.lookupcode = 'CITY_RECITY_CHECK_STATUS' and rownum = 1) as STATUS,
+			s.store_name,
+			s.status as storeStatus,
+			MAX(R.EDITTM) EDITTM,
+			sum(REAL_QTY) realQtyCount
+		  from BILL_OM_RECHECK r 
+		  <include refid="selectNoReCheckAuthorityLeftJoin" />
+		  inner join BILL_OM_RECHECK_DTL d 
+		    on r.locno=d.locno 
+		    and r.recheck_no=d.recheck_no
+		  inner join item it
+			on it.item_no = d.item_no
+		  inner join CON_LABEL c 
+		    on c.CONTAINER_NO=d.CONTAINER_NO
+		  and c.locno=d.locno
+		  left join store s
+            on s.store_no = r.store_no
+		where r.STATUS = '13'
+		and d.locno = #{params.locno,jdbcType=VARCHAR} 
+		and d.status = '13'
+		<if test="null!=params.recheckNo and ''!=params.recheckNo" >
+			AND  d.RECHECK_NO = #{params.recheckNo,jdbcType=VARCHAR} 
+		</if>
+		<if test="null!=params.labelNo and ''!=params.labelNo" >
+			AND  c.SCAN_LABEL_NO = #{params.labelNo,jdbcType=VARCHAR} 
+		</if>
+		<if test="null!=params.divideNo and ''!=params.divideNo" >
+			AND  r.divide_no = #{params.divideNo,jdbcType=VARCHAR} 
+		</if>
+		<if test="params.divideNoList != null">
+  		 	and r.divide_no in 
+  			<foreach collection="params.divideNoList" item="divideNo" open="(" close=")" separator=",">
+				#{divideNo}
+			</foreach>
+  		</if>
+		<if test="null!=params.storeNo and ''!=params.storeNo" >
+			AND  (r.store_no like '%${params.storeNo}%' or s.store_name like '%${params.storeNo}%') 
+		</if>
+		<if test="null!=params.brandNo and ''!=params.brandNo" >
+	      	and  it.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+	  	</if>
+	  	<if test="null!=params.sysNo and ''!=params.sysNo" >
+                and  it.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+         </if>
+         <!--复核时间-->
+		<if test="null!=params.recheckStart and ''!=params.recheckStart" >
+			<![CDATA[
+				and R.AUDITTM >=to_date('${params.recheckStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+			]]>	
+		</if>
+		<if test="null!=params.recheckEnd and ''!=params.recheckEnd" >
+			<![CDATA[
+				and R.AUDITTM <=to_date('${params.recheckEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			]]>	
+		</if>
+		<if test="null!=params.recheckTimeStart and ''!=params.recheckTimeStart" >
+			<![CDATA[
+				and to_char(R.AUDITTM,'hh24:mi:ss') >= #{params.recheckTimeStart,jdbcType=VARCHAR}
+			]]>	
+		</if>
+		<if test="null!=params.recheckTimeEnd and ''!=params.recheckTimeEnd" >
+			<![CDATA[
+				and to_char(R.AUDITTM,'hh24:mi:ss') <= #{params.recheckTimeEnd,jdbcType=VARCHAR}
+			]]>	
+		</if>
+		 <include refid="selectNoReCheckAuthorityCondition" />
+		group by d.RECHECK_NO, c.SCAN_LABEL_NO,r.store_no,r.status, s.store_name,s.status
+		order by d.RECHECK_NO desc
+	</sql>
+	
+  <!--权限过滤左连接子查询-->
+  <sql id="sqlNoReCheckedAuthorityLeftJoin" >
+   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+            left join (select locno, owner_no, recheck_no
+                         from BILL_OM_RECHECK_DTL                         
+                        where 
+                        locno = #{params.locno,jdbcType=VARCHAR}
+                        and brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+                         group by locno, owner_no, recheck_no
+                        ) sub1
+              on sub1.locno = dd.locno
+             and sub1.recheck_no = dd.recheck_no
+    </if>
+  </sql>
+  <!--权限过滤查询条件-->
+  <sql id="sqlNoReCheckedAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and sub1.recheck_no is not null 
+    </if>
+  </sql>
+	
+	
+	<!-- 查询已经交接的箱号 -->
+	<select id="selectReCheckedCount" resultType="java.lang.Integer">
+		SELECT count(1) as s from (
+			<include refid="sqlNoReChecked" />
+		) A
+	</select>
+
+	<select id="selectReChecked" resultMap="BillOmRecheckJoinDtoMap">
+		select B.* from (select A.*,rownum rn from(
+			<include refid="sqlNoReChecked" />
+		) A where rownum &lt; #{params.endRowNum}) B where rn &gt; #{params.startRowNum}
+	</select>
+	
+	<sql id="sqlNoReChecked" >
+		SELECT d.locno,
+               d.owner_no,
+               d.RECHECK_NO,
+               c.SCAN_LABEL_NO,
+               d.ITEM_NO,
+               max(i.ITEM_NAME) ITEM_NAME,
+               max(co.COLOR_NAME) COLOR_NAME,
+               d.SIZE_NO,
+               dd.EDITTM,
+               d.JOIN_DATE,
+               max(d.JOIN_NAME) JOIN_NAME,
+               max(d.JOINNAMECH) JOINNAMECH,
+               sum(d.REAL_QTY) REAL_QTY,
+               de.deliver_no,
+               de.status,
+               (CASE
+                 WHEN de.status = '13' THEN
+                  '已装车'
+                 ELSE
+                  '未装车'
+               END) AS statusName
+          FROM BILL_OM_RECHECK_DTL d
+         inner join BILL_OM_RECHECK dd
+            on dd.locno = d.locno
+           and dd.recheck_no = d.recheck_no
+         left join (select t1.locno,
+                           t1.owner_no,
+                           t1.deliver_no,
+                           t1.container_no,
+                           t1.item_no,
+                           t1.size_no,
+                           t1.status
+                      from bill_om_deliver_dtl t1
+                     inner join bill_om_deliver t2
+                        on t2.locno = t1.locno
+                       and t2.deliver_no = t1.deliver_no
+                     where 1 = 1
+                       and t1.locno = #{params.locno,jdbcType=VARCHAR}
+                       and t1.status = '13'
+                       and t2.TRANS_FLAG = '20'
+                       <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+					   	and t1.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+					   </if>
+                     group by t1.locno,
+               				  t1.owner_no,
+                              t1.deliver_no,
+                              t1.container_no,
+                              t1.item_no,
+                              t1.size_no,
+                              t1.status) de
+        	on de.locno = d.locno
+           and de.owner_no = d.owner_no
+           and de.container_no = d.container_no
+           and de.item_no = d.item_no
+           and de.size_no = d.size_no
+         <include refid="sqlNoReCheckedAuthorityLeftJoin" />
+         inner join CON_LABEL c
+            on c.container_no = d.container_no
+           and c.locno = d.locno
+          left outer join item i
+            on i.item_no = d.item_no
+          left outer join color_info co
+            on co.color_no = i.color_no
+         where d.status = '14'
+           and d.locno = #{params.locno,jdbcType=VARCHAR} 
+        <if test="null!=params.recheckNo and ''!=params.recheckNo" >
+			AND  d.RECHECK_NO = #{params.recheckNo,jdbcType=VARCHAR} 
+		</if>
+		<if test="null!=params.labelNo and ''!=params.labelNo" >
+			AND  c.SCAN_LABEL_NO = #{params.labelNo,jdbcType=VARCHAR} 
+		</if>
+        <if test="null!=params.itemNo and ''!=params.itemNo" >
+			AND  d.ITEM_NO = #{params.itemNo,jdbcType=VARCHAR} 
+		</if>
+		<if test="null!=params.brandNo and ''!=params.brandNo" >
+	      	and  i.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+	  	</if>
+	  	<if test="null!=params.sysNo and ''!=params.sysNo" >
+            and  i.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+        </if>
+        <if test="null!=params.deliverStatus and ''!=params.deliverStatus" >
+        	<choose>
+			    <when test="'13'!=params.deliverStatus">
+					and de.status is null
+				</when>
+				<otherwise>
+					and de.status = #{params.deliverStatus,jdbcType=VARCHAR}
+				</otherwise>
+		    </choose>
+        </if>
+	  	<!--复核时间-->
+			<if test="null!=params.startEdittm and ''!=params.startEdittm" >
+			<![CDATA[
+			 	and d.JOIN_DATE >=to_date('${params.startEdittm} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+			]]>	
+			</if>
+			<if test="null!=params.endEdittm and ''!=params.endEdittm" >
+			<![CDATA[
+			 	and d.JOIN_DATE <=to_date('${params.endEdittm} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			]]>	
+		</if>
+		<include refid="sqlNoReCheckedAuthorityCondition" />
+         group by d.locno,
+                  d.owner_no,
+                  d.RECHECK_NO,
+                  c.SCAN_LABEL_NO,
+                  d.ITEM_NO,
+                  d.SIZE_NO,
+                  dd.EDITTM,
+               	  d.JOIN_DATE,
+               	  de.deliver_no,
+                  de.status
+         order by d.RECHECK_NO desc
+	</sql>
+
+	<!-- 根据箱号查询单号 -->
+	<select id="selectReCheckNoByLabelNo" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select distinct b.LOCNO,b.RECHECK_NO from BILL_OM_RECHECK_DTL b 
+		inner join CON_LABEL c on c.CONTAINER_NO=b.CONTAINER_NO 
+		and c.locno = b.locno
+		where c.SCAN_LABEL_NO = #{labelNo,jdbcType=VARCHAR} 
+		and b.locno=#{locno,jdbcType=VARCHAR}
+	</select>
+	
+	<!--根据单号，状态查询条数-->
+	<select id="selectReCheckCountByStataus" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(1) from BILL_OM_RECHECK_DTL where RECHECK_NO = #{recheckNo,jdbcType=VARCHAR} and locno = #{locno,jdbcType=VARCHAR}
+		<if test="null!=status and ''!=stauts" >
+			AND STATUS = #{status,jdbcType=VARCHAR}
+		</if>
+	</select>
+	<!--根据箱号更新订单状态-->
+	 <update id="updateStatusByLabelNo" parameterType="java.util.Map">
+	 	update BILL_OM_RECHECK_DTL b set STATUS = #{status,jdbcType=VARCHAR} where RECHECK_NO = #{recheckNo,jdbcType=VARCHAR}
+	 	and locno = #{locno,jdbcType=VARCHAR}
+	 	and CONTAINER_NO in (select b.CONTAINER_NO from BILL_OM_RECHECK_DTL b inner join CON_LABEL c on c.CONTAINER_NO=b.CONTAINER_NO where c.SCAN_LABEL_NO = #{labelNo,jdbcType=VARCHAR})
+	</update>		
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_OM_RECHECK_DTL where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillOmRecheckDtlKey" >
+    delete from BILL_OM_RECHECK_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RECHECK_NO = #{recheckNo,jdbcType=VARCHAR}
+      and CONTAINER_NO = #{containerNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillOmRecheckDtl" >
+    delete from BILL_OM_RECHECK_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RECHECK_NO = #{recheckNo,jdbcType=VARCHAR}
+      and CONTAINER_NO = #{containerNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillOmRecheckDtl" >
+    insert into BILL_OM_RECHECK_DTL (LOCNO, RECHECK_NO, CONTAINER_NO, 
+      ROW_ID, OWNER_NO, ITEM_NO, 
+      ITEM_ID, ITEM_QTY, REAL_QTY, 
+      ADD_FLAG, STATUS, ASSIGN_NAME, 
+      RECHECK_NAME, RECHECK_DATE, EXP_NO, 
+      EXP_TYPE, EXP_DATE, PACK_QTY, 
+      RECHECK_NAME2)
+    values (#{locno,jdbcType=VARCHAR}, #{recheckNo,jdbcType=VARCHAR}, #{containerNo,jdbcType=VARCHAR}, 
+      #{rowId,jdbcType=DECIMAL}, #{ownerNo,jdbcType=VARCHAR}, #{itemNo,jdbcType=VARCHAR}, 
+      #{itemId,jdbcType=DECIMAL}, #{itemQty,jdbcType=DECIMAL}, #{realQty,jdbcType=DECIMAL}, 
+      #{addFlag,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{assignName,jdbcType=VARCHAR}, 
+      #{recheckName,jdbcType=VARCHAR}, #{recheckDate,jdbcType=TIMESTAMP}, #{expNo,jdbcType=VARCHAR}, 
+      #{expType,jdbcType=VARCHAR}, #{expDate,jdbcType=TIMESTAMP}, #{packQty,jdbcType=DECIMAL}, 
+      #{recheckName2,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillOmRecheckDtl" >
+    insert into BILL_OM_RECHECK_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="recheckNo != null" >
+        RECHECK_NO,
+      </if>
+      <if test="containerNo != null" >
+        CONTAINER_NO,
+      </if>
+      <if test="rowId != null" >
+        ROW_ID,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="itemId != null" >
+        ITEM_ID,
+      </if>
+      <if test="itemQty != null" >
+        ITEM_QTY,
+      </if>
+      <if test="realQty != null" >
+        REAL_QTY,
+      </if>
+      <if test="addFlag != null" >
+        ADD_FLAG,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="assignName != null" >
+        ASSIGN_NAME,
+      </if>
+      <if test="recheckName != null" >
+        RECHECK_NAME,
+      </if>
+      <if test="recheckDate != null" >
+        RECHECK_DATE,
+      </if>
+      <if test="expNo != null" >
+        EXP_NO,
+      </if>
+      <if test="expType != null" >
+        EXP_TYPE,
+      </if>
+      <if test="expDate != null" >
+        EXP_DATE,
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY,
+      </if>
+      <if test="recheckName2 != null" >
+        RECHECK_NAME2,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="recheckNo != null" >
+        #{recheckNo,jdbcType=VARCHAR},
+      </if>
+      <if test="containerNo != null" >
+        #{containerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rowId != null" >
+        #{rowId,jdbcType=DECIMAL},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=DECIMAL},
+      </if>
+      <if test="itemQty != null" >
+        #{itemQty,jdbcType=DECIMAL},
+      </if>
+      <if test="realQty != null" >
+        #{realQty,jdbcType=DECIMAL},
+      </if>
+      <if test="addFlag != null" >
+        #{addFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="assignName != null" >
+        #{assignName,jdbcType=VARCHAR},
+      </if>
+      <if test="recheckName != null" >
+        #{recheckName,jdbcType=VARCHAR},
+      </if>
+      <if test="recheckDate != null" >
+        #{recheckDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expNo != null" >
+        #{expNo,jdbcType=VARCHAR},
+      </if>
+      <if test="expType != null" >
+        #{expType,jdbcType=VARCHAR},
+      </if>
+      <if test="expDate != null" >
+        #{expDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="packQty != null" >
+        #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="recheckName2 != null" >
+        #{recheckName2,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillOmRecheckDtl" >
+    update BILL_OM_RECHECK_DTL
+    <set >
+      <if test="ownerNo != null" >
+        OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        ITEM_ID = #{itemId,jdbcType=DECIMAL},
+      </if>
+      <if test="itemQty != null" >
+        ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+      </if>
+      <if test="realQty != null" >
+        REAL_QTY = #{realQty,jdbcType=DECIMAL},
+      </if>
+      <if test="addFlag != null" >
+        ADD_FLAG = #{addFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="assignName != null" >
+        ASSIGN_NAME = #{assignName,jdbcType=VARCHAR},
+      </if>
+      <if test="recheckName != null" >
+        RECHECK_NAME = #{recheckName,jdbcType=VARCHAR},
+      </if>
+      <if test="recheckDate != null" >
+        RECHECK_DATE = #{recheckDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expNo != null" >
+        EXP_NO = #{expNo,jdbcType=VARCHAR},
+      </if>
+      <if test="expType != null" >
+        EXP_TYPE = #{expType,jdbcType=VARCHAR},
+      </if>
+      <if test="expDate != null" >
+        EXP_DATE = #{expDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="recheckName2 != null" >
+        RECHECK_NAME2 = #{recheckName2,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RECHECK_NO = #{recheckNo,jdbcType=VARCHAR}
+      and CONTAINER_NO = #{containerNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillOmRecheckDtl" >
+    update BILL_OM_RECHECK_DTL
+    set OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      <!-- ITEM_ID = #{itemId,jdbcType=DECIMAL}, -->
+      ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+      REAL_QTY = #{realQty,jdbcType=DECIMAL},
+      ADD_FLAG = #{addFlag,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      ASSIGN_NAME = #{assignName,jdbcType=VARCHAR},
+      RECHECK_NAME = #{recheckName,jdbcType=VARCHAR},
+      RECHECK_DATE = #{recheckDate,jdbcType=TIMESTAMP},
+      EXP_NO = #{expNo,jdbcType=VARCHAR},
+      EXP_TYPE = #{expType,jdbcType=VARCHAR},
+      EXP_DATE = #{expDate,jdbcType=TIMESTAMP},
+      PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      RECHECK_NAME2 = #{recheckName2,jdbcType=VARCHAR}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RECHECK_NO = #{recheckNo,jdbcType=VARCHAR}
+      and CONTAINER_NO = #{containerNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+  
+  <!--集货审核存储过程-->
+  <select id="checkStatus" parameterType="java.util.Map" resultType="java.util.Map" statementType="CALLABLE">
+		<!-- 
+		{call pkg_om_city_recheck.proc_om_recheck (
+				#{I_locno, mode=IN, jdbcType=VARCHAR},
+			 	#{I_reCheckNo, mode=IN, jdbcType=VARCHAR},
+			 	#{I_boxNo, mode=IN, jdbcType=VARCHAR},
+			 	#{I_creator, mode=IN, jdbcType=VARCHAR},
+			 	#{O_reCheckNo, mode=OUT, jdbcType=VARCHAR},
+			 	#{O_storeName, mode=OUT, jdbcType=VARCHAR},
+			 	#{O_storeNo, mode=OUT, jdbcType=VARCHAR},
+			 	#{O_noScanQty, mode=OUT, jdbcType=DECIMAL},
+			 	#{O_scanQty, mode=OUT, jdbcType=DECIMAL},
+			 	#{O_msg, mode=OUT, jdbcType=VARCHAR}
+			 )}
+		 -->
+		
+		<![CDATA[
+			{call PKG_OM_CITY_RECHECK_JOIN_QUERY.proc_recheck_join_query (
+				#{I_locno, mode=IN, jdbcType=VARCHAR},
+			 	#{I_strRecheckBoxs, mode=IN, jdbcType=VARCHAR},
+			 	#{I_creator, mode=IN, jdbcType=VARCHAR},
+			 	#{O_msg, mode=OUT, jdbcType=VARCHAR}
+			 )}
+		]]>
+  </select>
+  
+  
+  <!-- 查询分货明细的总数 -->
+  <select id="selectNoReCheckSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="java.util.Map">
+	select 
+		sum(nvl(dtl.realQtyCount,0)) realQtyCount
+		from 
+		(
+			select d.RECHECK_NO, c.SCAN_LABEL_NO labelNo,
+			r.store_no, r.status,s.store_name,
+			sum(REAL_QTY) realQtyCount
+		  from BILL_OM_RECHECK r 		  
+		  <include refid="selectNoReCheckAuthorityLeftJoin" />
+		  inner join BILL_OM_RECHECK_DTL d 
+		    on r.locno=d.locno 
+		    and r.recheck_no=d.recheck_no
+		  inner join item it
+			on it.item_no = d.item_no
+		  inner join CON_LABEL c 
+		    on c.CONTAINER_NO=d.CONTAINER_NO
+		  and c.locno=d.locno
+		  left join store s
+            on s.store_no = r.store_no
+		where r.STATUS = '13'
+		and d.locno = #{params.locno,jdbcType=VARCHAR} 
+		and d.status = '13'
+		<if test="null!=params.recheckNo and ''!=params.recheckNo" >
+			AND  d.RECHECK_NO = #{params.recheckNo,jdbcType=VARCHAR} 
+		</if>
+		<if test="null!=params.labelNo and ''!=params.labelNo" >
+			AND  c.SCAN_LABEL_NO = #{params.labelNo,jdbcType=VARCHAR} 
+		</if>
+		<if test="null!=params.brandNo and ''!=params.brandNo" >
+	      	and  it.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+	  	</if>
+	  	<if test="null!=params.sysNo and ''!=params.sysNo" >
+            and  it.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+         </if>
+          <!--复核时间-->
+		<if test="null!=params.recheckStart and ''!=params.recheckStart" >
+			<![CDATA[
+				and R.EDITTM >=to_date('${params.recheckStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+			]]>	
+		</if>
+		<if test="params.divideNoList != null">
+  		 	and r.divide_no in 
+  			<foreach collection="params.divideNoList" item="divideNo" open="(" close=")" separator=",">
+				#{divideNo}
+			</foreach>
+  		</if>
+  		<if test="null!=params.storeNo and ''!=params.storeNo" >
+			AND  (r.store_no like '%${params.storeNo}%' or s.store_name like '%${params.storeNo}%') 
+		</if>
+		<if test="null!=params.recheckEnd and ''!=params.recheckEnd" >
+			<![CDATA[
+				and R.EDITTM <=to_date('${params.recheckEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			]]>	
+		</if>
+		<if test="null!=params.recheckTimeStart and ''!=params.recheckTimeStart" >
+			<![CDATA[
+				and to_char(R.EDITTM,'hh24:mi:ss') >= #{params.recheckTimeStart,jdbcType=VARCHAR}
+			]]>	
+		</if>
+		<if test="null!=params.recheckTimeEnd and ''!=params.recheckTimeEnd" >
+			<![CDATA[
+				and to_char(R.EDITTM,'hh24:mi:ss') <= #{params.recheckTimeEnd,jdbcType=VARCHAR}
+			]]>	
+		</if>
+		<include refid="selectNoReCheckAuthorityCondition" />
+		group by d.RECHECK_NO, c.SCAN_LABEL_NO,r.store_no,r.status, s.store_name
+		order by d.RECHECK_NO desc
+		)dtl
+  </select>
+  
+  <!-- 查询分货明细的总数 -->
+  <select id="selectNoReCheckedSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+	select 
+		sum(nvl(dtl.REAL_QTY,0)) REAL_QTY
+		from 
+		(
+			<include refid="sqlNoReChecked" />
+		)dtl
+  </select>
+  
+</mapper>

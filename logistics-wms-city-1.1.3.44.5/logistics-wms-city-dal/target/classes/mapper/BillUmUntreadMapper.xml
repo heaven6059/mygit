@@ -1,0 +1,595 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillUmUntreadMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillUmUntread" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="UNTREAD_NO" property="untreadNo" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="UNTREAD_TYPE" property="untreadType" jdbcType="VARCHAR" />
+    <result column="QUALITY" property="quality" jdbcType="VARCHAR" />
+    <result column="UNTREAD_MM_NO" property="untreadMmNo" jdbcType="VARCHAR" />
+    <result column="STORE_NO" property="storeNo" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="AUDITOR" property="auditor" jdbcType="VARCHAR" />
+    <result column="AUDITTM" property="audittm" jdbcType="TIMESTAMP" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="PO_NO" property="poNo" jdbcType="VARCHAR" />
+    <result column="PO_TYPE" property="poType" jdbcType="VARCHAR" />
+    <result column="PACK_QTY" property="packQty" jdbcType="DECIMAL" />
+   	<result column="STORE_NAME" property="storeName" jdbcType="VARCHAR" />
+   	<result column="CREATORNAME" property="creatorName" jdbcType="VARCHAR" />
+    <result column="EDITORNAME" property="editorName" jdbcType="VARCHAR" />
+    <result column="AUDITORNAME" property="auditorName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    d.LOCNO, d.OWNER_NO, d.UNTREAD_NO, d.STATUS, UNTREAD_TYPE, QUALITY, UNTREAD_MM_NO, d.STORE_NO, 
+    d.CREATOR, d.CREATETM, d.EDITOR, d.EDITTM, d.AUDITOR, d.AUDITTM, REMARK, PO_NO, PO_TYPE, PACK_QTY,s.STORE_NAME,
+    d.CREATORNAME, d.EDITORNAME, d.AUDITORNAME
+  </sql>
+  <sql id="Base_Column_List_Task" >
+    d.LOCNO, d.OWNER_NO, d.UNTREAD_NO as untreadNo, d.PO_NO as poNo, 
+    d.STATUS, d.UNTREAD_TYPE, d.QUALITY, d.UNTREAD_MM_NO, 
+    d.STORE_NO as storeNo, d.REMARK, s.STORE_NAME as storeName
+  </sql>
+  <sql id="Base_Column_List_ById" >
+    d.LOCNO, d.OWNER_NO, d.UNTREAD_NO, d.STATUS, UNTREAD_TYPE, QUALITY, UNTREAD_MM_NO, d.STORE_NO, 
+    d.CREATOR, d.CREATETM, d.EDITOR, d.EDITTM, d.AUDITOR, d.AUDITTM, REMARK, PO_NO, PO_TYPE, PACK_QTY
+  </sql>
+   <sql id="Base_Column_List_Sort" >
+    d.LOCNO as locno, d.OWNER_NO as ownerNo, d.UNTREAD_NO as untreadNo, d.STATUS as status, UNTREAD_TYPE as untreadType, 
+    QUALITY as quality, UNTREAD_MM_NO as untreadMmNo, d.STORE_NO as storeNo, d.CREATOR as creator, d.CREATETM as createtm, 
+    d.EDITOR as editor, d.EDITTM as edittim, d.AUDITOR as auditor, d.AUDITTM as audittm, REMARK as remark, PO_NO as poNo,
+    PO_TYPE as poType, PACK_QTY as packQty ,s.STORE_NAME as storeName, d.CREATORNAME, d.EDITORNAME, d.AUDITORNAME
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.status and ''!=params.status" >
+        and d.status = #{params.status,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.untreadNo and ''!=params.untreadNo" >
+        and d.UNTREAD_NO like '%${params.untreadNo}%'
+      </if>
+       <if test="null!=params.untreadMmNo and ''!=params.untreadMmNo" >
+        and d.UNTREAD_MM_NO = #{params.untreadMmNo,jdbcType=VARCHAR}
+      </if>
+      
+      <if test="null!=params.storeNo and ''!=params.storeNo" >
+        and d.STORE_NO = #{params.storeNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.storeName and ''!=params.storeName" >
+        and s.store_Name like '%${params.storeName}%' 
+      </if>
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        and d.OWNER_NO = #{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+        and d.locno = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.statusMore and ''!=params.statusMore" >
+         and (d.status = '20' or d.status = '25')
+      </if>
+       <if test="null!=params.creator and ''!=params.creator" >
+         and d.creator = #{params.creator}
+      </if>
+      <!--创建日期-->
+      <if test="null!=params.createtmStart and ''!=params.createtmStart" >
+		<![CDATA[
+         and d.CREATETM >=to_date('${params.createtmStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+		]]>	
+      </if>
+      <if test="null!=params.createtmEnd and ''!=params.createtmEnd" >
+      	<![CDATA[
+       	 and d.CREATETM <=to_date('${params.createtmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+        ]]>	
+      </if>
+      <if test="null!=params.auditor and ''!=params.auditor" >
+         and AUDITOR = #{params.auditor}
+      </if>
+       <!--审核日期-->
+      <if test="null!=params.audittmStart and ''!=params.audittmStart" >
+		<![CDATA[
+         and d.AUDITTM >=to_date('${params.audittmStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+		]]>	
+      </if>
+      <if test="null!=params.audittmEnd and ''!=params.audittmEnd" >
+      	<![CDATA[
+       	 and d.AUDITTM <=to_date('${params.audittmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+        ]]>	
+      </if>
+      <if test="null!=params.poNo and ''!=params.poNo" >
+         and d.PO_NO  like '%${params.poNo}%'
+      </if>
+       <if test="null!=params.quality and ''!=params.quality" >
+         and d.quality = #{params.quality}
+      </if>
+      <if test="null!=params.untreadType and ''!=params.untreadType" >
+         and d.UNTREAD_TYPE = #{params.untreadType}
+      </if>
+      <if test="null!=params.brandNo and ''!=params.brandNo" >
+      	<![CDATA[
+      		and EXISTS (
+      			select 1 from BILL_UM_UNTREAD_DTL ud,item i
+      				where ud.LOCNO = d.LOCNO 
+      				and ud.UNTREAD_NO = d.UNTREAD_NO 
+      				and ud.ITEM_NO = i.ITEM_NO
+      				and i.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+      				and rownum=1
+      		)
+      	]]>
+	  </if>
+	  <if test="null!=params.sysNo and ''!=params.sysNo" >
+        <![CDATA[
+            and EXISTS (
+                select 1 from BILL_UM_UNTREAD_DTL ud,item i
+                    where ud.LOCNO = d.LOCNO 
+                    and ud.UNTREAD_NO = d.UNTREAD_NO 
+                    and ud.ITEM_NO = i.ITEM_NO
+                    and i.SYS_NO = #{params.sysNo,jdbcType=VARCHAR}
+                    and rownum=1
+            )
+        ]]>
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillUmUntreadKey" >
+    select 
+    <include refid="Base_Column_List_ById" />
+    from BILL_UM_UNTREAD d
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and UNTREAD_NO = #{untreadNo,jdbcType=VARCHAR}
+  </select>
+  
+    <sql id="child_condition">
+  	<if test="null!=params" >
+      <if test="null!=params.locno and ''!=params.locno" >
+      	and b.locno = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.untreadNo and ''!=params.untreadNo" >
+      	and b.UNTREAD_NO = #{params.untreadNo,jdbcType=VARCHAR}
+      </if>
+     </if>
+  </sql>
+  
+  <sql id="selectByPageAuthorityLeftJoin" >
+   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+            left join (select UNTREAD_NO,locno,owner_no
+                         from BILL_UM_UNTREAD_DTL b                         
+                        where brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+                        <include refid="child_condition" />
+                         group by UNTREAD_NO,locno,owner_no
+                        ) sub1
+             ON sub1.UNTREAD_NO = d.UNTREAD_NO
+               and sub1.locno = d.locno
+               and sub1.owner_no = d.owner_no           
+             left join (select UNTREAD_NO,locno,owner_no
+                         from BILL_UM_UNTREAD_DTL b
+                         where 1=1
+                         <include refid="child_condition" />  
+                          group by UNTREAD_NO,locno,owner_no                   
+                        ) sub2
+             ON sub2.UNTREAD_NO = d.UNTREAD_NO
+               and sub2.locno = d.locno
+               and sub2.owner_no = d.owner_no 
+    </if>
+  </sql>
+  <!--权限过滤查询条件-->
+  <sql id="selectByPageAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and (sub1.UNTREAD_NO is not null or sub2.UNTREAD_NO is null)
+    </if>
+  </sql>
+  
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_UM_UNTREAD d left join store s on d.store_no = s.store_no 
+    <include refid="selectByPageAuthorityLeftJoin" /> 
+    where 1=1 
+    <include refid="condition" />
+    <include refid="selectByPageAuthorityCondition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List_Sort" />,
+    (select count(1) from bill_um_untread_dtl dtl
+     where d.locno = dtl.locno and d.owner_no = dtl.owner_no and dtl.UNTREAD_NO = d.UNTREAD_NO) dtlCount
+     ,
+     (select nvl(sum(dtl.receipt_qty),0)  from bill_um_untread_dtl dtl
+     where d.locno = dtl.locno and d.owner_no = dtl.owner_no and dtl.UNTREAD_NO = d.UNTREAD_NO) receiptQty,
+     (select nvl(sum(dtl.item_qty),0)  from bill_um_untread_dtl dtl
+     where d.locno = dtl.locno and d.owner_no = dtl.owner_no and dtl.UNTREAD_NO = d.UNTREAD_NO) itemQty,
+     (select nvl(sum(dtl.check_qty),0)  from bill_um_untread_dtl dtl
+     where d.locno = dtl.locno and d.owner_no = dtl.owner_no and dtl.UNTREAD_NO = d.UNTREAD_NO) checkQty
+     from BILL_UM_UNTREAD d left join store s on d.store_no = s.store_no 
+     <include refid="selectByPageAuthorityLeftJoin" /> 
+     where 1=1 
+    <include refid="condition" />
+     <include refid="selectByPageAuthorityCondition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+     <if test="orderByField == null or ''==orderByField" >
+		     order by untreadNo desc
+	 </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <!-- 退仓单合计 -->
+    <select id="selectSumQty" parameterType="map" resultType="com.yougou.logistics.city.common.utils.SumUtilMap">
+        select sum(nvl(qty.receiptQty, 0)) RECEIPT_QTY,
+	       sum(nvl(qty.itemQty, 0)) ITEM_QTY,
+	       sum(nvl(qty.checkQty, 0)) CHECK_QTY
+		  from (select (select nvl(sum(dtl.receipt_qty), 0) as receiptQty
+		                  from bill_um_untread_dtl dtl
+		                 where d.locno = dtl.locno
+		                   and d.owner_no = dtl.owner_no
+		                   and dtl.UNTREAD_NO = d.UNTREAD_NO) receiptQty,
+		               (select nvl(sum(dtl.item_qty), 0) as itemQty
+		                  from bill_um_untread_dtl dtl
+		                 where d.locno = dtl.locno
+		                   and d.owner_no = dtl.owner_no
+		                   and dtl.UNTREAD_NO = d.UNTREAD_NO) itemQty,
+		               (select nvl(sum(dtl.check_qty), 0) as checkQty
+		                  from bill_um_untread_dtl dtl
+		                 where d.locno = dtl.locno
+		                   and d.owner_no = dtl.owner_no
+		                   and dtl.UNTREAD_NO = d.UNTREAD_NO) checkQty
+		          from BILL_UM_UNTREAD d
+		          left join store s
+		            on d.store_no = s.store_no
+		          <include refid="selectByPageAuthorityLeftJoin" /> 
+			     where 1=1 
+			    <include refid="condition" />
+			     <include refid="selectByPageAuthorityCondition" />
+		      ) qty
+    </select>
+  <select id="selectDetail4Print" resultMap="BaseResultMap" parameterType="map" >
+    select d.UNTREAD_NO,d.store_no,s.store_name,d.po_no,l.ITEMNAME PO_TYPE
+     from BILL_UM_UNTREAD d left join store s on s.store_no = d.store_no left join lookupdtl l on l.lookupcode = 'CMD_TYPE' and l.ITEMVAL = d.po_type
+     where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and UNTREAD_NO = #{untreadNo,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_UM_UNTREAD d where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillUmUntreadKey" >
+    delete from BILL_UM_UNTREAD
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and UNTREAD_NO = #{untreadNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillUmUntread" >
+    delete from BILL_UM_UNTREAD
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and UNTREAD_NO = #{untreadNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillUmUntread" >
+    insert into BILL_UM_UNTREAD (LOCNO, OWNER_NO, UNTREAD_NO, 
+      STATUS, UNTREAD_TYPE, QUALITY, 
+      UNTREAD_MM_NO, STORE_NO, CREATOR, 
+      CREATETM, EDITOR, EDITTM, 
+      AUDITOR, AUDITTM, REMARK, 
+      PO_NO, PO_TYPE, PACK_QTY, 
+      CREATORNAME, EDITORNAME, AUDITORNAME)
+    values (#{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, #{untreadNo,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{untreadType,jdbcType=VARCHAR}, #{quality,jdbcType=VARCHAR}, 
+      #{untreadMmNo,jdbcType=VARCHAR}, #{storeNo,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
+      #{createtm,jdbcType=TIMESTAMP}, #{editor,jdbcType=VARCHAR}, #{edittm,jdbcType=TIMESTAMP}, 
+      #{auditor,jdbcType=VARCHAR}, #{audittm,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}, 
+      #{poNo,jdbcType=VARCHAR}, #{poType,jdbcType=VARCHAR}, #{packQty,jdbcType=DECIMAL},
+      #{creatorName,jdbcType=VARCHAR}, #{editorName,jdbcType=VARCHAR}, #{auditorName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillUmUntread" >
+    insert into BILL_UM_UNTREAD
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="untreadNo != null" >
+        UNTREAD_NO,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="untreadType != null" >
+        UNTREAD_TYPE,
+      </if>
+      <if test="quality != null" >
+        QUALITY,
+      </if>
+      <if test="untreadMmNo != null" >
+        UNTREAD_MM_NO,
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="auditor != null" >
+        AUDITOR,
+      </if>
+      <if test="audittm != null" >
+        AUDITTM,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+      <if test="poNo != null" >
+        PO_NO,
+      </if>
+      <if test="poType != null" >
+        PO_TYPE,
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY,
+      </if>
+      <if test="creatorName != null" >
+        CREATORNAME,
+      </if>
+      <if test="editorName != null" >
+        EDITORNAME,
+      </if>
+      <if test="auditorName != null" >
+        AUDITORNAME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="untreadNo != null" >
+        #{untreadNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="untreadType != null" >
+        #{untreadType,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="untreadMmNo != null" >
+        #{untreadMmNo,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo != null" >
+        #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditor != null" >
+        #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        #{audittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="poNo != null" >
+        #{poNo,jdbcType=VARCHAR},
+      </if>
+      <if test="poType != null" >
+        #{poType,jdbcType=VARCHAR},
+      </if>
+      <if test="packQty != null" >
+        #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="creatorName != null" >
+        #{creatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null" >
+        #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorName != null" >
+        #{auditorName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillUmUntread" >
+    update BILL_UM_UNTREAD
+    <set >
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="untreadType != null" >
+        UNTREAD_TYPE = #{untreadType,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        QUALITY = #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="untreadMmNo != null" >
+        UNTREAD_MM_NO = #{untreadMmNo,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditor != null" >
+        AUDITOR = #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="poNo != null" >
+        PO_NO = #{poNo,jdbcType=VARCHAR},
+      </if>
+      <if test="poType != null" >
+        PO_TYPE = #{poType,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorName != null" >
+        CREATORNAME = #{creatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null" >
+        EDITORNAME = #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorName != null" >
+        AUDITORNAME = #{auditorName,jdbcType=VARCHAR},
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and UNTREAD_NO = #{untreadNo,jdbcType=VARCHAR}
+      <if test="null!=sourceStatus and ''!=sourceStatus" >
+	     and STATUS = #{sourceStatus}
+	  </if>
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillUmUntread" >
+    update BILL_UM_UNTREAD
+    set STATUS = #{status,jdbcType=VARCHAR},
+      UNTREAD_TYPE = #{untreadType,jdbcType=VARCHAR},
+      QUALITY = #{quality,jdbcType=VARCHAR},
+      UNTREAD_MM_NO = #{untreadMmNo,jdbcType=VARCHAR},
+      STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      AUDITOR = #{auditor,jdbcType=VARCHAR},
+      AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      REMARK = #{remark,jdbcType=VARCHAR},
+      PO_NO = #{poNo,jdbcType=VARCHAR},
+      PO_TYPE = #{poType,jdbcType=VARCHAR},
+      CREATORNAME = #{creatorName,jdbcType=VARCHAR},
+      EDITORNAME = #{editorName,jdbcType=VARCHAR},
+      AUDITORNAME = #{auditorName,jdbcType=VARCHAR},
+      PACK_QTY = #{packQty,jdbcType=DECIMAL}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and UNTREAD_NO = #{untreadNo,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 退仓任务查询店退仓单 -->
+  <select id="selectUntread2CheckTask" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List_Task" />,
+    (select count(1) from bill_um_untread_dtl dtl
+     where d.locno = dtl.locno and d.owner_no = dtl.owner_no and dtl.UNTREAD_NO = d.UNTREAD_NO) dtlCount
+     ,
+     (select nvl(sum(dtl.receipt_qty),0)  from bill_um_untread_dtl dtl
+     where d.locno = dtl.locno and d.owner_no = dtl.owner_no and dtl.UNTREAD_NO = d.UNTREAD_NO) receiptQty,
+     (select nvl(sum(dtl.item_qty),0)  from bill_um_untread_dtl dtl
+     where d.locno = dtl.locno and d.owner_no = dtl.owner_no and dtl.UNTREAD_NO = d.UNTREAD_NO) itemQty,
+     (select nvl(sum(dtl.check_qty),0)  from bill_um_untread_dtl dtl
+     where d.locno = dtl.locno and d.owner_no = dtl.owner_no and dtl.UNTREAD_NO = d.UNTREAD_NO) checkQty
+     from BILL_UM_UNTREAD d left join store s on d.store_no = s.store_no 
+     <include refid="selectByPageAuthorityLeftJoin" /> 
+     where 1=1 
+    <include refid="condition" />
+    	<!-- 排除已选择的店退仓单 -->
+    	<if test="null!=list and list.size > 0">
+			and d.untread_no not in
+			<foreach collection="list" item="item"  open="(" separator="," close=")">  
+        		 #{item.untreadNo}  
+    		</foreach> 
+    	</if>
+    	
+     <include refid="selectByPageAuthorityCondition" />
+    
+    	<choose>
+		    <when test="orderByField != null and ''!=orderByField">
+				order by ${orderByField}
+				<if test="orderByField">
+				${orderBy}
+				</if>
+			</when>
+			<otherwise>
+				order by d.AUDITTM desc 
+			</otherwise>
+	     </choose>
+  </select>
+	
+  <!-- 保存退仓验收任务，更新来源店退仓单状态为15-已分配任务 -->
+  <update id="updateUntreadStatus4CheckTask" parameterType="map">
+		update bill_um_untread set status = '15'
+		where LOCNO = #{params.locno,jdbcType=VARCHAR}
+		and OWNER_NO = #{params.ownerNo,jdbcType=VARCHAR}
+		<if test="null!=list and list.size > 0">
+			and untread_no in
+			<foreach collection="list" item="item" open="(" separator=","
+				close=")">
+				#{item.untreadNo}
+			</foreach>
+		</if>
+  </update>
+  
+
+  <update id="batchUpdateUntreadStatus" parameterType="map">
+		<foreach collection="list" item="item" >
+			update bill_um_untread set status=#{params.status,jdbcType=VARCHAR},EDITTM = sysdate, AUDITTM = sysdate,EDITORNAME = #{params.editorname,jdbcType=VARCHAR},
+				  EDITOR = #{params.editor,jdbcType=VARCHAR}
+			where 1=1 
+			    and LOCNO = #{item.locno,jdbcType=VARCHAR}
+			    and OWNER_NO = #{item.ownerNo,jdbcType=VARCHAR}
+				and untread_no = #{item.untreadNo}
+		</foreach>
+  </update>
+
+  <!-- 更新状态为已审核 -->
+  <update id="updateUntread2Status11" parameterType="com.yougou.logistics.city.common.model.BillUmUntread">
+  		update bill_um_untread set status = '11'
+  			where LOCNO = #{locno,jdbcType=VARCHAR}
+				and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+				and UNTREAD_NO = #{untreadNo,jdbcType=VARCHAR}
+				and STATUS = '15'
+  </update>
+	<!-- 检查店退仓单是否是建单状态或者是否被删除 -->
+ <select id="judgeObjIsExist" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_UM_UNTREAD d where d.LOCNO=#{params.locno} and  d.OWNER_NO =#{params.ownerNo} and d.UNTREAD_NO=#{params.untreadNo}
+    and d.STATUS= #{param}
+  </select>
+</mapper>

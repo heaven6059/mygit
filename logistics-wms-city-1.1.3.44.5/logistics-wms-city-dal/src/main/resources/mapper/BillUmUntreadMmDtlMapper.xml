@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillUmUntreadMmDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillUmUntreadMmDtl" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="UNTREAD_MM_NO" property="untreadMmNo" jdbcType="VARCHAR" />
+    <id column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="STORE_NO" property="storeNo" jdbcType="VARCHAR" />
+    <result column="STORE_NAME" property="storeName" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="ITEM_QTY" property="itemQty" jdbcType="DECIMAL" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="item_name" property="itemName" jdbcType="VARCHAR" />
+    <result column="color_name" property="colorName" jdbcType="VARCHAR" />
+    <result column="style_no" property="styleNo" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="BARCODE" property="barcode" jdbcType="VARCHAR" />
+    <result column="brand_name" property="brandName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, OWNER_NO, UNTREAD_MM_NO, ROW_ID, d.ITEM_NO, STORE_NO, SIZE_NO, ITEM_QTY, d.STATUS, 
+    d.CREATOR, d.CREATETM,i.item_name,c.color_name,b.brand_name
+  </sql>
+  <sql id="Base_Column_List_0" >
+    LOCNO, OWNER_NO, UNTREAD_MM_NO, ROW_ID, ITEM_NO, STORE_NO, SIZE_NO, ITEM_QTY, STATUS, 
+    CREATOR, CREATETM
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.locno and ''!=params.locno" >
+        and locno =  #{params.locno}
+      </if>
+      <if test="null!=params.untreadMmNo and ''!=params.untreadMmNo" >
+        and UNTREAD_MM_NO =  #{params.untreadMmNo}
+      </if>
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        and OWNER_NO =  #{params.ownerNo}
+      </if>
+    </if>
+  </sql>
+  <sql id="condition_item">
+	  <if test="null!=params">
+	      <if test="null!=params.itemNo and ''!=params.itemNo" >
+	            and i.item_no = #{params.itemNo}
+	      </if>
+	      <if test="null!=params.itemName and ''!=params.itemName" >
+	          and i.item_name like '%${params.itemName}%' 
+	      </if>
+	      <if test="null!=params.barcode and ''!=params.barcode" >
+	          and b.barcode = #{params.barcode}
+	      </if>
+	       <if test="null!=params.sysNo and ''!=params.sysNo" >
+	          and i.sys_no = #{params.sysNo}
+	      </if>
+	  </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillUmUntreadMmDtlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_UM_UNTREAD_MM_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and UNTREAD_MM_NO = #{untreadMmNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_UM_UNTREAD_MM_DTL where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from(
+		select <include refid="Base_Column_List" />
+    		,(select store_name  from store s where s.store_no = d.store_no) storeName
+     	from BILL_UM_UNTREAD_MM_DTL d left join item i on i.item_no = d.item_no
+      	LEFT JOIN color_info c
+		    ON c.color_no = i.color_no
+	 	left join brand b on b.brand_no = i.brand_no	    
+      	where 1=1 
+    	<include refid="condition" />
+    	<if test="orderByField != null and ''!=orderByField" >
+      		order by ${orderByField}
+      		<if test="orderByField" >
+        		${orderBy}
+      		</if>
+    	</if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+	select '合计' ITEM_NO , NVL(sum(ITEM_QTY),0) ITEM_QTY
+	  from BILL_UM_UNTREAD_MM_DTL d
+	  LEFT JOIN item i
+	    on i.item_no = d.item_no
+	  LEFT JOIN color_info c
+	    ON c.color_no = i.color_no
+	  LEFT JOIN brand b
+	    on b.brand_no = i.brand_no
+	 where 1=1 
+    	<include refid="condition" />
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List_0" />
+     from BILL_UM_UNTREAD_MM_DTL where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <!--查询通知单下的客户-->
+  <select id="selectStoreNo" resultMap="BaseResultMap">
+  	select d.store_no,s.store_name from BILL_UM_UNTREAD_MM_DTL d inner join store s on d.store_no  = s.store_no
+  	where d.locno = #{params.locno} and d.owner_no  = #{params.ownerNo} and d.untread_mm_no = #{params.untreadMmNo}
+  	group by d.store_no,s.store_name
+  </select>
+  <select id="selectMaxRowId" resultType="java.lang.Integer" parameterType="com.yougou.logistics.city.common.model.BillUmUntreadMm">
+  	select nvl(max(row_id),0) from BILL_UM_UNTREAD_MM_DTL where UNTREAD_MM_NO = #{params.untreadMmNo} and locno = #{params.locno}
+  </select>
+    <!-- 查询商品 -->
+  <select id="selectItem" resultMap="BaseResultMap">
+	  	 select B.* from (select A.*,rownum rn from(
+		SELECT i.item_no ,
+		       i.item_name ,
+		       b.barcode ,
+		       i.style_no ,
+		       b.size_no ,
+		       c.color_name
+		  FROM item i
+		  LEFT JOIN color_info c
+		    ON c.color_no = i.color_no
+		  LEFT JOIN item_barcode b
+		       ON i.item_no = b.item_no
+		       AND b.package_id = 0
+		  where 1=1
+		  <include refid="condition_item" />
+		  and i.item_no in(select item_no from con_box_dtl where locno = #{params.locno})
+		   ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectItemCount" resultType="java.lang.Integer">
+		SELECT count(1)
+		  FROM item i
+		  LEFT JOIN color_info c
+		    ON c.color_no = i.color_no
+		  LEFT JOIN item_barcode b
+		       ON i.item_no = b.item_no
+		       AND b.package_id = 0
+		  where 1=1
+		  <include refid="condition_item" />
+		  and i.item_no in(select item_no from con_box_dtl where locno = #{params.locno})
+  </select>	
+  <!--根据商品编码，尺码汇总明细-->
+  <select id="selectDetail4Direct"  resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillUmUntreadMm">
+	SELECT d.item_no, d.size_no, nvl(SUM(d.item_qty), 0) itemQty
+	  FROM bill_um_untread_mm_dtl d
+	 WHERE d.locno = #{params.locno} AND d.untread_mm_no = #{params.untreadMmNo} AND d.owner_no = #{params.ownerNo}
+	 GROUP BY d.item_no, d.size_no
+  </select>
+  
+  <delete id="deleteAllDetail" parameterType="com.yougou.logistics.city.common.model.BillUmUntreadMm" >
+  		delete from BILL_UM_UNTREAD_MM_DTL where LOCNO = #{params.locno,jdbcType=VARCHAR}
+  		 and UNTREAD_MM_NO = #{params.untreadMmNo,jdbcType=VARCHAR}
+  		 and OWNER_NO = #{params.ownerNo,jdbcType=VARCHAR}
+  </delete>
+  <update id="updateAllDetail" parameterType="com.yougou.logistics.city.common.model.BillUmUntreadMm" >
+    update BILL_UM_UNTREAD_MM_DTL
+    set status = #{params.status,jdbcType=VARCHAR}
+    where LOCNO = #{params.locno,jdbcType=VARCHAR}
+  		 and UNTREAD_MM_NO = #{params.untreadMmNo,jdbcType=VARCHAR}
+  		 and OWNER_NO = #{params.ownerNo,jdbcType=VARCHAR}
+  </update>
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillUmUntreadMmDtlKey" >
+    delete from BILL_UM_UNTREAD_MM_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and UNTREAD_MM_NO = #{untreadMmNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillUmUntreadMmDtl" >
+    delete from BILL_UM_UNTREAD_MM_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and UNTREAD_MM_NO = #{untreadMmNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillUmUntreadMmDtl" >
+    insert into BILL_UM_UNTREAD_MM_DTL (LOCNO, OWNER_NO, UNTREAD_MM_NO, 
+      ROW_ID, ITEM_NO, STORE_NO, 
+      SIZE_NO, ITEM_QTY, STATUS, 
+      CREATOR, CREATETM)
+    values (#{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, #{untreadMmNo,jdbcType=VARCHAR}, 
+      #{rowId,jdbcType=DECIMAL}, #{itemNo,jdbcType=VARCHAR}, #{storeNo,jdbcType=VARCHAR}, 
+      #{sizeNo,jdbcType=VARCHAR}, #{itemQty,jdbcType=DECIMAL}, #{status,jdbcType=VARCHAR}, 
+      #{creator,jdbcType=VARCHAR}, #{createtm,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillUmUntreadMmDtl" >
+    insert into BILL_UM_UNTREAD_MM_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="untreadMmNo != null" >
+        UNTREAD_MM_NO,
+      </if>
+      <if test="rowId != null" >
+        ROW_ID,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="itemQty != null" >
+        ITEM_QTY,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="untreadMmNo != null" >
+        #{untreadMmNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rowId != null" >
+        #{rowId,jdbcType=DECIMAL},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo != null" >
+        #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemQty != null" >
+        #{itemQty,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillUmUntreadMmDtl" >
+    update BILL_UM_UNTREAD_MM_DTL
+    <set >
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemQty != null" >
+        ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and UNTREAD_MM_NO = #{untreadMmNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillUmUntreadMmDtl" >
+    update BILL_UM_UNTREAD_MM_DTL
+    set ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+      STATUS = #{status,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and UNTREAD_MM_NO = #{untreadMmNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+</mapper>

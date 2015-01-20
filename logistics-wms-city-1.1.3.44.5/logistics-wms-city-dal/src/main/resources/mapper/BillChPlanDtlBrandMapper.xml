@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BillChPlanDtlBrandMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillChPlanDtlBrand" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="PLAN_NO" property="planNo" jdbcType="VARCHAR" />
+    <id column="BRAND_NO" property="brandNo" jdbcType="VARCHAR" />
+    <result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, PLAN_NO, BRAND_NO, OWNER_NO
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+        	and LOCNO = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        	and OWNER_NO = #{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.planNo and ''!=params.planNo" >
+        	and PLAN_NO = #{params.planNo,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillChPlanDtlBrandKey" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM BILL_CH_PLAN_DTL_BRAND
+    WHERE LOCNO = #{locno,jdbcType=VARCHAR}
+      AND PLAN_NO = #{planNo,jdbcType=VARCHAR}
+      AND BRAND_NO = #{brandNo,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    SELECT COUNT(1) as s FROM BILL_CH_PLAN_DTL_BRAND WHERE 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    SELECT B.* from (SELECT A.*,ROWNUM rn FROM( SELECT 
+    <include refid="Base_Column_List" />
+     FROM BILL_CH_PLAN_DTL_BRAND WHERE 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      ORDER BY ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A WHERE ROWNUM &lt; #{page.endRowNum}) B WHERE rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+     FROM BILL_CH_PLAN_DTL_BRAND WHERE 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillChPlanDtlBrandKey" >
+    DELETE FROM BILL_CH_PLAN_DTL_BRAND
+    WHERE LOCNO = #{locno,jdbcType=VARCHAR}
+      AND PLAN_NO = #{planNo,jdbcType=VARCHAR}
+      AND BRAND_NO = #{brandNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillChPlanDtlBrand" >
+    DELETE FROM BILL_CH_PLAN_DTL_BRAND
+    WHERE LOCNO = #{locno,jdbcType=VARCHAR}
+      AND PLAN_NO = #{planNo,jdbcType=VARCHAR}
+      <if test="null!=brandNo and ''!=brandNo" >
+      	AND BRAND_NO = #{brandNo,jdbcType=VARCHAR}
+      </if>
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillChPlanDtlBrand" >
+    INSERT INTO BILL_CH_PLAN_DTL_BRAND (LOCNO, PLAN_NO, BRAND_NO, 
+      OWNER_NO)
+    VALUES (#{locno,jdbcType=VARCHAR}, #{planNo,jdbcType=VARCHAR}, #{brandNo,jdbcType=VARCHAR}, 
+      #{ownerNo,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillChPlanDtlBrand" >
+    INSERT INTO BILL_CH_PLAN_DTL_BRAND
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="planNo != null" >
+        PLAN_NO,
+      </if>
+      <if test="brandNo != null" >
+        BRAND_NO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="planNo != null" >
+        #{planNo,jdbcType=VARCHAR},
+      </if>
+      <if test="brandNo != null" >
+        #{brandNo,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillChPlanDtlBrand" >
+    UPDATE BILL_CH_PLAN_DTL_BRAND
+    <set >
+      <if test="ownerNo != null" >
+        OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    WHERE LOCNO = #{locno,jdbcType=VARCHAR}
+      AND PLAN_NO = #{planNo,jdbcType=VARCHAR}
+      AND BRAND_NO = #{brandNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillChPlanDtlBrand" >
+    UPDATE BILL_CH_PLAN_DTL_BRAND
+    SET OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+    WHERE LOCNO = #{locno,jdbcType=VARCHAR}
+      AND PLAN_NO = #{planNo,jdbcType=VARCHAR}
+      AND BRAND_NO = #{brandNo,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 批量插入全部品牌库 -->
+  <insert id="batchInsertPlanDtlBrand" parameterType="map">
+  		insert into bill_ch_plan_dtl_brand
+  			(locno, owner_no, plan_no, brand_no)
+  		select #{params.locno,jdbcType=VARCHAR},
+  			   #{params.ownerNo,jdbcType=VARCHAR},
+  		       #{params.planNo,jdbcType=VARCHAR},
+  		       br.brand_no
+  		from BRAND br where 1=1 
+    	and SYS_NO=#{params.sysNo,jdbcType=VARCHAR}
+    	<if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       		and brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    	</if>
+  </insert>
+  
+</mapper>

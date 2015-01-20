@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.TmpCmDefCellExcelMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.TmpCmDefCellExcel" > 
+	<result column="locNo" property="locNo" jdbcType="VARCHAR" />
+	<result column="ware_No" property="wareNo" jdbcType="VARCHAR" />
+	<result column="ware_Name" property="wareName" jdbcType="VARCHAR" />
+	<result column="area_No" property="areaNo" jdbcType="VARCHAR" />
+	<result column="area_Name" property="areaName" jdbcType="VARCHAR" />
+	<result column="area_Type" property="areaType" jdbcType="VARCHAR" />
+	<result column="area_Attribute" property="areaAttribute" jdbcType="VARCHAR" />
+	<result column="area_Usetype" property="areaUsetype" jdbcType="VARCHAR" />
+	<result column="stock_No" property="stockNo" jdbcType="VARCHAR" />
+	<result column="stock_Name" property="stockName" jdbcType="VARCHAR" />
+	<result column="STOCKX" property="stockX" jdbcType="VARCHAR" />
+	<result column="STOCKY" property="stockY" jdbcType="VARCHAR" />
+	<result column="BAYX" property="bayX" jdbcType="VARCHAR" />
+	<result column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+	<result column="ITEM_TYPE" property="itemType" jdbcType="VARCHAR" />
+	<result column="QUALITY" property="quality" jdbcType="VARCHAR" />
+	<result column="MIX_FLAG" property="mixFlag" jdbcType="VARCHAR"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+	  WARE_NO,WARE_NAME, AREA_NO,AREA_TYPE,AREA_ATTRIBUTE,AREA_USETYPE,
+	  STOCK_NO,STOCK_NAME,STOCKX,STOCKY,BAYX,CELL_NO,ITEM_TYPE,QUALITY,MIX_FLAG,LOCNO
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+     <if test="null!=params.uuId and ''!=params.uuId" >
+        AND UUID = #{params.uuId,jdbcType=VARCHAR}
+      </if>
+     </if>
+  </sql>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from TMP_CM_DEFCELL_EXCEL where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from TMP_CM_DEFCELL_EXCEL where 1=1 
+    <include refid="condition" />
+      order by CREATETM desc
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <delete id="deleteByUuid" parameterType="com.yougou.logistics.city.common.model.TmpCmDefCellExcel" >
+     <![CDATA[ DELETE FROM TMP_CM_DEFCELL_EXCEL T WHERE T.UUID =#{params.uuId,jdbcType=VARCHAR} 
+     	OR T.CREATETM<TRUNC(SYSDATE)]]>
+  </delete>
+ <!-- 批量插入临时表 -->
+  <select id="batchInsertSelective" parameterType="map">
+	INSERT INTO TMP_CM_DEFCELL_EXCEL (WARE_NO, WARE_NAME, AREA_NO,AREA_NAME,
+	AREA_TYPE, AREA_ATTRIBUTE, AREA_USETYPE, STOCK_NO, STOCK_NAME, STOCKX,
+	STOCKY, BAYX, CELL_NO, ITEM_TYPE, QUALITY, MIX_FLAG, LOCNO,UUID,
+	CREATETM,ITEM_TYPE_VALUE,QUALITY_VALUE,MIX_FLAG_VALUE)
+        <foreach collection="params.list" item="item" index="index"  separator="union all">  
+          SELECT #{item.wareNo,jdbcType=VARCHAR},#{item.wareName,jdbcType=VARCHAR},
+          	#{item.areaNo,jdbcType=VARCHAR},#{item.areaName,jdbcType=VARCHAR},#{item.areaType,jdbcType=VARCHAR},
+          	#{item.areaAttribute,jdbcType=VARCHAR},#{item.areaUsetype,jdbcType=VARCHAR},
+   			#{item.stockNo,jdbcType=VARCHAR},#{item.stockName,jdbcType=VARCHAR},
+   			#{item.stockX,jdbcType=VARCHAR},#{item.stockY,jdbcType=VARCHAR},
+   			#{item.bayX,jdbcType=VARCHAR},#{item.cellNo,jdbcType=VARCHAR},
+   			#{item.itemType,jdbcType=VARCHAR},#{item.quality,jdbcType=VARCHAR},
+   			#{item.mixFlag,jdbcType=VARCHAR},#{item.locNo,jdbcType=VARCHAR},
+   			#{params.uuId,jdbcType=VARCHAR},sysdate,#{item.itemTypeValue,jdbcType=VARCHAR},
+   			#{item.qualityValue,jdbcType=VARCHAR}, #{item.mixFlagValue,jdbcType=VARCHAR}
+   		 FROM DUAL
+        </foreach>
+  </select>
+   <delete id="batchDeleteBy" parameterType="map" >
+    	DELETE FROM TMP_CON_BOX_EXCEL T WHERE  T.LOC_NO =#{params.locNo,jdbcType=VARCHAR} and
+    		T.CON_NO in 
+    		<foreach collection="params.list" index="index" item="item" open="(" separator="," close=")">   
+        		#{item}   
+    		</foreach>  
+  </delete>
+  <!--增加通道表cm_defstock-->
+  <insert id="batshSaveCmDdefstockExcel" parameterType="map">
+	INSERT INTO CM_DEFSTOCK (
+		LOCNO, WARE_NO, AREA_NO, STOCK_NO, A_STOCK_NO,Q_STOCK_X, Q_BAY_X, Q_STOCK_Y,
+	 	AREA_TYPE, MIX_FLAG,CREATOR,CREATETM, ITEM_TYPE, AREA_QUALITY)
+    SELECT T.LOCNO,T.WARE_NO,T.AREA_NO,T.STOCK_NO,(T.WARE_NO||T.AREA_NO||T.STOCK_NO),
+      MAX(T.STOCKX),MAX(T.BAYX),MAX(T.STOCKY),MAX(D.AREA_TYPE),MAX(T.MIX_FLAG_VALUE),
+      #{params.userName,jdbcType=VARCHAR},SYSDATE,0,0
+  	 FROM TMP_CM_DEFCELL_EXCEL T 
+  	 LEFT JOIN CM_DEFAREA D ON T.AREA_NO=D.AREA_NO AND T.LOCNO=D.LOCNO AND D.WARE_NO=T.WARE_NO
+  	 WHERE T.LOCNO=#{params.locNo,jdbcType=VARCHAR} AND T.UUID=#{params.uuId,jdbcType=VARCHAR}
+  	 AND  NOT  EXISTS 
+  	 (SELECT 1 FROM CM_DEFSTOCK CM WHERE CM.LOCNO=T.LOCNO AND CM.STOCK_NO=T.STOCK_NO AND CM.WARE_NO=T.WARE_NO AND CM.AREA_NO=T.AREA_NO )
+  	 GROUP BY T.LOCNO,T.WARE_NO,T.AREA_NO,T.STOCK_NO
+  </insert>
+  <!--增加储位表-->
+  <insert id="batshSaveCmDefcellExcel" parameterType="map">
+	INSERT INTO CM_DEFCELL (LOCNO, OWNER_NO, WARE_NO, AREA_NO, STOCK_NO, STOCK_X, BAY_X, 
+	  	STOCK_Y, CELL_NO, MIX_FLAG,CREATOR, CREATETM,ITEM_TYPE, AREA_QUALITY)
+ 	SELECT  T.LOCNO,'BL',T.WARE_NO,T.AREA_NO,T.STOCK_NO,T.STOCKX,T.BAYX,
+ 		T.STOCKY,T.CELL_NO,T.MIX_FLAG_VALUE,#{params.userName,jdbcType=VARCHAR},
+ 		SYSDATE,T.ITEM_TYPE_VALUE,T.QUALITY_VALUE FROM TMP_CM_DEFCELL_EXCEL T  WHERE 
+  	 	T.LOCNO=#{params.locNo,jdbcType=VARCHAR} AND T.UUID=#{params.uuId,jdbcType=VARCHAR} 
+  </insert>
+  
+  <select id="selectCellNoBy" resultType="java.lang.String" parameterType="map" >
+    SELECT C.CELL_NO FROM CM_DEFCELL C WHERE C.LOCNO=#{params.locNo,jdbcType=VARCHAR}
+       AND C.CELL_NO IN 
+        <foreach collection="params.list" item="cellNo" open="(" close=")" separator=",">
+				#{cellNo}
+	   </foreach>
+  </select>
+  
+  <select id="selectCmDefwareBy" resultType="java.lang.String" parameterType="map" >
+     SELECT DISTINCT D.WARE_NO  FROM CM_DEFWARE D INNER JOIN TMP_CM_DEFCELL_EXCEL T ON D.WARE_NO = T.WARE_NO 
+    	WHERE D.LOCNO = #{params.locNo,jdbcType=VARCHAR} AND T.UUID=#{params.uuId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectCmDefareaBy" resultType="java.lang.String" parameterType="map" >
+   SELECT DISTINCT D.AREA_NO  FROM  CM_DEFAREA D INNER JOIN TMP_CM_DEFCELL_EXCEL T ON D.AREA_NO = T.AREA_NO
+      WHERE D.LOCNO = #{params.locNo,jdbcType=VARCHAR} AND T.UUID=#{params.uuId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectCellNoByUuId" resultType="java.lang.String" parameterType="map" >
+     SELECT T.CELL_NO FROM CM_DEFCELL CM INNER JOIN TMP_CM_DEFCELL_EXCEL T
+       ON CM.LOCNO=T.LOCNO AND T.CELL_NO=CM.CELL_NO  WHERE T.LOCNO = #{params.locNo,jdbcType=VARCHAR} 
+       AND T.UUID=#{params.uuId,jdbcType=VARCHAR}
+  </select>
+  
+</mapper>

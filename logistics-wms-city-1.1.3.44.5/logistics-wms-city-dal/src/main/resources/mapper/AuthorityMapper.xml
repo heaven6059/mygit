@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.AuthorityMapper">
+	<sql id="Verify_Authority_Brand_Sql">
+            <foreach collection="authorityParams.hasBrandNoList" item="brandNo" open="(" close=")" separator=",">
+				#{brandNo}
+			</foreach>
+	</sql>
+	
+	<sql id="Verify_Authority_PartSysNo_Sql">
+            <foreach collection="authorityParams.queryParams.partSysNoList" item="sysNo" open="(" close=")" separator=",">
+				#{sysNo}
+			</foreach>
+	</sql>
+	
+</mapper>

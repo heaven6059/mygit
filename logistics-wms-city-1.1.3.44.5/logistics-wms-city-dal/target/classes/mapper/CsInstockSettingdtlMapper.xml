@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.CsInstockSettingdtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.CsInstockSettingdtl" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="SETTING_NO" property="settingNo" jdbcType="VARCHAR" />
+    <id column="SELECT_VALUE" property="selectValue" jdbcType="VARCHAR" />
+    <result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, SETTING_NO, SELECT_VALUE, OWNER_NO
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.CsInstockSettingdtlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from CS_INSTOCK_SETTINGDTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and SETTING_NO = #{settingNo,jdbcType=VARCHAR}
+      and SELECT_VALUE = #{selectValue,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from CS_INSTOCK_SETTINGDTL where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from CS_INSTOCK_SETTINGDTL where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from CS_INSTOCK_SETTINGDTL where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <!---查询品牌 -->
+  <select id="selectBrandBySettingNo" resultType="java.util.Map" parameterType="java.util.Map" >
+	select SELECT_VALUE as code,BRAND_NAME as name
+	from CS_INSTOCK_SETTINGDTL dt inner join BRAND b on b.BRAND_NO = DT.SELECT_VALUE 
+    where dt.LOCNO = #{locNo} and dt.SETTING_NO = #{settingNo}
+  </select>
+  
+    <!---查询Category -->
+  <select id="selectCategoryBySettingNo" resultType="java.util.Map" parameterType="java.util.Map" >
+	select SELECT_VALUE as code,CATE_NAME as name
+	from CS_INSTOCK_SETTINGDTL dt inner join CATEGORY c on c.CATE_NO = DT.SELECT_VALUE 
+    where dt.LOCNO = #{locNo} and dt.SETTING_NO = #{settingNo}
+  </select>
+  
+    <!---查询商品 ITEM-->
+  <select id="selectItemBySettingNo" resultType="java.util.Map" parameterType="java.util.Map" >
+	select SELECT_VALUE as code,ITEM_NAME as name
+	from CS_INSTOCK_SETTINGDTL dt inner join ITEM i on i.ITEM_NO = DT.SELECT_VALUE 
+    where dt.LOCNO = #{locNo} and dt.SETTING_NO = #{settingNo}
+  </select>
+  
+  <!-- 查询同一生效对象在整个策略中是否存在 -->
+  <select id="selectSelectValueCount" resultType = "java.lang.Integer" parameterType="java.util.Map">
+	  SELECT COUNT(1)
+	  FROM cs_instock_settingdtl d
+	 INNER JOIN cs_instock_setting c
+	    ON c.locno = d.locno
+	   AND c.owner_no = d.owner_no
+	   AND c.setting_no = d.setting_no
+	   AND c.status != '0'
+	 WHERE c.DETAIL_TYPE = #{param.detailType}
+	   AND c.set_type = #{param.setType}
+	   AND c.locno = #{param.locno}
+	   AND d.select_value = #{param.selectValue}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.CsInstockSettingdtlKey" >
+    delete from CS_INSTOCK_SETTINGDTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and SETTING_NO = #{settingNo,jdbcType=VARCHAR}
+      and SELECT_VALUE = #{selectValue,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.CsInstockSettingdtl" >
+    delete from CS_INSTOCK_SETTINGDTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and SETTING_NO = #{settingNo,jdbcType=VARCHAR}
+      and SELECT_VALUE = #{selectValue,jdbcType=VARCHAR}
+  </delete>
+  <!--通过策略删除商品明细-->
+  <delete id="deleteBySettingNo" parameterType="com.yougou.logistics.city.common.model.CsInstockSettingdtl" >
+    delete from CS_INSTOCK_SETTINGDTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and SETTING_NO = #{settingNo,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.CsInstockSettingdtl" >
+    insert into CS_INSTOCK_SETTINGDTL (LOCNO, SETTING_NO, SELECT_VALUE, 
+      OWNER_NO)
+    values (#{locno,jdbcType=VARCHAR}, #{settingNo,jdbcType=VARCHAR}, #{selectValue,jdbcType=VARCHAR}, 
+      #{ownerNo,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.CsInstockSettingdtl" >
+    insert into CS_INSTOCK_SETTINGDTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="settingNo != null" >
+        SETTING_NO,
+      </if>
+      <if test="selectValue != null" >
+        SELECT_VALUE,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="settingNo != null" >
+        #{settingNo,jdbcType=VARCHAR},
+      </if>
+      <if test="selectValue != null" >
+        #{selectValue,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.CsInstockSettingdtl" >
+    update CS_INSTOCK_SETTINGDTL
+    <set >
+      <if test="ownerNo != null" >
+        OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and SETTING_NO = #{settingNo,jdbcType=VARCHAR}
+      and SELECT_VALUE = #{selectValue,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.CsInstockSettingdtl" >
+    update CS_INSTOCK_SETTINGDTL
+    set OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and SETTING_NO = #{settingNo,jdbcType=VARCHAR}
+      and SELECT_VALUE = #{selectValue,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.LookupMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.Lookup" >
+    <id column="SYSTEMID" property="systemid" jdbcType="DECIMAL" />
+    <id column="LOOKUPCODE" property="lookupcode" jdbcType="VARCHAR" />
+    <id column="LOOKUPTYPE" property="lookuptype" jdbcType="VARCHAR" />
+    <result column="LOOKUPNAME" property="lookupname" jdbcType="VARCHAR" />
+    <result column="LOOKUPLEVEL" property="lookuplevel" jdbcType="DECIMAL" />
+    <result column="AUDITSTATUS" property="auditstatus" jdbcType="DECIMAL" />
+    <result column="REMARKS" property="remarks" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="BRAND_NO" property="brandNo" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    SYSTEMID, LOOKUPCODE, LOOKUPTYPE, LOOKUPNAME, LOOKUPLEVEL, AUDITSTATUS, REMARKS, 
+    EDITTM, BRAND_NO, CREATETM, CREATOR, EDITOR
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+    	   <if test="null!=params.lookupcode and ''!=params.lookupcode">
+		         and LOOKUPCODE=#{params.lookupcode,jdbcType=VARCHAR}
+		   </if>
+		    <if test="null!=params.lookupname and ''!=params.lookupname">
+		         and LOOKUPNAME like '%${params.lookupname}%'
+		   </if>
+		  <if test="null!=params.systemid and ''!=params.systemid">
+		         and SYSTEMID=#{params.systemid,jdbcType=DECIMAL}
+		   </if>
+		  <if test="null!=params.sysNo and ''!=params.sysNo">
+		         and BRAND_NO=#{params.brandNo,jdbcType=VARCHAR}
+		   </if>
+	      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+	        ${params.queryCondition}
+	      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.LookupKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from LOOKUP
+    where SYSTEMID = #{systemid,jdbcType=DECIMAL}
+      and LOOKUPCODE = #{lookupcode,jdbcType=VARCHAR}
+      and LOOKUPTYPE = #{lookuptype,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from LOOKUP where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from LOOKUP where 1=1 
+    <include refid="condition" />
+    <choose>
+    	<when test="orderByField != null and ''!=orderByField">
+    		order by ${orderByField}
+    		<if test="orderByField" >
+	        	${orderBy}
+	      	</if>
+    	</when>
+    	<otherwise>
+    		order by edittm desc
+    	</otherwise>
+    </choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from LOOKUP where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.LookupKey" >
+    delete from LOOKUP
+    where SYSTEMID = #{systemid,jdbcType=DECIMAL}
+      and LOOKUPCODE = #{lookupcode,jdbcType=VARCHAR}
+      and LOOKUPTYPE = #{lookuptype,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.Lookup" >
+    delete from LOOKUP
+    where SYSTEMID = #{systemid,jdbcType=DECIMAL}
+      and LOOKUPCODE = #{lookupcode,jdbcType=VARCHAR}
+      and LOOKUPTYPE = #{lookuptype,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.Lookup" >
+    insert into LOOKUP (SYSTEMID, LOOKUPCODE, LOOKUPTYPE, 
+      LOOKUPNAME, LOOKUPLEVEL, AUDITSTATUS, 
+      REMARKS, EDITTM, BRAND_NO, 
+      CREATETM, CREATOR, EDITOR
+      )
+    values (#{systemid,jdbcType=DECIMAL}, #{lookupcode,jdbcType=VARCHAR}, #{lookuptype,jdbcType=VARCHAR}, 
+      #{lookupname,jdbcType=VARCHAR}, #{lookuplevel,jdbcType=DECIMAL}, #{auditstatus,jdbcType=DECIMAL}, 
+      #{remarks,jdbcType=VARCHAR}, #{edittm,jdbcType=TIMESTAMP}, #{brandNo,jdbcType=VARCHAR}, 
+      #{createtm,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, #{editor,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.Lookup" >
+    insert into LOOKUP
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="systemid != null" >
+        SYSTEMID,
+      </if>
+      <if test="lookupcode != null" >
+        LOOKUPCODE,
+      </if>
+      <if test="lookuptype != null" >
+        LOOKUPTYPE,
+      </if>
+      <if test="lookupname != null" >
+        LOOKUPNAME,
+      </if>
+      <if test="lookuplevel != null" >
+        LOOKUPLEVEL,
+      </if>
+      <if test="auditstatus != null" >
+        AUDITSTATUS,
+      </if>
+      <if test="remarks != null" >
+        REMARKS,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="brandNo != null" >
+        BRAND_NO,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="systemid != null" >
+        #{systemid,jdbcType=DECIMAL},
+      </if>
+      <if test="lookupcode != null" >
+        #{lookupcode,jdbcType=VARCHAR},
+      </if>
+      <if test="lookuptype != null" >
+        #{lookuptype,jdbcType=VARCHAR},
+      </if>
+      <if test="lookupname != null" >
+        #{lookupname,jdbcType=VARCHAR},
+      </if>
+      <if test="lookuplevel != null" >
+        #{lookuplevel,jdbcType=DECIMAL},
+      </if>
+      <if test="auditstatus != null" >
+        #{auditstatus,jdbcType=DECIMAL},
+      </if>
+      <if test="remarks != null" >
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="brandNo != null" >
+        #{brandNo,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.Lookup" >
+    update LOOKUP
+    <set >
+      <if test="lookupname != null" >
+        LOOKUPNAME = #{lookupname,jdbcType=VARCHAR},
+      </if>
+      <if test="lookuplevel != null" >
+        LOOKUPLEVEL = #{lookuplevel,jdbcType=DECIMAL},
+      </if>
+      <if test="auditstatus != null" >
+        AUDITSTATUS = #{auditstatus,jdbcType=DECIMAL},
+      </if>
+      <if test="remarks != null" >
+        REMARKS = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="brandNo != null" >
+        BRAND_NO = #{brandNo,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where SYSTEMID = #{systemid,jdbcType=DECIMAL}
+      and LOOKUPCODE = #{lookupcode,jdbcType=VARCHAR}
+      and LOOKUPTYPE = #{lookuptype,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.Lookup" >
+    update LOOKUP
+    set LOOKUPNAME = #{lookupname,jdbcType=VARCHAR},
+      LOOKUPLEVEL = #{lookuplevel,jdbcType=DECIMAL},
+      AUDITSTATUS = #{auditstatus,jdbcType=DECIMAL},
+      REMARKS = #{remarks,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      BRAND_NO = #{brandNo,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      EDITOR = #{editor,jdbcType=VARCHAR}
+    where SYSTEMID = #{systemid,jdbcType=DECIMAL}
+      and LOOKUPCODE = #{lookupcode,jdbcType=VARCHAR}
+      and LOOKUPTYPE = #{lookuptype,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="checkItemValue" resultType="int" parameterType="map">
+  	select count(1) as s from LOOKUPDTL where 1=1 
+  	<if test="systemid != null">
+  		and SYSTEMID=#{systemid,jdbcType=DECIMAL}
+  	</if>
+  	<if test="lookupcode !=null">
+  		and LOOKUPCODE=#{lookupcode,jdbcType=VARCHAR}
+  	</if>
+  	<if test="itemval !=null">
+  		and ITEMVAL=#{itemval,jdbcType=VARCHAR}
+  	</if>
+  </select>
+  
+  <!-- 删除码表表头 -->
+  <delete id="deletelookup" parameterType="String">
+  	delete from lookup where LOOKUPCODE = #{lookupcode,jdbcType=VARCHAR}
+  	
+  </delete>
+  
+  <!-- 删除码表明细 -->
+  <delete id="deletelookupdtl" parameterType="String">
+  	delete from lookupdtl where LOOKUPCODE =#{lookupcode,jdbcType=VARCHAR}
+  </delete>
+  
+  <!-- 验证lookupcode是否唯一 -->
+  <select id="checkLookuoCode" resultType="int" parameterType="String">
+  select count(1) as s  from lookup where LOOKUPCODE=#{lookupcode,jdbcType=VARCHAR}
+  </select>
+</mapper>

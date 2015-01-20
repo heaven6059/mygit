@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="logistics-wms-city-web">
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <dependent-module archiveName="logistics-wms-city-manager-1.1.3.44.4.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/logistics-wms-city-manager/logistics-wms-city-manager">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="logistics-wms-city-service-1.1.3.44.4.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/logistics-wms-city-service/logistics-wms-city-service">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="logistics-wms-city-acc-service-1.1.3.44.4.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/logistics-wms-city-acc-service/logistics-wms-city-acc-service">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="logistics-wms-city-acc-dal-1.1.3.44.4.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/logistics-wms-city-acc-dal/logistics-wms-city-acc-dal">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="logistics-wms-city-dal-1.1.3.44.4.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/logistics-wms-city-dal/logistics-wms-city-dal">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="logistics-wms-city-common-1.1.3.44.4.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/logistics-wms-city-common/logistics-wms-city-common">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="context-root" value="logistics-wms-city-web"/>
+        <property name="java-output-path" value="/logistics-wms-city-web/target/classes"/>
+        <property name="component.exclusion.patterns" value="src/main/resources/assembly.xml"/>
+    </wb-module>
+</project-modules>

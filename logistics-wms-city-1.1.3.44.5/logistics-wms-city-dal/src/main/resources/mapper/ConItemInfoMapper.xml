@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.ConItemInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.ConItemInfo" >
+    <id column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <id column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+    <result column="SUPPLIER_NO" property="supplierNo" jdbcType="VARCHAR" />
+    <result column="BARCODE" property="barcode" jdbcType="VARCHAR" />
+    <result column="LOT_NO" property="lotNo" jdbcType="VARCHAR" />
+    <result column="PRODUCE_DATE" property="produceDate" jdbcType="TIMESTAMP" />
+    <result column="EXPIRE_DATE" property="expireDate" jdbcType="TIMESTAMP" />
+    <result column="QUALITY" property="quality" jdbcType="VARCHAR" />
+    <result column="IMPORT_BATCH_NO" property="importBatchNo" jdbcType="VARCHAR" />
+    <result column="BATCH_SERIAL_NO" property="batchSerialNo" jdbcType="VARCHAR" />
+    <result column="EXT_BARCODE_NO" property="extBarcodeNo" jdbcType="VARCHAR" />
+    <result column="ITEM_TYPE" property="itemType" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ITEM_NO, ITEM_ID, SUPPLIER_NO, BARCODE, LOT_NO, PRODUCE_DATE, EXPIRE_DATE, QUALITY, 
+    IMPORT_BATCH_NO, BATCH_SERIAL_NO, EXT_BARCODE_NO, ITEM_TYPE
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.ConItemInfoKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from CON_ITEM_INFO
+    where ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+      and ITEM_ID = #{itemId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from CON_ITEM_INFO where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from CON_ITEM_INFO where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from CON_ITEM_INFO where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.ConItemInfoKey" >
+    delete from CON_ITEM_INFO
+    where ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+      and ITEM_ID = #{itemId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.ConItemInfo" >
+    delete from CON_ITEM_INFO
+    where ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+      and ITEM_ID = #{itemId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.ConItemInfo" >
+    insert into CON_ITEM_INFO (ITEM_NO, ITEM_ID, SUPPLIER_NO, 
+      BARCODE, LOT_NO, PRODUCE_DATE, 
+      EXPIRE_DATE, QUALITY, IMPORT_BATCH_NO, 
+      BATCH_SERIAL_NO, EXT_BARCODE_NO, ITEM_TYPE
+      )
+    values (#{itemNo,jdbcType=VARCHAR}, #{itemId,jdbcType=DECIMAL}, #{supplierNo,jdbcType=VARCHAR}, 
+      #{barcode,jdbcType=VARCHAR}, #{lotNo,jdbcType=VARCHAR}, #{produceDate,jdbcType=TIMESTAMP}, 
+      #{expireDate,jdbcType=TIMESTAMP}, #{quality,jdbcType=VARCHAR}, #{importBatchNo,jdbcType=VARCHAR}, 
+      #{batchSerialNo,jdbcType=VARCHAR}, #{extBarcodeNo,jdbcType=VARCHAR}, #{itemType,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.ConItemInfo" >
+    insert into CON_ITEM_INFO
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="itemId != null" >
+        ITEM_ID,
+      </if>
+      <if test="supplierNo != null" >
+        SUPPLIER_NO,
+      </if>
+      <if test="barcode != null" >
+        BARCODE,
+      </if>
+      <if test="lotNo != null" >
+        LOT_NO,
+      </if>
+      <if test="produceDate != null" >
+        PRODUCE_DATE,
+      </if>
+      <if test="expireDate != null" >
+        EXPIRE_DATE,
+      </if>
+      <if test="quality != null" >
+        QUALITY,
+      </if>
+      <if test="importBatchNo != null" >
+        IMPORT_BATCH_NO,
+      </if>
+      <if test="batchSerialNo != null" >
+        BATCH_SERIAL_NO,
+      </if>
+      <if test="extBarcodeNo != null" >
+        EXT_BARCODE_NO,
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=DECIMAL},
+      </if>
+      <if test="supplierNo != null" >
+        #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null" >
+        #{barcode,jdbcType=VARCHAR},
+      </if>
+      <if test="lotNo != null" >
+        #{lotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="produceDate != null" >
+        #{produceDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expireDate != null" >
+        #{expireDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="quality != null" >
+        #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="importBatchNo != null" >
+        #{importBatchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="batchSerialNo != null" >
+        #{batchSerialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="extBarcodeNo != null" >
+        #{extBarcodeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null" >
+        #{itemType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.ConItemInfo" >
+    update CON_ITEM_INFO
+    <set >
+      <if test="supplierNo != null" >
+        SUPPLIER_NO = #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null" >
+        BARCODE = #{barcode,jdbcType=VARCHAR},
+      </if>
+      <if test="lotNo != null" >
+        LOT_NO = #{lotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="produceDate != null" >
+        PRODUCE_DATE = #{produceDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expireDate != null" >
+        EXPIRE_DATE = #{expireDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="quality != null" >
+        QUALITY = #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="importBatchNo != null" >
+        IMPORT_BATCH_NO = #{importBatchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="batchSerialNo != null" >
+        BATCH_SERIAL_NO = #{batchSerialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="extBarcodeNo != null" >
+        EXT_BARCODE_NO = #{extBarcodeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+      and ITEM_ID = #{itemId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.ConItemInfo" >
+    update CON_ITEM_INFO
+    set SUPPLIER_NO = #{supplierNo,jdbcType=VARCHAR},
+      BARCODE = #{barcode,jdbcType=VARCHAR},
+      LOT_NO = #{lotNo,jdbcType=VARCHAR},
+      PRODUCE_DATE = #{produceDate,jdbcType=TIMESTAMP},
+      EXPIRE_DATE = #{expireDate,jdbcType=TIMESTAMP},
+      QUALITY = #{quality,jdbcType=VARCHAR},
+      IMPORT_BATCH_NO = #{importBatchNo,jdbcType=VARCHAR},
+      BATCH_SERIAL_NO = #{batchSerialNo,jdbcType=VARCHAR},
+      EXT_BARCODE_NO = #{extBarcodeNo,jdbcType=VARCHAR},
+      ITEM_TYPE = #{itemType,jdbcType=VARCHAR}
+    where ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+      and ITEM_ID = #{itemId,jdbcType=DECIMAL}
+  </update>
+   <select id="getItemId" resultType="java.lang.String" >
+	   select i.item_id  from   con_item_info  i
+		where i.item_no = #{itemNo,jdbcType=VARCHAR} 
+		and i.barcode = #{barcode,jdbcType=VARCHAR} 
+		and i.supplier_no = #{supplierNo,jdbcType=VARCHAR} 
+		and i.import_batch_no =#{importNo,jdbcType=VARCHAR}  
+  </select>
+   <select id="getMaxItemIdByItemNo" resultType="java.lang.String" >
+	  select nvl(max(item_id),0)+1 from con_item_info where item_no = #{itemNo,jdbcType=VARCHAR}
+  </select>
+</mapper>

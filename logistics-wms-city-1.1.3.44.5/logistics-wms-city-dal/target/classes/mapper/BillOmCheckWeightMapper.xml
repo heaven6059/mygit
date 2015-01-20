@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillOmCheckWeightMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillOmCheckWeight" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="CONTAINER_NO" property="containerNo" jdbcType="VARCHAR" />
+    <id column="LABEL_NO" property="labelNo" jdbcType="VARCHAR" />
+    <result column="CONTAINER_TYPE" property="containerType" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+   	<result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+   	<result column="QTY" property="qty" jdbcType="DECIMAL" />
+   	<result column="COLOR_NO" property="colorNo" jdbcType="VARCHAR" />
+   	<result column="COLOR_NAME" property="colorName" jdbcType="VARCHAR" />
+   	<result column="STYLE_NO" property="styleNo" jdbcType="VARCHAR" />
+    <result column="STORE_NO" property="storeNo" jdbcType="VARCHAR" />
+    <result column="REAL_WEIGHT" property="realWeight" jdbcType="DECIMAL" />
+    <result column="OPERATE_WORKER" property="operateWorker" jdbcType="VARCHAR" />
+    <result column="OPERATE_DATE" property="operateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, CONTAINER_NO, LABEL_NO, STORE_NO, REAL_WEIGHT, OPERATE_WORKER, OPERATE_DATE
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillOmCheckWeightKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_OM_CHECK_WEIGHT
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and CONTAINER_NO = #{containerNo,jdbcType=VARCHAR}
+      and LABEL_NO = #{labelNo,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_OM_CHECK_WEIGHT where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) from (
+    	select a1.container_no,
+	       a1.container_no,
+	       a1.container_type,
+	       a1.label_no,
+	       b1.item_no,
+	       c1.item_name,
+	       b1.size_no,
+	       b1.qty,
+	       c1.color_no,
+	       e1.color_name,
+	       c1.style_no
+	  from Con_label            a1,
+	       Con_label_dtl        b1,
+	       Item                 c1,
+	       Bill_om_check_weight d1,
+	       Color_Info           e1
+	 where a1.locno = b1.locno
+	   and a1.container_no = b1.container_no
+	   and a1.container_type = b1.container_type
+	   and b1.item_no = c1.item_no
+	   and c1.color_no = e1.color_no
+	   and a1.locno = d1.locno(+)
+	   and a1.container_no = d1.container_no(+)
+	   and a1.label_no = d1.label_no(+)
+		<if test="params.locno != null and ''!=params.locno" >
+			and a1.locNo = #{params.locno,jdbcType=VARCHAR}
+		</if>
+		<if test="params.labelNo != null and ''!=params.labelNo" >
+	    	and a1.label_no = #{params.labelNo,jdbcType=VARCHAR}
+		</if>
+   	) A
+  </select>
+  
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    	   a1.container_no,
+	       a1.container_type,
+	       a1.label_no,
+	       b1.item_no,
+	       c1.item_name,
+	       b1.size_no,
+	       b1.qty,
+	       c1.color_no,
+	       e1.color_name,
+	       c1.style_no,
+	       nvl(d1.real_weight, 0) real_weight
+	  from Con_label            a1,
+	       Con_label_dtl        b1,
+	       Item                 c1,
+	       Bill_om_check_weight d1,
+	       Color_Info           e1
+	 where a1.locno = b1.locno
+	   and a1.container_no = b1.container_no
+	   and a1.container_type = b1.container_type
+	   and b1.item_no = c1.item_no
+	   and c1.color_no = e1.color_no
+	   and a1.locno = d1.locno(+)
+	   and a1.container_no = d1.container_no(+)
+	   and a1.label_no = d1.label_no(+)
+   		<if test="params.locno != null and ''!=params.locno" >
+	    	and a1.locNo = #{params.locno,jdbcType=VARCHAR}
+	    </if>
+	    <if test="params.labelNo != null and ''!=params.labelNo" >
+	        and a1.label_no = #{params.labelNo,jdbcType=VARCHAR}
+	    </if>
+    	<if test="orderByField != null and ''!=orderByField" >
+      		order by ${orderByField}
+      		<if test="orderByField" >
+        		${orderBy}
+      		</if>
+    	</if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillOmCheckWeightKey" >
+    delete from BILL_OM_CHECK_WEIGHT
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and CONTAINER_NO = #{containerNo,jdbcType=VARCHAR}
+      and LABEL_NO = #{labelNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillOmCheckWeight" >
+    delete from BILL_OM_CHECK_WEIGHT
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and CONTAINER_NO = #{containerNo,jdbcType=VARCHAR}
+      and LABEL_NO = #{labelNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillOmCheckWeight" >
+    insert into BILL_OM_CHECK_WEIGHT (LOCNO, CONTAINER_NO, LABEL_NO, 
+      STORE_NO, REAL_WEIGHT, OPERATE_WORKER, 
+      OPERATE_DATE)
+    values (#{locno,jdbcType=VARCHAR}, #{containerNo,jdbcType=VARCHAR}, #{labelNo,jdbcType=VARCHAR}, 
+      #{storeNo,jdbcType=VARCHAR}, #{realWeight,jdbcType=DECIMAL}, #{operateWorker,jdbcType=VARCHAR}, 
+      #{operateDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillOmCheckWeight" >
+    insert into BILL_OM_CHECK_WEIGHT
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="containerNo != null" >
+        CONTAINER_NO,
+      </if>
+      <if test="labelNo != null" >
+        LABEL_NO,
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO,
+      </if>
+      <if test="realWeight != null" >
+        REAL_WEIGHT,
+      </if>
+      <if test="operateWorker != null" >
+        OPERATE_WORKER,
+      </if>
+      <if test="operateDate != null" >
+        OPERATE_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="containerNo != null" >
+        #{containerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="labelNo != null" >
+        #{labelNo,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo != null" >
+        #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="realWeight != null" >
+        #{realWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="operateWorker != null" >
+        #{operateWorker,jdbcType=VARCHAR},
+      </if>
+      <if test="operateDate != null" >
+        #{operateDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillOmCheckWeight" >
+    update BILL_OM_CHECK_WEIGHT
+    <set >
+      <if test="storeNo != null" >
+        STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="realWeight != null" >
+        REAL_WEIGHT = #{realWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="operateWorker != null" >
+        OPERATE_WORKER = #{operateWorker,jdbcType=VARCHAR},
+      </if>
+      <if test="operateDate != null" >
+        OPERATE_DATE = #{operateDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and CONTAINER_NO = #{containerNo,jdbcType=VARCHAR}
+      and LABEL_NO = #{labelNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillOmCheckWeight" >
+    update BILL_OM_CHECK_WEIGHT
+    set STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      REAL_WEIGHT = #{realWeight,jdbcType=DECIMAL},
+      OPERATE_WORKER = #{operateWorker,jdbcType=VARCHAR},
+      OPERATE_DATE = #{operateDate,jdbcType=TIMESTAMP}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and CONTAINER_NO = #{containerNo,jdbcType=VARCHAR}
+      and LABEL_NO = #{labelNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

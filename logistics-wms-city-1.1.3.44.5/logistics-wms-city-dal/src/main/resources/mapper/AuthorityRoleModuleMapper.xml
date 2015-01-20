@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.AuthorityRoleModuleMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.AuthorityRoleModule" >
+    <result column="ROLE_ID" property="roleId" jdbcType="DECIMAL" />
+    <result column="MODULE_ID" property="moduleId" jdbcType="DECIMAL" />
+    <result column="OPER_PERMISSIONS" property="operPermissions" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      
+      <if test=" null!=params.userId and ''!=params.userId and null!=params.moduleId and ''!=params.moduleId " >
+          and role_id in (select roleid from system_user_role where 1=1 and userid=#{params.userId,jdbcType=DECIMAL}  )
+		  and module_id=#{params.moduleId,jdbcType=DECIMAL}
+      </if>
+      
+    </if>
+  </sql>
+  <sql id="Base_Column_List">
+  ROLE_ID,MODULE_ID,OPER_PERMISSIONS
+  </sql>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from AUTHORITY_ROLE_MODULE where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.AuthorityRoleModule" >
+    insert into AUTHORITY_ROLE_MODULE (ROLE_ID, MODULE_ID, OPER_PERMISSIONS
+      )
+         values (#{roleId,jdbcType=DECIMAL}, #{moduleId,jdbcType=DECIMAL}, #{operPermissions,jdbcType=DECIMAL}
+      )
+  </insert>
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.AuthorityRoleModule" >
+      delete from AUTHORITY_ROLE_MODULE where ROLE_ID=#{roleId,jdbcType=DECIMAL}
+  </delete>
+  
+  
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.AuthorityRoleModule" >
+    insert into AUTHORITY_ROLE_MODULE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="roleId != null" >
+        ROLE_ID,
+      </if>
+      <if test="moduleId != null" >
+        MODULE_ID,
+      </if>
+      <if test="operPermissions != null" >
+        OPER_PERMISSIONS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="roleId != null" >
+        #{roleId,jdbcType=DECIMAL},
+      </if>
+      <if test="moduleId != null" >
+        #{moduleId,jdbcType=DECIMAL},
+      </if>
+      <if test="operPermissions != null" >
+        #{operPermissions,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+</mapper>

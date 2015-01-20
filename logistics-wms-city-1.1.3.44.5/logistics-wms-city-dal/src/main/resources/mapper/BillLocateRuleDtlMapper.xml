@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BillLocateRuleDtlMapper" >
+  
+  
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillLocateRuleDtl" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="RULE_NO" property="ruleNo" jdbcType="VARCHAR" />
+    <id column="RULE_CATENO" property="ruleCateno" jdbcType="VARCHAR" />
+    <result column="RULE_CATENAME" property="ruleCatename" jdbcType="VARCHAR" />
+  </resultMap>
+  
+   <resultMap id="BaseResultMapCategory" type="com.yougou.logistics.city.common.model.Category" >
+    <id column="CATE_NO" property="cateNo" jdbcType="VARCHAR" />
+    <result column="CATE_NAME" property="cateName" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="REMARKS" property="remarks" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List_Category" >
+   CATE_NO, CATE_NAME
+  </sql>
+  
+  <sql id="Base_Column_List" >
+    LOCNO, RULE_NO, RULE_CATENO, RULE_CATENAME
+  </sql>
+  
+  
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+        	and LOCNO  = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ruleNo and ''!=params.ruleNo" >
+        	and RULE_NO  = #{params.ruleNo,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+  
+  <sql id="conditionCategory" >
+  	<if test="null!=params" >
+		<if test="null!=params.cateNo and ''!=params.cateNo">
+			and CATE_NO=#{params.cateNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.cateName and ''!=params.cateName" >
+            and CATE_NAME LIKE '%${params.cateName}%'
+      	</if>
+      			
+	</if>
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillLocateRuleDtlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_LOCATE_RULE_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RULE_NO = #{ruleNo,jdbcType=VARCHAR}
+      and RULE_CATENO = #{ruleCateno,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_LOCATE_RULE_DTL where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from BILL_LOCATE_RULE_DTL where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  
+  <select id="selectBillLocateRuleDtlFilter" resultMap="BaseResultMap" parameterType="map" >
+    select 
+      <include refid="Base_Column_List" />
+      from BILL_LOCATE_RULE_DTL where 1=1 
+      <if test="null!=list and list.size > 0">
+      	and RULE_CATENO not in
+      	<foreach collection="list" item="item"  open="(" separator="," close=")">  
+        	#{item.ruleCateno}  
+    	</foreach> 
+      </if>
+      <include refid="condition" />
+      
+  </select>
+  
+  <!-- 查询商品分类分页总数 -->
+  <select id="selectCategoryFilterCount" resultType="java.lang.Integer" >
+    select count(1) as s from CATEGORY  where 1=1 
+    <if test="null!=list and list.size > 0">
+    	and CATE_NO not in 
+	    <foreach collection="list" item="item"  open="(" separator="," close=")">  
+	        #{item.cateNo}  
+	    </foreach>
+    </if>
+    <include refid="conditionCategory" />
+  </select>
+  
+  <!-- 查询商品分类分页 -->
+  <select id="selectCategoryFilterByPage" resultMap="BaseResultMapCategory" >
+   select B.* from (select A.*,rownum rn from(
+	    	select 
+	    	<include refid="Base_Column_List_Category" />
+	     	from CATEGORY  where 1=1 
+	     	<if test="null!=list and list.size > 0">
+	     		and CATE_NO not in 
+	     		<foreach collection="list" item="item"  open="(" separator="," close=")">  
+	        		#{item.cateNo}  
+	     		</foreach>
+	     	</if>
+	     	<include refid="conditionCategory" />
+	     	order by edittm desc,cate_no asc
+     ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_LOCATE_RULE_DTL where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillLocateRuleDtlKey" >
+    delete from BILL_LOCATE_RULE_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RULE_NO = #{ruleNo,jdbcType=VARCHAR}
+      <if test="null!=ruleCateno and ''!=ruleCateno" >
+      	and RULE_CATENO = #{ruleCateno,jdbcType=VARCHAR}
+      </if>
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillLocateRuleDtl" >
+    delete from BILL_LOCATE_RULE_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RULE_NO = #{ruleNo,jdbcType=VARCHAR}
+      <if test="null!=ruleCateno and ''!=ruleCateno" >
+      	and RULE_CATENO = #{ruleCateno,jdbcType=VARCHAR}
+      </if>
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillLocateRuleDtl" >
+    insert into BILL_LOCATE_RULE_DTL (LOCNO, RULE_NO, RULE_CATENO, 
+      RULE_CATENAME)
+    values (#{locno,jdbcType=VARCHAR}, #{ruleNo,jdbcType=VARCHAR}, #{ruleCateno,jdbcType=VARCHAR}, 
+      #{ruleCatename,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillLocateRuleDtl" >
+    insert into BILL_LOCATE_RULE_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ruleNo != null" >
+        RULE_NO,
+      </if>
+      <if test="ruleCateno != null" >
+        RULE_CATENO,
+      </if>
+      <if test="ruleCatename != null" >
+        RULE_CATENAME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ruleNo != null" >
+        #{ruleNo,jdbcType=VARCHAR},
+      </if>
+      <if test="ruleCateno != null" >
+        #{ruleCateno,jdbcType=VARCHAR},
+      </if>
+      <if test="ruleCatename != null" >
+        #{ruleCatename,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillLocateRuleDtl" >
+    update BILL_LOCATE_RULE_DTL
+    <set >
+      <if test="ruleCatename != null" >
+        RULE_CATENAME = #{ruleCatename,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RULE_NO = #{ruleNo,jdbcType=VARCHAR}
+      and RULE_CATENO = #{ruleCateno,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillLocateRuleDtl" >
+    update BILL_LOCATE_RULE_DTL
+    set RULE_CATENAME = #{ruleCatename,jdbcType=VARCHAR}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RULE_NO = #{ruleNo,jdbcType=VARCHAR}
+      and RULE_CATENO = #{ruleCateno,jdbcType=VARCHAR}
+  </update>
+</mapper>

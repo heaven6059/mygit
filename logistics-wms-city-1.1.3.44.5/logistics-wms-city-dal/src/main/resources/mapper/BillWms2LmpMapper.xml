@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillWms2LmpMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.api.dto.Bill4WmsDto" >
+    <result column="bill_type" property="billType" jdbcType="VARCHAR" />
+    <result column="locno" property="locno" jdbcType="VARCHAR" />
+    <result column="locname" property="locName" jdbcType="VARCHAR" />
+    <result column="bill_name" property="billName" jdbcType="VARCHAR" />
+    <result column="wms_bill_no" property="wmsBillNo" jdbcType="VARCHAR" />
+    <result column="qty" property="qty" jdbcType="DECIMAL" />
+    <result column="operdate" property="operDate" jdbcType="TIMESTAMP" />
+    <result column="sys_no" property="sysNo" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="BaseResultMap4ItemManage" type="com.yougou.logistics.city.common.api.dto.ItemManageResultDto" >
+    <result column="locno" property="locno" jdbcType="VARCHAR" />
+    <result column="item_no" property="itemNo" jdbcType="VARCHAR" />
+    <result column="item_name" property="itemName" jdbcType="VARCHAR" />
+    <result column="quality" property="quality" jdbcType="VARCHAR" />
+    <result column="quality_name" property="qualityName" jdbcType="VARCHAR" />
+    <result column="color_no" property="colorNo" jdbcType="VARCHAR" />
+    <result column="color_name" property="colorName" jdbcType="VARCHAR" />
+    <result column="cate_no" property="cateNo" jdbcType="VARCHAR" />
+    <result column="cate_name" property="cateName" jdbcType="VARCHAR" />
+    <result column="brand_no" property="brandNo" jdbcType="VARCHAR" />
+    <result column="brand_name" property="brandName" jdbcType="VARCHAR" />
+    <result column="years" property="years" jdbcType="VARCHAR" />
+    <result column="years_name" property="yearsName" jdbcType="VARCHAR" />
+    <result column="season" property="season" jdbcType="VARCHAR" />
+    <result column="season_name" property="seasonName" jdbcType="VARCHAR" />
+    <result column="gender" property="gender" jdbcType="VARCHAR" />
+    <result column="gender_name" property="genderName" jdbcType="VARCHAR" />
+    <result column="size_kind" property="sizeKind" jdbcType="VARCHAR" />
+    <result column="size_no" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="qty" property="qty" jdbcType="DECIMAL" />
+  </resultMap>
+  <!-- 异常动作业查询-->
+  <sql id="Base_Column_List" >
+    v.bill_type,v.locno,v.bill_name,v.wms_bill_no,v.qty,v.operdate,v.sys_no,v.locname
+  </sql>
+  <!-- 异常动作业查询-->
+  <sql id="condition" >
+    <if test="null!=list and ''!=list" >
+		and v.bill_type in 
+		<foreach collection="list" item="item"  open="(" separator="," close=")">  
+        	#{item}  
+    	</foreach> 
+	</if>
+    <if test="null!=params.locno and ''!=params.locno" >
+		and v.locno = #{params.locno,jdbcType=VARCHAR}
+	</if>
+	<if test="null!=params.sysNo and ''!=params.sysNo" >
+		and v.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+	</if>
+    <if test="null!=params.beginDate and ''!=params.beginDate" >
+		<![CDATA[
+			and v.operdate >= to_date('${params.beginDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+        ]]>	
+	</if>
+    <if test="null!=params.endDate and ''!=params.endDate" >
+		<![CDATA[
+			and v.operdate < to_date('${params.endDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+        ]]>	
+	</if>
+  </sql>
+  
+  <!-- 异常动作业查询-->
+  <select id="getBill4Wms" resultMap="BaseResultMap" parameterType="map" >
+	  	select 
+		<include refid="Base_Column_List" /> 
+		from report_wms_backdata v where 1=1 
+		 <include refid="condition" />
+  </select>
+  
+  
+  <!-- LMP货管库存查询报表 S -->
+  <sql id="itemManageContentChildCondition">
+  	<if test="params != null">
+  		<if test="params.locno != null and params.locno != ''">
+  			and d.locno = #{params.locno,jdbcType=VARCHAR}
+  		</if>
+  		<if test="params.locnoList != null">
+  			and d.locno in 
+  			<foreach collection="params.locnoList" item="locno" open="(" close=")" separator=",">
+				#{locno}
+			</foreach>
+  		</if>
+  		<if test="params.itemNo != null and params.itemNo != ''">
+  			and d.item_no = #{params.itemNo,jdbcType=VARCHAR}
+  		</if>
+  		<if test="params.sysNo != null and params.sysNo != ''">
+  			and d.item_no like '${params.sysNo}%'
+  		</if>
+  	</if>
+  </sql>
+  <!-- 收货单-收货完成：取收货数量 -->
+  <sql id="billImReceipt20">
+  		select d.item_no, d.locno, d.quality, d.size_no, sum(d.receipt_qty) qty
+		  from bill_im_receipt_dtl d
+		 inner join bill_im_receipt m
+		    on m.receipt_no = d.receipt_no
+		   and m.status = '20'
+		 where d.quality = '0'
+		   <include refid="itemManageContentChildCondition"/>
+		 group by d.item_no, d.locno, d.quality, d.size_no
+		having sum(d.receipt_qty) != 0
+  </sql>
+  <!-- 收货单-差异验收：取收货数量-验收数量；条件：收货数量-验收数量>0且预到货通知状态不等于（90，91），是零售正品 -->
+  <sql id="billImReceipt50">
+  		select d.item_no,
+		       d.locno,
+		       d.quality,
+		       d.size_no,
+		       sum(nvl(d.receipt_qty, 0) - nvl(d.check_qty, 0)) qty
+		  from bill_im_receipt_dtl d
+		 inner join bill_im_receipt m
+		    on m.receipt_no = d.receipt_no
+		   and m.status = '50'
+		 inner join bill_im_import i
+		    on d.import_no = i.import_no
+		   and i.status != '90'
+		   and i.status != '91'
+		 where d.quality = '0'
+		   <include refid="itemManageContentChildCondition"/>
+		 group by d.item_no, d.locno, d.quality, d.size_no
+		having sum(nvl(d.receipt_qty, 0) - nvl(d.check_qty, 0)) > 0
+  </sql>
+  <!-- （零售、批发）正品属性而且不属于虚拟区的库存 -->
+  <sql id="conContent">
+  		select d.item_no, d.locno, d.quality, d.size_no, sum(d.qty) qty
+          from v_content d
+         inner join cm_defcell cdc
+            on cdc.cell_no = d.cell_no
+           and cdc.locno = d.locno
+         inner join cm_defarea cda
+            on cda.locno = d.locno
+           and cda.area_no = cdc.area_no
+           and cda.ware_no = cdc.ware_no
+           and cda.area_attribute != '4'
+         where d.quality = '0' and d.item_type in ('0','9')
+           <include refid="itemManageContentChildCondition"/>
+         group by d.item_no, d.locno, d.quality, d.size_no having sum(d.qty) != 0
+  </sql>
+  <!-- 发货通知单明细数量（状态为建单） -->
+  <sql id="billOmExp">
+  		select d.item_no,
+               d.locno,
+               d.quality,
+               d.size_no,
+               0 - sum(d.item_qty) qty
+          from bill_om_exp_dtl d
+         inner join bill_om_exp m
+            on m.exp_no = d.exp_no
+           and m.status = '10'
+         where d.quality = '0'
+           <include refid="itemManageContentChildCondition"/>
+         group by d.item_no, d.locno, d.quality, d.size_no having sum(d.item_qty) != 0
+  </sql>
+  <!-- 未分派拣货的任务计划数量 -->
+  <sql id="billOmOutstockDirect">
+  		select d.item_no,
+               d.locno,
+               d.quality,
+               d.size_no,
+               0 - sum(d.item_qty) qty
+          from bill_om_outstock_direct d
+         where d.status = '10'
+          <include refid="itemManageContentChildCondition"/>
+         group by d.item_no, d.locno, d.quality, d.size_no having sum(d.item_qty) != 0
+  </sql>
+  <!-- 分货任务,明细没有复核数量的计划数量 -->
+  <sql id="billOmDivide">
+  		select d.item_no,
+               d.locno,
+               '0' quality,
+               d.size_no,
+               0 - sum(d.item_qty) qty
+          from bill_om_divide_dtl d
+         where nvl(d.real_qty, 0) = 0
+           <include refid="itemManageContentChildCondition"/>
+         group by d.item_no, d.locno, d.size_no having sum(d.item_qty) != 0
+  </sql>
+  <!-- 拣货任务，明细没有复核数量的计划数量 -->
+  <sql id="billOmOutstock">
+  		select d.item_no,
+               d.locno,
+               d.quality,
+               d.size_no,
+               0 - sum(d.item_qty) qty
+          from bill_om_outstock_dtl d
+         where nvl(d.recheck_qty, 0) = 0
+          <include refid="itemManageContentChildCondition"/>
+         group by d.item_no, d.locno, d.quality, d.size_no having sum(d.item_qty) != 0
+  </sql>
+  <!-- 复核单数量 -->
+  <sql id="billOmRecheck">
+  		select d.item_no,
+               d.locno,
+               '0' quality,
+               d.size_no,
+               0 - sum(d.real_qty) qty
+          from bill_om_recheck_dtl d
+         where 1 = 1
+           <include refid="itemManageContentChildCondition"/>
+         group by d.item_no, d.locno, d.size_no having sum(d.real_qty) != 0
+  </sql>
+  <!-- 已审核装车数量 -->
+  <sql id="billOmDeliver">
+  		select d.item_no, d.locno, d.quality, d.size_no, sum(d.qty) qty
+          from bill_om_deliver_dtl d
+         inner join bill_om_deliver m
+            on m.deliver_no = d.deliver_no
+           and m.status = '13'
+         where d.quality = '0'
+           <include refid="itemManageContentChildCondition"/>
+         group by d.item_no, d.locno, d.quality, d.size_no having sum(d.qty) != 0
+  </sql>
+  <sql id="itemManageContentCondition">
+  	<if test="params != null">
+  		<if test="params.locno != null and params.locno != ''">
+  			and A1.locno = #{params.locno,jdbcType=VARCHAR}
+  		</if>
+  		<if test="params.locnoList != null">
+  			and A1.locno in 
+  			<foreach collection="params.locnoList" item="locno" open="(" close=")" separator=",">
+				#{locno}
+			</foreach>
+  		</if>
+  		<if test="params.itemNo != null and params.itemNo != ''">
+  			and A1.item_no = #{params.itemNo,jdbcType=VARCHAR}
+  		</if>
+  		<if test="params.brandNo != null and params.brandNo != ''">
+  			and it.brand_no = #{params.brandNo,jdbcType=VARCHAR}
+  		</if>
+  		<if test="params.years != null and params.years != ''">
+  			and it.years = #{params.years,jdbcType=VARCHAR}
+  		</if>
+  		<if test="params.yearsList != null">
+  			and it.years in 
+  			<foreach collection="params.yearsList" item="years" open="(" close=")" separator=",">
+				#{years}
+			</foreach>
+  		</if>
+  		<if test="params.season != null and params.season != ''">
+  			and it.season = #{params.season,jdbcType=VARCHAR}
+  		</if>
+  		<if test="params.seasonList != null">
+  			and it.season in 
+  			<foreach collection="params.seasonList" item="season" open="(" close=")" separator=",">
+				#{season}
+			</foreach>
+  		</if>
+  		<if test="params.gender != null and params.gender != ''">
+  			and it.gender = #{params.gender,jdbcType=VARCHAR}
+  		</if>
+  		<if test="params.genderList != null">
+  			and it.gender in 
+  			<foreach collection="params.genderList" item="gender" open="(" close=")" separator=",">
+				#{gender}
+			</foreach>
+  		</if>
+  		<if test="params.majorNoList != null">
+  			and it.major_no in 
+  			<foreach collection="params.majorNoList" item="majorNo" open="(" close=")" separator=",">
+				#{majorNo}
+			</foreach>
+  		</if>
+  	</if>
+  </sql>
+  <!-- 含尺码信息,去掉可用数量为0和负数的数据 -->
+  <sql id="baseItemMnanageSQL">
+		select A.item_no, A.locno, A.quality, A.size_no, sum(A.qty) qty
+		  from (<include refid="billImReceipt20"/> union all
+		<include refid="billImReceipt50"/> union all
+  		<include refid="conContent"/> union all
+  		<include refid="billOmExp"/> union all
+  		<include refid="billOmOutstockDirect"/> union all
+  		<include refid="billOmDivide"/> union all
+  		<include refid="billOmOutstock"/> union all
+  		<include refid="billOmRecheck"/> union all
+  		<include refid="billOmDeliver"/>) A
+		 group by A.item_no, A.locno, A.quality, A.size_no
+		having sum(A.qty) > 0
+  </sql>
+  <select id="selectItemManageContentCount" resultType="java.lang.Integer" >
+  	select count(1) as s from (
+  		select item_no, locno, quality from (<include refid="baseItemMnanageSQL"/>) group by item_no, locno, quality) A1
+  		 left join item it on A1.item_no = it.item_no
+         <!-- left join color_info ci on ci.color_no = it.color_no
+         left join brand b on b.brand_no = it.brand_no
+         left join category ct on ct.cate_no = it.cate_no
+         left join lookupdtl lpts on it.season = lpts.itemval and lpts.lookupcode = 'SEASON'
+         left join lookupdtl lpty on it.years = lpty.itemval and lpty.lookupcode = 'YEARS'
+         left join lookupdtl lptg on it.gender = lptg.itemval and lptg.lookupcode = 'GENDER'
+         left join lookupdtl lptq on A1.quality = lptq.itemval and lptq.lookupcode = 'AREA_QUALITY' -->
+         where 1=1
+         <include refid="itemManageContentCondition"/>
+  </select>
+  <select id="selectItemManageContentByPage" resultMap="BaseResultMap4ItemManage" parameterType="map">
+  	select A3.*,
+       rs.size_no,
+       rs.qty
+	  from (select A2.*
+	          from (select pg.* from (select A1.*, it.item_name,
+                             lptq.itemname quality_name,
+                         it.color_no,
+                         ci.color_name,
+                         it.brand_no,
+                         b.brand_name,
+                         it.cate_no,
+                         ct.cate_name,
+                         it.season,
+                         lpts.itemname season_name,
+                         it.years,
+                         lpty.itemname years_name,
+                         it.gender,
+                         lptg.itemname gender_name,
+                         it.size_kind ,rownum rn from (
+  				select item_no, locno, quality from (<include refid="baseItemMnanageSQL"/>) group by item_no, locno, quality) A1
+		  		 left join item it on A1.item_no = it.item_no
+		         left join color_info ci on ci.color_no = it.color_no
+		         left join brand b on b.brand_no = it.brand_no
+		         left join category ct on ct.cate_no = it.cate_no
+		         left join lookupdtl lpts on it.season = lpts.itemval and lpts.lookupcode = 'SEASON'
+		         left join lookupdtl lpty on it.years = lpty.itemval and lpty.lookupcode = 'YEARS'
+		         left join lookupdtl lptg on it.gender = lptg.itemval and lptg.lookupcode = 'GENDER'
+		         left join lookupdtl lptq on A1.quality = lptq.itemval and lptq.lookupcode = 'AREA_QUALITY'
+		         where 1=1
+		         <include refid="itemManageContentCondition"/>) pg
+	                 where rownum &lt; #{page.endRowNum}) A2
+	         where A2.rn &gt; #{page.startRowNum}) A3
+	  left join (<include refid="baseItemMnanageSQL"/>) rs
+	    on A3.item_no = rs.item_no
+	   and A3.locno = rs.locno
+	   and A3.quality = rs.quality
+	 order by rs.locno,rs.item_no, rs.size_no
+  </select>
+  <select id="selectItemManageContentNum" resultType="java.lang.Integer" parameterType="map">
+  	select 
+       sum(A1.qty) as qty
+	  from (<include refid="baseItemMnanageSQL"/>) A1
+	         left join item it on A1.item_no = it.item_no
+             <!-- left join color_info ci on ci.color_no = it.color_no
+             left join brand b on b.brand_no = it.brand_no
+             left join category ct on ct.cate_no = it.cate_no
+             left join lookupdtl lpts on it.season = lpts.itemval and lpts.lookupcode = 'SEASON'
+             left join lookupdtl lpty on it.years = lpty.itemval and lpty.lookupcode = 'YEARS'
+             left join lookupdtl lptg on it.gender = lptg.itemval and lptg.lookupcode = 'GENDER'
+             left join lookupdtl lptq on A1.quality = lptq.itemval and lptq.lookupcode = 'AREA_QUALITY' -->
+	   where 1=1
+         <include refid="itemManageContentCondition"/>
+  </select>
+  <!-- LMP货管库存查询报表 E -->
+</mapper>

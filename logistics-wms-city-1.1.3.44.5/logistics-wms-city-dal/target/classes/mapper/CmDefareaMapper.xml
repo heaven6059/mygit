@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.CmDefareaMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.CmDefarea" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="WARE_NO" property="wareNo" jdbcType="VARCHAR" />
+    <id column="AREA_NO" property="areaNo" jdbcType="VARCHAR" />
+    <result column="AREA_NAME" property="areaName" jdbcType="VARCHAR" />
+    <result column="AREA_REMARK" property="areaRemark" jdbcType="VARCHAR" />
+    <result column="O_TYPE" property="oType" jdbcType="CHAR" />
+    <result column="AREA_TYPE" property="areaType" jdbcType="CHAR" />
+    <result column="AREA_USETYPE" property="areaUsetype" jdbcType="VARCHAR" />
+    <result column="AREA_QUALITY" property="areaQuality" jdbcType="VARCHAR" />
+    <result column="MIX_FLAG" property="mixFlag" jdbcType="DECIMAL" />
+    <result column="MIX_SUPPLIER" property="mixSupplier" jdbcType="VARCHAR" />
+    <result column="MAX_QTY" property="maxQty" jdbcType="DECIMAL" />
+    <result column="STOCK_NUM" property="stockNum" jdbcType="DECIMAL" />
+    <result column="DIVIDE_FLAG" property="divideFlag" jdbcType="CHAR" />
+    <result column="B_DIVIDE_FLAG" property="bDivideFlag" jdbcType="CHAR" />
+    <result column="AREA_ATTRIBUTE" property="areaAttribute" jdbcType="CHAR" />
+    <result column="ATTRIBUTE_TYPE" property="attributeType" jdbcType="CHAR" />
+    <result column="LIMIT_TYPE" property="limitType" jdbcType="CHAR" />
+    <result column="LIMIT_RATE" property="limitRate" jdbcType="DECIMAL" />
+    <result column="PAL_OUT_RATE" property="palOutRate" jdbcType="DECIMAL" />
+    <result column="B_PICK" property="bPick" jdbcType="VARCHAR" />
+    <result column="AREA_PICK" property="areaPick" jdbcType="CHAR" />
+    <result column="A_FLAG" property="aFlag" jdbcType="VARCHAR" />
+    <result column="IO_BUFFER_FLAG" property="ioBufferFlag" jdbcType="CHAR" />
+    <result column="PICK_FLAG" property="pickFlag" jdbcType="VARCHAR" />
+    <result column="FLOOR" property="floor" jdbcType="VARCHAR" />
+    <result column="ADVANCER_PICK_FLAG" property="advancerPickFlag" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATORNAME" property="creatorName" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="EDITORNAME" property="editorName" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="MAX_CASE" property="maxCase" jdbcType="DECIMAL" />
+    <result column="ITEM_TYPE" property="itemType" jdbcType="VARCHAR" />
+    <result column="wareAreaNo" property="wareAreaNo" jdbcType="VARCHAR" />
+    <result column="WARE_NAME" property="wareName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, WARE_NO, AREA_NO, AREA_NAME, AREA_REMARK, O_TYPE, AREA_TYPE, AREA_USETYPE, 
+    AREA_QUALITY, MIX_FLAG, MIX_SUPPLIER, MAX_QTY, STOCK_NUM, DIVIDE_FLAG, B_DIVIDE_FLAG, 
+    AREA_ATTRIBUTE, ATTRIBUTE_TYPE, LIMIT_TYPE, LIMIT_RATE, PAL_OUT_RATE, B_PICK, AREA_PICK, 
+    A_FLAG, IO_BUFFER_FLAG, PICK_FLAG, FLOOR, ADVANCER_PICK_FLAG, CREATOR, CREATETM, 
+    EDITOR, EDITTM, MAX_CASE, ITEM_TYPE,CREATORNAME,EDITORNAME
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+     <if test="null!=params.locno and ''!=params.locno">
+		 and LOCNO=#{params.locno,jdbcType=VARCHAR}
+	  </if>
+     <if test="null!=params.wareNo and ''!=params.wareNo">
+		 and WARE_NO=#{params.wareNo,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.areaNo and ''!=params.areaNo">
+		 and AREA_NO=#{params.areaNo,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.attributeType and ''!=params.attributeType">
+			and ATTRIBUTE_TYPE=#{params.attributeType,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.areaType and ''!=params.areaType">
+			and AREA_TYPE=#{params.areaType,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.areaAttribute and ''!=params.areaAttribute">
+			and AREA_ATTRIBUTE=#{params.areaAttribute,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.areaQuality and ''!=params.areaQuality">
+			and AREA_QUALITY=#{params.areaQuality,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.oType and ''!=params.oType">
+			and O_TYPE=#{params.oType,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.mixFlag and ''!=params.mixFlag">
+			and MIX_FLAG=#{params.mixFlag,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.areaUsetype and ''!=params.areaUsetype">
+			and AREA_USETYPE=#{params.areaUsetype,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.areaUsetypeArray and ''!=params.areaUsetypeArray">
+			and AREA_USETYPE in (${params.areaUsetypeArray})
+		</if>
+		<if test="null!=params.wareAreaNo and ''!=params.wareAreaNo">
+			and CONCAT(ware_no,area_no)=#{params.wareAreaNo,jdbcType=VARCHAR}
+		</if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.CmDefareaKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from CM_DEFAREA
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and WARE_NO = #{wareNo,jdbcType=VARCHAR}
+      and AREA_NO = #{areaNo,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from CM_DEFAREA where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn ,
+    (select cdw.ware_name from cm_defware cdw where cdw.ware_no = A.ware_no and cdw.locno = A.locno) ware_name
+    from( select 
+    <include refid="Base_Column_List" />,
+    CONCAT(ware_no,area_no) as wareAreaNo
+     from CM_DEFAREA  where 1=1 
+    <include refid="condition" />
+    <choose>
+	    <when test="orderByField != null and ''!=orderByField">
+			order by ${orderByField}
+			<if test="orderByField">
+			${orderBy}
+			</if>
+		</when>
+		<otherwise>
+			order by CREATETM desc
+		</otherwise>
+    </choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from CM_DEFAREA where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <!-- 仓区多选时,加载不同的库区 start-->
+  <!--WARE_NO || '-'|| AREA_NO修改的时候需要同步修改BillImReceiptMapper.xml中的 -->
+  <select id="findByStoreroom" resultMap="BaseResultMap" parameterType="map" >
+    select LOCNO, WARE_NO, AREA_NAME,WARE_NO || '-'|| AREA_NO as areaNo
+     from CM_DEFAREA where 1=1 
+     <if test="null!=params.locno and ''!=params.locno">
+		 and LOCNO=#{params.locno,jdbcType=VARCHAR}
+	 </if>
+     <if test="null!=params.wareNo and ''!=params.wareNo" >
+         and WARE_NO in
+           	<foreach item="wareNo" index="index" collection="params.wareNo" 
+                    open="(" separator="," close=")">
+                    #{wareNo}
+           </foreach>
+     </if>
+  </select>
+  
+  <select id="selectByWareAndArea" resultMap="BaseResultMap" parameterType="map">
+  	select * from(
+	select c.ware_no||c.area_no as code,c.* from CM_DEFAREA c where locno=#{params.locno,jdbcType=VARCHAR}
+	)t where t.locno=#{params.locno,jdbcType=VARCHAR} and t.code=#{params.code,jdbcType=VARCHAR}
+  </select>
+  
+  
+  <!-- 验证查询仓区是否存在库区 -->
+  <select id="selectCmDefareaIsHaveByWareNo" resultMap="BaseResultMap" >
+    select WARE_NO from CM_DEFAREA  where 1=1 
+    <if test="null!=list and list.size > 0">
+    	and WARE_NO in 
+	    <foreach collection="list" item="item"  open="(" separator="," close=")">  
+	        #{item.wareNo}  
+	    </foreach>
+    </if>
+    <include refid="condition" />
+    group by ware_no
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.CmDefareaKey" >
+    delete from CM_DEFAREA
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and WARE_NO = #{wareNo,jdbcType=VARCHAR}
+      and AREA_NO = #{areaNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.CmDefarea" >
+    delete from CM_DEFAREA
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and WARE_NO = #{wareNo,jdbcType=VARCHAR}
+      and AREA_NO = #{areaNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.CmDefarea" >
+    insert into CM_DEFAREA (LOCNO, WARE_NO, AREA_NO, 
+      AREA_NAME, AREA_REMARK, O_TYPE, 
+      AREA_TYPE, AREA_USETYPE, AREA_QUALITY, 
+      MIX_FLAG, MIX_SUPPLIER, MAX_QTY, 
+      STOCK_NUM, DIVIDE_FLAG, B_DIVIDE_FLAG, 
+      AREA_ATTRIBUTE, ATTRIBUTE_TYPE, LIMIT_TYPE, 
+      LIMIT_RATE, PAL_OUT_RATE, B_PICK, 
+      AREA_PICK, A_FLAG, IO_BUFFER_FLAG, 
+      PICK_FLAG, FLOOR, ADVANCER_PICK_FLAG, 
+      CREATOR,CREATORNAME, CREATETM, EDITOR, 
+      EDITORNAME,EDITTM, MAX_CASE, ITEM_TYPE
+      )
+    values (#{locno,jdbcType=VARCHAR}, #{wareNo,jdbcType=VARCHAR}, #{areaNo,jdbcType=VARCHAR}, 
+      #{areaName,jdbcType=VARCHAR}, #{areaRemark,jdbcType=VARCHAR}, #{oType,jdbcType=CHAR}, 
+      #{areaType,jdbcType=CHAR}, #{areaUsetype,jdbcType=VARCHAR}, #{areaQuality,jdbcType=VARCHAR}, 
+      #{mixFlag,jdbcType=DECIMAL}, #{mixSupplier,jdbcType=VARCHAR}, #{maxQty,jdbcType=DECIMAL}, 
+      #{stockNum,jdbcType=DECIMAL}, #{divideFlag,jdbcType=CHAR}, #{bDivideFlag,jdbcType=CHAR}, 
+      #{areaAttribute,jdbcType=CHAR}, #{attributeType,jdbcType=CHAR}, #{limitType,jdbcType=CHAR}, 
+      #{limitRate,jdbcType=DECIMAL}, #{palOutRate,jdbcType=DECIMAL}, #{bPick,jdbcType=VARCHAR}, 
+      #{areaPick,jdbcType=CHAR}, #{aFlag,jdbcType=VARCHAR}, #{ioBufferFlag,jdbcType=CHAR}, 
+      #{pickFlag,jdbcType=VARCHAR}, #{floor,jdbcType=VARCHAR}, #{advancerPickFlag,jdbcType=VARCHAR}, 
+      #{creator,jdbcType=VARCHAR},#{creatorName,jdbcType=VARCHAR}, #{createtm,jdbcType=TIMESTAMP}, 
+      #{editor,jdbcType=VARCHAR}, #{editorName,jdbcType=VARCHAR}, #{edittm,jdbcType=TIMESTAMP},
+       #{maxCase,jdbcType=DECIMAL}, #{itemType,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.CmDefarea" >
+    insert into CM_DEFAREA
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="wareNo != null" >
+        WARE_NO,
+      </if>
+      <if test="areaNo != null" >
+        AREA_NO,
+      </if>
+      <if test="areaName != null" >
+        AREA_NAME,
+      </if>
+      <if test="areaRemark != null" >
+        AREA_REMARK,
+      </if>
+      <if test="oType != null" >
+        O_TYPE,
+      </if>
+      <if test="areaType != null" >
+        AREA_TYPE,
+      </if>
+      <if test="areaUsetype != null" >
+        AREA_USETYPE,
+      </if>
+      <if test="areaQuality != null" >
+        AREA_QUALITY,
+      </if>
+      <if test="mixFlag != null" >
+        MIX_FLAG,
+      </if>
+      <if test="mixSupplier != null" >
+        MIX_SUPPLIER,
+      </if>
+      <if test="maxQty != null" >
+        MAX_QTY,
+      </if>
+      <if test="stockNum != null" >
+        STOCK_NUM,
+      </if>
+      <if test="divideFlag != null" >
+        DIVIDE_FLAG,
+      </if>
+      <if test="bDivideFlag != null" >
+        B_DIVIDE_FLAG,
+      </if>
+      <if test="areaAttribute != null" >
+        AREA_ATTRIBUTE,
+      </if>
+      <if test="attributeType != null" >
+        ATTRIBUTE_TYPE,
+      </if>
+      <if test="limitType != null" >
+        LIMIT_TYPE,
+      </if>
+      <if test="limitRate != null" >
+        LIMIT_RATE,
+      </if>
+      <if test="palOutRate != null" >
+        PAL_OUT_RATE,
+      </if>
+      <if test="bPick != null" >
+        B_PICK,
+      </if>
+      <if test="areaPick != null" >
+        AREA_PICK,
+      </if>
+      <if test="aFlag != null" >
+        A_FLAG,
+      </if>
+      <if test="ioBufferFlag != null" >
+        IO_BUFFER_FLAG,
+      </if>
+      <if test="pickFlag != null" >
+        PICK_FLAG,
+      </if>
+      <if test="floor != null" >
+        FLOOR,
+      </if>
+      <if test="advancerPickFlag != null" >
+        ADVANCER_PICK_FLAG,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="creatorName != null" >
+        CREATORNAME,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="editorName != null" >
+        EDITOR,
+      </if>
+      <if test="editor != null" >
+        EDITORNAME,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="maxCase != null" >
+        MAX_CASE,
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="wareNo != null" >
+        #{wareNo,jdbcType=VARCHAR},
+      </if>
+      <if test="areaNo != null" >
+        #{areaNo,jdbcType=VARCHAR},
+      </if>
+      <if test="areaName != null" >
+        #{areaName,jdbcType=VARCHAR},
+      </if>
+      <if test="areaRemark != null" >
+        #{areaRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="oType != null" >
+        #{oType,jdbcType=CHAR},
+      </if>
+      <if test="areaType != null" >
+        #{areaType,jdbcType=CHAR},
+      </if>
+      <if test="areaUsetype != null" >
+        #{areaUsetype,jdbcType=VARCHAR},
+      </if>
+      <if test="areaQuality != null" >
+        #{areaQuality,jdbcType=VARCHAR},
+      </if>
+      <if test="mixFlag != null" >
+        #{mixFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="mixSupplier != null" >
+        #{mixSupplier,jdbcType=VARCHAR},
+      </if>
+      <if test="maxQty != null" >
+        #{maxQty,jdbcType=DECIMAL},
+      </if>
+      <if test="stockNum != null" >
+        #{stockNum,jdbcType=DECIMAL},
+      </if>
+      <if test="divideFlag != null" >
+        #{divideFlag,jdbcType=CHAR},
+      </if>
+      <if test="bDivideFlag != null" >
+        #{bDivideFlag,jdbcType=CHAR},
+      </if>
+      <if test="areaAttribute != null" >
+        #{areaAttribute,jdbcType=CHAR},
+      </if>
+      <if test="attributeType != null" >
+        #{attributeType,jdbcType=CHAR},
+      </if>
+      <if test="limitType != null" >
+        #{limitType,jdbcType=CHAR},
+      </if>
+      <if test="limitRate != null" >
+        #{limitRate,jdbcType=DECIMAL},
+      </if>
+      <if test="palOutRate != null" >
+        #{palOutRate,jdbcType=DECIMAL},
+      </if>
+      <if test="bPick != null" >
+        #{bPick,jdbcType=VARCHAR},
+      </if>
+      <if test="areaPick != null" >
+        #{areaPick,jdbcType=CHAR},
+      </if>
+      <if test="aFlag != null" >
+        #{aFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="ioBufferFlag != null" >
+        #{ioBufferFlag,jdbcType=CHAR},
+      </if>
+      <if test="pickFlag != null" >
+        #{pickFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="floor != null" >
+        #{floor,jdbcType=VARCHAR},
+      </if>
+      <if test="advancerPickFlag != null" >
+        #{advancerPickFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorName != null" >
+        #{creatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null" >
+        #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="maxCase != null" >
+        #{maxCase,jdbcType=DECIMAL},
+      </if>
+      <if test="itemType != null" >
+        #{itemType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.CmDefarea" >
+    update CM_DEFAREA
+    <set >
+      <if test="areaName != null" >
+        AREA_NAME = #{areaName,jdbcType=VARCHAR},
+      </if>
+      <if test="areaRemark != null" >
+        AREA_REMARK = #{areaRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="oType != null" >
+        O_TYPE = #{oType,jdbcType=CHAR},
+      </if>
+      <if test="areaType != null" >
+        AREA_TYPE = #{areaType,jdbcType=CHAR},
+      </if>
+      <if test="areaUsetype != null" >
+        AREA_USETYPE = #{areaUsetype,jdbcType=VARCHAR},
+      </if>
+      <if test="areaQuality != null" >
+        AREA_QUALITY = #{areaQuality,jdbcType=VARCHAR},
+      </if>
+      <if test="mixFlag != null" >
+        MIX_FLAG = #{mixFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="mixSupplier != null" >
+        MIX_SUPPLIER = #{mixSupplier,jdbcType=VARCHAR},
+      </if>
+      <if test="maxQty != null" >
+        MAX_QTY = #{maxQty,jdbcType=DECIMAL},
+      </if>
+      <if test="stockNum != null" >
+        STOCK_NUM = #{stockNum,jdbcType=DECIMAL},
+      </if>
+      <if test="divideFlag != null" >
+        DIVIDE_FLAG = #{divideFlag,jdbcType=CHAR},
+      </if>
+      <if test="bDivideFlag != null" >
+        B_DIVIDE_FLAG = #{bDivideFlag,jdbcType=CHAR},
+      </if>
+      <if test="areaAttribute != null" >
+        AREA_ATTRIBUTE = #{areaAttribute,jdbcType=CHAR},
+      </if>
+      <if test="attributeType != null" >
+        ATTRIBUTE_TYPE = #{attributeType,jdbcType=CHAR},
+      </if>
+      <if test="limitType != null" >
+        LIMIT_TYPE = #{limitType,jdbcType=CHAR},
+      </if>
+      <if test="limitRate != null" >
+        LIMIT_RATE = #{limitRate,jdbcType=DECIMAL},
+      </if>
+      <if test="palOutRate != null" >
+        PAL_OUT_RATE = #{palOutRate,jdbcType=DECIMAL},
+      </if>
+      <if test="bPick != null" >
+        B_PICK = #{bPick,jdbcType=VARCHAR},
+      </if>
+      <if test="areaPick != null" >
+        AREA_PICK = #{areaPick,jdbcType=CHAR},
+      </if>
+      <if test="aFlag != null" >
+        A_FLAG = #{aFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="ioBufferFlag != null" >
+        IO_BUFFER_FLAG = #{ioBufferFlag,jdbcType=CHAR},
+      </if>
+      <if test="pickFlag != null" >
+        PICK_FLAG = #{pickFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="floor != null" >
+        FLOOR = #{floor,jdbcType=VARCHAR},
+      </if>
+      <if test="advancerPickFlag != null" >
+        ADVANCER_PICK_FLAG = #{advancerPickFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorName != null" >
+        CREATORNAME = #{creatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null" >
+        EDITORNAME = #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="maxCase != null" >
+        MAX_CASE = #{maxCase,jdbcType=DECIMAL},
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and WARE_NO = #{wareNo,jdbcType=VARCHAR}
+      and AREA_NO = #{areaNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.CmDefarea" >
+    update CM_DEFAREA
+    set AREA_NAME = #{areaName,jdbcType=VARCHAR},
+      AREA_REMARK = #{areaRemark,jdbcType=VARCHAR},
+      O_TYPE = #{oType,jdbcType=CHAR},
+      AREA_TYPE = #{areaType,jdbcType=CHAR},
+      AREA_USETYPE = #{areaUsetype,jdbcType=VARCHAR},
+      AREA_QUALITY = #{areaQuality,jdbcType=VARCHAR},
+      MIX_FLAG = #{mixFlag,jdbcType=DECIMAL},
+      MIX_SUPPLIER = #{mixSupplier,jdbcType=VARCHAR},
+      MAX_QTY = #{maxQty,jdbcType=DECIMAL},
+      STOCK_NUM = #{stockNum,jdbcType=DECIMAL},
+      DIVIDE_FLAG = #{divideFlag,jdbcType=CHAR},
+      B_DIVIDE_FLAG = #{bDivideFlag,jdbcType=CHAR},
+      AREA_ATTRIBUTE = #{areaAttribute,jdbcType=CHAR},
+      ATTRIBUTE_TYPE = #{attributeType,jdbcType=CHAR},
+      LIMIT_TYPE = #{limitType,jdbcType=CHAR},
+      LIMIT_RATE = #{limitRate,jdbcType=DECIMAL},
+      PAL_OUT_RATE = #{palOutRate,jdbcType=DECIMAL},
+      B_PICK = #{bPick,jdbcType=VARCHAR},
+      AREA_PICK = #{areaPick,jdbcType=CHAR},
+      A_FLAG = #{aFlag,jdbcType=VARCHAR},
+      IO_BUFFER_FLAG = #{ioBufferFlag,jdbcType=CHAR},
+      PICK_FLAG = #{pickFlag,jdbcType=VARCHAR},
+      FLOOR = #{floor,jdbcType=VARCHAR},
+      ADVANCER_PICK_FLAG = #{advancerPickFlag,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATORNAME = #{creatorName,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITORNAME = #{editorName,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      MAX_CASE = #{maxCase,jdbcType=DECIMAL},
+      ITEM_TYPE = #{itemType,jdbcType=VARCHAR}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and WARE_NO = #{wareNo,jdbcType=VARCHAR}
+      and AREA_NO = #{areaNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

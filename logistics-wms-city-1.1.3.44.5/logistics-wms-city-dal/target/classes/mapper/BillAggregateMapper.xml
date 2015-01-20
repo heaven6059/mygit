@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BillAggregateMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.api.dto.BillUnusualDto" >
+    <result column="zone_no" property="zoneNo" jdbcType="VARCHAR" />
+    <result column="locno" property="locNo" jdbcType="VARCHAR" />
+    <result column="r_qty" property="rQty" jdbcType="DECIMAL" />
+    <result column="o_qty" property="oQty" jdbcType="DECIMAL" />
+    <result column="i_qty" property="iQty" jdbcType="DECIMAL" />
+    <result column="re_qty" property="reQty" jdbcType="DECIMAL" />
+    <result column="c_qty" property="cQty" jdbcType="DECIMAL" />
+  </resultMap>
+  <!-- 异常动作业查询-->
+  <sql id="BillUnusual_Column_List" >
+    v.zone_no,v.locno,sum(v.r_qty) as r_qty,sum(v.o_qty) as o_qty,sum(v.i_qty) as i_qty,sum(v.re_qty) as re_qty,sum(v.c_qty) as c_qty
+  </sql>
+  
+  <!-- 异常动作业查询-->
+  <sql id="BillUnusual_Condition" >
+    <if test="null!=params.zoneNo and ''!=params.zoneNo" >
+		and v.zone_no = #{params.zoneNo,jdbcType=VARCHAR}
+	</if>
+    <if test="null!=params.locNo and ''!=params.locNo" >
+		and v.locno = #{params.locNo,jdbcType=VARCHAR}
+	</if>
+    <if test="null!=params.beginDate and ''!=params.beginDate" >
+		<![CDATA[
+			and v.r_date >= to_date('${params.beginDate}','yyyy-mm-dd')
+        ]]>	
+	</if>
+    <if test="null!=params.endDate and ''!=params.endDate" >
+		<![CDATA[
+			and v.r_date < (to_date('${params.endDate}','yyyy-mm-dd')+1)
+        ]]>	
+	</if>
+  </sql>
+  
+  <!-- 异常动作业查询-->
+  <select id="selectBillUnusualByPage" resultMap="BaseResultMap" parameterType="map" >
+	  	select B.* from (select A.*,rownum rn from(select 
+		<include refid="BillUnusual_Column_List" /> 
+		from v_exceptionDate_forLMP v where 1=1 
+		 <include refid="BillUnusual_Condition" />
+		group by v.zone_no,v.locno
+		) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+		
+  </select>
+  
+  <select id="selectBillUnusual" resultMap="BaseResultMap" parameterType="map" >
+  	select 
+	<include refid="BillUnusual_Column_List" /> 
+	from v_exceptionDate_forLMP v where 1=1 
+	 <include refid="BillUnusual_Condition" />
+	group by v.zone_no,v.locno 
+	</select>
+  
+  <!-- 异常动作业查询记录数-->
+  <select id="selectBillUnusualCount" resultType="java.lang.Integer" >
+    select nvl(sum(1),0) as s from (
+    select 1 from v_exceptionDate_forLMP v where 1=1 
+    <include refid="BillUnusual_Condition" />
+    group by v.zone_no,v.locno ) A    
+  </select>
+</mapper>

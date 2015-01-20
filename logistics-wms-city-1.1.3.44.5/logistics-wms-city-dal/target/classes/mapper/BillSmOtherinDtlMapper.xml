@@ -1,0 +1,601 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillSmOtherinDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillSmOtherinDtl" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="OTHERIN_NO" property="otherinNo" jdbcType="VARCHAR" />
+    <result column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+    <result column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="INSTORAGE_QTY" property="instorageQty" jdbcType="DECIMAL" />
+    <result column="Brand_NO" property="brandNO" jdbcType="VARCHAR" />
+    <result column="brandNoStr" property="brandNoStr" jdbcType="VARCHAR" />
+    <result column="RECHECK_QTY" property="recheckQty" jdbcType="DECIMAL" />
+    
+    <result column="sys_no" property="sysNo" jdbcType="VARCHAR" />
+    <result column="sysNoStr" property="sysNoStr" jdbcType="VARCHAR" />
+    <result column="size_kind" property="sizeKind" jdbcType="VARCHAR" />
+    <result column="item_name" property="itemName" jdbcType="VARCHAR" />
+    <result column="barcode" property="barcode" jdbcType="VARCHAR" />
+    <result column="color_no" property="colorNo" jdbcType="VARCHAR" />
+    <result column="color_name" property="colorName" jdbcType="VARCHAR" />
+    <result column="total_qty" property="total" jdbcType="DECIMAL" />
+    <result column="NO_RECHECK_QTY" property="noRecheckQty" jdbcType="DECIMAL" />
+    <!-- 更新明细表中的修改人，修改时间，修改人对应的中文名称-->
+	 <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+	 <result column="EDITORNAME" property="editorName" jdbcType="VARCHAR" />
+	 <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <resultMap id="ExtendResultMap" type="com.yougou.logistics.city.common.dto.BillSmOtherinDtlDto" extends="BaseResultMap" >
+    <id column="item_name" property="itemName" jdbcType="VARCHAR" />
+    <id column="barcode" property="barcode" jdbcType="VARCHAR" />
+    <id column="color_name" property="colorName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    d.LOCNO, d.OWNER_NO, d.OTHERIN_NO, d.ROW_ID, d.CELL_NO, d.ITEM_NO, d.SIZE_NO, 
+    d.INSTORAGE_QTY,d.RECHECK_QTY,d.brand_no,d.brand_no as brandNo,
+    nvl(d.instorage_qty - d.recheck_qty,0) as noRecheckQty
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+	            and d.LOCNO = #{params.locno}
+	  </if>
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+	            and d.OWNER_NO = #{params.ownerNo}
+	  </if>
+      <if test="null!=params.otherinNo and ''!=params.otherinNo" >
+	            and d.OTHERIN_NO = #{params.otherinNo}
+	  </if>
+      <if test="null!=params.rowId and ''!=params.rowId" >
+	            and d.ROW_ID = #{params.rowId}
+	  </if>
+      <if test="null!=params.cellNo and ''!=params.cellNo" >
+	            and d.CELL_NO = #{params.cellNo}
+	  </if>
+      <if test="null!=params.itemNo and ''!=params.itemNo" >
+	            and d.ITEM_NO = #{params.itemNo}
+	  </if>
+      <if test="null!=params.sizeNo and ''!=params.sizeNo" >
+	            and d.SIZE_NO = #{params.sizeNo}
+	  </if>
+	  <if test="null!=params.barcode and ''!=params.barcode" >
+            	and b.barcode = #{params.barcode,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.isRecheckSelect and ''!=params.isRecheckSelect" >
+            	and nvl(d.INSTORAGE_QTY - d.RECHECK_QTY,0) > 0
+      </if>
+    </if>
+  </sql>
+  
+  <!-- 添加明细查询商品条件 -->
+   <sql id="condition_item">
+	  <if test="null!=params">
+	      <if test="null!=params.itemNo and ''!=params.itemNo" >
+	            and i.item_no like '%${params.itemNo}%'
+	      </if>
+	      <if test="null!=params.itemName and ''!=params.itemName" >
+	          and i.item_name like '%${params.itemName}%' 
+	      </if>
+	      <if test="null!=params.barcode and ''!=params.barcode" >
+	          and b.barcode like '%${params.barcode}%'
+	      </if>
+	       <if test="null!=params.sysNo and ''!=params.sysNo" >
+	          and i.sys_no = #{params.sysNo}
+	      </if>
+	      <if test="null!=params.brandNo and ''!=params.brandNo" >
+	          and i.brand_no = #{params.brandNo}
+	      </if>
+	      
+	  </if>
+  </sql>
+    
+  <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and i.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  <!-- 添加明细查询商品 -->
+  <select id="selectContent" resultMap="ExtendResultMap">
+	  	 select B.* from (select A.*,rownum rn from(
+		SELECT i.item_no ,
+		       i.item_name ,
+		       b.barcode ,
+		       b.size_no ,
+		       c.color_name,
+		       i.Brand_NO,
+               (select br.Brand_Name
+                  from Brand br
+                 where br.Brand_NO = i.Brand_NO) as brandNoStr
+		  FROM item i
+		  LEFT JOIN color_info c
+		    ON c.color_no = i.color_no
+		  inner JOIN item_barcode b
+		       ON i.item_no = b.item_no
+		       AND b.package_id = 0
+		  where 1=1
+		  <include refid="AuthorityCondition" />
+		  <include refid="condition_item" />
+		   order by i.sys_no, b.barcode
+		   ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <!-- 添加明细查询商品总数 -->
+  <select id="selectContentCount" resultType="java.lang.Integer">
+		SELECT count(1)
+		  FROM item i
+		  LEFT JOIN color_info c
+		    ON c.color_no = i.color_no
+		  inner JOIN item_barcode b
+		       ON i.item_no = b.item_no
+		       AND b.package_id = 0
+		  where 1=1
+		  <include refid="AuthorityCondition" />
+		  <include refid="condition_item" />
+  </select>
+	<!-- 查询明细是否重复 -->
+	<select id="selectDuplicateRecord" resultMap="BaseResultMap" parameterType="map">
+		select d.cell_no, d.item_no, d.size_no
+		from BILL_SM_OTHERIN_DTL d
+		where d.locno = #{params.locno,jdbcType=VARCHAR}
+		and d.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+		and d.otherin_no = #{params.otherinNo,jdbcType=VARCHAR}
+		group by d.cell_no, d.item_no, d.size_no
+		having count(*) > 1
+	</select>
+  
+  <!-- 获取明细最大的序号 -->
+  <select id="selectMaxPid" resultType="java.lang.Integer" parameterType="com.yougou.logistics.city.common.model.BillSmOtherinDtl" >
+    select NVL(max(dtl.row_id),0) as s
+    from BILL_SM_OTHERIN_DTL dtl
+    where dtl.LOCNO = #{locno,jdbcType=VARCHAR}
+      and dtl.OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and dtl.OTHERIN_NO = #{otherinNo,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillSmOtherinDtlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_SM_OTHERIN_DTL d
+    where d.LOCNO = #{locno,jdbcType=VARCHAR}
+      and d.OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and d.OTHERIN_NO = #{otherinNo,jdbcType=VARCHAR}
+      and d.ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_SM_OTHERIN_DTL d
+    inner JOIN item i 
+    	on d.item_no=i.item_no
+    	and d.brand_no = i.brand_no
+     	<include refid="AuthorityCondition" />
+	 left JOIN color_info c ON c.color_no = i.color_no
+	 inner JOIN item_barcode b ON (i.item_no = b.item_no and d.size_no=b.size_no and b.package_id = 0) 
+     where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="ExtendResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />,
+     i.item_name,c.color_name,
+     (select br.Brand_Name
+                  from Brand br
+                 where br.Brand_NO = d.Brand_NO) as brandNoStr
+     from BILL_SM_OTHERIN_DTL d 
+     inner JOIN item i 
+    	on d.item_no=i.item_no
+    	and d.brand_no = i.brand_no
+     	<include refid="AuthorityCondition" />
+	 left JOIN color_info c ON c.color_no = i.color_no
+	 inner JOIN item_barcode b ON (i.item_no = b.item_no and d.size_no=b.size_no and b.package_id = 0) 
+     where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <select id="selectPageSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+		select
+			NVL(sum(cd.NO_RECHECK_QTY), 0) NO_RECHECK_QTY
+		from
+		(
+			select nvl(d.instorage_qty - d.recheck_qty,0) as NO_RECHECK_QTY
+			from BILL_SM_OTHERIN_DTL d 
+			inner join item i on i.item_no = d.item_no
+			where nvl(d.instorage_qty - d.recheck_qty,0) > 0
+			<include refid="condition" />
+			<include refid="AuthorityCondition" />
+		)cd
+  </select>
+  
+   <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+   		select 
+   		sum(d.instorage_qty) as instorage_qty,
+   		sum(d.recheck_qty) as recheck_qty,
+   		sum(nvl(d.instorage_qty - d.recheck_qty,0)) as NO_RECHECK_QTY
+    	from BILL_SM_OTHERIN_DTL d 
+    	inner JOIN item i 
+    		on d.item_no=i.item_no
+    		and d.brand_no = i.brand_no
+     	<include refid="AuthorityCondition" />
+	 	left JOIN color_info c ON c.color_no = i.color_no
+	 	inner JOIN item_barcode b ON (i.item_no = b.item_no and d.size_no=b.size_no and b.package_id = 0) 
+     	where 1=1 
+   		<include refid="condition" />
+  </select>
+  
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_SM_OTHERIN_DTL d where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillSmOtherinDtlKey" >
+    delete from BILL_SM_OTHERIN_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and OTHERIN_NO = #{otherinNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillSmOtherinDtl" >
+    delete from BILL_SM_OTHERIN_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and OTHERIN_NO = #{otherinNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillSmOtherinDtl" >
+    insert into BILL_SM_OTHERIN_DTL (LOCNO, OWNER_NO, OTHERIN_NO, 
+      ROW_ID, CELL_NO, ITEM_NO, BRAND_NO
+      SIZE_NO, INSTORAGE_QTY)
+    values (#{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, #{otherinNo,jdbcType=VARCHAR}, 
+      #{rowId,jdbcType=DECIMAL}, #{cellNo,jdbcType=VARCHAR}, #{itemNo,jdbcType=VARCHAR}, 
+      #{sizeNo,jdbcType=VARCHAR}, #{instorageQty,jdbcType=DECIMAL}), #{brandNO,jdbcType=VARCHAR}
+  </insert>
+  <!--更新明细表中的修改人，修改时间，修改人对应的中文名称  add by li.zm-->
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillSmOtherinDtl" >
+    insert into BILL_SM_OTHERIN_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="otherinNo != null" >
+        OTHERIN_NO,
+      </if>
+      <if test="rowId != null" >
+        ROW_ID,
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="instorageQty != null" >
+        INSTORAGE_QTY,
+      </if>
+      <if test="brandNO != null" >
+        BRAND_NO,
+      </if>
+      <if test="editor != null" >
+		EDITOR,
+  		</if>
+	  <if test="editorName != null" >
+		EDITORNAME,
+	  </if>
+	  <if test="edittm != null" >
+		EDITTM,
+	  </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="otherinNo != null" >
+        #{otherinNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rowId != null" >
+        #{rowId,jdbcType=DECIMAL},
+      </if>
+      <if test="cellNo != null" >
+        #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="instorageQty != null" >
+        #{instorageQty,jdbcType=DECIMAL},
+      </if>
+      <if test="brandNO != null" >
+        #{brandNO,jdbcType=VARCHAR},
+      </if>
+      <if test="editor != null" >
+        #{editor},
+      </if>
+      <if test="editorName != null" >
+       	#{editorName},
+      </if>
+      <if test="edittm != null" >
+       	#{edittm,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <!-- 更新明细表中的修改人，修改时间，修改人对应的中文名称-->
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillSmOtherinDtl" >
+    update BILL_SM_OTHERIN_DTL
+    <set >
+      <if test="cellNo != null" >
+        CELL_NO = #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="instorageQty != null" >
+        INSTORAGE_QTY = #{instorageQty,jdbcType=DECIMAL},
+      </if>
+      <if test="recheckQty != null" >
+        RECHECK_QTY = #{recheckQty,jdbcType=DECIMAL},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor},
+      </if>
+      <if test="editorName != null" >
+        EDITORNAME = #{editorName},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and OTHERIN_NO = #{otherinNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillSmOtherinDtl" >
+    update BILL_SM_OTHERIN_DTL
+    set CELL_NO = #{cellNo,jdbcType=VARCHAR},
+      ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      INSTORAGE_QTY = #{instorageQty,jdbcType=DECIMAL}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and OTHERIN_NO = #{otherinNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+  
+  <select id="batchInsertDtl" parameterType="java.util.List">
+  	insert into BILL_SM_OTHERIN_DTL (LOCNO,OWNER_NO,OTHERIN_NO,ROW_ID,CELL_NO,ITEM_NO,SIZE_NO,INSTORAGE_QTY,BRAND_NO)  
+        <foreach collection="list" item="item" index="index"  
+            separator="union all">  
+            select
+              #{item.locno,jdbcType=VARCHAR},
+              #{item.ownerNo,jdbcType=VARCHAR},
+              #{item.otherinNo,jdbcType=VARCHAR},
+              #{item.rowId,jdbcType=DECIMAL},
+              #{item.cellNo,jdbcType=VARCHAR},
+              #{item.itemNo,jdbcType=VARCHAR},
+              #{item.sizeNo,jdbcType=VARCHAR},
+              #{item.instorageQty,jdbcType=DECIMAL},
+              #{item.brandNO,jdbcType=VARCHAR}
+             from DUAL
+        </foreach>
+  </select>
+  <select id="selectDtlSysNo" resultMap="BaseResultMap" parameterType="Map" >
+    	select A.*
+		  from (select i.sys_no, MAX(lk.itemname) as sysNoStr
+          from BILL_SM_OTHERIN_DTL d
+         inner JOIN item i
+            on d.item_no = i.item_no
+           and d.brand_no = i.brand_no
+           <include refid="AuthorityCondition" />
+          left join lookupdtl lk
+            on lk.itemval = i.sys_no
+         where 1 = 1
+        	and d.locno = #{model.locno,jdbcType=VARCHAR}
+           	<if test="null!=model.ownerNo and ''!=model.ownerNo" >
+		    	and d.owner_no = #{model.ownerNo,jdbcType=VARCHAR}
+		    </if>
+		    <if test="null!=model.otherinNo and ''!=model.otherinNo" >
+	            and d.OTHERIN_NO = #{model.otherinNo,jdbcType=VARCHAR}
+	  		</if>
+         group by i.sys_no) A
+  </select>
+  <select id="selectSysNoContentCount" resultType="java.lang.Integer" parameterType="Map" >
+  	select count(*) s from (
+  	<include refid="selectSysNoContentSql" />
+  	) A
+  </select>
+  <select id="selectSysNoContentByPage" resultMap="BaseResultMap" parameterType="Map" >
+  	select B.* from (select A.*,rownum rn from(
+		<include refid="selectSysNoContentSql" />
+    ) A ) B
+  </select>
+  <sql id="selectSysNoContentSql">
+  	select d.LOCNO,
+               d.OWNER_NO,
+               d.OTHERIN_NO,
+               d.CELL_NO,
+               d.ITEM_NO,
+               MAX(i.item_name) item_name,
+               i.size_kind,
+               i.color_no,
+               MAX(c.color_name) color_name,
+               d.brand_no,
+               (select br.Brand_Name
+                  from Brand br
+                 where br.Brand_NO = d.Brand_NO) as brandNoStr,
+               sum(d.INSTORAGE_QTY) total_qty
+          from BILL_SM_OTHERIN_DTL d
+         inner join BILL_SM_OTHERIN w1
+            on w1.locno = d.locno
+           and w1.owner_no = d.owner_no
+           and w1.otherin_no = d.otherin_no
+         inner JOIN item i
+            on d.item_no = i.item_no
+           and d.brand_no = i.brand_no
+           <include refid="AuthorityCondition" />
+          left JOIN color_info c
+            ON c.color_no = i.color_no
+         left join brand br
+            on i.brand_no = br.brand_no
+         where 1 = 1
+           	and d.LOCNO = #{model.locno,jdbcType=VARCHAR}
+           	<if test="null!=model.ownerNo and ''!=model.ownerNo" >
+		    	and d.owner_no = #{model.ownerNo,jdbcType=VARCHAR}
+		   	</if>
+		   	<if test="null!=model.otherinNo and ''!=model.otherinNo" >
+	            and d.OTHERIN_NO = #{model.otherinNo,jdbcType=VARCHAR}
+	  		</if>
+	  		<if test="null!=model.sysNo and ''!=model.sysNo" >
+		   		and i.sys_no = #{model.sysNo,jdbcType=VARCHAR}
+		  	</if>
+         group by d.LOCNO,
+                  d.OWNER_NO,
+                  d.OTHERIN_NO,
+                  d.CELL_NO,
+                  d.ITEM_NO,
+                  i.size_kind,
+                  i.color_no,
+                  d.brand_no
+         order by d.CELL_NO, d.ITEM_NO
+  </sql>
+  <select id="selectSysNoByPage" resultMap="BaseResultMap" parameterType="Map" >
+  	select A.*, rownum rn
+  		from (select d.CELL_NO,
+               d.ITEM_NO,
+               MAX(i.item_name) as itemName,
+               i.color_no,
+               MAX(c.COLOR_NAME) as colorName,
+               i.size_kind,
+               d.size_no as SIZE_NO,
+               d.brand_no,
+               MAX(br.brand_name) as brandNoStr,
+               sum(d.instorage_qty) instorage_qty
+          from BILL_SM_OTHERIN_DTL d
+         inner join BILL_SM_OTHERIN w1
+            on w1.locno = d.locno
+           and w1.owner_no = d.owner_no
+           and w1.otherin_no = d.otherin_no
+         inner JOIN item i
+            on d.item_no = i.item_no
+           and d.brand_no = i.brand_no
+           <include refid="AuthorityCondition" />
+          left JOIN color_info c
+            ON c.color_no = i.color_no
+          left join brand br
+            on i.brand_no = br.brand_no
+         where 1 = 1
+           and d.LOCNO = #{model.locno,jdbcType=VARCHAR}
+           <if test="null!=model.ownerNo and ''!=model.ownerNo" >
+		    	and d.owner_no = #{model.ownerNo,jdbcType=VARCHAR}
+		   	</if>
+		   	<if test="null!=model.otherinNo and ''!=model.otherinNo" >
+	            and d.OTHERIN_NO = #{model.otherinNo,jdbcType=VARCHAR}
+	  		</if>
+	  		<if test="null!=model.sysNo and ''!=model.sysNo" >
+		   		and i.sys_no = #{model.sysNo,jdbcType=VARCHAR}
+		  	</if>
+		  	<if test="null!=model.itemNo and ''!=model.itemNo" >
+		   		and d.ITEM_NO = #{model.itemNo,jdbcType=VARCHAR}
+		  	</if>
+		  	<if test="null!=model.cellNo and ''!=model.cellNo" >
+		   		and d.CELL_NO = #{model.cellNo,jdbcType=VARCHAR}
+		  	</if>
+		  	<if test="null!=model.colorNo and ''!=model.colorNo" >
+		   		and i.color_no = #{model.colorNo,jdbcType=VARCHAR}
+		  	</if>
+		  	<if test="null!=model.brandNO and ''!=model.brandNO" >
+		   		and d.brand_no = #{model.brandNO,jdbcType=VARCHAR}
+		   	</if>
+         group by d.CELL_NO,
+                  d.ITEM_NO,
+                  i.color_no,
+                  d.brand_no,
+                  i.size_kind,
+                  d.size_no,
+                  d.brand_no
+         order by d.CELL_NO, d.ITEM_NO, d.size_no) A
+  </select>
+  
+  <!-- 查询验收单的复核数量 -->
+  <select id="selectOtherinDtlRecheckQtySum" resultType="java.lang.Integer" >
+  		select nvl(sum(d.recheck_qty),0) recheck_qty
+  			from BILL_SM_OTHERIN_DTL d
+  		where d.LOCNO = #{params.locno,jdbcType=VARCHAR}
+		      and d.OTHERIN_NO = #{params.divideNo,jdbcType=VARCHAR}
+  </select>
+  <select id="selectPrintDtl4Size" parameterType="map" resultType="com.yougou.logistics.city.common.model.BillSmOtherinPrintDto">
+  		select d.cell_no cellNo,
+		       d.item_no itemNo,
+		       d.size_no sizeNo,
+		       nvl(sum(d.instorage_qty),0) instorageQty,
+		       max(i.size_kind) sizeKind,
+		       max(i.sys_no) sysNo,
+		       max(o.area_quality) quality,
+		       max(o.item_type) itemType,
+		       max(o.creatorname) creatorName,
+		       max(o.auditorname) auditorName
+		  from bill_sm_otherin_dtl d
+		  left join item i
+		    on d.item_no = i.item_no
+		  left join bill_sm_otherin o
+		    on o.otherin_no = d.otherin_no
+		 where d.otherin_no = #{params.otherinNo,jdbcType=VARCHAR}
+		   and d.locno = #{params.locno,jdbcType=VARCHAR}
+		 group by d.cell_no, d.item_no, d.size_no
+		 order by d.cell_no, d.item_no
+  </select>
+  <!-- 退仓验收转门店，如果只转一个客户把退仓验收明细插入复核明细,更新退仓验收单的复核数量-->
+  <update id="updateRecheckQty4Convert" parameterType="map">
+		update bill_sm_otherin_dtl d 
+			set d.recheck_qty = d.instorage_qty
+		where d.LOCNO = #{params.locno,jdbcType=VARCHAR}
+			and d.OWNER_NO = #{params.ownerNo,jdbcType=VARCHAR}
+			and d.OTHERIN_NO = #{params.otherinNo,jdbcType=VARCHAR}
+  </update>
+ <!--主表审核时，更新明细表中的修改人，修改时间，修改人对应的中文名称  add by li.zm-->
+ <update id="updateOperateRecord" parameterType="com.yougou.logistics.city.common.model.BillSmWasteDtl" >
+    update Bill_Sm_Otherin_Dtl
+    <set >
+      <if test="editor != null" >
+        EDITOR = #{editor},
+      </if>
+      <if test="editorName != null" >
+        EDITORNAME = #{editorName},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where OTHERIN_NO = #{otherinNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+  </update> 
+</mapper>

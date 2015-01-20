@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BillAccListMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillAccList" >
+    <id column="SERIALID" property="serialid" jdbcType="DECIMAL" />
+    <result column="PAPER_NO" property="paperNo" jdbcType="VARCHAR" />
+    <result column="PAPER_TYPE" property="paperType" jdbcType="VARCHAR" />
+    <result column="IO_FLAG" property="ioFlag" jdbcType="VARCHAR" />
+    <result column="CREATEDT" property="createdt" jdbcType="TIMESTAMP" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="CREATETM_END" property="createtmEnd" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    PAPER_NO, PAPER_TYPE, IO_FLAG, SERIALID, CREATEDT, CREATETM, CREATETM_END
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.paperNo and ''!=params.paperNo" >
+        and PAPER_NO=#{params.paperNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.paperType and ''!=params.paperType" >
+        and PAPER_TYPE=#{params.paperType,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ioFlag and ''!=params.ioFlag" >
+        and IO_FLAG=#{params.ioFlag,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillAccListKey" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM BILL_ACC_LIST
+    WHERE PAPER_NO = #{paperNo,jdbcType=VARCHAR}
+      AND PAPER_TYPE = #{paperType,jdbcType=VARCHAR}
+      AND IO_FLAG = #{ioFlag,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    SELECT COUNT(1) as s FROM BILL_ACC_LIST WHERE 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    SELECT B.* from (SELECT A.*,ROWNUM rn FROM( SELECT 
+    <include refid="Base_Column_List" />
+     FROM BILL_ACC_LIST WHERE 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      ORDER BY ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A WHERE ROWNUM &lt; #{page.endRowNum}) B WHERE rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+     FROM BILL_ACC_LIST WHERE 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillAccListKey" >
+    DELETE FROM BILL_ACC_LIST
+    WHERE PAPER_NO = #{paperNo,jdbcType=VARCHAR}
+      AND PAPER_TYPE = #{paperType,jdbcType=VARCHAR}
+      AND IO_FLAG = #{ioFlag,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillAccList" >
+    DELETE FROM BILL_ACC_LIST
+    WHERE PAPER_NO = #{paperNo,jdbcType=VARCHAR}
+      AND PAPER_TYPE = #{paperType,jdbcType=VARCHAR}
+      AND IO_FLAG = #{ioFlag,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillAccList" >
+  	<selectKey keyProperty="serialid" resultType="long" order="BEFORE">
+  		select SEQ_BILL_ACC_LIST.Nextval from dual
+  	</selectKey>
+    INSERT INTO BILL_ACC_LIST (PAPER_NO, PAPER_TYPE, IO_FLAG, 
+      SERIALID, CREATEDT, CREATETM, 
+      CREATETM_END)
+    VALUES (#{paperNo,jdbcType=VARCHAR}, #{paperType,jdbcType=VARCHAR}, #{ioFlag,jdbcType=VARCHAR}, 
+      #{serialid,jdbcType=DECIMAL}, #{createdt,jdbcType=TIMESTAMP}, #{createtm,jdbcType=TIMESTAMP}, 
+      #{createtmEnd,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillAccList" >
+    INSERT INTO BILL_ACC_LIST
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="paperNo != null" >
+        PAPER_NO,
+      </if>
+      <if test="paperType != null" >
+        PAPER_TYPE,
+      </if>
+      <if test="ioFlag != null" >
+        IO_FLAG,
+      </if>
+      <if test="serialid != null" >
+        SERIALID,
+      </if>
+      <if test="createdt != null" >
+        CREATEDT,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="createtmEnd != null" >
+        CREATETM_END,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="paperNo != null" >
+        #{paperNo,jdbcType=VARCHAR},
+      </if>
+      <if test="paperType != null" >
+        #{paperType,jdbcType=VARCHAR},
+      </if>
+      <if test="ioFlag != null" >
+        #{ioFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="serialid != null" >
+        #{serialid,jdbcType=DECIMAL},
+      </if>
+      <if test="createdt != null" >
+        #{createdt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createtmEnd != null" >
+        #{createtmEnd,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillAccList" >
+    UPDATE BILL_ACC_LIST
+    <set >
+      <if test="serialid != null" >
+        SERIALID = #{serialid,jdbcType=DECIMAL},
+      </if>
+      <if test="createdt != null" >
+        CREATEDT = #{createdt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createtmEnd != null" >
+        CREATETM_END = #{createtmEnd,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    WHERE PAPER_NO = #{paperNo,jdbcType=VARCHAR}
+      AND PAPER_TYPE = #{paperType,jdbcType=VARCHAR}
+      AND IO_FLAG = #{ioFlag,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillAccList" >
+    UPDATE BILL_ACC_LIST
+    SET SERIALID = #{serialid,jdbcType=DECIMAL},
+      CREATEDT = #{createdt,jdbcType=TIMESTAMP},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      CREATETM_END = #{createtmEnd,jdbcType=TIMESTAMP}
+    WHERE PAPER_NO = #{paperNo,jdbcType=VARCHAR}
+      AND PAPER_TYPE = #{paperType,jdbcType=VARCHAR}
+      AND IO_FLAG = #{ioFlag,jdbcType=VARCHAR}
+  </update>
+</mapper>

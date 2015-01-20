@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.TmpAccResultMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.TmpAccResult" >
+    <id column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+    <result column="CELL_ID" property="cellId" jdbcType="DECIMAL" />
+    <result column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <result column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="BARCODE" property="barcode" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ROW_ID, CELL_ID, LOCNO, CELL_NO, ITEM_NO, BARCODE
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <!--行号-->
+      <if test="null!=params.rowId and ''!=params.rowId" >
+        	and ROW_ID=#{params.rowId,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from TMP_ACC_RESULT
+    where ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from TMP_ACC_RESULT where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from TMP_ACC_RESULT where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from TMP_ACC_RESULT where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from TMP_ACC_RESULT
+    where ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.TmpAccResult" >
+    delete from TMP_ACC_RESULT
+    where ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.TmpAccResult" >
+    insert into TMP_ACC_RESULT (ROW_ID, CELL_ID, LOCNO, 
+      CELL_NO, ITEM_NO, BARCODE
+      )
+    values (#{rowId,jdbcType=DECIMAL}, #{cellId,jdbcType=DECIMAL}, #{locno,jdbcType=VARCHAR}, 
+      #{cellNo,jdbcType=VARCHAR}, #{itemNo,jdbcType=VARCHAR}, #{barcode,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.TmpAccResult" >
+    insert into TMP_ACC_RESULT
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="rowId != null" >
+        ROW_ID,
+      </if>
+      <if test="cellId != null" >
+        CELL_ID,
+      </if>
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="barcode != null" >
+        BARCODE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="rowId != null" >
+        #{rowId,jdbcType=DECIMAL},
+      </if>
+      <if test="cellId != null" >
+        #{cellId,jdbcType=DECIMAL},
+      </if>
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null" >
+        #{barcode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.TmpAccResult" >
+    update TMP_ACC_RESULT
+    <set >
+      <if test="cellId != null" >
+        CELL_ID = #{cellId,jdbcType=DECIMAL},
+      </if>
+      <if test="locno != null" >
+        LOCNO = #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO = #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null" >
+        BARCODE = #{barcode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.TmpAccResult" >
+    update TMP_ACC_RESULT
+    set CELL_ID = #{cellId,jdbcType=DECIMAL},
+      LOCNO = #{locno,jdbcType=VARCHAR},
+      CELL_NO = #{cellNo,jdbcType=VARCHAR},
+      ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      BARCODE = #{barcode,jdbcType=VARCHAR}
+    where ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+</mapper>

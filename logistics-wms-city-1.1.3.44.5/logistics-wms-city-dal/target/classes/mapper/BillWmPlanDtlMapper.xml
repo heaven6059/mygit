@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillWmPlanDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillWmPlanDtl" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="PLAN_NO" property="planNo" jdbcType="VARCHAR" />
+    <id column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="item_name" property="itemName" jdbcType="VARCHAR" />
+    <result column="color_name" property="colorName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    d.LOCNO, d.OWNER_NO, d.PLAN_NO, d.ITEM_NO, d.STATUS
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.locno and ''!=params.locno" >
+        and d.locno = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.planNo and ''!=params.planNo" >
+        and d.plan_no = #{params.planNo,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+  
+  <sql id="condition_item">
+	  <if test="null!=params">
+	      <if test="null!=params.itemNo and ''!=params.itemNo" >
+	            and i.item_no = #{params.itemNo}
+	      </if>
+	      <if test="null!=params.itemName and ''!=params.itemName" >
+	          and i.item_name like '%${params.itemName}%' 
+	      </if>
+	       <if test="null!=params.sysNo and ''!=params.sysNo" >
+	          and i.sys_no = #{params.sysNo}
+	      </if>
+	  </if>
+   </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillWmPlanDtlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_WM_PLAN_DTL d
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and PLAN_NO = #{planNo,jdbcType=VARCHAR}
+      and ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+  </select>
+  
+  <!--权限过滤查询条件-->
+  <sql id="d_AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and d.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_WM_PLAN_DTL d where 1=1 
+    <include refid="condition" />
+    <include refid="d_AuthorityCondition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+    ,i.item_name,c.color_name
+     from BILL_WM_PLAN_DTL d 
+     left join item i on i.item_no = d.item_no
+     left join color_info c on c.color_no = i.color_no
+     where 1=1 
+    <include refid="condition" />
+    <include refid="d_AuthorityCondition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_WM_PLAN_DTL where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <!--权限过滤查询条件-->
+  <sql id="i_AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and i.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+   <select id="selectItemCount" resultType="java.lang.Integer">
+		SELECT count(1)
+		  FROM item i
+		  where 1=1
+		  <include refid="condition_item" />
+		  <include refid="i_AuthorityCondition" />
+  </select>	
+    
+  <!-- 查询商品 -->
+  <select id="selectItem" resultType="com.yougou.logistics.city.common.model.Item">
+	  	 select B.* from (select A.*,rownum rn from(
+		SELECT i.item_no  itemNo,
+		       i.item_name itemName,
+		       c.color_name colorName
+		  FROM item i
+		  LEFT JOIN color_info c
+		    ON c.color_no = i.color_no
+		  where 1=1
+		  <include refid="condition_item" />
+		  <include refid="i_AuthorityCondition" />
+		  order by itemNo
+		   ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillWmPlanDtlKey" >
+    delete from BILL_WM_PLAN_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and PLAN_NO = #{planNo,jdbcType=VARCHAR}
+      and ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillWmPlanDtl" >
+    delete from BILL_WM_PLAN_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and PLAN_NO = #{planNo,jdbcType=VARCHAR}
+      and ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillWmPlanDtl" >
+    insert into BILL_WM_PLAN_DTL (LOCNO, OWNER_NO, PLAN_NO, 
+      ITEM_NO, STATUS)
+    values (#{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, #{planNo,jdbcType=VARCHAR}, 
+      #{itemNo,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillWmPlanDtl" >
+    insert into BILL_WM_PLAN_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="planNo != null" >
+        PLAN_NO,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="brandNo != null" >
+        BRAND_NO,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="planNo != null" >
+        #{planNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="brandNo != null" >
+        #{brandNo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillWmPlanDtl" >
+    update BILL_WM_PLAN_DTL
+    <set >
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and PLAN_NO = #{planNo,jdbcType=VARCHAR}
+      and ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateAllDetail" parameterType="com.yougou.logistics.city.common.model.BillWmPlan" >
+    update BILL_WM_PLAN_DTL
+    <set >
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and PLAN_NO = #{planNo,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillWmPlanDtl" >
+    update BILL_WM_PLAN_DTL
+    set STATUS = #{status,jdbcType=VARCHAR}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and PLAN_NO = #{planNo,jdbcType=VARCHAR}
+      and ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

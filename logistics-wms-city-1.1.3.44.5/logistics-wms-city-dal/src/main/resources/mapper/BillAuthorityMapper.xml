@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillAuthorityMapper" >
+   <select id="selectHasFullBillAuthority" resultType="java.lang.Integer" >
+    select count(*) from ${bean.tableName}  
+    where ${bean.billNoClumn}=#{bean.billNo,jdbcType=VARCHAR}
+    and brand_no not in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+  </select>
+</mapper>

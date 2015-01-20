@@ -1,0 +1,696 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillOmOutstockMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillOmOutstock" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OUTSTOCK_NO" property="outstockNo" jdbcType="VARCHAR" />
+    <result column="OPERATE_DATE" property="operateDate" jdbcType="TIMESTAMP" />
+    <result column="OUTSTOCK_TYPE" property="outstockType" jdbcType="VARCHAR" />
+    <result column="BATCH_NO" property="batchNo" jdbcType="VARCHAR" />
+    <result column="OPERATE_TYPE" property="operateType" jdbcType="CHAR" />
+    <result column="PICK_TYPE" property="pickType" jdbcType="VARCHAR" />
+    <result column="TASK_TYPE" property="taskType" jdbcType="CHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="PRIORITY" property="priority" jdbcType="DECIMAL" />
+    <result column="DOCK_NO" property="dockNo" jdbcType="VARCHAR" />
+    <result column="HANDIN_DATE" property="handinDate" jdbcType="TIMESTAMP" />
+    <result column="HANDOUT_DATE" property="handoutDate" jdbcType="TIMESTAMP" />
+    <result column="HANDIN_NAME" property="handinName" jdbcType="VARCHAR" />
+    <result column="HANDOUT_NAME" property="handoutName" jdbcType="VARCHAR" />
+    <result column="PRINT_STATUS" property="printStatus" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATORNAME" property="creatorname" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="EDITORNAME" property="editorname" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="EXP_DATE" property="expDate" jdbcType="TIMESTAMP" />
+    <result column="LABELPICK_FLAG" property="labelpickFlag" jdbcType="VARCHAR" />
+    <result column="MASS_FLAG" property="massFlag" jdbcType="VARCHAR" />
+    <result column="AUDITOR" property="auditor" jdbcType="VARCHAR" />
+    <result column="AUDITORNAME" property="auditorname" jdbcType="VARCHAR" />
+    <result column="AUDITTM" property="audittm" jdbcType="TIMESTAMP" />
+    <result column="SOURCE_NO" property="sourceNo" jdbcType="VARCHAR" />
+    <result column="SOURCE_TYPE" property="sourceType" jdbcType="VARCHAR" />
+    <result column="OUTSTOCK_SEND_TYPE" property="outstockSendType" jdbcType="VARCHAR" />
+    <result column="storeName" property="storeName" jdbcType="VARCHAR" />
+    
+    <result column="item_qty" property="itemQty" jdbcType="DECIMAL" />
+    <result column="real_qty" property="realQty" jdbcType="DECIMAL" />
+    <result column="outstocked_qty" property="outstockedQty" jdbcType="DECIMAL" />
+    
+    <!--拣货日期，拣货人-->
+    <result column="assign_name" property="assignName" jdbcType="VARCHAR" />
+    <result column="assign_name_ch" property="assignNameCh" jdbcType="VARCHAR" />
+    <result column="OUTSTOCK_DATE" property="outstockDate" jdbcType="TIMESTAMP" />
+    <result column="OUTSTOCK_NAME" property="outstockName" jdbcType="VARCHAR" />
+    <result column="INSTOCK_NAME" property="instockName" jdbcType="VARCHAR" />
+    <result column="startCreatetm" property="startCreatetm" jdbcType="TIMESTAMP" />
+    <result column="endCreatetm" property="endCreatetm" jdbcType="TIMESTAMP" />
+    <result column="startAudittm" property="startAudittm" jdbcType="TIMESTAMP" />
+    <result column="endAudittm" property="endAudittm" jdbcType="TIMESTAMP" />
+    <result column="statusStr" property="statusStr" jdbcType="VARCHAR" />
+    <result column="LOCATE_NO" property="locateNo" jdbcType="VARCHAR" />
+    <result column="brandNo" property="brandNo" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+  <sql id="Base_Column_List" >
+    LOCNO, OUTSTOCK_NO, OPERATE_DATE, OUTSTOCK_TYPE, BATCH_NO, OPERATE_TYPE, PICK_TYPE, 
+    TASK_TYPE, STATUS, PRIORITY, DOCK_NO, HANDIN_DATE, HANDOUT_DATE, HANDIN_NAME, HANDOUT_NAME, 
+    PRINT_STATUS, CREATOR,CREATORNAME, CREATETM, EDITOR,EDITORNAME, EDITTM, EXP_DATE, LABELPICK_FLAG, MASS_FLAG, 
+    AUDITOR,AUDITORNAME, AUDITTM,OUTSTOCK_SEND_TYPE,SOURCE_NO,SOURCE_TYPE
+  </sql>
+  <sql id="Extend_Column_List" >
+    b.LOCNO, b.OUTSTOCK_NO, b.STATUS, b.TASK_TYPE,
+    b.OPERATE_DATE as OUTSTOCK_DATE,
+    b.CREATOR,MAX(b.CREATORNAME) CREATORNAME, b.CREATETM, b.EDITOR,MAX(b.EDITORNAME) EDITORNAME, b.EDITTM,
+    b.AUDITOR,MAX(b.AUDITORNAME) AUDITORNAME, b.AUDITTM, b.OUTSTOCK_SEND_TYPE
+  </sql>
+  
+   <sql id="Move_Stock_Column_List" >
+    b.LOCNO, b.OUTSTOCK_NO, b.STATUS,
+    b.CREATOR,b.CREATORNAME, b.CREATETM, b.EDITOR,b.EDITORNAME, b.EDITTM,
+    b.AUDITOR,b.AUDITORNAME, b.AUDITTM
+  </sql>
+  
+  
+  <sql id="condition" >
+    <if test="null!=params" >
+      <!--单据状态-->
+      <if test="null!=params.status and ''!=params.status" >
+       		AND b.STATUS=${params.status}
+      </if>
+      <!--单据编号-->
+      <if test="null!=params.outstockNo and ''!=params.outstockNo" >
+       		AND b.OUTSTOCK_NO=#{params.outstockNo,jdbcType=VARCHAR}
+      </if>
+      <!--单据类型-->
+      <if test="null!=params.outstockType and ''!=params.outstockType" >
+       		AND b.OUTSTOCK_TYPE=#{params.outstockType,jdbcType=VARCHAR}
+      </if>
+      
+      <if test="null!=params.creator and ''!=params.creator" >
+            and b.CREATOR LIKE '%${params.creator}%'
+      </if>
+      <if test="null!=params.auditor and ''!=params.auditor" >
+            and b.AUDITOR LIKE '%${params.auditor}%'
+      </if>
+      <!--创建日期-->
+      <if test="null!=params.createTmStart and ''!=params.createTmStart" >
+    	<![CDATA[ 
+      	 	AND b.CREATETM >= to_date('${params.createTmStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+        ]]>
+      </if>
+       <if test="null!=params.createTmEnd and ''!=params.createTmEnd" >
+    	<![CDATA[ 
+      	 	AND b.CREATETM <= to_date('${params.createTmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+        ]]>
+      </if>
+      <if test="null!=params.startAudittm and ''!=params.startAudittm" >
+       <![CDATA[
+        	and b.AUDITTM >= to_date('${params.startAudittm} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+     	]]>	 
+      </if>
+      <if test="null!=params.endAudittm and ''!=params.endAudittm" >
+       <![CDATA[
+        	and b.AUDITTM <= to_date('${params.endAudittm} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+     	]]>	 
+      </if>
+      <!--拣货类型-->
+      <if test="null!=params.taskType and ''!=params.taskType" >
+       AND b.TASK_TYPE=${params.taskType}
+      </if>
+      <if test="null!=params.outstockSendType and ''!=params.outstockSendType" >
+       	AND b.OUTSTOCK_SEND_TYPE=#{params.outstockSendType,jdbcType=VARCHAR}
+      </if>
+      <!--拣货日期-->
+      <if test="null!=params.outstockDateStart and ''!=params.outstockDateStart" >
+    	<![CDATA[ 
+      	 	AND b.OPERATE_DATE >= to_date(#{params.outstockDateStart,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+        ]]>
+      </if>
+      <if test="null!=params.outstockDateEnd and ''!=params.outstockDateEnd" >
+    	<![CDATA[ 
+      	 	AND b.OPERATE_DATE <= to_date(#{params.outstockDateEnd,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+        ]]>
+      </if>
+      
+      
+       <!--波次号-->
+      <if test="null!=params.locateNo and ''!=params.locateNo" >
+       		AND d.LOCATE_NO=#{params.locateNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.brandNo and ''!=params.brandNo" >
+      		and d.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+	  	</if>
+	  	 <if test="null!=params.sysNo and ''!=params.sysNo" >
+            and it.SYS_NO = #{params.sysNo,jdbcType=VARCHAR}
+        </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillOmOutstockKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_OM_OUTSTOCK
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OUTSTOCK_NO = #{outstockNo,jdbcType=VARCHAR}
+  </select>
+  
+  <!--权限过滤左连接子查询-->
+  <sql id="selectByPageAuthorityLeftJoin" >
+   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+   	and it.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+   </if>
+  </sql>
+  
+  <!--权限过滤子查询条件-->
+  <sql id="child_condition">
+  	<if test="null!=params" >
+      <if test="null!=params.locno and ''!=params.locno" >
+      	and locno = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.outstockNo and ''!=params.outstockNo" >
+      	and outstock_no = #{params.outstockNo,jdbcType=VARCHAR}
+      </if>
+     </if>
+  </sql>
+  
+  <sql id="SQL_joinIn">
+  	 inner join BILL_OM_OUTSTOCK_DTL d
+            on b.locno = d.locno
+           and b.outstock_no = d.outstock_no
+     inner join item it
+            on it.item_no = d.item_no
+           and it.brand_no = d.brand_no
+           <include refid="selectByPageAuthorityLeftJoin" />
+     inner join cm_defcell cdc
+            on cdc.locno = d.locno
+           and cdc.cell_no = d.s_cell_no
+     inner join cm_defarea cda
+            on cda.locno = d.locno
+           and cda.ware_no = cdc.ware_no
+           and cda.area_no = cdc.area_no
+   	  where b.locno=#{params.locno,jdbcType=VARCHAR}
+    	<include refid="condition" />
+  </sql>
+  <select id="selectSumQty" resultType="java.util.Map" parameterType="map">
+ 		select nvl(sum(d.item_qty), 0) item_qty,
+ 			nvl(sum(d.real_qty), 0) real_qty,
+       		nvl(sum(d.outstocked_qty), 0) outstocked_qty
+          from BILL_OM_OUTSTOCK b
+          <include refid="SQL_joinIn" />
+   </select>
+   
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(distinct b.OUTSTOCK_NO) as s
+	  from BILL_OM_OUTSTOCK b
+      <include refid="SQL_joinIn" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,
+    	(select ld.ITEMNAME
+          from LOOKUPDTL ld
+         where A.status = ld.itemval
+           and ld.lookupcode = 'CITY_OUTSTOCK_STATUS'
+           and rownum = 1) as statusStr,
+       (CASE
+         WHEN A.OUTSTOCK_SEND_TYPE = '0' THEN
+          (select store_name from store s where s.store_no = A.store_no)
+         WHEN A.OUTSTOCK_SEND_TYPE = '1' then
+          A.area_name
+       	END) AS storeName,
+    rownum rn from( select distinct
+    <include refid="Extend_Column_List" />,
+			MAX(d.assign_name) assign_name,
+			MAX(d.assign_name_ch) assign_name_ch,
+            MAX(d.LOCATE_NO) LOCATE_NO,
+          	MAX(d.store_no) store_no,
+          	MAX(cda.area_name) area_name,
+          	MAX(b.remark) remark,
+           	nvl(sum(d.item_qty), 0) item_qty,
+           	nvl(sum(d.real_qty), 0) real_qty,
+           	nvl(sum(d.outstocked_qty), 0) outstocked_qty
+      from BILL_OM_OUTSTOCK b
+      <include refid="SQL_joinIn" />
+      group by b.LOCNO,
+                  b.OUTSTOCK_NO,
+                  b.STATUS,
+                  b.TASK_TYPE,
+                  b.OPERATE_DATE,
+                  b.CREATOR,
+                  b.CREATETM,
+                  b.EDITOR,
+                  b.EDITTM,
+                  b.AUDITOR,
+                  b.AUDITTM,
+                  b.OUTSTOCK_SEND_TYPE
+    <choose>
+	    <when test="orderByField != null and ''!=orderByField">
+			order by ${orderByField}
+			<if test="orderByField">
+			${orderBy}
+			</if>
+		</when>
+		<otherwise>
+			order by b.CREATETM desc, b.OUTSTOCK_NO desc
+		</otherwise>
+    </choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  
+  <!--权限过滤左连接子查询-->
+  <sql id="selectMoveStockByPageAuthorityLeftJoin" >
+   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+            left join (select locno, outstock_no
+                         from BILL_OM_OUTSTOCK_DTL                         
+                        where brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+                         <include refid="selectMoveStockChildCondition" />   
+                         group by  locno, outstock_no
+                        ) sub1
+              on sub1.locno = b.locno
+             and sub1.outstock_no = b.outstock_no
+                          
+             left join (select locno, outstock_no
+                         from BILL_OM_OUTSTOCK_DTL where 1=1
+                         <include refid="selectMoveStockChildCondition" />  
+                         group by  locno, outstock_no                   
+                        ) sub2
+              on sub2.locno = b.locno
+             and sub2.outstock_no = b.outstock_no
+    </if>
+  </sql>
+  
+  <!--权限过滤查询条件-->
+  <sql id="selectMoveStockByPageAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and (sub1.outstock_no is not null or sub2.outstock_no is null)
+    </if>
+  </sql>
+
+
+<!--权限过滤子查询条件-->
+  <sql id="selectMoveStockChildCondition">
+  	<if test="null!=params" >
+      <if test="null!=params.locno and ''!=params.locno" >
+      	and locno = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.outstockNo and ''!=params.outstockNo" >
+      	and outstock_no = #{params.outstockNo,jdbcType=VARCHAR}
+      </if>
+     </if>
+  </sql>
+  
+  
+  <!-- 即时移库 -->
+  <select id="selectMoveStockCount" resultType="java.lang.Integer" >
+    select count(distinct b.OUTSTOCK_NO) as s
+	  from BILL_OM_OUTSTOCK b
+	  <include refid="selectMoveStockByPageAuthorityLeftJoin" />
+	  left outer join BILL_OM_OUTSTOCK_DTL d
+	    on b.OUTSTOCK_NO = d.OUTSTOCK_NO
+	    and b.locno = d.locno
+	  left join item it on it.item_no = d.item_no
+	where b.locno = #{params.locno,jdbcType=VARCHAR}
+    <include refid="condition" />
+    <include refid="selectMoveStockByPageAuthorityCondition" />
+  </select>
+  
+  <select id="selectMoveStockByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select distinct
+    <include refid="Move_Stock_Column_List" />,
+    (select ld.ITEMNAME from LOOKUPDTL ld where b.status = ld.itemval and ld.lookupcode = 'CITY_IMMEDIATE_MOVE_STOCK' and rownum = 1) as statusStr,
+    (select nvl(sum(ood.item_qty),0) from BILL_OM_OUTSTOCK_DTL ood 
+    	where ood.locno = b.locno 
+    	and ood.outstock_no = b.outstock_no ) as itemQty
+      from BILL_OM_OUTSTOCK b
+      <include refid="selectMoveStockByPageAuthorityLeftJoin" />
+      left outer join BILL_OM_OUTSTOCK_DTL d
+        on b.OUTSTOCK_NO = d.OUTSTOCK_NO
+        and b.locno=d.locno
+      left join item it on it.item_no = d.item_no
+   	  where b.locno=#{params.locno,jdbcType=VARCHAR}
+    <include refid="condition" />
+    <include refid="selectMoveStockByPageAuthorityCondition" />
+    <choose>
+	    <when test="orderByField != null and ''!=orderByField">
+			order by ${orderByField}
+			<if test="orderByField">
+			${orderBy}
+			</if>
+		</when>
+		<otherwise>
+			order by b.CREATETM desc
+		</otherwise>
+    </choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_OM_OUTSTOCK b where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillOmOutstockKey" >
+    delete from BILL_OM_OUTSTOCK
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OUTSTOCK_NO = #{outstockNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillOmOutstock" >
+    delete from BILL_OM_OUTSTOCK
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OUTSTOCK_NO = #{outstockNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillOmOutstock" >
+    insert into BILL_OM_OUTSTOCK (LOCNO, OUTSTOCK_NO, OPERATE_DATE, 
+      OUTSTOCK_TYPE, BATCH_NO, OPERATE_TYPE, 
+      PICK_TYPE, TASK_TYPE, STATUS, 
+      PRIORITY, DOCK_NO, HANDIN_DATE, 
+      HANDOUT_DATE, HANDIN_NAME, HANDOUT_NAME, 
+      PRINT_STATUS, CREATOR,CREATORNAME, CREATETM, 
+      EDITOR,EDITORNAME, EDITTM, EXP_DATE, 
+      LABELPICK_FLAG, MASS_FLAG, AUDITOR,AUDITORNAME, 
+      AUDITTM)
+    values (#{locno,jdbcType=VARCHAR}, #{outstockNo,jdbcType=VARCHAR}, #{operateDate,jdbcType=TIMESTAMP}, 
+      #{outstockType,jdbcType=VARCHAR}, #{batchNo,jdbcType=VARCHAR}, #{operateType,jdbcType=CHAR}, 
+      #{pickType,jdbcType=VARCHAR}, #{taskType,jdbcType=CHAR}, #{status,jdbcType=VARCHAR}, 
+      #{priority,jdbcType=DECIMAL}, #{dockNo,jdbcType=VARCHAR}, #{handinDate,jdbcType=TIMESTAMP}, 
+      #{handoutDate,jdbcType=TIMESTAMP}, #{handinName,jdbcType=VARCHAR}, #{handoutName,jdbcType=VARCHAR}, 
+      #{printStatus,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR},#{creatorname,jdbcType=VARCHAR}, #{createtm,jdbcType=TIMESTAMP}, 
+      #{editor,jdbcType=VARCHAR},#{editorname,jdbcType=VARCHAR}, #{edittm,jdbcType=TIMESTAMP}, #{expDate,jdbcType=TIMESTAMP}, 
+      #{labelpickFlag,jdbcType=VARCHAR}, #{massFlag,jdbcType=VARCHAR}, #{auditor,jdbcType=VARCHAR},#{auditorname,jdbcType=VARCHAR},  
+      #{audittm,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillOmOutstock" >
+    insert into BILL_OM_OUTSTOCK
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="outstockNo != null" >
+        OUTSTOCK_NO,
+      </if>
+      <if test="operateDate != null" >
+        OPERATE_DATE,
+      </if>
+      <if test="outstockType != null" >
+        OUTSTOCK_TYPE,
+      </if>
+      <if test="batchNo != null" >
+        BATCH_NO,
+      </if>
+      <if test="operateType != null" >
+        OPERATE_TYPE,
+      </if>
+      <if test="pickType != null" >
+        PICK_TYPE,
+      </if>
+      <if test="taskType != null" >
+        TASK_TYPE,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="priority != null" >
+        PRIORITY,
+      </if>
+      <if test="dockNo != null" >
+        DOCK_NO,
+      </if>
+      <if test="handinDate != null" >
+        HANDIN_DATE,
+      </if>
+      <if test="handoutDate != null" >
+        HANDOUT_DATE,
+      </if>
+      <if test="handinName != null" >
+        HANDIN_NAME,
+      </if>
+      <if test="handoutName != null" >
+        HANDOUT_NAME,
+      </if>
+      <if test="printStatus != null" >
+        PRINT_STATUS,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="creatorname != null" >
+        CREATORNAME,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="editorname != null" >
+        EDITORNAME,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="expDate != null" >
+        EXP_DATE,
+      </if>
+      <if test="labelpickFlag != null" >
+        LABELPICK_FLAG,
+      </if>
+      <if test="massFlag != null" >
+        MASS_FLAG,
+      </if>
+      <if test="auditor != null" >
+        AUDITOR,
+      </if>
+      <if test="auditorname != null" >
+        AUDITORNAME,
+      </if>
+      <if test="audittm != null" >
+        AUDITTM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="outstockNo != null" >
+        #{outstockNo,jdbcType=VARCHAR},
+      </if>
+      <if test="operateDate != null" >
+        #{operateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="outstockType != null" >
+        #{outstockType,jdbcType=VARCHAR},
+      </if>
+      <if test="batchNo != null" >
+        #{batchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="operateType != null" >
+        #{operateType,jdbcType=CHAR},
+      </if>
+      <if test="pickType != null" >
+        #{pickType,jdbcType=VARCHAR},
+      </if>
+      <if test="taskType != null" >
+        #{taskType,jdbcType=CHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="priority != null" >
+        #{priority,jdbcType=DECIMAL},
+      </if>
+      <if test="dockNo != null" >
+        #{dockNo,jdbcType=VARCHAR},
+      </if>
+      <if test="handinDate != null" >
+        #{handinDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="handoutDate != null" >
+        #{handoutDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="handinName != null" >
+        #{handinName,jdbcType=VARCHAR},
+      </if>
+      <if test="handoutName != null" >
+        #{handoutName,jdbcType=VARCHAR},
+      </if>
+      <if test="printStatus != null" >
+        #{printStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorname != null" >
+        #{creatorname,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorname != null" >
+        #{editorname,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expDate != null" >
+        #{expDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="labelpickFlag != null" >
+        #{labelpickFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="massFlag != null" >
+        #{massFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="auditor != null" >
+        #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorname != null" >
+        #{auditorname,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        #{audittm,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillOmOutstock" >
+    update BILL_OM_OUTSTOCK
+    <set >
+      <if test="operateDate != null" >
+        OPERATE_DATE = #{operateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="outstockType != null" >
+        OUTSTOCK_TYPE = #{outstockType,jdbcType=VARCHAR},
+      </if>
+      <if test="batchNo != null" >
+        BATCH_NO = #{batchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="operateType != null" >
+        OPERATE_TYPE = #{operateType,jdbcType=CHAR},
+      </if>
+      <if test="pickType != null" >
+        PICK_TYPE = #{pickType,jdbcType=VARCHAR},
+      </if>
+      <if test="taskType != null" >
+        TASK_TYPE = #{taskType,jdbcType=CHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="priority != null" >
+        PRIORITY = #{priority,jdbcType=DECIMAL},
+      </if>
+      <if test="dockNo != null" >
+        DOCK_NO = #{dockNo,jdbcType=VARCHAR},
+      </if>
+      <if test="handinDate != null" >
+        HANDIN_DATE = #{handinDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="handoutDate != null" >
+        HANDOUT_DATE = #{handoutDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="handinName != null" >
+        HANDIN_NAME = #{handinName,jdbcType=VARCHAR},
+      </if>
+      <if test="handoutName != null" >
+        HANDOUT_NAME = #{handoutName,jdbcType=VARCHAR},
+      </if>
+      <if test="printStatus != null" >
+        PRINT_STATUS = #{printStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorname != null" >
+        CREATORNAME = #{creatorname,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorname != null" >
+        EDITORNAME = #{editorname,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expDate != null" >
+        EXP_DATE = #{expDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="labelpickFlag != null" >
+        LABELPICK_FLAG = #{labelpickFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="massFlag != null" >
+        MASS_FLAG = #{massFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="auditor != null" >
+        AUDITOR = #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorname != null" >
+        AUDITORNAME = #{auditorname,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OUTSTOCK_NO = #{outstockNo,jdbcType=VARCHAR}
+      <if test="updStatus != null and '' != updStatus">
+          and STATUS = #{updStatus,jdbcType=VARCHAR}
+      </if>
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillOmOutstock" >
+    update BILL_OM_OUTSTOCK
+    set OPERATE_DATE = #{operateDate,jdbcType=TIMESTAMP},
+      OUTSTOCK_TYPE = #{outstockType,jdbcType=VARCHAR},
+      BATCH_NO = #{batchNo,jdbcType=VARCHAR},
+      OPERATE_TYPE = #{operateType,jdbcType=CHAR},
+      PICK_TYPE = #{pickType,jdbcType=VARCHAR},
+      TASK_TYPE = #{taskType,jdbcType=CHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      PRIORITY = #{priority,jdbcType=DECIMAL},
+      DOCK_NO = #{dockNo,jdbcType=VARCHAR},
+      HANDIN_DATE = #{handinDate,jdbcType=TIMESTAMP},
+      HANDOUT_DATE = #{handoutDate,jdbcType=TIMESTAMP},
+      HANDIN_NAME = #{handinName,jdbcType=VARCHAR},
+      HANDOUT_NAME = #{handoutName,jdbcType=VARCHAR},
+      PRINT_STATUS = #{printStatus,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATORNAME = #{creatorname,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITORNAME = #{editorname,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      EXP_DATE = #{expDate,jdbcType=TIMESTAMP},
+      LABELPICK_FLAG = #{labelpickFlag,jdbcType=VARCHAR},
+      MASS_FLAG = #{massFlag,jdbcType=VARCHAR},
+      AUDITOR = #{auditor,jdbcType=VARCHAR},
+      AUDITORNAME = #{auditorname,jdbcType=VARCHAR},
+      AUDITTM = #{audittm,jdbcType=TIMESTAMP}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OUTSTOCK_NO = #{outstockNo,jdbcType=VARCHAR}
+  </update>
+  
+   <!-- 查询复核单计划数量实际数量总数 -->
+  <select id="selectImmediateMoveSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+    select nvl(sum(d.item_qty),0) as item_qty
+	  from BILL_OM_OUTSTOCK b
+	  <include refid="selectMoveStockByPageAuthorityLeftJoin" />
+	  left outer join BILL_OM_OUTSTOCK_DTL d
+	    on b.OUTSTOCK_NO = d.OUTSTOCK_NO
+	    and b.locno = d.locno
+	  left join item it on it.item_no = d.item_no
+	where b.locno = #{params.locno,jdbcType=VARCHAR}
+    <include refid="condition" />
+    <include refid="selectMoveStockByPageAuthorityCondition" />
+  </select>
+  
+</mapper>

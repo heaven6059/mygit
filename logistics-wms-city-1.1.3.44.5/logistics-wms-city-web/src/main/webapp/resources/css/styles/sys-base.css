@@ -1,0 +1,58 @@
+@charset "utf-8";
+/*---全局 start--- */
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;background:transparent}
+body{line-height:1;background:url(../../images/layout/bg.gif) repeat-y left top; font-size:12px;}
+form{padding:0;margin:0;}
+ol,ul,li{list-style:none}
+blockquote,q{quotes:none}
+blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outline:0}
+ins{text-decoration:none}
+del{text-decoration:line-through}
+table{border-collapse:collapse;border-spacing:0}
+input,select,textarea{vertical-align:middle;font-size:12px;}
+* html .clearfix {height: 1%;}
+html, body, .wrap {height:100%;}
+body > .wrap {height: auto; min-height: 100%;}
+img{border:0}
+a {outline: none;}
+a:active {star:expression(this.onFocus=this.blur());}
+:focus { outline:0; }
+a:link{text-decoration:none; color:#000;}
+a:visited{text-decoration:none; color:#000;}
+a:hover{text-decoration:none; color:#F00;}
+a:active{text-decoration:none;}
+/*---全局 end--- */
+
+/*按钮*/
+.btn_delete { width:58px; height:20px; border:0; background:url(../images/btn/del_btn.png); cursor:pointer}
+.btn-add-normal{width:53px; height:24px; text-align:center; border:none; background:url(../images/icon/btn-normal.gif) no-repeat; cursor:pointer;}
+a.btn{text-decoration:none;background:url(../../images/icon/btn.png) 0 0;color:#565662;margin:0px 32px 0px 0px;  cursor:pointer;display:inline-block;color:#000; font-family:"宋体";}
+a.btn span{ position:relative;background:  url(../images/icon/btn.png) top right;line-height: 24px;margin:0 -10px 0 10px; padding-right:10px;display:inline-block;}
+a.btn:hover{background:  url(../../images/icon/btn.png) left -24px;height:24px;margin:0px 32px 0px 0px;display:inline-block;color:#000;}
+a.btn:hover span{background:  url(../../images/icon/btn.png) right -24px;line-height: 24px;margin:0 -10px 0 10px; padding-right:10px;display:inline-block;}
+.clear {clear: both;display: block;overflow: hidden;visibility: hidden;width: 0;height: 0;}/* 单独的清除元素*/
+.clearfix:after {clear: both;content: '.';display: block;visibility: hidden;height: 0;}
+.clearfix {display:block;}
+.ft-cl-red{color:#F00;}
+.ft-cl-gray{color:#666;}
+.ft-cl-green{color:green;}
+.fl{ float:left}
+.fr{ float:right}
+.tleft{ text-align:left}
+.tcenter{ text-align:center}
+.tright{ text-align:right}
+.f_red { color:red}
+.hidden { display:none}
+.block{display:block;}
+.relative{position:relative}
+.absolute{position:absolute;}
+.blank10{height:10px; clear:both; width:100%;font-size:0px;}
+.blank20{height:20px; clear:both; width:100%;font-size:0px;}
+.blank40{height:40px; clear:both; width:100%;font-size:0px;}
+a.blue:link{color:#39F; text-decoration:none;}
+a.blue:visited{color:#39F; text-decoration:none;}
+a.blue:hover{color:#C00; text-decoration:none;}
+a.blue:active{color:#39F; text-decoration:none;}
+a.red:link,a.red:visited{color:#930; text-decoration:none;}
+a.red:hover,a.red:active{color:#ff0000; text-decoration:none;}
+.td-no{color:red;text-align:center;}

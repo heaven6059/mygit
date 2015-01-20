@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BmContainerMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BmContainer" >  
+  	<result column="CON_NO" property="conNo" jdbcType="VARCHAR" />
+	<result column="LOCNO" property="locno" jdbcType="VARCHAR" />
+	<result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+	<result column="CON_TYPE" property="type" jdbcType="CHAR" />
+	<result column="CON_WEIGHT" property="weight" jdbcType="DECIMAL" />
+	<result column="CON_VOLUME" property="volume" jdbcType="DECIMAL" />
+	<result column="CON_LENGTH" property="length" jdbcType="DECIMAL" />
+	<result column="CON_WIDE" property="wide" jdbcType="DECIMAL" />
+	<result column="CON_HEIGHT" property="height" jdbcType="DECIMAL" />
+	<result column="STATUS" property="status" jdbcType="CHAR" />
+	<result column="MIX_STYLE" property="mixStyle" jdbcType="CHAR" />
+	<result column="IS_DELETED" property="isDeleted" jdbcType="CHAR" />
+	<result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+	<result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+	<result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+	<result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+	<result column="REMARKS" property="remarks" jdbcType="VARCHAR" />
+	<result column="OPT_BILL_NO" property="optBillNo" jdbcType="VARCHAR" />
+	<result column="OPT_BILL_TYPE" property="optBillType" jdbcType="CHAR" />
+	<result column="CON_STATUS" property="conStatus" jdbcType="VARCHAR" />
+	<result column="TRANS_FLAG" property="transFlag" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List">
+	CON_NO,LOCNO,OWNER_NO,CON_TYPE,CON_WEIGHT,CON_VOLUME,CON_LENGTH,CON_WIDE,OPT_BILL_NO,
+	CON_HEIGHT,STATUS,MIX_STYLE,IS_DELETED,CREATOR,CREATETM,EDITOR,EDITTM,REMARKS,
+	OPT_BILL_TYPE,TRANS_FLAG
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.locno and ''!=params.locno" >
+        AND LOCNO = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.type and ''!=params.type" >
+        AND CON_TYPE = #{params.type,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.transFlag and ''!=params.transFlag" >
+        AND TRANS_FLAG = #{params.transFlag,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.conNo and ''!=params.conNo" >
+        AND CON_NO = #{params.conNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.status and ''!=params.status" >
+        AND STATUS = #{params.status,jdbcType=VARCHAR}
+      </if>
+        AND IS_DELETED = '0'
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BmContainer" >
+    select 
+    <include refid="Base_Column_List" />
+    from BM_CONTAINER
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and CON_NO = #{conNo,jdbcType=CHAR}
+      AND IS_DELETED=0
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from (select A.* from BM_CONTAINER A
+      <if test="null!=params.conStatus and ''!=params.conStatus" >
+	      inner JOIN <include refid="con_box" /> B ON A.CON_NO=B.BOX_NO AND A.LOCNO=B.LOCNO
+	      where  B.STATUS = #{params.conStatus,jdbcType=VARCHAR}
+      </if>
+      )
+    where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select D.* from (select C.*,rownum rn from(
+     select A.*,b.status con_status from (
+     select  <include refid="Base_Column_List" />
+     from BM_CONTAINER where 1=1 
+    <include refid="condition" />
+    ) A 
+      <if test="null!=params.conStatus and ''!=params.conStatus" >
+	      inner JOIN <include refid="con_box" /> B ON A.CON_NO=B.BOX_NO AND A.LOCNO=B.LOCNO
+	       and B.STATUS = #{params.conStatus,jdbcType=VARCHAR}
+      </if>
+      <if test="null==params.conStatus || ''==params.conStatus" >
+       	  LEFT JOIN <include refid="con_box" /> B ON A.CON_NO=B.BOX_NO AND A.LOCNO=B.LOCNO
+      </if>  order by A.CREATETM desc)C
+    where rownum &lt; #{page.endRowNum}) D where rn &gt; #{page.startRowNum}
+  </select>
+  <sql id="con_box">
+  	(SELECT T.BOX_NO,T.LOCNO,T.STATUS FROM CON_BOX T  where t.locno=#{params.locno,jdbcType=VARCHAR}
+                    UNION ALL
+      SELECT T1.PAN_NO BOX_NO,T1.LOCNO LOCNO,MIN(T1.STATUS) STATUS
+            FROM CON_BOX T1 where t1.pan_no is not null  and  t1.locno=#{params.locno,jdbcType=VARCHAR} 
+            GROUP BY T1.PAN_NO,T1.LOCNO)
+  </sql>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BM_CONTAINER where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BmContainer" >
+    delete from BM_CONTAINER
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and CON_NO = #{conNo,jdbcType=CHAR}
+  </delete>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BmContainer" >
+    insert into BM_CONTAINER
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+	    CON_NO,LOCNO,OWNER_NO,CON_TYPE,	STATUS,
+	     <if test="weight != null and weight != ''" >
+	    	 CON_WEIGHT,
+	     </if>
+	     <if test="volume != null and volume != ''" >
+	     	CON_VOLUME,
+	     </if>
+	     <if test="length != null and length != ''" >
+	     	CON_LENGTH,
+	     </if>
+	     <if test="wide != null and wide != ''" >
+	    	CON_WIDE,
+	    </if>
+	     <if test="height != null and height != ''" >
+			CON_HEIGHT,
+		</if>
+	    <if test="mixStyle != null and mixStyle != ''" >
+			MIX_STYLE,
+		</if>
+	    <if test="isDeleted != null and isDeleted != ''" >
+			IS_DELETED,
+		</if>
+	    <if test="creator != null and creator != ''" >
+			CREATOR,
+		</if>
+	    <if test="createtm != null " >
+			CREATETM,
+		</if>
+	    <if test="editor != null and editor != ''" >
+			EDITOR,
+		</if>
+	    <if test="edittm != null" >
+			EDITTM,
+		</if>
+		<if test="remarks != null and remarks != ''" >
+			remarks,
+		</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+     #{conNo,jdbcType=VARCHAR},#{locno,jdbcType=VARCHAR},#{ownerNo,jdbcType=VARCHAR},#{type,jdbcType=CHAR},0,
+	     <if test="weight != null and weight != ''" >
+	     	#{weight,jdbcType=DECIMAL},
+	     </if>
+	     <if test="volume != null and volume != ''" >
+	     	#{volume,jdbcType=DECIMAL},
+	     </if>
+	     <if test="length != null and length != ''" >
+	     	#{length,jdbcType=DECIMAL}, 
+	     </if>
+	      <if test="wide != null and wide != ''" >
+	     	#{wide,jdbcType=DECIMAL}, 
+	     </if>
+	      <if test="height != null and height != ''" >
+	      	#{height,jdbcType=DECIMAL},
+	      </if>
+	      <if test="mixStyle != null and mixStyle != ''" >
+	     	#{mixStyle,jdbcType=CHAR},
+	     	</if>
+	      <if test="isDeleted != null and isDeleted != ''" >
+	     	#{isDeleted,jdbcType=CHAR},
+	     </if>
+	      <if test="creator != null and creator != ''" >
+	     	#{creator,jdbcType=VARCHAR},
+	     </if>
+	     <if test="createtm != null " >
+	     	#{createtm,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="editor != null and editor != ''" > 
+	     	#{editor,jdbcType=VARCHAR}, 
+	     </if>
+	     <if test="edittm != null " >
+	     	#{edittm,jdbcType=TIMESTAMP},
+	     </if>
+	     <if test="remarks != null and remarks != ''" >
+	     	#{remarks,jdbcType=VARCHAR}
+	     </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BmContainer" >
+    update BM_CONTAINER
+    <set >
+	 <if test="type != null and type != ''" >
+     	CON_TYPE=#{type,jdbcType=CHAR},
+     </if>
+     <if test="weight != null and weight != ''" >
+     	CON_WEIGHT=#{weight,jdbcType=DECIMAL},
+     </if>
+     <if test="volume != null and volume != ''" >
+     	CON_VOLUME=#{volume,jdbcType=DECIMAL},
+     </if>
+     <if test="length != null and length != ''" >
+     	CON_LENGTH=#{length,jdbcType=DECIMAL}, 
+     </if>
+      <if test="wide != null and wide != ''" >
+     	CON_WIDE=#{wide,jdbcType=DECIMAL}, 
+     </if>
+      <if test="height != null and height != ''" >
+      	CON_HEIGHT=#{height,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null and status != ''" >
+      	STATUS=#{status,jdbcType=CHAR},
+      </if>
+      <if test="mixStyle != null and mixStyle != ''" >
+     	MIX_STYLE=#{mixStyle,jdbcType=CHAR},
+     </if>
+      <if test="isDeleted != null and isDeleted != ''" >
+     	IS_DELETED=#{isDeleted,jdbcType=CHAR},
+     </if>
+      <if test="editor != null and editor != ''" > 
+     	EDITOR=#{editor,jdbcType=VARCHAR}, 
+     </if>
+      <!-- <if test="edittm != null and wide != ''" > -->
+     	EDITTM=sysdate,
+     <!-- </if> -->
+      <if test="remarks != null and remarks != ''" >
+     	REMARKS=#{remarks,jdbcType=VARCHAR},
+     </if>
+      <if test="optBillNo != null and optBillNo != ''" >
+		 OPT_BILL_NO=#{optBillNo,jdbcType=CHAR},
+     </if>
+     <if test="optBillType!= null and optBillType != ''" >
+     	OPT_BILL_TYPE=#{optBillType,jdbcType=CHAR},
+     </if>
+     <if test="falg!= null and falg!= ''" >
+		     	OPT_BILL_NO='',
+		     	OPT_BILL_TYPE='',
+	 </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and CON_NO = #{conNo,jdbcType=VARCHAR}
+  </update>
+  <update id="batchUpdate" parameterType="java.util.List">
+  	begin 
+   	<foreach collection="list" item="item" index="index" separator=";" > 
+    	update BM_CONTAINER
+    <set >
+	 <if test="item.type != null and item.type != ''" >
+     	CON_TYPE=#{item.type,jdbcType=CHAR},
+     </if>
+      <if test="item.status != null and item.status != ''" >
+      	STATUS=#{item.status,jdbcType=CHAR},
+      </if>
+      <if test="item.mixStyle != null and item.mixStyle != ''" >
+     	MIX_STYLE=#{item.mixStyle,jdbcType=CHAR},
+     </if>
+      <if test="item.isDeleted != null and item.isDeleted != ''" >
+     	IS_DELETED=#{item.isDeleted,jdbcType=CHAR},
+     </if>
+      <if test="item.editor != null and item.editor != ''" > 
+     	EDITOR=#{item.editor,jdbcType=VARCHAR}, 
+     </if>
+     	EDITTM=sysdate,
+      <if test="item.optBillNo != null and item.optBillNo != ''" >
+		 OPT_BILL_NO=#{item.optBillNo,jdbcType=CHAR},
+     </if>
+     <if test="item.optBillType!= null and item.optBillType != ''" >
+     	OPT_BILL_TYPE=#{item.optBillType,jdbcType=CHAR},
+     </if>
+     <if test="item.falg!= null and item.falg!= ''" >
+		     	OPT_BILL_NO='',
+		     	OPT_BILL_TYPE='',
+	 </if>
+    </set>
+    where LOCNO = #{item.locno,jdbcType=VARCHAR}
+      and CON_NO = #{item.conNo,jdbcType=VARCHAR} 
+       </foreach>  
+      ;end;
+  </update>
+  <update id="batchStatusByBillConAdj" parameterType="map">
+    	UPDATE BM_CONTAINER T SET 
+		  T.STATUS=#{params.status,jdbcType=VARCHAR},T.OPT_BILL_NO=#{params.optBillNo,jdbcType=VARCHAR},
+		  T.OPT_BILL_TYPE=#{params.optBillType,jdbcType=VARCHAR},T.EDITOR=#{params.editor,jdbcType=VARCHAR},T.EDITTM=sysdate
+		WHERE T.LOCNO=#{params.locno,jdbcType=VARCHAR} AND T.CON_NO IN(
+		  SELECT  DTL.LABEL_NO
+		   FROM BILL_CON_ADJ_DTL DTL
+		  WHERE DTL.LOCNO = #{params.locno,jdbcType=VARCHAR}
+		    AND DTL.ADJ_NO = #{params.adjNo,jdbcType=VARCHAR}
+		    AND DTL.LABEL_NO IS NOT NULL AND DTL.LABEL_NO!='N'
+		  GROUP BY DTL.LABEL_NO
+		  union all 
+      SELECT  DTL.Pan_No
+       FROM BILL_CON_ADJ_DTL DTL
+      WHERE DTL.LOCNO =#{params.locno,jdbcType=VARCHAR}
+        AND DTL.ADJ_NO = #{params.adjNo,jdbcType=VARCHAR}
+        AND DTL.Pan_No IS NOT NULL AND DTL.Pan_No!='N'
+      GROUP BY DTL.Pan_No
+		  )
+  </update>
+  <update id="batchConBoxStatusByBillConAdj" parameterType="map">
+    	UPDATE con_box T SET 
+      	T.Status='11'
+		WHERE T.LOCNO=#{params.locno,jdbcType=VARCHAR} AND T.BOX_NO IN(
+		  SELECT  DTL.LABEL_NO
+		   FROM BILL_CON_ADJ_DTL DTL
+		  WHERE DTL.LOCNO = #{params.locno,jdbcType=VARCHAR}
+		    AND DTL.ADJ_NO = #{params.adjNo,jdbcType=VARCHAR}
+		    AND DTL.LABEL_NO IS NOT NULL AND DTL.LABEL_NO!='N'
+		  GROUP BY DTL.LABEL_NO)
+  </update>
+</mapper>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.RolelistMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.Rolelist" >
+    <id column="ROLEID" property="roleid" jdbcType="DECIMAL" />
+    <result column="ROLEOWNER" property="roleowner" jdbcType="VARCHAR" />
+    <result column="ROLENAME" property="rolename" jdbcType="VARCHAR" />
+    <result column="ENABLEFLAG" property="enableflag" jdbcType="DECIMAL" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ROLEID, ROLEOWNER, ROLENAME, ENABLEFLAG, REMARK
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.math.BigDecimal" >
+    select 
+    <include refid="Base_Column_List" />
+    from ROLELIST
+    where ROLEID = #{roleid,jdbcType=DECIMAL}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from ROLELIST where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from ROLELIST where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from ROLELIST where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.math.BigDecimal" >
+    delete from ROLELIST
+    where ROLEID = #{roleid,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.Rolelist" >
+    delete from ROLELIST
+    where ROLEID = #{roleid,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.Rolelist" >
+    insert into ROLELIST (ROLEID, ROLEOWNER, ROLENAME, 
+      ENABLEFLAG, REMARK)
+    values (#{roleid,jdbcType=DECIMAL}, #{roleowner,jdbcType=VARCHAR}, #{rolename,jdbcType=VARCHAR}, 
+      #{enableflag,jdbcType=DECIMAL}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.Rolelist" >
+    insert into ROLELIST
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="roleid != null" >
+        ROLEID,
+      </if>
+      <if test="roleowner != null" >
+        ROLEOWNER,
+      </if>
+      <if test="rolename != null" >
+        ROLENAME,
+      </if>
+      <if test="enableflag != null" >
+        ENABLEFLAG,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="roleid != null" >
+        #{roleid,jdbcType=DECIMAL},
+      </if>
+      <if test="roleowner != null" >
+        #{roleowner,jdbcType=VARCHAR},
+      </if>
+      <if test="rolename != null" >
+        #{rolename,jdbcType=VARCHAR},
+      </if>
+      <if test="enableflag != null" >
+        #{enableflag,jdbcType=DECIMAL},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.Rolelist" >
+    update ROLELIST
+    <set >
+      <if test="roleowner != null" >
+        ROLEOWNER = #{roleowner,jdbcType=VARCHAR},
+      </if>
+      <if test="rolename != null" >
+        ROLENAME = #{rolename,jdbcType=VARCHAR},
+      </if>
+      <if test="enableflag != null" >
+        ENABLEFLAG = #{enableflag,jdbcType=DECIMAL},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ROLEID = #{roleid,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.Rolelist" >
+    update ROLELIST
+    set ROLEOWNER = #{roleowner,jdbcType=VARCHAR},
+      ROLENAME = #{rolename,jdbcType=VARCHAR},
+      ENABLEFLAG = #{enableflag,jdbcType=DECIMAL},
+      REMARK = #{remark,jdbcType=VARCHAR}
+    where ROLEID = #{roleid,jdbcType=DECIMAL}
+  </update>
+</mapper>

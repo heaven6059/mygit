@@ -1,0 +1,6 @@
+.loc_main{margin-top:5px;}
+.left{float:left;width:450px;}
+.right{float:left;width:400px;margin-left:10px;}
+.loc_op{width:50px;float:left;padding-left:5px;margin-top:100px;}
+.loc_op input{width:40px;text-align:center;}
+.loc_op input.loc_op_single{margin-top:30px;}

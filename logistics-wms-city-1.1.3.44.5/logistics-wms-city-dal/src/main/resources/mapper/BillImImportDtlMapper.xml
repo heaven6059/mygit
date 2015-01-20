@@ -1,0 +1,683 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillImImportDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillImImportDtl" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="IMPORT_NO" property="importNo" jdbcType="VARCHAR" />
+    <id column="PO_ID" property="poId" jdbcType="DECIMAL" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="PACK_QTY" property="packQty" jdbcType="DECIMAL" />
+    <result column="PO_QTY" property="poQty" jdbcType="DECIMAL" />
+    <result column="receipt_Qty" property="receiptQty" jdbcType="DECIMAL" />
+    <result column="IMPORT_QTY" property="importQty" jdbcType="DECIMAL" />
+    <result column="differQty" property="differQty" jdbcType="DECIMAL" />
+    <result column="UNIT_COST" property="unitCost" jdbcType="DECIMAL" />
+    <result column="CHECK_NAME" property="checkName" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="CHECK_DATE" property="checkDate" jdbcType="TIMESTAMP" />
+    <result column="OUT_STOCK_FLAG" property="outStockFlag" jdbcType="VARCHAR" />
+    <result column="ERROR_STATUS" property="errorStatus" jdbcType="VARCHAR" />
+    <result column="ITEM_TYPE" property="itemType" jdbcType="VARCHAR" />
+    <result column="PLAN_ACROSS_QTY" property="planAcrossQty" jdbcType="DECIMAL" />
+    <result column="CHECK_ACROSS_QTY" property="checkAcrossQty" jdbcType="DECIMAL" />
+    <result column="QC_FLAG" property="qcFlag" jdbcType="VARCHAR" />
+    <result column="BATCH_SERIAL_NO" property="batchSerialNo" jdbcType="VARCHAR" />
+    <result column="BATCH_SERIAL_NAME" property="batchSerialName" jdbcType="VARCHAR" />
+    <result column="BOX_NO" property="boxNo" jdbcType="VARCHAR" />
+    <result column="CAR_PLATE" property="carPlate" jdbcType="VARCHAR" />
+    <result column="DELIVER_NO" property="deliverNo" jdbcType="VARCHAR" />
+    <result column="item_Name" property="itemName" jdbcType="VARCHAR" />
+    <result column="color_Name" property="colorName" jdbcType="VARCHAR" />
+    <result column="brand_Name" property="brandName" jdbcType="VARCHAR" />
+    <result column="BRAND_NO" property="brandNo" jdbcType="VARCHAR" />
+    <result column="CHECK_NAME_CH" property="checkNameCh" jdbcType="VARCHAR" />
+    
+    <result column="TRANS_QTY" property="transQty" jdbcType="VARCHAR" />
+    <result column="TRANS_TIME" property="transTime" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="BaseResultDTOMap" type="com.yougou.logistics.city.common.dto.BillImImportDtlSizeKind" >
+    <id column="IMPORT_NO" property="importNo" jdbcType="VARCHAR" />
+    <id column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <id column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="DELIVER_NO" property="deliverNo" jdbcType="VARCHAR" />
+    <result column="BOX_NO" property="boxNo" jdbcType="VARCHAR" />
+    
+    <result column="IMPORT_QTY" property="importQty" jdbcType="DECIMAL" />
+    <result column="PO_QTY" property="poQty" jdbcType="DECIMAL" />
+    
+    <result column="style_no" property="styleNo" jdbcType="VARCHAR"  />
+    <result column="colorNoStr" property="colorNoStr" jdbcType="VARCHAR" />
+    <result column="brandNoStr" property="brandNoStr" jdbcType="VARCHAR" />
+    
+    <result column="itemName" property="itemName" jdbcType="VARCHAR" />
+    <result column="sysNo" property="sysNo" jdbcType="VARCHAR" />
+    <result column="sizeKind" property="sizeKind" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+  <sql id="Base_Column_List" >
+    LOCNO, OWNER_NO, IMPORT_NO, PO_ID, ITEM_NO, SIZE_NO, PACK_QTY, PO_QTY, IMPORT_QTY, 
+    UNIT_COST, CHECK_NAME, STATUS, CHECK_DATE, OUT_STOCK_FLAG, ERROR_STATUS, ITEM_TYPE, 
+    PLAN_ACROSS_QTY, CHECK_ACROSS_QTY, QC_FLAG, BATCH_SERIAL_NO, BATCH_SERIAL_NAME, BOX_NO, 
+    CAR_PLATE, DELIVER_NO,receipt_Qty,TRANS_QTY, TRANS_TIME,BRAND_NO,CHECK_NAME_CH
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.importNo and ''!=params.importNo" >
+        and IMPORT_NO=#{params.importNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+        and LOCNO=#{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        and OWNER_NO=#{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.boxNo and ''!=params.boxNo" >
+        and BOX_NO=#{params.boxNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.sizeNo and ''!=params.sizeNo" >
+        and SIZE_NO=#{params.sizeNo,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+    <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillImImportDtlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_IM_IMPORT_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and IMPORT_NO = #{importNo,jdbcType=VARCHAR}
+      and PO_ID = #{poId,jdbcType=DECIMAL}
+  </select>
+  
+  <!-- 根据业务编码，仓别编码，预到货通知单号，查询最大的行号 -->
+  <select id="selectMaxPid" resultType="java.lang.Integer" parameterType="com.yougou.logistics.city.common.model.BillImImportDtlKey" >
+    select 
+    NVL(max(dd.po_id),0) as s
+    from BILL_IM_IMPORT_DTL dd
+    where dd.LOCNO = #{locno,jdbcType=VARCHAR}
+      and dd.OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and dd.IMPORT_NO = #{importNo,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 根据预到货通知单明细查询箱号  (总数) -->
+  <select id="selectBoxNoByDetailCount" resultType="java.lang.Integer" parameterType="com.yougou.logistics.city.common.model.BillImImportDtlKey" >
+    select
+    NVL(count(1),0) as s from ( select 
+       box_no,car_plate,deliver_no,sum(nvl(po_Qty,0)) as  IMPORT_QTY
+     from BILL_IM_IMPORT_DTL where 
+       LOCNO = #{params.locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{params.ownerNo,jdbcType=VARCHAR}
+      and IMPORT_NO = #{params.importNo,jdbcType=VARCHAR}
+      <include refid="AuthorityCondition" />
+      group by box_no,car_plate,deliver_no
+    ) a
+  </select>
+  
+  <select id="selectBoxNoListByDetail" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillImImportDtlKey" >
+    select distinct BOX_NO, LOCNO, OWNER_NO from BILL_IM_IMPORT_DTL 
+      where 1 = 1 
+      <if test="null!=importNo and ''!=importNo" >
+        and IMPORT_NO=#{importNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=locno and ''!=locno" >
+        and LOCNO=#{locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=ownerNo and ''!=ownerNo" >
+        and OWNER_NO=#{ownerNo,jdbcType=VARCHAR}
+      </if>
+  </select>
+  
+  <!-- 查找未验收完成的箱子数 -->
+  <select id="selectNotCheckBoxNoByDetail" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillImImportDtlKey" >
+	 select distinct d.BOX_NO, d.LOCNO, d.OWNER_NO from BILL_IM_IMPORT_DTL  d 
+	 where 1 = 1 
+	   <if test="null!=importNo and ''!=importNo" >
+        and d.IMPORT_NO=#{importNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=locno and ''!=locno" >
+        and d.LOCNO=#{locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=ownerNo and ''!=ownerNo" >
+        and d.OWNER_NO=#{ownerNo,jdbcType=VARCHAR}
+      </if>
+	  and nvl(d.receipt_qty,0) != nvl(d.import_qty,0)
+  </select>
+  
+  <!-- 查询当前的箱号在预到货通知单明细中是否已经存在 -->
+  <select id="selectBoxNoIsHave" resultType="java.lang.Integer" parameterType="com.yougou.logistics.city.common.model.BillImImportDtlKey" >
+	  select count(*)  as  a  from   Bill_Im_Import_Dtl dd
+		where  dd.import_no = #{importNo,jdbcType=VARCHAR}
+		     and dd.locno = #{locno,jdbcType=VARCHAR}
+		     and dd.owner_no= #{ownerNo,jdbcType=VARCHAR}
+		     and dd.box_no = #{boxNo,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 根据预到货通知单明细查询箱号  (分页) -->
+  <select id="selectBoxNoByDetailPage" resultMap="BaseResultMap">
+    select B.* from (select A.*,rownum rn from( select 
+       box_no,car_plate,deliver_no,sum(nvl(po_Qty,0)) as  IMPORT_QTY
+     from BILL_IM_IMPORT_DTL where 1=1 
+      and LOCNO = #{dtlPage.locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{dtlPage.ownerNo,jdbcType=VARCHAR}
+      and IMPORT_NO = #{dtlPage.importNo,jdbcType=VARCHAR}
+      <include refid="AuthorityCondition" />
+      group by box_no,car_plate,deliver_no
+      order by box_no,car_plate,deliver_no
+    ) A where rownum &lt; #{dtlPage.endRowNum}) B where rn &gt; #{dtlPage.startRowNum}
+  </select>
+  
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_IM_IMPORT_DTL where 1=1 
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+    ,nvl(receipt_Qty,0) - nvl(IMPORT_QTY,0) differQty
+    ,(select i.item_name from item i where i.item_no = od.item_no) as item_Name
+	,(select ci.color_name from Color_Info ci , item i where i.item_no = od.item_no and ci.color_no = i.color_no) as color_name
+	,(select b.brand_name from Brand b , item i where i.item_no = od.item_no and b.brand_no = i.brand_no) as brand_name 
+     from BILL_IM_IMPORT_DTL od where 1=1 
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+   
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+	  select sum(nvl(od.po_qty,0)) po_qty,
+	  sum(nvl(od.receipt_Qty,0)) receipt_Qty,
+	  sum(nvl(od.import_Qty,0)) import_Qty,
+	  sum(nvl(od.receipt_Qty, 0) - nvl(od.IMPORT_QTY, 0)) differ_Qty
+	  from BILL_IM_IMPORT_DTL od where 1=1
+  <include refid="condition" />
+  <include refid="AuthorityCondition" />
+  </select> 
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_IM_IMPORT_DTL where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <!-- 尺码横排的 查询  begin -->
+  <select id="selectCountMx" resultType="java.lang.Integer" >
+     select count(1)  as s
+			from(
+			   select d.import_no,d.box_no,d.item_no  from   bill_im_import_dtl d 
+			   where  d.import_no = #{dto.importNo,jdbcType=VARCHAR}
+			   <include refid="AuthorityCondition" />
+			   group by d.import_no,d.box_no,d.item_no
+			)
+  </select>
+  
+  <select id="queryBillImImportDtlDTOlListGroupBy" resultMap="BaseResultDTOMap" >
+     select B.* from (select A.*,rownum rn from(
+    	select d.import_no,d.box_no,d.item_no, max(d.DELIVER_NO) as deliverNo from   bill_im_import_dtl d 
+		where  d.import_no = #{dto.importNo,jdbcType=VARCHAR}
+		<include refid="AuthorityCondition" />
+		group by d.import_no,d.box_no,d.item_no
+		order by d.box_no,d.item_no
+	  ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <select id="queryBillImImportDtlDTOlListByImportNo" resultMap="BaseResultDTOMap" parameterType="com.yougou.logistics.city.common.dto.BillImImportDtlSizeKind" >
+        select  distinct 
+           od.import_no,od.box_no,od.ITEM_NO,od.SIZE_NO,od.import_qty,od.po_Qty,c.style_no,
+           c.size_kind as sizeKind, c.item_name as itemName, c.sys_no as sysNo, od.DELIVER_NO,
+           (select br.Brand_Name from Brand br where br.Brand_NO = c.Brand_NO) as brandNoStr,
+   			(select ci.Color_Name from Color_Info ci where ci.Color_NO = c.COLOR_NO) as colorNoStr  
+	    from bill_im_import_dtl od,item c
+	    where od.ITEM_NO = c.ITEM_NO
+       <if test="null!=importNo and ''!=importNo" >
+		        and od.import_no=#{importNo,jdbcType=VARCHAR}
+	   </if>
+       <if test="null!=itemNo and ''!=itemNo" >
+		        and od.ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+	   </if>
+	   <if test="null!=boxNo and ''!=boxNo" >
+		        and od.box_no = #{boxNo,jdbcType=VARCHAR}
+	   </if>
+  </select>
+  
+  <!-- 尺码横排的 查询  end -->
+  
+  <sql id="extend_condition">
+  	<if test="null!=params">
+  		<if test="null!=params.brandNo and ''!=params.brandNo">
+  		 	and d.brand_no=#{params.brandNo,jdbcType=VARCHAR}
+  		 </if>
+  		 <if test="null!=params.deliverNo and ''!=params.deliverNo">
+		 and d.DELIVER_NO = #{params.deliverNo,jdbcType=VARCHAR}
+		</if>
+  	</if>
+  </sql>
+  
+  <sql id="detailCountByImportNo">
+  	FROM (SELECT d.locno, d.box_no, MAX(d.item_no) AS item_no, sum(d.PO_QTY) AS qty,d.deliver_no,d.import_no
+		          FROM bill_im_import_dtl d 
+		          where 1=1 
+		          <include refid="AuthorityCondition" />
+		         GROUP BY d.locno, d.box_no, d.deliver_no,d.import_no) t
+		  LEFT JOIN item i
+		    ON i.item_no = t.item_no
+		  LEFT JOIN brand d
+		    ON i.brand_no = d.brand_no
+		  LEFT JOIN con_box c
+		    ON c.locno = t.locno
+		   AND c.box_no = t.box_no
+		  left join con_box_dtl cd on 
+		   c.locno = cd.locno
+		   AND c.box_no = cd.box_no
+		  LEFT JOIN bill_im_import im
+		    ON im.locno = t.locno
+		    and
+		       im.import_no = t.import_no
+		   AND im.import_no = cd.import_no
+		   where
+		   c.status='0'
+		   and t.locno = #{params.locno,jdbcType=VARCHAR}
+		   and im.import_no = #{params.importNo,jdbcType=VARCHAR}
+		   and im.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+		   <include refid="extend_condition" />
+		   group by im.import_no,
+                  t.locno,
+                  t.ITEM_NO,
+                  t.box_no,
+                  im.po_no,
+                  im.s_po_no,
+                  t.deliver_no
+  </sql>
+  <!-- 根据预到货通知单查询箱号数量 -->
+  <select id="selectDetailCountByImportNo" resultType="java.lang.Integer" parameterType="com.yougou.logistics.city.common.vo.BillImImportDtlForPage">
+   select count(1) as s from (
+   	SELECT t.box_no boxNo
+   	<include refid="detailCountByImportNo" />
+   ) A
+  </select>
+  
+  <!-- 根据预到货通知单查询箱号数量 -->
+	<select id="selectDetailByImportNo" resultType="com.yougou.logistics.city.common.dto.BillImImportDtlDto" >
+	select B.* from (select A.*,rownum rn from(
+		SELECT im.import_no importNo,
+               t.locno,
+               t.ITEM_NO itemNo,
+               Max(i.item_Name) itemName,
+               t.box_no boxNo,
+               Max(d.brand_name) brandName,
+               im.po_no poNo,
+               im.s_po_no spoNo,
+               t.deliver_no deliverNo,
+               max(t.qty) qty
+		  <include refid="detailCountByImportNo" />
+	    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  	</select>
+  	
+  	<!-- 查询重复的箱子 -->
+  	 <select id="selectRepeat" resultType="com.yougou.logistics.city.common.model.BillImImportDtl" parameterType="com.yougou.logistics.city.common.model.BillImImport">
+	   	select d.box_no boxNo from BILL_IM_IMPORT_DTL d
+	   	where LOCNO = #{dtl.locno,jdbcType=VARCHAR}
+	       and OWNER_NO = #{dtl.ownerNo,jdbcType=VARCHAR}
+	       and IMPORT_NO = #{dtl.importNo,jdbcType=VARCHAR}
+	   	group by d.box_no having count(1) &gt; 1
+   	</select> 
+  	
+  	<!-- 收货完成更新通知单的收货数量 -->
+  	<update id="updateReceiptQty" parameterType="com.yougou.logistics.city.common.model.BillImImportDtl" >
+    update BILL_IM_IMPORT_DTL set RECEIPT_QTY = PO_QTY 
+     where LOCNO = #{dtl.locno,jdbcType=VARCHAR}
+	       and OWNER_NO = #{dtl.ownerNo,jdbcType=VARCHAR}
+	       and IMPORT_NO = #{dtl.importNo,jdbcType=VARCHAR}
+	       and SIZE_NO = #{dtl.sizeNo,jdbcType=VARCHAR}
+	       and BOX_NO = #{dtl.boxNo,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 查询收货完成的数量 -->
+  <select id="selectReceiptedCount"  resultType="java.lang.Integer">
+		SELECT COUNT(1)
+  FROM BILL_IM_IMPORT_DTL 
+ WHERE LOCNO = #{dtl.locno,jdbcType=VARCHAR}
+  AND OWNER_NO = #{dtl.ownerNo,jdbcType=VARCHAR}
+  AND IMPORT_NO = #{dtl.importNo,jdbcType=VARCHAR}
+  AND RECEIPT_QTY = PO_QTY
+  </select>
+  	
+  	
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillImImportDtlKey" >
+    delete from BILL_IM_IMPORT_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and IMPORT_NO = #{importNo,jdbcType=VARCHAR}
+    <if test="null!=poId and ''!=poId" >
+      and PO_ID = #{poId,jdbcType=DECIMAL}
+    </if>
+    <if test="null!=boxNo and ''!=boxNo" >
+      and box_no = #{boxNo,jdbcType=DECIMAL}
+    </if>
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillImImportDtl" >
+    delete from BILL_IM_IMPORT_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and IMPORT_NO = #{importNo,jdbcType=VARCHAR}
+      and PO_ID = #{poId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillImImportDtl" >
+    insert into BILL_IM_IMPORT_DTL (LOCNO, OWNER_NO, IMPORT_NO, 
+      PO_ID, ITEM_NO, SIZE_NO, 
+      PACK_QTY, PO_QTY, IMPORT_QTY, 
+      UNIT_COST, CHECK_NAME, STATUS, 
+      CHECK_DATE, OUT_STOCK_FLAG, ERROR_STATUS, 
+      ITEM_TYPE, PLAN_ACROSS_QTY, CHECK_ACROSS_QTY, 
+      QC_FLAG, BATCH_SERIAL_NO, BATCH_SERIAL_NAME, 
+      BOX_NO, CAR_PLATE, DELIVER_NO,CHECK_NAME_CH
+      )
+    values (#{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, #{importNo,jdbcType=VARCHAR}, 
+      #{poId,jdbcType=DECIMAL}, #{itemNo,jdbcType=VARCHAR}, #{sizeNo,jdbcType=VARCHAR}, 
+      #{packQty,jdbcType=DECIMAL}, #{poQty,jdbcType=DECIMAL}, #{importQty,jdbcType=DECIMAL}, 
+      #{unitCost,jdbcType=DECIMAL}, #{checkName,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{checkDate,jdbcType=TIMESTAMP}, #{outStockFlag,jdbcType=VARCHAR}, #{errorStatus,jdbcType=VARCHAR}, 
+      #{itemType,jdbcType=VARCHAR}, #{planAcrossQty,jdbcType=DECIMAL}, #{checkAcrossQty,jdbcType=DECIMAL}, 
+      #{qcFlag,jdbcType=VARCHAR}, #{batchSerialNo,jdbcType=VARCHAR}, #{batchSerialName,jdbcType=VARCHAR}, 
+      #{boxNo,jdbcType=VARCHAR}, #{carPlate,jdbcType=VARCHAR}, #{deliverNo,jdbcType=VARCHAR}, 
+      #{checkNameCh,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillImImportDtl" >
+    insert into BILL_IM_IMPORT_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="importNo != null" >
+        IMPORT_NO,
+      </if>
+      <if test="poId != null" >
+        PO_ID,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY,
+      </if>
+      <if test="poQty != null" >
+        PO_QTY,
+      </if>
+      <if test="importQty != null" >
+        IMPORT_QTY,
+      </if>
+      <if test="unitCost != null" >
+        UNIT_COST,
+      </if>
+      <if test="checkName != null" >
+        CHECK_NAME,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="checkDate != null" >
+        CHECK_DATE,
+      </if>
+      <if test="outStockFlag != null" >
+        OUT_STOCK_FLAG,
+      </if>
+      <if test="errorStatus != null" >
+        ERROR_STATUS,
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE,
+      </if>
+      <if test="planAcrossQty != null" >
+        PLAN_ACROSS_QTY,
+      </if>
+      <if test="checkAcrossQty != null" >
+        CHECK_ACROSS_QTY,
+      </if>
+      <if test="qcFlag != null" >
+        QC_FLAG,
+      </if>
+      <if test="batchSerialNo != null" >
+        BATCH_SERIAL_NO,
+      </if>
+      <if test="batchSerialName != null" >
+        BATCH_SERIAL_NAME,
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO,
+      </if>
+      <if test="carPlate != null" >
+        CAR_PLATE,
+      </if>
+      <if test="deliverNo != null" >
+        DELIVER_NO,
+      </if>
+      <if test="brandNo != null" >
+        BRAND_NO,
+      </if>
+      <if test="checkNameCh != null" >
+        CHECK_NAME_CH,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="importNo != null" >
+        #{importNo,jdbcType=VARCHAR},
+      </if>
+      <if test="poId != null" >
+        #{poId,jdbcType=DECIMAL},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="packQty != null" >
+        #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="poQty != null" >
+        #{poQty,jdbcType=DECIMAL},
+      </if>
+      <if test="importQty != null" >
+        #{importQty,jdbcType=DECIMAL},
+      </if>
+      <if test="unitCost != null" >
+        #{unitCost,jdbcType=DECIMAL},
+      </if>
+      <if test="checkName != null" >
+        #{checkName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="checkDate != null" >
+        #{checkDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="outStockFlag != null" >
+        #{outStockFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="errorStatus != null" >
+        #{errorStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null" >
+        #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="planAcrossQty != null" >
+        #{planAcrossQty,jdbcType=DECIMAL},
+      </if>
+      <if test="checkAcrossQty != null" >
+        #{checkAcrossQty,jdbcType=DECIMAL},
+      </if>
+      <if test="qcFlag != null" >
+        #{qcFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="batchSerialNo != null" >
+        #{batchSerialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="batchSerialName != null" >
+        #{batchSerialName,jdbcType=VARCHAR},
+      </if>
+      <if test="boxNo != null" >
+        #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="carPlate != null" >
+        #{carPlate,jdbcType=VARCHAR},
+      </if>
+      <if test="deliverNo != null" >
+        #{deliverNo,jdbcType=VARCHAR},
+      </if>
+      <if test="brandNo != null" >
+        #{brandNo,jdbcType=VARCHAR},
+      </if>
+      <if test="checkNameCh != null" >
+        #{checkNameCh,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillImImportDtl" >
+    update BILL_IM_IMPORT_DTL
+    <set >
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="poQty != null" >
+        PO_QTY = #{poQty,jdbcType=DECIMAL},
+      </if>
+      <if test="importQty != null" >
+        IMPORT_QTY = #{importQty,jdbcType=DECIMAL},
+      </if>
+      <if test="unitCost != null" >
+        UNIT_COST = #{unitCost,jdbcType=DECIMAL},
+      </if>
+      <if test="checkName != null" >
+        CHECK_NAME = #{checkName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="checkDate != null" >
+        CHECK_DATE = #{checkDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="outStockFlag != null" >
+        OUT_STOCK_FLAG = #{outStockFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="errorStatus != null" >
+        ERROR_STATUS = #{errorStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="planAcrossQty != null" >
+        PLAN_ACROSS_QTY = #{planAcrossQty,jdbcType=DECIMAL},
+      </if>
+      <if test="checkAcrossQty != null" >
+        CHECK_ACROSS_QTY = #{checkAcrossQty,jdbcType=DECIMAL},
+      </if>
+      <if test="qcFlag != null" >
+        QC_FLAG = #{qcFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="batchSerialNo != null" >
+        BATCH_SERIAL_NO = #{batchSerialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="batchSerialName != null" >
+        BATCH_SERIAL_NAME = #{batchSerialName,jdbcType=VARCHAR},
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO = #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="carPlate != null" >
+        CAR_PLATE = #{carPlate,jdbcType=VARCHAR},
+      </if>
+      <if test="deliverNo != null" >
+        DELIVER_NO = #{deliverNo,jdbcType=VARCHAR},
+      </if>
+      <if test="checkNameCh != null" >
+        CHECK_NAME_CH = #{checkNameCh,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and IMPORT_NO = #{importNo,jdbcType=VARCHAR}
+      <if test="poId != null" >
+      	   and PO_ID = #{poId,jdbcType=DECIMAL}
+      </if>
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillImImportDtl" >
+    update BILL_IM_IMPORT_DTL
+    set ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      PO_QTY = #{poQty,jdbcType=DECIMAL},
+      IMPORT_QTY = #{importQty,jdbcType=DECIMAL},
+      UNIT_COST = #{unitCost,jdbcType=DECIMAL},
+      CHECK_NAME = #{checkName,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      CHECK_DATE = #{checkDate,jdbcType=TIMESTAMP},
+      OUT_STOCK_FLAG = #{outStockFlag,jdbcType=VARCHAR},
+      ERROR_STATUS = #{errorStatus,jdbcType=VARCHAR},
+      ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+      PLAN_ACROSS_QTY = #{planAcrossQty,jdbcType=DECIMAL},
+      CHECK_ACROSS_QTY = #{checkAcrossQty,jdbcType=DECIMAL},
+      QC_FLAG = #{qcFlag,jdbcType=VARCHAR},
+      BATCH_SERIAL_NO = #{batchSerialNo,jdbcType=VARCHAR},
+      BATCH_SERIAL_NAME = #{batchSerialName,jdbcType=VARCHAR},
+      BOX_NO = #{boxNo,jdbcType=VARCHAR},
+      CAR_PLATE = #{carPlate,jdbcType=VARCHAR},
+      DELIVER_NO = #{deliverNo,jdbcType=VARCHAR},
+      CHECK_NAME_CH = #{checkNameCh,jdbcType=VARCHAR}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and IMPORT_NO = #{importNo,jdbcType=VARCHAR}
+      and PO_ID = #{poId,jdbcType=DECIMAL}
+  </update>
+  
+  <!-- 修改预到货通知单明细 -->
+  <update id="modifyImImportDtl" parameterType="com.yougou.logistics.city.common.model.BillImImportDtl" >
+    update BILL_IM_IMPORT_DTL
+    set CAR_PLATE = #{carPlate,jdbcType=VARCHAR},
+        DELIVER_NO = #{deliverNo,jdbcType=VARCHAR}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and IMPORT_NO = #{importNo,jdbcType=VARCHAR}
+      and BOX_NO = #{boxNo,jdbcType=VARCHAR}
+  </update>
+  
+   <update id="updateAllReceiptQty" parameterType="com.yougou.logistics.city.common.model.BillImImportDtl" >
+  		update BILL_IM_IMPORT_DTL t  set t.receipt_qty=t.po_qty where t.locno=#{locno} and t.IMPORT_NO=#{importNo} 
+  </update>
+</mapper>

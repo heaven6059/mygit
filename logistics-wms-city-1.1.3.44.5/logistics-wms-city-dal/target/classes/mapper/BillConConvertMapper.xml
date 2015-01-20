@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yougou.logistics.city.dal.database.BillConConvertMapper">
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillConConvert">
+    <id column="LOCNO" jdbcType="VARCHAR" property="locno" />
+    <id column="OWNER_NO" jdbcType="VARCHAR" property="ownerNo" />
+    <id column="CONVERT_NO" jdbcType="VARCHAR" property="convertNo" />
+    <result column="CONVERT_TYPE" jdbcType="VARCHAR" property="convertType" />
+    <result column="PO_NO" jdbcType="VARCHAR" property="poNo" />
+    <result column="STORE_NO" jdbcType="VARCHAR" property="storeNo" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    <result column="STATUS_TRANS" jdbcType="VARCHAR" property="statusTrans" />
+    <result column="CREATOR" jdbcType="VARCHAR" property="creator" />
+    <result column="CREATETM" jdbcType="TIMESTAMP" property="createtm" />
+    <result column="EDITOR" jdbcType="VARCHAR" property="editor" />
+    <result column="EDITTM" jdbcType="TIMESTAMP" property="edittm" />
+    <result column="AUDITOR" jdbcType="VARCHAR" property="auditor" />
+    <result column="AUDITTM" jdbcType="TIMESTAMP" property="audittm" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    <result column="CONVERT_DATE" jdbcType="TIMESTAMP" property="convertDate" />
+    <result column="SOURCE_NO" jdbcType="VARCHAR" property="sourceNo" />
+    <result column="SOURCE_TYPE" jdbcType="VARCHAR" property="sourceType" />
+    <result column="item_Qty" jdbcType="DECIMAL" property="itemQty" />
+    <!--增加中文字段 -->
+    <result column="creatorname" property="creatorName" jdbcType="CHAR" />
+	<result column="editorname" property="editorName" jdbcType="CHAR" />
+	<result column="auditorname" property="auditorName" jdbcType="CHAR" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    d.LOCNO, d.OWNER_NO, d.CONVERT_NO, d.CONVERT_TYPE, d.PO_NO, d.STORE_NO, d.STATUS, d.STATUS_TRANS, 
+    d.CREATOR, d.CREATETM, d.EDITOR, d.EDITTM, d.AUDITOR, d.AUDITTM, d.REMARK, d.CONVERT_DATE,
+    d.SOURCE_NO, d.SOURCE_TYPE,d.CREATORNAME,d.EDITORNAME,d.AUDITORNAME
+  </sql>
+  <sql id="condition">
+    <if test="null!=params">
+      <if test="null!=params.queryCondition and ''!=params.queryCondition">
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno">
+        and d.locno = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.status and ''!=params.status">
+        and d.status = #{params.status,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.convertNo and ''!=params.convertNo">
+        and d.convert_No = #{params.convertNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.storeNo and ''!=params.storeNo">
+        and d.store_No in (${params.storeNo})
+      </if>
+      <if test="null!=params.convertType and ''!=params.convertType">
+        and d.convert_Type = #{params.convertType,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.sourceNo and ''!=params.sourceNo">
+      	and d.SOURCE_NO = #{params.sourceNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.sourceType and ''!=params.sourceType">
+      	and d.SOURCE_TYPE = #{params.sourceType,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.creator and ''!=params.creator">
+        and d.creator = #{params.creator,jdbcType=VARCHAR}
+      </if>
+       <if test="null!=params.auditor and ''!=params.auditor">
+        and d.auditor = #{params.auditor,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.createtmStart and ''!=params.createtmStart" >
+      <![CDATA[
+        and d.CREATETM >= to_date('${params.createtmStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+        ]]>
+      </if>
+      <if test="null!=params.createtmEnd and ''!=params.createtmEnd" >
+      <![CDATA[
+        and d.createtm <= to_date('${params.createtmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+        ]]>
+      </if>
+      <if test="null!=params.audittmStart and ''!=params.audittmStart" >
+      <![CDATA[
+        and d.audittm >= to_date('${params.audittmStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+        ]]>
+      </if>
+      <if test="null!=params.audittmEnd and ''!=params.audittmEnd" >
+      <![CDATA[
+        and d.audittm <= to_date('${params.audittmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+        ]]>
+      </if>
+    </if>
+  </sql>
+  <!-- 权限过滤明细查询条件 -->
+  <sql id="child_condition">
+  	<if test="null!=params" >
+      <if test="null!=params.locno and ''!=params.locno" >
+      	and locno = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.planNo and ''!=params.planNo" >
+      	and plan_no = #{params.planNo,jdbcType=VARCHAR}
+      </if>
+     </if>
+  </sql>
+  <!--权限过滤左连接子查询-->
+  <sql id="selectByPageAuthorityLeftJoin" >
+   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       <choose>
+	    	<when test="null!=params.joinIn and 'true'==params.joinIn">
+     			inner join (select convert_no
+                      from bill_con_convert_dtl dd, item it
+                     where 1 = 1
+                       and dd.item_no = it.item_no
+                       and dd.brand_no = it.brand_no
+                       and dd.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+                       <if test="null!=params.brandNo and ''!=params.brandNo" >
+				      	and dd.brand_no = #{params.brandNo,jdbcType=VARCHAR}
+					   </if>
+					   <if test="null!=params.sysNo and ''!=params.sysNo" >
+				      	and it.sys_NO = #{params.sysNo,jdbcType=VARCHAR}
+					   </if>
+                       <include refid="child_condition" />
+                         group by convert_no
+                        ) sub1
+	             ON sub1.convert_no = d.convert_no
+	             where 1=1
+	    	</when>
+			<otherwise>
+			 	left join (select convert_no
+                         from bill_con_convert_dtl dd, item it
+                     	where 1 = 1
+                         and dd.item_no = it.item_no
+                         and dd.brand_no = it.brand_no                   
+                         and dd.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+                         <include refid="child_condition" />
+                          group by convert_no
+                        ) sub1
+	             ON sub1.convert_no = d.convert_no
+	                          
+	             left join (select convert_no
+	                         from bill_con_convert_dtl where 1=1 
+	                         <include refid="child_condition" />  
+	                          group by  convert_no                    
+	                        ) sub2
+	             ON sub2.convert_no = d.convert_no
+	              where 1=1 
+	              and (sub1.convert_no is not null or sub2.convert_no is null)
+			</otherwise>
+     	</choose>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillConConvertKey" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_CON_CONVERT d
+    where d.LOCNO = #{locno,jdbcType=VARCHAR}
+      and d.OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and d.CONVERT_NO = #{convertNo,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer">
+    select count(1) as s from BILL_CON_CONVERT d 
+    <include refid="selectByPageAuthorityLeftJoin" />
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" parameterType="map" resultMap="BaseResultMap">
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />,nvl(bccd.item_qty,0)item_qty
+     from BILL_CON_CONVERT d 
+     left join (select sum(item_qty) item_qty,convert_no,locno from BILL_CON_CONVERT_dtl group by convert_no,locno) bccd
+     on d.locno = bccd.locno
+     and d.convert_no = bccd.convert_no
+     <include refid="selectByPageAuthorityLeftJoin" />
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField">
+      order by ${orderByField}
+      <if test="orderByField">
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectSumQty" resultType="java.util.Map" parameterType="map">
+    select 
+    sum(nvl(bccd.item_qty,0)) item_qty
+     from BILL_CON_CONVERT d 
+     left join (select sum(item_qty) item_qty,convert_no,locno from BILL_CON_CONVERT_dtl group by convert_no,locno) bccd
+     on d.locno = bccd.locno
+     and d.convert_no = bccd.convert_no
+     <include refid="selectByPageAuthorityLeftJoin" />
+    <include refid="condition" />
+    
+  </select>
+  <select id="selectByParams" parameterType="map" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_CON_CONVERT d where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillConConvertKey">
+    delete from BILL_CON_CONVERT
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and CONVERT_NO = #{convertNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillConConvert">
+    delete from BILL_CON_CONVERT
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and CONVERT_NO = #{convertNo,jdbcType=VARCHAR}
+      <if test="updStatus != null and '' != null">
+          and STATUS = #{updStatus,jdbcType=VARCHAR}
+      </if>
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillConConvert">
+    insert into BILL_CON_CONVERT (LOCNO, OWNER_NO, CONVERT_NO, 
+      CONVERT_TYPE, PO_NO, STORE_NO, 
+      STATUS, STATUS_TRANS, CREATOR, 
+      CREATETM, EDITOR, EDITTM, 
+      AUDITOR, AUDITTM, REMARK, 
+      CONVERT_DATE)
+    values (#{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, #{convertNo,jdbcType=VARCHAR}, 
+      #{convertType,jdbcType=VARCHAR}, #{poNo,jdbcType=VARCHAR}, #{storeNo,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{statusTrans,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
+      #{createtm,jdbcType=TIMESTAMP}, #{editor,jdbcType=VARCHAR}, #{edittm,jdbcType=TIMESTAMP}, 
+      #{auditor,jdbcType=VARCHAR}, #{audittm,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}, 
+      #{convertDate,jdbcType=TIMESTAMP})
+  </insert>
+  <!--新增时增加中文名称 -->
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillConConvert">
+    insert into BILL_CON_CONVERT
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="locno != null">
+        LOCNO,
+      </if>
+      <if test="ownerNo != null">
+        OWNER_NO,
+      </if>
+      <if test="convertNo != null">
+        CONVERT_NO,
+      </if>
+      <if test="convertType != null">
+        CONVERT_TYPE,
+      </if>
+      <if test="poNo != null">
+        PO_NO,
+      </if>
+      <if test="storeNo != null">
+        STORE_NO,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="statusTrans != null">
+        STATUS_TRANS,
+      </if>
+      <if test="creator != null">
+        CREATOR,
+      </if>
+      <if test="creatorName != null">
+        CREATORNAME,
+      </if>
+      <if test="createtm != null">
+        CREATETM,
+      </if>
+      <if test="editor != null">
+        EDITOR,
+      </if>
+      <if test="editorName != null">
+        EDITORNAME,
+      </if>
+      <if test="edittm != null">
+        EDITTM,
+      </if>
+      <if test="auditor != null">
+        AUDITOR,
+      </if>
+      <if test="auditorName != null">
+        AUDITORNAME,
+      </if>
+      <if test="audittm != null">
+        AUDITTM,
+      </if>
+      <if test="remark != null">
+        REMARK,
+      </if>
+      <if test="convertDate != null">
+        CONVERT_DATE,
+      </if>
+      <if test="sourceNo != null" >
+        SOURCE_NO,
+      </if>
+      <if test="sourceType != null" >
+        SOURCE_TYPE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="locno != null">
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null">
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="convertNo != null">
+        #{convertNo,jdbcType=VARCHAR},
+      </if>
+      <if test="convertType != null">
+        #{convertType,jdbcType=VARCHAR},
+      </if>
+      <if test="poNo != null">
+        #{poNo,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo != null">
+        #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="statusTrans != null">
+        #{statusTrans,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorName != null">
+        #{creatorName},
+      </if>
+      <if test="createtm != null">
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null">
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null">
+        #{editorName},
+      </if>
+      <if test="edittm != null">
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditor != null">
+        #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorName != null">
+        #{auditorName},
+      </if>
+      <if test="audittm != null">
+        #{audittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="convertDate != null">
+        #{convertDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sourceNo != null" >
+        #{sourceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null" >
+        #{sourceType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <!--修改时增加中文名称 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillConConvert">
+    update BILL_CON_CONVERT
+    <set>
+      <if test="convertType != null">
+        CONVERT_TYPE = #{convertType,jdbcType=VARCHAR},
+      </if>
+      <if test="poNo != null">
+        PO_NO = #{poNo,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo != null">
+        STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="statusTrans != null">
+        STATUS_TRANS = #{statusTrans,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorName != null">
+        CREATORNAME = #{creatorName},
+      </if>
+      <if test="createtm != null">
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null">
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null">
+        editorName = #{editorName},
+      </if>
+      <if test="edittm != null">
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditor != null">
+        AUDITOR = #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorName != null">
+        AUDITORNAME = #{auditorName},
+      </if>
+      <if test="audittm != null">
+        AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="convertDate != null">
+        CONVERT_DATE = #{convertDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and CONVERT_NO = #{convertNo,jdbcType=VARCHAR}
+      <if test="updStatus != null and '' != updStatus">
+          and STATUS = #{updStatus,jdbcType=VARCHAR}
+      </if>
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillConConvert">
+    update BILL_CON_CONVERT
+    set CONVERT_TYPE = #{convertType,jdbcType=VARCHAR},
+      PO_NO = #{poNo,jdbcType=VARCHAR},
+      STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      STATUS_TRANS = #{statusTrans,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      AUDITOR = #{auditor,jdbcType=VARCHAR},
+      AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      REMARK = #{remark,jdbcType=VARCHAR},
+      CONVERT_DATE = #{convertDate,jdbcType=TIMESTAMP}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and CONVERT_NO = #{convertNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

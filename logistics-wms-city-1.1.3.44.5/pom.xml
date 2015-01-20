@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.yougou.logistics</groupId>
+  <artifactId>logistics-wms-city</artifactId>
+  <version>1.1.3.44.4</version>
+  <packaging>pom</packaging>
+
+  <name>logistics-wms-city</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <spring.version>3.1.4.RELEASE</spring.version>
+    <base.version>0.9.9-SNAPSHOT</base.version>
+    <project.basedir>E:\workspace\base</project.basedir>
+  </properties>
+  <distributionManagement>
+    <repository>
+      <id>releases</id>
+      <name>Yougou Releases</name>
+      <url>http://172.17.210.101:8081/nexus/content/repositories/releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>snapshots</id>
+      <name>Yougou Snapshots</name>
+      <url>http://172.17.210.101:8081/nexus/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <modules>
+    <module>logistics-wms-city-common</module>
+    <module>logistics-wms-city-common-api</module>
+    <module>logistics-wms-city-dal</module>
+    <module>logistics-wms-city-acc-dal</module>
+    <module>logistics-wms-city-service</module>
+    <module>logistics-wms-city-acc-service</module>
+    <module>logistics-wms-city-manager</module>
+    <module>logistics-wms-city-web</module>
+  </modules>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+          <encoding>${project.build.sourceEncoding}</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.1.2</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

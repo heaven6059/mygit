@@ -1,0 +1,906 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillChRecheckDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillChRecheckDtl" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="RECHECK_NO" property="recheckNo" jdbcType="VARCHAR" />
+    <id column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+    <result column="PLAN_NO" property="planNo" jdbcType="VARCHAR" />
+    <result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <result column="CHECK_NO" property="checkNo" jdbcType="VARCHAR" />
+    <result column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+    <result column="CONTAINER_NO" property="containerNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="BARCODE" property="barcode" jdbcType="VARCHAR" />
+    <result column="PACK_QTY" property="packQty" jdbcType="DECIMAL" />
+    <result column="LOT_NO" property="lotNo" jdbcType="VARCHAR" />
+    <result column="PRODUCE_DATE" property="produceDate" jdbcType="TIMESTAMP" />
+    <result column="EXPIRE_DATE" property="expireDate" jdbcType="TIMESTAMP" />
+    <result column="QUALITY" property="quality" jdbcType="VARCHAR" />
+    <result column="RECHECK_QTY" property="recheckQty" jdbcType="DECIMAL" />
+    <result column="ADD_FLAG" property="addFlag" jdbcType="CHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="RESERVED1" property="reserved1" jdbcType="VARCHAR" />
+    <result column="RESERVED2" property="reserved2" jdbcType="VARCHAR" />
+    <result column="RESERVED3" property="reserved3" jdbcType="VARCHAR" />
+    <result column="RESERVED4" property="reserved4" jdbcType="VARCHAR" />
+    <result column="CHECK_WORKER" property="checkWorker" jdbcType="VARCHAR" />
+    <result column="ITEM_TYPE" property="itemType" jdbcType="VARCHAR" />
+    <result column="LABEL_NO" property="labelNo" jdbcType="VARCHAR" />
+    <result column="STOCK_TYPE" property="stockType" jdbcType="VARCHAR" />
+    <result column="STOCK_VALUE" property="stockValue" jdbcType="VARCHAR" />
+    <result column="BATCH_SERIAL_NO" property="batchSerialNo" jdbcType="VARCHAR" />
+    <result column="RECHECK_TIME" property="recheckTime" jdbcType="DECIMAL" />
+    <result column="CHECK_ROW_ID" property="checkRowId" jdbcType="DECIMAL" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="ITEM_QTY" property="itemQty" jdbcType="DECIMAL" />
+    <result column="item_name" property="itemName" jdbcType="VARCHAR" />
+    <result column="color_name" property="colorName" jdbcType="VARCHAR" />
+    <result column="style_no" property="styleNo" jdbcType="VARCHAR" />
+    <result column="DIFFERENT_FLAG" property="differentFlag" jdbcType="VARCHAR" />
+    <result column="CHECK_DATE" property="checkDate" jdbcType="TIMESTAMP" />
+    <result column="brand_no" property="brandNo" jdbcType="VARCHAR" />
+    <result column="CHECK_WORKERNAME" property="checkWorkerName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, RECHECK_NO, ROW_ID, OWNER_NO, CHECK_NO, CELL_NO, CONTAINER_NO, ITEM_NO, BARCODE, 
+    PACK_QTY, LOT_NO, PRODUCE_DATE, EXPIRE_DATE, QUALITY, RECHECK_QTY, ADD_FLAG, STATUS, 
+    RESERVED1, RESERVED2, RESERVED3, RESERVED4, CHECK_WORKER, ITEM_TYPE, LABEL_NO, STOCK_TYPE, 
+    STOCK_VALUE, BATCH_SERIAL_NO, RECHECK_TIME, CHECK_ROW_ID,SIZE_NO,item_qty,DIFFERENT_FLAG,CHECK_DATE,
+    CHECK_WORKERNAME
+  </sql>
+  <sql id="extend_Column_List" >
+    b.LOCNO, RECHECK_NO, ROW_ID,  b.OWNER_NO,  b.CHECK_NO, CELL_NO cellNo, CONTAINER_NO, b.ITEM_NO itemNo, b.BARCODE, 
+    PACK_QTY, LOT_NO, PRODUCE_DATE, EXPIRE_DATE, QUALITY, nvl(RECHECK_QTY,0)  recheckQty, ADD_FLAG,  b.STATUS, 
+    RESERVED1, RESERVED2, RESERVED3, RESERVED4, CHECK_WORKER, ITEM_TYPE, LABEL_NO labelNo, b.STOCK_TYPE, 
+    STOCK_VALUE, BATCH_SERIAL_NO, RECHECK_TIME, CHECK_ROW_ID,
+    i.item_name itemName,c.color_name colorName,i.style_no,SIZE_NO sizeNo,item_qty itemQty,DIFFERENT_FLAG, b.CHECK_DATE,b.brand_no,
+    CHECK_WORKERNAME
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.locno and ''!=params.locno" >
+       	 and b.locno = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.checkNo and ''!=params.checkNo" >
+       	 and b.CHECK_NO =#{params.checkNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.recheckNo and ''!=params.recheckNo" >
+       	 and b.RECHECK_NO =#{params.recheckNo,jdbcType=VARCHAR}
+      </if>
+     <if test="null!=params.status and ''!=params.status" >
+       	 and b.status =#{params.status,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.isNullBox and 'N'.toString() == params.isNullBox" >
+            and (b.LABEL_NO is null or b.LABEL_NO = 'N') 
+      </if>
+      <if test="null!=params.isNullBox and 'Y'.toString() == params.isNullBox" >
+            and (b.LABEL_NO is not null and b.LABEL_NO != 'N') 
+      </if>
+      <if test="null!=params.itemNoIsNotNull and params.itemNoIsNotNull == 'Y'.toString()">
+      	 and b.item_no != 'N'
+      </if>
+    </if>
+  </sql>
+  
+  <sql id="condition_rechcheck">
+	  <if test="null!=params" >
+		  <if test="null!=params.locno and ''!=params.locno" >
+	       	 and d.locno = #{params.locno,jdbcType=VARCHAR}
+	      </if>
+	      <if test="null!=params.checkNo and ''!=params.checkNo" >
+	       	 and d.check_no =#{params.checkNo,jdbcType=VARCHAR}
+	      </if>
+	      <if test="null!=params.planNo and ''!=params.planNo" >
+	       	 and c.plan_no =#{params.planNo,jdbcType=VARCHAR}
+	      </if>
+	      <if test="null!=params.status and ''!=params.status" >
+	       	 and d.status =#{params.status,jdbcType=VARCHAR}
+	      </if>
+	      <if test="null!=params.checkWorker and ''!=params.checkWorker" >
+	       	 and d.check_worker =#{params.checkWorker,jdbcType=VARCHAR}
+	      </if>
+	      <if test="null!=params.recheckWorker and ''!=params.recheckWorker" >
+	       	 and d.check_worker =#{params.recheckWorker,jdbcType=VARCHAR}
+	      </if>
+	      <if test="null!=params.createtm_start and ''!=params.createtm_start" >
+	        <![CDATA[
+	        and d.check_date >= to_date('${params.createtm_start} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+	     	]]>
+	      </if>
+	      <if test="null!=params.createtm_end and ''!=params.createtm_end" >
+	        <![CDATA[
+	        and d.check_date <= to_date('${params.createtm_end} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+	     	]]>
+	      </if>
+	      <if test="null!=params.planDateStart and ''!=params.planDateStart" >
+	        <![CDATA[
+	        and cp.plan_date >= to_date('${params.planDateStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+	     	]]>
+	      </if>
+	      <if test="null!=params.planDateEnd and ''!=params.planDateEnd" >
+	        <![CDATA[
+	        and cp.plan_date <= to_date('${params.planDateEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+	     	]]>
+	      </if>
+	       <if test="null!=params.brandNo and ''!=params.brandNo" >
+	       	 and i.brand_no =#{params.brandNo,jdbcType=VARCHAR}
+	      </if>
+	       <if test="null!=params.sysNo and ''!=params.sysNo" >
+             and i.sys_no =#{params.sysNo,jdbcType=VARCHAR}
+          </if>
+	  </if>
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillChRecheckDtlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_CH_RECHECK_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RECHECK_NO = #{recheckNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </select>
+  
+    <sql id="AuthorityCondition4Base" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and b.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <select id="selectCount" resultType="java.lang.Integer" >
+  	select sum(t.counttemp) from (
+    select count(1) as counttemp from BILL_CH_RECHECK_DTL b inner join bill_ch_check c on c.check_no = b.check_no
+     where 1=1 
+     and c.plan_type = '0'
+    <include refid="condition" />
+     <include refid="AuthorityCondition4Base" />
+     UNION
+     select count(1) as counttemp from BILL_CH_RECHECK_DTL b inner join bill_ch_check c on c.check_no = b.check_no
+     where 1=1 
+     and c.plan_type = '1'
+    <include refid="condition" />
+    )t
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( 
+    select t.* from(
+    select 
+    <include refid="extend_Column_List" />
+     ,NVL(b.recheck_qty,0)-NVL(b.item_qty,0)AS diffQty
+     from BILL_CH_RECHECK_DTL b inner join bill_ch_check c on c.check_no = b.check_no
+     left join item i on b.item_no = i.item_no
+     left join color_info c on i.color_no = c.color_no
+     where 1=1 
+     and c.plan_type = '0'
+    <include refid="condition" />
+     <include refid="AuthorityCondition4Base" />
+      UNION
+      select 
+    <include refid="extend_Column_List" />
+     ,NVL(b.recheck_qty,0)-NVL(b.item_qty,0)AS diffQty
+     from BILL_CH_RECHECK_DTL b inner join bill_ch_check c on c.check_no = b.check_no
+     left join item i on b.item_no = i.item_no
+     left join color_info c on i.color_no = c.color_no
+     where 1=1 
+     and c.plan_type = '1'
+    <include refid="condition" />
+    )t
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+  	select SUM(t.item_qty) item_qty,SUM(t.recheck_qty) recheck_qty,SUM(t.diff_Qty) diff_Qty  from(
+	select 
+	sum(nvl(b.item_qty,0)) item_qty
+	,sum(nvl(b.recheck_qty,0)) recheck_qty
+	 ,sum(NVL(b.recheck_qty,0)-NVL(b.item_qty,0))AS diff_Qty
+     from BILL_CH_RECHECK_DTL b inner join bill_ch_check c on c.check_no = b.check_no
+  	  where 1=1 
+  	  and c.plan_type = '0'
+     <include refid="condition" />
+      <include refid="AuthorityCondition4Base" />
+      UNION
+      select 
+	sum(nvl(b.item_qty,0)) item_qty
+	,sum(nvl(b.recheck_qty,0)) recheck_qty
+	 ,sum(NVL(b.recheck_qty,0)-NVL(b.item_qty,0))AS diff_Qty
+     from BILL_CH_RECHECK_DTL b inner join bill_ch_check c on c.check_no = b.check_no
+  	  where 1=1 
+  	  and c.plan_type = '1'
+     <include refid="condition" />
+     )t
+  </select>	
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />,brand_no
+     from BILL_CH_RECHECK_DTL b where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and d.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <sql id="selectReCheckJoin" >
+     <if test="(null!=params.brandNo and ''!=params.brandNo) or (null!=params.sysNo and ''!=params.sysNo)" >
+       inner join item i on i.item_no = d.item_no 
+    </if>
+  </sql>
+  
+  <!--复盘回单汇总-->
+  <select id="selectReCheckCount" resultType="java.lang.Integer">
+  	 select count(1) from(
+	  	 select t.* from(
+		 SELECT d.recheck_no  
+		   FROM bill_ch_recheck_dtl d inner join bill_ch_check c on c.locno = d.locno and c.check_no = d.check_no
+		   <include refid="selectReCheckJoin" />
+		   inner join BILL_CH_PLAN cp on (c.plan_no=cp.plan_no and c.locno=cp.locno and c.owner_no=cp.owner_no) 
+		     WHERE 1=1
+		       and  c.plan_type = '0'
+		 <include refid="condition_rechcheck" />
+		 <include refid="AuthorityCondition" />
+		  ) t
+		  
+	   UNION
+	    select * from(
+		 SELECT 
+		        d.recheck_no
+		   FROM bill_ch_recheck_dtl d inner join bill_ch_check c on c.locno = d.locno and c.check_no = d.check_no
+		   <include refid="selectReCheckJoin" />
+		   inner join BILL_CH_PLAN cp on (c.plan_no=cp.plan_no and c.locno=cp.locno and c.owner_no=cp.owner_no) 
+		     WHERE 1=1
+		       and  c.plan_type = '1'
+		 <include refid="condition_rechcheck" />
+		  ) t
+	  )
+  </select>
+  
+  <select id="selectReCheck" resultType="com.yougou.logistics.city.common.model.BillChRecheckDtlDto">
+  	 select B.* from (select A.*,nvl((realCount-itemCount), 0) differlCount, rownum rn from(
+  	 select * from(
+	  	 select * from(
+		 SELECT d.locno,
+		        d.check_no checkNo,
+		        d.recheck_no recheckNo,
+		        max(d.check_date) checkDate,
+		        max(cp.plan_date) planDate,
+		        COUNT(distinct d.cell_no) cellCount,
+	            sum(nvl(d.item_qty, 0)) itemCount,
+	            sum(nvl(d.recheck_qty, 0)) realCount,
+		        d.check_worker checkWorker,
+		        max(d.check_workerName) checkWorkerName,
+		        c.plan_type planType,
+		        c.plan_no planNo,
+		        min(d.status) status,
+		        cp.BRAND_NO brandNo,
+		        cp.LIMIT_BRAND_FLAG limitBrandFlag  
+		   FROM bill_ch_recheck_dtl d inner join bill_ch_check c on c.locno = d.locno and c.check_no = d.check_no
+		   <include refid="selectReCheckJoin" />
+		   inner join BILL_CH_PLAN cp on (c.plan_no=cp.plan_no and c.locno=cp.locno and c.owner_no=cp.owner_no) 
+		     WHERE 1=1
+		       and  c.plan_type = '0'
+		 <include refid="condition_rechcheck" />
+		 <include refid="AuthorityCondition" />
+		  GROUP BY d.locno,c.plan_no, d.check_no, d.recheck_no, d.check_worker,c.plan_type,cp.BRAND_NO,cp.LIMIT_BRAND_FLAG
+		  ) t
+		  
+	   UNION
+	    select * from(
+		 SELECT d.locno,
+		        d.check_no checkNo,
+		        d.recheck_no recheckNo,
+		        max(d.check_date) checkDate,
+		        max(cp.plan_date) planDate,
+		        COUNT(distinct d.cell_no) cellCount,
+	            sum(nvl(d.item_qty, 0)) itemCount,
+	            sum(nvl(d.recheck_qty, 0)) realCount,
+		        d.check_worker checkWorker,
+		        max(d.check_workerName) checkWorkerName,
+		        c.plan_type planType,
+		        c.plan_no planNo,
+		        min(d.status) status,
+		        cp.BRAND_NO brandNo,
+		        cp.LIMIT_BRAND_FLAG limitBrandFlag  
+		   FROM bill_ch_recheck_dtl d inner join bill_ch_check c on c.locno = d.locno and c.check_no = d.check_no
+		   <include refid="selectReCheckJoin" />
+		   inner join BILL_CH_PLAN cp on (c.plan_no=cp.plan_no and c.locno=cp.locno and c.owner_no=cp.owner_no) 
+		     WHERE 1=1
+		       and  c.plan_type = '1'
+		 <include refid="condition_rechcheck" />
+		  GROUP BY d.locno,c.plan_no, d.check_no, d.recheck_no, d.check_worker,c.plan_type,cp.BRAND_NO,cp.LIMIT_BRAND_FLAG
+		  ) t
+	  )
+	  <if test="params.orderByField == null or ''==params.orderByField" >
+		     order by recheckNo desc
+	  </if>
+ 	) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}  
+  </select>
+   <!--复盘回单汇总end-->
+   
+   <!--查询复盘点单明细中所有储位-->
+  <select id="selectCellNo" resultType="com.yougou.logistics.city.common.model.BillChCheckDtl" parameterType="com.yougou.logistics.city.common.model.BillChRecheckDtl">
+	select d.cell_no cellNo
+	  FROM BILL_CH_RECHECK_DTL d
+	 WHERE d.locno =#{check.locno} and d.recheck_no = #{check.recheckNo}
+	  GROUP BY d.cell_no
+  </select>
+   
+   <!-- 查询最大行号 -->
+   
+  <select id="selectMaxRowId" resultType="java.lang.Integer" parameterType="com.yougou.logistics.city.common.model.BillChRecheckDtl">
+	select nvl(max(row_id),0) from BILL_CH_RECHECK_DTL d where d.locno = #{dtl.locno} and d.check_no = #{dtl.checkNo} and d.recheck_no=#{dtl.recheckNo}
+  </select>
+  
+  <!-- 批量插入 -->
+  <select id="batchInsert" parameterType="java.util.List" timeout="180">   
+       insert into BILL_CH_RECHECK_DTL
+     (LOCNO, OWNER_NO, CHECK_NO,RECHECK_NO, ROW_ID, 
+       CELL_NO,ITEM_NO, BARCODE,RECHECK_QTY,ADD_FLAG, STATUS,CHECK_WORKER, CHECK_ROW_ID, SIZE_NO,CHECK_DATE,DIFFERENT_FLAG,PACK_QTY,quality,brand_No)  
+    <foreach collection="list" item="item" index="index"  
+        separator="union all">  
+        select
+         #{item.locno,jdbcType=VARCHAR},
+         #{item.ownerNo,jdbcType=VARCHAR},
+         #{item.checkNo,jdbcType=VARCHAR},
+         #{item.recheckNo,jdbcType=VARCHAR},
+         #{item.rowId,jdbcType=DECIMAL},
+         #{item.cellNo,jdbcType=VARCHAR},
+         #{item.itemNo,jdbcType=VARCHAR},
+         #{item.barcode,jdbcType=VARCHAR},
+         #{item.recheckQty,jdbcType=DECIMAL},
+         #{item.addFlag,jdbcType=VARCHAR},
+         #{item.status,jdbcType=VARCHAR},
+         #{item.checkWorker,jdbcType=VARCHAR},
+         #{item.checkRowId,jdbcType=DECIMAL},
+         #{item.sizeNo,jdbcType=VARCHAR},
+         #{item.checkDate,jdbcType=TIMESTAMP},
+         #{item.differentFlag,jdbcType=VARCHAR},
+         #{item.packQty,jdbcType=DECIMAL},
+         #{item.quality,jdbcType=DECIMAL},
+         #{item.brandNo,jdbcType=VARCHAR}
+         from DUAL
+    </foreach>  
+   </select>
+  <!-- 批量更新 -->
+   <update id="batchUpdate" parameterType="java.util.List" timeout="180">  
+   		begin
+        <foreach collection="list" index="index" item="item" separator=";">  
+            update BILL_CH_RECHECK_DTL set   
+            CHECK_WORKER=#{item.checkWorker},
+            RECHECK_QTY = #{item.recheckQty},
+            CHECK_DATE = #{item.checkDate,jdbcType=TIMESTAMP}
+        where LOCNO = #{item.locno,jdbcType=VARCHAR}
+      			and ROW_ID = #{item.rowId,jdbcType=DECIMAL}
+      			and check_no = #{item.checkNo,jdbcType=VARCHAR}
+        </foreach>  
+        ;end;
+    </update>
+    
+    <update id="saveByPlan" parameterType="com.yougou.logistics.city.common.model.BillChRecheckDtl">
+	  update BILL_CH_RECHECK_DTL d
+	      set d.recheck_qty = NVL(d.item_qty,0),
+	      d.check_date = #{item.checkDate,jdbcType=TIMESTAMP}
+	    where d.locno =  #{item.locno,jdbcType=VARCHAR}
+	     		and d.recheck_no  =  #{item.recheckNo,jdbcType=VARCHAR}
+	      and d.check_no = #{item.checkNo,jdbcType=VARCHAR}
+	      and d.status = '10'
+	      <if test="null != item.fBoxFlag  and 'N'.toString() == item.fBoxFlag">
+	           and (d.LABEL_NO is null or  d.LABEL_NO ='N')
+	      </if>
+	      <if test="null != item.fBoxFlag  and 'Y'.toString() == item.fBoxFlag">
+	           and (d.LABEL_NO is not null and  d.LABEL_NO !='N')
+	      </if>
+	      and NVL(d.recheck_qty, 0) != NVL(d.item_qty, 0)
+	      <!--  
+	      and NOT EXISTS (select 1
+	             from BILL_CH_RECHECK_DTL b
+	            where b.locno =  #{item.locno,jdbcType=VARCHAR}
+	              and b.recheck_no  =  #{item.recheckNo,jdbcType=VARCHAR}
+	              and b.check_no  =  #{item.checkNo,jdbcType=VARCHAR}
+	              and NVL(b.recheck_qty, 0) != 0)
+	      -->
+  </update>
+  
+  <update id="resetPlan" parameterType="com.yougou.logistics.city.common.model.BillChRecheckDtl">
+	     update BILL_CH_RECHECK_DTL d
+      set d.recheck_qty = 0,
+      d.check_date = #{item.checkDate,jdbcType=TIMESTAMP}
+	 where d.locno =  #{item.locno,jdbcType=VARCHAR}
+	      and d.check_no = #{item.checkNo,jdbcType=VARCHAR}
+	      and d.recheck_no  =  #{item.recheckNo,jdbcType=VARCHAR}
+	      and d.status = '10'
+	      <if test="null != item.fBoxFlag  and 'N'.toString() == item.fBoxFlag">
+	           and (d.LABEL_NO is null or  d.LABEL_NO ='N')
+	      </if>
+	      <if test="null != item.fBoxFlag  and 'Y'.toString() == item.fBoxFlag">
+	           and (d.LABEL_NO is not null and  d.LABEL_NO !='N')
+	      </if>
+	      and NVL(d.recheck_qty, 0) > 0
+	  <!--      
+      and  EXISTS (select 1
+             from BILL_CH_RECHECK_DTL b
+             where b.locno =  #{item.locno,jdbcType=VARCHAR}
+	              and b.check_no  =  #{item.checkNo,jdbcType=VARCHAR}
+	              and b.recheck_no  =  #{item.recheckNo,jdbcType=VARCHAR}
+              and NVL(b.recheck_qty, 0) != 0)
+      -->
+  </update>
+    
+    <select id="selectRepeat" resultType="com.yougou.logistics.city.common.model.BillChRecheckDtl" parameterType="com.yougou.logistics.city.common.model.BillChCheck">
+	   	select d.cell_no cellNo,d.size_no sizeNo,d.item_no,d.LABEL_NO itemNo from BILL_CH_RECHECK_DTL d
+	   	where LOCNO = #{item.locno,jdbcType=VARCHAR}
+	      			and RECHECK_NO = #{item.recheckNo,jdbcType=VARCHAR}
+	   	group by d.cell_no ,d.size_no ,d.item_no,d.LABEL_NO having count(1) &gt; 1
+   	</select> 
+    
+    <select id="selectFirstDtl" resultMap="BaseResultMap"  resultType="com.yougou.logistics.city.common.model.BillChRecheckDtl">
+    	select * from BILL_CH_RECHECK_DTL d where LOCNO = #{item.locno,jdbcType=VARCHAR}
+	      			and RECHECK_NO = #{item.recheckNo,jdbcType=VARCHAR} and rownum = 1
+    </select>
+    
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillChRecheckDtlKey" >
+    delete from BILL_CH_RECHECK_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RECHECK_NO = #{recheckNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillChRecheckDtl" >
+    delete from BILL_CH_RECHECK_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RECHECK_NO = #{recheckNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillChRecheckDtl" >
+    insert into BILL_CH_RECHECK_DTL (LOCNO, RECHECK_NO, ROW_ID, 
+      OWNER_NO, CHECK_NO, CELL_NO, 
+      CONTAINER_NO, ITEM_NO, BARCODE, 
+      PACK_QTY, LOT_NO, PRODUCE_DATE, 
+      EXPIRE_DATE, QUALITY, RECHECK_QTY, 
+      ADD_FLAG, STATUS, RESERVED1, 
+      RESERVED2, RESERVED3, RESERVED4, 
+      CHECK_WORKER, ITEM_TYPE, LABEL_NO, 
+      STOCK_TYPE, STOCK_VALUE, BATCH_SERIAL_NO, 
+      RECHECK_TIME, CHECK_ROW_ID, SIZE_NO
+      )
+    values (#{locno,jdbcType=VARCHAR}, #{recheckNo,jdbcType=VARCHAR}, #{rowId,jdbcType=DECIMAL}, 
+      #{ownerNo,jdbcType=VARCHAR}, #{checkNo,jdbcType=VARCHAR}, #{cellNo,jdbcType=VARCHAR}, 
+      #{containerNo,jdbcType=VARCHAR}, #{itemNo,jdbcType=VARCHAR}, #{barcode,jdbcType=VARCHAR}, 
+      #{packQty,jdbcType=DECIMAL}, #{lotNo,jdbcType=VARCHAR}, #{produceDate,jdbcType=TIMESTAMP}, 
+      #{expireDate,jdbcType=TIMESTAMP}, #{quality,jdbcType=VARCHAR}, #{recheckQty,jdbcType=DECIMAL}, 
+      #{addFlag,jdbcType=CHAR}, #{status,jdbcType=VARCHAR}, #{reserved1,jdbcType=VARCHAR}, 
+      #{reserved2,jdbcType=VARCHAR}, #{reserved3,jdbcType=VARCHAR}, #{reserved4,jdbcType=VARCHAR}, 
+      #{checkWorker,jdbcType=VARCHAR}, #{itemType,jdbcType=VARCHAR}, #{labelNo,jdbcType=VARCHAR}, 
+      #{stockType,jdbcType=VARCHAR}, #{stockValue,jdbcType=VARCHAR}, #{batchSerialNo,jdbcType=VARCHAR}, 
+      #{recheckTime,jdbcType=DECIMAL}, #{checkRowId,jdbcType=DECIMAL}, #{sizeNo,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillChRecheckDtl" >
+    insert into BILL_CH_RECHECK_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="recheckNo != null" >
+        RECHECK_NO,
+      </if>
+      <if test="rowId != null" >
+        ROW_ID,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="checkNo != null" >
+        CHECK_NO,
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO,
+      </if>
+      <if test="containerNo != null" >
+        CONTAINER_NO,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="barcode != null" >
+        BARCODE,
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY,
+      </if>
+      <if test="lotNo != null" >
+        LOT_NO,
+      </if>
+      <if test="produceDate != null" >
+        PRODUCE_DATE,
+      </if>
+      <if test="expireDate != null" >
+        EXPIRE_DATE,
+      </if>
+      <if test="quality != null" >
+        QUALITY,
+      </if>
+      <if test="recheckQty != null" >
+        RECHECK_QTY,
+      </if>
+      <if test="addFlag != null" >
+        ADD_FLAG,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="reserved1 != null" >
+        RESERVED1,
+      </if>
+      <if test="reserved2 != null" >
+        RESERVED2,
+      </if>
+      <if test="reserved3 != null" >
+        RESERVED3,
+      </if>
+      <if test="reserved4 != null" >
+        RESERVED4,
+      </if>
+      <if test="checkWorker != null" >
+        CHECK_WORKER,
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE,
+      </if>
+      <if test="labelNo != null" >
+        LABEL_NO,
+      </if>
+      <if test="stockType != null" >
+        STOCK_TYPE,
+      </if>
+      <if test="stockValue != null" >
+        STOCK_VALUE,
+      </if>
+      <if test="batchSerialNo != null" >
+        BATCH_SERIAL_NO,
+      </if>
+      <if test="recheckTime != null" >
+        RECHECK_TIME,
+      </if>
+      <if test="checkRowId != null" >
+        CHECK_ROW_ID,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="itemQty != null" >
+        ITEM_QTY,
+      </if>
+     <if test="differentFlag != null" >
+        DIFFERENT_FLAG,
+      </if>
+       <if test="checkDate != null" >
+        CHECK_DATE,
+      </if>
+       <if test="brandNo != null" >
+        brand_no,
+      </if>
+      <if test="checkWorkerName != null">
+        check_workerName,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="recheckNo != null" >
+        #{recheckNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rowId != null" >
+        #{rowId,jdbcType=DECIMAL},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="checkNo != null" >
+        #{checkNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="containerNo != null" >
+        #{containerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null" >
+        #{barcode,jdbcType=VARCHAR},
+      </if>
+      <if test="packQty != null" >
+        #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="lotNo != null" >
+        #{lotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="produceDate != null" >
+        #{produceDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expireDate != null" >
+        #{expireDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="quality != null" >
+        #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="recheckQty != null" >
+        #{recheckQty,jdbcType=DECIMAL},
+      </if>
+      <if test="addFlag != null" >
+        #{addFlag,jdbcType=CHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="reserved1 != null" >
+        #{reserved1,jdbcType=VARCHAR},
+      </if>
+      <if test="reserved2 != null" >
+        #{reserved2,jdbcType=VARCHAR},
+      </if>
+      <if test="reserved3 != null" >
+        #{reserved3,jdbcType=VARCHAR},
+      </if>
+      <if test="reserved4 != null" >
+        #{reserved4,jdbcType=VARCHAR},
+      </if>
+      <if test="checkWorker != null" >
+        #{checkWorker,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null" >
+        #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="labelNo != null" >
+        #{labelNo,jdbcType=VARCHAR},
+      </if>
+      <if test="stockType != null" >
+        #{stockType,jdbcType=VARCHAR},
+      </if>
+      <if test="stockValue != null" >
+        #{stockValue,jdbcType=VARCHAR},
+      </if>
+      <if test="batchSerialNo != null" >
+        #{batchSerialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="recheckTime != null" >
+        #{recheckTime,jdbcType=DECIMAL},
+      </if>
+      <if test="checkRowId != null" >
+        #{checkRowId,jdbcType=DECIMAL},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemQty != null" >
+        #{itemQty,jdbcType=VARCHAR},
+      </if>
+      <if test="differentFlag != null" >
+          #{differentFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="checkDate != null" >
+          #{checkDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="brandNo != null" >
+          #{brandNo,jdbcType=VARCHAR},
+      </if>
+      <if test="checkWorkerName != null">
+          #{checkWorkerName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillChRecheckDtl" >
+    update BILL_CH_RECHECK_DTL
+    <set >
+      <if test="ownerNo != null" >
+        OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="checkNo != null" >
+        CHECK_NO = #{checkNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO = #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="containerNo != null" >
+        CONTAINER_NO = #{containerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null" >
+        BARCODE = #{barcode,jdbcType=VARCHAR},
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="lotNo != null" >
+        LOT_NO = #{lotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="produceDate != null" >
+        PRODUCE_DATE = #{produceDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expireDate != null" >
+        EXPIRE_DATE = #{expireDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="quality != null" >
+        QUALITY = #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="recheckQty != null" >
+        RECHECK_QTY = #{recheckQty,jdbcType=DECIMAL},
+      </if>
+      <if test="addFlag != null" >
+        ADD_FLAG = #{addFlag,jdbcType=CHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="reserved1 != null" >
+        RESERVED1 = #{reserved1,jdbcType=VARCHAR},
+      </if>
+      <if test="reserved2 != null" >
+        RESERVED2 = #{reserved2,jdbcType=VARCHAR},
+      </if>
+      <if test="reserved3 != null" >
+        RESERVED3 = #{reserved3,jdbcType=VARCHAR},
+      </if>
+      <if test="reserved4 != null" >
+        RESERVED4 = #{reserved4,jdbcType=VARCHAR},
+      </if>
+      <if test="checkWorker != null" >
+        CHECK_WORKER = #{checkWorker,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="labelNo != null" >
+        LABEL_NO = #{labelNo,jdbcType=VARCHAR},
+      </if>
+      <if test="stockType != null" >
+        STOCK_TYPE = #{stockType,jdbcType=VARCHAR},
+      </if>
+      <if test="stockValue != null" >
+        STOCK_VALUE = #{stockValue,jdbcType=VARCHAR},
+      </if>
+      <if test="batchSerialNo != null" >
+        BATCH_SERIAL_NO = #{batchSerialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="recheckTime != null" >
+        RECHECK_TIME = #{recheckTime,jdbcType=DECIMAL},
+      </if>
+      <if test="checkRowId != null" >
+        CHECK_ROW_ID = #{checkRowId,jdbcType=DECIMAL},
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="checkWorkerName != null" >
+        CHECK_WORKERNAME = #{checkWorkerName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RECHECK_NO = #{recheckNo,jdbcType=VARCHAR}
+       <if test="null!=rowId and ''!=rowId" >
+	   and ROW_ID = #{rowId,jdbcType=DECIMAL}
+	  </if>
+      <if test="null!=sourceStatus and ''!=sourceStatus" >
+	     and (status='10' or status = '12')
+	  </if>
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillChRecheckDtl" >
+    update BILL_CH_RECHECK_DTL
+    set OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      CHECK_NO = #{checkNo,jdbcType=VARCHAR},
+      CELL_NO = #{cellNo,jdbcType=VARCHAR},
+      CONTAINER_NO = #{containerNo,jdbcType=VARCHAR},
+      ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      BARCODE = #{barcode,jdbcType=VARCHAR},
+      PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      LOT_NO = #{lotNo,jdbcType=VARCHAR},
+      PRODUCE_DATE = #{produceDate,jdbcType=TIMESTAMP},
+      EXPIRE_DATE = #{expireDate,jdbcType=TIMESTAMP},
+      QUALITY = #{quality,jdbcType=VARCHAR},
+      RECHECK_QTY = #{recheckQty,jdbcType=DECIMAL},
+      ADD_FLAG = #{addFlag,jdbcType=CHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      RESERVED1 = #{reserved1,jdbcType=VARCHAR},
+      RESERVED2 = #{reserved2,jdbcType=VARCHAR},
+      RESERVED3 = #{reserved3,jdbcType=VARCHAR},
+      RESERVED4 = #{reserved4,jdbcType=VARCHAR},
+      CHECK_WORKER = #{checkWorker,jdbcType=VARCHAR},
+      ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+      LABEL_NO = #{labelNo,jdbcType=VARCHAR},
+      STOCK_TYPE = #{stockType,jdbcType=VARCHAR},
+      STOCK_VALUE = #{stockValue,jdbcType=VARCHAR},
+      BATCH_SERIAL_NO = #{batchSerialNo,jdbcType=VARCHAR},
+      RECHECK_TIME = #{recheckTime,jdbcType=DECIMAL},
+      CHECK_ROW_ID = #{checkRowId,jdbcType=DECIMAL},
+      SIZE_NO = #{sizeNo,jdbcType=VARCHAR}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RECHECK_NO = #{recheckNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+    <update id="updateStatusByPlanNo" parameterType="map" >
+    update BILL_CH_RECHECK_DTL 
+	set STATUS=#{params.status,jdbcType=VARCHAR}
+	where 
+	exists 
+	(
+	 select 1 from BILL_CH_CHECK c 
+	 where 
+	 c.locno=BILL_CH_RECHECK_DTL.locno 
+	 and c.check_no=BILL_CH_RECHECK_DTL.Check_No 
+	 and c.plan_no=#{params.planNo,jdbcType=VARCHAR}
+	)
+	and BILL_CH_RECHECK_DTL.Locno=#{params.locno,jdbcType=VARCHAR}
+  </update>
+  
+  
+  <select id="selectChReCheckSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+	  select sum(nvl(u.cellCount, 0)) cell_Count,
+         sum(nvl(u.itemCount, 0)) item_Count,
+         sum(nvl(u.realCount, 0)) real_Count,
+      	(sum(nvl(u.realCount, 0)) - sum(nvl(u.itemCount, 0))) differl_Count
+         from (select *
+  from (SELECT COUNT(distinct d.cell_no) cellCount,
+               sum(nvl(d.item_qty, 0)) itemCount,
+               sum(nvl(d.recheck_qty, 0)) realCount
+          FROM bill_ch_recheck_dtl d
+         inner join bill_ch_check c
+            on c.locno = d.locno
+           and c.check_no = d.check_no
+         inner join BILL_CH_PLAN cp
+            on (c.plan_no = cp.plan_no and c.locno = cp.locno and
+               c.owner_no = cp.owner_no)
+               <include refid="selectReCheckJoin" />
+         WHERE 1 = 1
+           and c.plan_type = '0'
+           <include refid="condition_rechcheck" />
+		 <include refid="AuthorityCondition" />
+         GROUP BY d.locno,
+                  c.plan_no,
+                  d.check_no,
+                  d.recheck_no,
+                  d.check_worker,
+                  c.plan_type,
+                  cp.BRAND_NO,
+                  cp.LIMIT_BRAND_FLAG) t
+	UNION
+	select *
+	  from (SELECT COUNT(distinct d.cell_no) cellCount,
+	               sum(nvl(d.item_qty, 0)) itemCount,
+               sum(nvl(d.recheck_qty, 0)) realCount
+	        
+	          FROM bill_ch_recheck_dtl d
+	         inner join bill_ch_check c
+	            on c.locno = d.locno
+	           and c.check_no = d.check_no
+	         inner join BILL_CH_PLAN cp
+	            on (c.plan_no = cp.plan_no and c.locno = cp.locno and
+	               c.owner_no = cp.owner_no)
+	         <include refid="selectReCheckJoin" />
+		   inner join BILL_CH_PLAN cp on (c.plan_no=cp.plan_no and c.locno=cp.locno and c.owner_no=cp.owner_no) 
+		     WHERE 1=1
+		       and  c.plan_type = '1'
+		 <include refid="condition_rechcheck" />
+	         GROUP BY d.locno,
+	                  c.plan_no,
+	                  d.check_no,
+	                  d.recheck_no,
+	                  d.check_worker,
+	                  c.plan_type,
+	                  cp.BRAND_NO,
+	                  cp.LIMIT_BRAND_FLAG) b)u
+	  
+  </select>
+</mapper>

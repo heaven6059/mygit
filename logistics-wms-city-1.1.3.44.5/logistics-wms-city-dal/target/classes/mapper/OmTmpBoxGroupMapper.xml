@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.OmTmpBoxGroupMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.OmTmpBoxGroupKey" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="SERIAL_NO" property="serialNo" jdbcType="VARCHAR" />
+    <id column="BILL_NO" property="billNo" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    LOCNO, SERIAL_NO, BILL_NO
+  </sql>
+  
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from OM_TMP_BOX_GROUP where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.OmTmpBoxGroupKey" >
+    delete from OM_TMP_BOX_GROUP
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and SERIAL_NO = #{serialNo,jdbcType=VARCHAR}
+      and BILL_NO = #{billNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.OmTmpBoxGroup" >
+    delete from OM_TMP_BOX_GROUP
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and SERIAL_NO = #{serialNo,jdbcType=VARCHAR}
+      and BILL_NO = #{billNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.OmTmpBoxGroupKey" >
+    insert into OM_TMP_BOX_GROUP (LOCNO, SERIAL_NO, BILL_NO
+      )
+    values (#{locno,jdbcType=VARCHAR}, #{serialNo,jdbcType=VARCHAR}, #{billNo,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.OmTmpBoxGroupKey" >
+    insert into OM_TMP_BOX_GROUP
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="serialNo != null" >
+        SERIAL_NO,
+      </if>
+      <if test="billNo != null" >
+        BILL_NO,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="serialNo != null" >
+        #{serialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="billNo != null" >
+        #{billNo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <select id="getNextvalId" resultType="java.lang.String" >
+	   select SEQ_BOX_GROUP_ID.Nextval from dual
+  </select>
+  
+</mapper>

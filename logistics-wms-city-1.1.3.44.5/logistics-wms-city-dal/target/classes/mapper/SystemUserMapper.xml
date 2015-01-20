@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.SystemUserMapper" >
+  
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.SystemUser" >
+    <id column="USERID" property="userid" jdbcType="DECIMAL" />
+    <result column="USERNAME" property="username" jdbcType="VARCHAR" />
+    <result column="SEX" property="sex" jdbcType="VARCHAR" />
+    <result column="LOGIN_NAME" property="loginName" jdbcType="VARCHAR" />
+    <result column="LOGIN_PASSWORD" property="loginPassword" jdbcType="VARCHAR" />
+    <result column="MOBILE_PHONE" property="mobilePhone" jdbcType="VARCHAR" />
+    <result column="TEL_PHONE" property="telPhone" jdbcType="VARCHAR" />
+    <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+    <result column="QQ_NUM" property="qqNum" jdbcType="VARCHAR" />
+    <result column="MSN_NUM" property="msnNum" jdbcType="VARCHAR" />
+    <result column="STATE" property="state" jdbcType="VARCHAR" />
+    <result column="CATEGORY" property="category" jdbcType="VARCHAR" />
+    <result column="NO" property="no" jdbcType="VARCHAR" />
+    <result column="USERLEVEL" property="userlevel" jdbcType="VARCHAR" />
+    <result column="ORGANIZ_NAME" property="organizName" jdbcType="VARCHAR" />
+    <result column="ORGANIZ_NO" property="organizNo" jdbcType="DECIMAL" />
+    <result column="SUPPLIER_CODE" property="supplierCode" jdbcType="VARCHAR" />
+    <result column="WAREHOUSE_CODE" property="warehouseCode" jdbcType="VARCHAR" />
+    <result column="USER_GROUP_ID" property="userGroupId" jdbcType="VARCHAR" />
+    <result column="PWD_UPDATE_TIME" property="pwdUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="GIFT_CARD_PERMISSION" property="giftCardPermission" jdbcType="VARCHAR" />
+    <result column="STORE_NO" property="storeNo" jdbcType="VARCHAR" />
+    <result column="role_name" property="roleName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="BaseResultMapDto" type="com.yougou.logistics.city.common.dto.SystemUserDto" >
+    <result column="USERID" property="userid" jdbcType="DECIMAL" />
+    <result column="USERNAME" property="username" jdbcType="VARCHAR" />
+    <result column="SEX" property="sex" jdbcType="VARCHAR" />
+    <result column="LOGIN_NAME" property="loginName" jdbcType="VARCHAR" />
+    <result column="LOGIN_PASSWORD" property="loginPassword" jdbcType="VARCHAR" />
+    <result column="MOBILE_PHONE" property="mobilePhone" jdbcType="VARCHAR" />
+    <result column="TEL_PHONE" property="telPhone" jdbcType="VARCHAR" />
+    <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+    <result column="QQ_NUM" property="qqNum" jdbcType="VARCHAR" />
+    <result column="MSN_NUM" property="msnNum" jdbcType="VARCHAR" />
+    <result column="STATE" property="state" jdbcType="VARCHAR" />
+    <result column="CATEGORY" property="category" jdbcType="VARCHAR" />
+    <result column="NO" property="no" jdbcType="VARCHAR" />
+    <result column="USERLEVEL" property="userlevel" jdbcType="VARCHAR" />
+    <result column="ORGANIZ_NAME" property="organizName" jdbcType="VARCHAR" />
+    <result column="ORGANIZ_NO" property="organizNo" jdbcType="DECIMAL" />
+    <result column="SUPPLIER_CODE" property="supplierCode" jdbcType="VARCHAR" />
+    <result column="WAREHOUSE_CODE" property="warehouseCode" jdbcType="VARCHAR" />
+    <result column="USER_GROUP_ID" property="userGroupId" jdbcType="VARCHAR" />
+    <result column="PWD_UPDATE_TIME" property="pwdUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="GIFT_CARD_PERMISSION" property="giftCardPermission" jdbcType="VARCHAR" />
+    <result column="STORE_NO" property="storeNo" jdbcType="VARCHAR" />
+    <result column="ROLE_NAME" property="roleName" jdbcType="VARCHAR" />
+    <result column="ROLE_ID" property="roleid" jdbcType="DECIMAL" />
+    <collection property="listAuthorityRoles" javaType="ArrayList" column="USERID" 
+    ofType="com.yougou.logistics.city.common.model.AuthorityRole" select="selectAuthorityRoleList"/>
+  </resultMap>
+  
+  <resultMap id="BaseResultMapRole" type="com.yougou.logistics.city.common.model.AuthorityRole" >
+  	<result column="ROLE_ID" property="roleId" jdbcType="DECIMAL" />
+    <result column="ROLE_NAME" property="roleName" jdbcType="VARCHAR" />
+    <result column="NO" property="no" jdbcType="VARCHAR" />
+    <result column="ROLE_CREATEDATE" property="roleCreatedate" jdbcType="TIMESTAMP" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+  <sql id="condition" >
+	<if test="null!=params" >
+	  <if test="params.roleid > 0">
+		 and userid in (select u.userid from SYSTEM_USER u,SYSTEM_USER_ROLE ur where u.userid=ur.userid and ur.roleid = #{params.roleid,jdbcType=DECIMAL})  
+	  </if>
+	  <if test="null!=params.username and ''!=params.username" >
+	        AND USERNAME like '%${params.username}%'
+	  </if>
+	  <if test="null!=params.loginName and ''!=params.loginName" >
+	        AND LOGIN_NAME = #{params.loginName,jdbcType=VARCHAR}
+	  </if>
+	</if>
+  </sql>
+  
+  <sql id="Base_Column_List" >
+    USERID, USERNAME, SEX, LOGIN_NAME, LOGIN_PASSWORD, u.MOBILE_PHONE, u.TEL_PHONE, u.EMAIL, 
+    QQ_NUM, MSN_NUM, u.STATE, CATEGORY, u.NO, USERLEVEL, ORGANIZ_NO, SUPPLIER_CODE, 
+    WAREHOUSE_CODE, USER_GROUP_ID, PWD_UPDATE_TIME, GIFT_CARD_PERMISSION,u.STORE_NO
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from SYSTEM_USER u
+    where USERID = #{userid,jdbcType=DECIMAL}
+  </select>
+  
+  
+  <select id="selectByParams" resultMap="BaseResultMapDto" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from SYSTEM_USER u where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  
+  <select id="selectCount" resultType="java.lang.Integer"  >
+  	 select count(1) as s from SYSTEM_USER u where 1=1 
+  	 <include refid="condition" />
+  </select>
+  
+  <select id="selectByPage"  resultMap="BaseResultMap" parameterType="map" >
+  	  select B.* from (select A.*,rownum rn from( select 
+      <include refid="Base_Column_List" />
+      from SYSTEM_USER u where 1=1 
+      <include refid="condition" />
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <!-- 查询系统用户分页总数量-->
+  <select id="selectSystemUserCount" resultType="java.lang.Integer"  >
+  	 select count(1) as s from SYSTEM_USER u where 1=1 
+  	 <include refid="condition" />
+   </select>
+  
+  <!-- 查询系统用户(分页)-->
+  <select id="selectSystemUserByPage"  resultMap="BaseResultMapDto" parameterType="map" >
+  	  select B.* from (select A.*,rownum rn from( select 
+      <include refid="Base_Column_List" />
+      from SYSTEM_USER u where 1=1 
+      <include refid="condition" />
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+   </select>
+  
+  
+  <select id="querySystemUserList" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.SystemUser" >
+    select 
+    <include refid="Base_Column_List" />
+    from SYSTEM_USER u
+    where 1=1
+    <if test="username != null" >
+        and  username  like CONCAT(CONCAT('%','${username}'),'%') 
+    </if>
+    <if test="loginName != null" >
+        and  login_name =#{loginName,jdbcType=VARCHAR}
+    </if>
+     <if test="loginPassword != null" >
+        and  login_password= #{loginPassword,jdbcType=VARCHAR} 
+     </if>
+        order by PWD_UPDATE_TIME desc
+    
+  </select>
+  
+  <!-- 根据角色查询对应的账号列表(带仓库) -->
+  <select id="querySystemUserListByRoleId" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.SystemUser" >
+	  select distinct s.*,r.role_name  
+	  from  SYSTEM_USER_ROLE u, system_user  s , AUTHORITY_ROLE  r ,bs_worker_loc w
+	  where u.userid = s.userid
+	    and r.role_id =  u.roleid
+	    and w.worker_no = s.login_name
+	    and w.locno = #{locNo,jdbcType=VARCHAR}
+	    and u.roleid = #{roleId,jdbcType=DECIMAL}
+  </select>
+  
+  <delete id="removeSystemUser" parameterType="Long" >
+    delete from SYSTEM_USER
+    where USERID = #{userid,jdbcType=DECIMAL}
+  </delete>
+
+  <insert id="insertSystemUser" parameterType="com.yougou.logistics.city.common.model.SystemUser" >
+  
+     <selectKey keyProperty="userid" order="BEFORE" resultType="java.lang.Long">
+  		select seq_system_user_id.nextval as userid from dual 
+  	</selectKey>
+  
+     insert into SYSTEM_USER
+     <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userid != null" >
+        USERID,
+      </if>
+      <if test="username != null" >
+        USERNAME,
+      </if>
+      <if test="sex != null" >
+        SEX,
+      </if>
+      <if test="loginName != null" >
+        LOGIN_NAME,
+      </if>
+      <if test="loginPassword != null" >
+        LOGIN_PASSWORD,
+      </if>
+      <if test="mobilePhone != null" >
+        MOBILE_PHONE,
+      </if>
+      <if test="telPhone != null" >
+        TEL_PHONE,
+      </if>
+      <if test="email != null" >
+        EMAIL,
+      </if>
+      <if test="qqNum != null" >
+        QQ_NUM,
+      </if>
+      <if test="msnNum != null" >
+        MSN_NUM,
+      </if>
+      <if test="state != null" >
+        STATE,
+      </if>
+      <if test="category != null" >
+        CATEGORY,
+      </if>
+      <if test="no != null" >
+        NO,
+      </if>
+      <if test="userlevel != null" >
+        USERLEVEL,
+      </if>
+      <if test="organizName != null" >
+        ORGANIZ_NAME,
+      </if>
+      <if test="organizNo != null" >
+        ORGANIZ_NO,
+      </if>
+      <if test="supplierCode != null" >
+        SUPPLIER_CODE,
+      </if>
+      <if test="warehouseCode != null" >
+        WAREHOUSE_CODE,
+      </if>
+      <if test="userGroupId != null" >
+        USER_GROUP_ID,
+      </if>
+      <if test="pwdUpdateTime != null" >
+        PWD_UPDATE_TIME,
+      </if>
+      <if test="giftCardPermission != null" >
+        GIFT_CARD_PERMISSION,
+      </if>
+     <if test="storeNo != null" >
+        STORE_NO
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userid != null" >
+        #{userid,jdbcType=DECIMAL},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="loginName != null" >
+        #{loginName,jdbcType=VARCHAR},
+      </if>
+      <if test="loginPassword != null" >
+        #{loginPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="mobilePhone != null" >
+        #{mobilePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="telPhone != null" >
+        #{telPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="qqNum != null" >
+        #{qqNum,jdbcType=VARCHAR},
+      </if>
+      <if test="msnNum != null" >
+        #{msnNum,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="category != null" >
+        #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="no != null" >
+        #{no,jdbcType=VARCHAR},
+      </if>
+      <if test="userlevel != null" >
+        #{userlevel,jdbcType=VARCHAR},
+      </if>
+      <if test="organizName != null" >
+        #{organizName,jdbcType=VARCHAR},
+      </if>
+      <if test="organizNo != null" >
+        #{organizNo,jdbcType=DECIMAL},
+      </if>
+      <if test="supplierCode != null" >
+        #{supplierCode,jdbcType=VARCHAR},
+      </if>
+      <if test="warehouseCode != null" >
+        #{warehouseCode,jdbcType=VARCHAR},
+      </if>
+      <if test="userGroupId != null" >
+        #{userGroupId,jdbcType=VARCHAR},
+      </if>
+      <if test="pwdUpdateTime != null" >
+        #{pwdUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="giftCardPermission != null" >
+        #{giftCardPermission,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo != null" >
+        #{storeNo,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateSystemUser" parameterType="com.yougou.logistics.city.common.model.SystemUser" >
+    update SYSTEM_USER
+    <set >
+      <if test="username != null" >
+        USERNAME = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        SEX = #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="loginName != null" >
+        LOGIN_NAME = #{loginName,jdbcType=VARCHAR},
+      </if>
+      <if test="loginPassword != null" >
+        LOGIN_PASSWORD = #{loginPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="mobilePhone != null" >
+        MOBILE_PHONE = #{mobilePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="telPhone != null" >
+        TEL_PHONE = #{telPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        EMAIL = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="qqNum != null" >
+        QQ_NUM = #{qqNum,jdbcType=VARCHAR},
+      </if>
+      <if test="msnNum != null" >
+        MSN_NUM = #{msnNum,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        STATE = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="category != null" >
+        CATEGORY = #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="no != null" >
+        NO = #{no,jdbcType=VARCHAR},
+      </if>
+      <if test="userlevel != null" >
+        USERLEVEL = #{userlevel,jdbcType=VARCHAR},
+      </if>
+      <if test="organizName != null" >
+        ORGANIZ_NAME = #{organizName,jdbcType=VARCHAR},
+      </if>
+      <if test="organizNo != null" >
+        ORGANIZ_NO = #{organizNo,jdbcType=DECIMAL},
+      </if>
+      <if test="supplierCode != null" >
+        SUPPLIER_CODE = #{supplierCode,jdbcType=VARCHAR},
+      </if>
+      <if test="warehouseCode != null" >
+        WAREHOUSE_CODE = #{warehouseCode,jdbcType=VARCHAR},
+      </if>
+      <if test="userGroupId != null" >
+        USER_GROUP_ID = #{userGroupId,jdbcType=VARCHAR},
+      </if>
+      <if test="pwdUpdateTime != null" >
+        PWD_UPDATE_TIME = #{pwdUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="giftCardPermission != null" >
+        GIFT_CARD_PERMISSION = #{giftCardPermission,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo != null" >
+        store_No = #{storeNo,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where USERID = #{userid,jdbcType=DECIMAL}
+  </update>
+  
+   <delete id="removeSystemUserRole" parameterType="Long" >
+        delete from system_user_role where 1=1
+        and userId = #{userId,jdbcType=DECIMAL}
+  </delete>
+  
+   <insert id="insertSystemUserRole"  >
+        insert into system_user_role(userid,roleid) values(#{userId},#{roleId})
+          
+  </insert>
+  
+  <select id="selectAuthorityRoleList" parameterType="int" resultMap="BaseResultMapRole">
+  		select rl.ROLE_ID,rl.ROLE_NAME from SYSTEM_USER_ROLE ur,AUTHORITY_ROLE rl where ur.ROLEID=rl.ROLE_ID  
+  		and ur.userid=#{userid} 
+  		group by rl.ROLE_ID,rl.ROLE_NAME
+  </select>
+
+</mapper>

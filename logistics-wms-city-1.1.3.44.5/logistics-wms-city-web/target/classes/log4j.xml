@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+	<!-- 控制台输出 -->
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%d{yyyy-MM-dd HH:mm:ss sss}[%-p][%-c][line:%-L] \r\n  %m%n" />
+		</layout>
+
+		<!-- 以下是过滤一些不需要输出的log信息 -->
+		<filter class="org.apache.log4j.varia.StringMatchFilter">
+			<param name="StringToMatch" value="new a seq no spend" />
+			<param name="AcceptOnMatch" value="false" />
+		</filter>
+		<filter class="org.apache.log4j.varia.StringMatchFilter">
+			<param name="StringToMatch" value="new hi[type=" />
+			<param name="AcceptOnMatch" value="false" />
+		</filter>
+		<filter class="org.apache.log4j.varia.StringMatchFilter">
+			<param name="StringToMatch" value="FileTransfer.execCommand()" />
+			<param name="AcceptOnMatch" value="false" />
+		</filter>
+		<filter class="org.apache.log4j.varia.StringMatchFilter">
+			<param name="StringToMatch" value="Mapped" />
+			<param name="AcceptOnMatch" value="false" />
+		</filter>
+	</appender>
+
+	<!-- 以下是appender的定义 ConsoleAppender RollingFileAppender DailyRollingFileAppender -->
+	<appender name="PROJECT" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="/data/logs/yougou/logistics/city/city.log" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%d{yyyy-MM-dd HH:mm:ss sss}[%-p][%-c][line:%-L] \r\n  %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.StringMatchFilter">
+			<param name="StringToMatch" value="new a seq no spend" />
+			<param name="AcceptOnMatch" value="false" />
+		</filter>
+		<filter class="org.apache.log4j.varia.StringMatchFilter">
+			<param name="StringToMatch" value="new hi[type=" />
+			<param name="AcceptOnMatch" value="false" />
+		</filter>
+		<filter class="org.apache.log4j.varia.StringMatchFilter">
+			<param name="StringToMatch" value="FileTransfer.execCommand()" />
+			<param name="AcceptOnMatch" value="false" />
+		</filter>
+	</appender>
+	
+	<!-- 库存记账log begin-->
+	<appender name="SKUCONSTOCKAPPENDER" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="/data/logs/yougou/logistics/city/skuconstock.log" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%d{yyyy-MM-dd HH:mm:ss sss}[%-p][line:%-l] \r\n  %m%n" />
+		</layout>
+	</appender>
+	
+	<logger name="com.yougou.logistics.city.dal" additivity="false">
+		<level value="DEBUG" />
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="PROJECT" />
+	</logger>
+	
+	<logger name="SKUCONSTOCK" additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="SKUCONSTOCKAPPENDER" />
+	</logger>
+	<!-- 库存记账log end-->
+	
+	<!-- 根loggr -->
+	<root>
+		<priority value="INFO" />
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="PROJECT" />
+	</root>
+</log4j:configuration>

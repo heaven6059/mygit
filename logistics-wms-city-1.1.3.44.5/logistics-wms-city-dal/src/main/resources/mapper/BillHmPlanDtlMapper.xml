@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BillHmPlanDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillHmPlanDtl" >
+    <id column="PLAN_NO" property="planNo" jdbcType="VARCHAR" />
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="ITEM_ID" property="itemId" jdbcType="VARCHAR" />
+    <result column="ORIGIN_QTY" property="originQty" jdbcType="DECIMAL" />
+    <result column="S_CELL_NO" property="sCellNo" jdbcType="VARCHAR" />
+    <result column="S_CONTAINER_NO" property="sContainerNo" jdbcType="VARCHAR" />
+    <result column="D_CONTAINER_NO" property="dContainerNo" jdbcType="VARCHAR" />
+    <result column="D_CELL_NO" property="dCellNo" jdbcType="VARCHAR" />
+    <result column="MOVE_DATE" property="moveDate" jdbcType="TIMESTAMP" />
+    <result column="SCAN_LABEL_NO" property="scanLabelNo" jdbcType="VARCHAR" />
+    <result column="STOCK_TYPE" property="stockType" jdbcType="VARCHAR" />
+    <result column="STOCK_VALUE" property="stockValue" jdbcType="VARCHAR" />
+    <result column="itemName" property="itemName" jdbcType="VARCHAR" />
+    <result column="styleNo" property="styleNo" jdbcType="VARCHAR" />
+    <result column="colorName" property="colorName" jdbcType="VARCHAR" />
+    <result column="item_type" property="itemType" jdbcType="VARCHAR" />
+    <result column="BRAND_NO" property="brandNo" jdbcType="VARCHAR" />
+    <result column="itemTypeStr" property="itemTypeStr" jdbcType="VARCHAR" />
+    <result column="qualityStr" property="qualityStr" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    PLAN_NO, LOCNO, OWNER_NO, ROW_ID, ITEM_NO, SIZE_NO, ITEM_ID, ORIGIN_QTY, S_CELL_NO, 
+    S_CONTAINER_NO, D_CONTAINER_NO, D_CELL_NO, MOVE_DATE, SCAN_LABEL_NO, STOCK_TYPE, 
+    STOCK_VALUE,quality,item_type
+  </sql>
+  
+  <sql id="Base_Column_List_Pd" >
+    pd.PLAN_NO, pd.LOCNO, pd.OWNER_NO, pd.ROW_ID, pd.ITEM_NO, pd.SIZE_NO, pd.ITEM_ID, 
+    pd.ORIGIN_QTY, pd.S_CELL_NO,pd.S_CONTAINER_NO, pd.D_CONTAINER_NO, pd.D_CELL_NO, 
+    pd.MOVE_DATE, pd.SCAN_LABEL_NO, pd.STOCK_TYPE, 
+    pd.STOCK_VALUE,pd.QUALITY,pd.ITEM_TYPE
+  </sql>
+  
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      
+      <if test="null!=params.locno and ''!=params.locno" >
+            and LOCNO = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      	
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+            and OWNER_NO = #{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+      
+      <if test="null!=params.planNo and ''!=params.planNo" >
+            and PLAN_NO = #{params.planNo,jdbcType=VARCHAR}
+      </if>
+      
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillHmPlanDtlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_HM_PLAN_DTL
+    where PLAN_NO = #{planNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </select>
+  
+  <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and dtl.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_HM_PLAN_DTL dtl where 1=1 
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />,
+    (select ld.ITEMNAME from LOOKUPDTL ld
+                 where dtl.ITEM_TYPE = ld.itemval
+                   and ld.lookupcode = 'ITEM_TYPE'
+                   and rownum = 1) as itemTypeStr,
+     (select ld.ITEMNAME from LOOKUPDTL ld
+                 where dtl.QUALITY = ld.itemval
+                   and ld.lookupcode = 'AREA_QUALITY'
+                   and rownum = 1) as qualityStr,
+    (select t.item_name from item t where t.item_no = dtl.item_no) as itemName,
+    (select t.style_no from item t where t.item_no = dtl.item_no) as styleNo,
+    (select NVL(SUM(c.qty), 0) - NVL(SUM(c.outstock_qty), 0) from v_content c 
+    where c.locno=dtl.locno 
+    	and c.item_no = dtl.item_no 
+    	and c.cell_no = dtl.s_cell_no 
+    	and c.size_no = dtl.size_no
+    	and c.hm_manual_flag = '1'
+     group by c.cell_no) as conContentQty,
+    (select max(ci.color_name) from item t,color_info ci where t.item_no = dtl.item_no and t.color_no=ci.color_no group by t.color_no) as colorName
+     from BILL_HM_PLAN_DTL dtl where 1=1 
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+      <choose>
+	    <when test="orderByField != null and ''!=orderByField">
+			order by ${orderByField}
+			<if test="orderByField">
+			${orderBy}
+			</if>
+		</when>
+		<otherwise>
+			order by S_CELL_NO, ITEM_NO,SIZE_NO
+		</otherwise>
+	  </choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+	select '合计' ITEM_NO, sum(ORIGIN_QTY) ORIGIN_QTY
+  		from BILL_HM_PLAN_DTL dtl
+	 	where 1=1 
+    	<include refid="condition" />
+    	<include refid="AuthorityCondition" />
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_HM_PLAN_DTL where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <!-- 根据业务编码，仓别编码，预到货通知单号，查询最大的行号 -->
+  <select id="selectMaxPid" resultType="java.lang.Integer" parameterType="com.yougou.logistics.city.common.model.BillHmPlanDtl" >
+    select 
+    NVL(max(hp.row_id),0) as s
+    from BILL_HM_PLAN_DTL hp
+    where hp.LOCNO = #{locno,jdbcType=VARCHAR}
+      and hp.OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and hp.PLAN_NO = #{planNo,jdbcType=VARCHAR}
+  </select>
+  
+  	<!-- 查询明细是否重复 -->
+	<select id="selectDuplicateRecord" resultMap="BaseResultMap" parameterType="map">
+      select d.s_cell_no, d.item_no, d.size_no
+        from bill_hm_plan_dtl d
+       where d.locno = #{params.locno,jdbcType=VARCHAR}
+         and d.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+         and d.plan_no = #{params.planNo,jdbcType=VARCHAR}
+       group by d.s_cell_no, d.item_no, d.size_no, d.item_type, d.quality
+      having count(*) > 1
+	</select>
+	
+	<select id="selectBillHmPlanDtl" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" /> 
+    
+      from BILL_HM_PLAN_DTL dtl where 1=1 
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+  </select>
+	
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillHmPlanDtlKey" >
+    delete from BILL_HM_PLAN_DTL
+    where PLAN_NO = #{planNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      <if test="null!=rowId and ''!=rowId" >
+      	and ROW_ID = #{rowId,jdbcType=DECIMAL}
+      </if>
+      <if test="null!=itemNo and ''!=itemNo" >
+      	and ITEM_NO = #{itemNo,jdbcType=DECIMAL}
+      </if>
+      <if test="null!=sizeNo and ''!=sizeNo" >
+      	and SIZE_NO = #{sizeNo,jdbcType=DECIMAL}
+      </if>
+      <!-- 
+      <if test="null!=itemId and ''!=itemId" >
+      	and ITEM_ID = #{itemId,jdbcType=DECIMAL}
+      </if>
+       -->
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillHmPlanDtl" >
+    delete from BILL_HM_PLAN_DTL
+    where PLAN_NO = #{planNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      <if test="null!=rowId and ''!=rowId" >
+      	and ROW_ID = #{rowId,jdbcType=DECIMAL}
+      </if>
+      <if test="null!=itemNo and ''!=itemNo" >
+      	and ITEM_NO = #{itemNo,jdbcType=DECIMAL}
+      </if>
+      <if test="null!=sizeNo and ''!=sizeNo" >
+      	and SIZE_NO = #{sizeNo,jdbcType=DECIMAL}
+      </if>
+      <!--  
+      <if test="null!=itemId and ''!=itemId" >
+      	and ITEM_ID = #{itemId,jdbcType=DECIMAL}
+      </if>
+      -->
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillHmPlanDtl" >
+    insert into BILL_HM_PLAN_DTL (PLAN_NO, LOCNO, OWNER_NO, 
+      ROW_ID, ITEM_NO, SIZE_NO, 
+      ITEM_ID, ORIGIN_QTY, S_CELL_NO, 
+      S_CONTAINER_NO, D_CONTAINER_NO, D_CELL_NO, 
+      MOVE_DATE, SCAN_LABEL_NO, STOCK_TYPE, 
+      STOCK_VALUE)
+    values (#{planNo,jdbcType=VARCHAR}, #{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, 
+      #{rowId,jdbcType=DECIMAL}, #{itemNo,jdbcType=VARCHAR}, #{sizeNo,jdbcType=VARCHAR}, 
+      #{itemId,jdbcType=VARCHAR}, #{originQty,jdbcType=DECIMAL}, #{sCellNo,jdbcType=VARCHAR}, 
+      #{sContainerNo,jdbcType=VARCHAR}, #{dContainerNo,jdbcType=VARCHAR}, #{dCellNo,jdbcType=VARCHAR}, 
+      #{moveDate,jdbcType=TIMESTAMP}, #{scanLabelNo,jdbcType=VARCHAR}, #{stockType,jdbcType=VARCHAR}, 
+      #{stockValue,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillHmPlanDtl" >
+    insert into BILL_HM_PLAN_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="planNo != null" >
+        PLAN_NO,
+      </if>
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="rowId != null" >
+        ROW_ID,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="itemId != null" >
+        ITEM_ID,
+      </if>
+      <if test="originQty != null" >
+        ORIGIN_QTY,
+      </if>
+      <if test="sCellNo != null" >
+        S_CELL_NO,
+      </if>
+      <if test="sContainerNo != null" >
+        S_CONTAINER_NO,
+      </if>
+      <if test="dContainerNo != null" >
+        D_CONTAINER_NO,
+      </if>
+      <if test="dCellNo != null" >
+        D_CELL_NO,
+      </if>
+      <if test="moveDate != null" >
+        MOVE_DATE,
+      </if>
+      <if test="scanLabelNo != null" >
+        SCAN_LABEL_NO,
+      </if>
+      <if test="stockType != null" >
+        STOCK_TYPE,
+      </if>
+      <if test="stockValue != null" >
+        STOCK_VALUE,
+      </if>      
+      <if test="quality != null" >
+        quality,
+      </if>      
+      <if test="itemType != null" >
+        item_type,
+      </if>
+      <if test="brandNo != null" >
+        brand_no,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="planNo != null" >
+        #{planNo,jdbcType=VARCHAR},
+      </if>
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rowId != null" >
+        #{rowId,jdbcType=DECIMAL},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=VARCHAR},
+      </if>
+      <if test="originQty != null" >
+        #{originQty,jdbcType=DECIMAL},
+      </if>
+      <if test="sCellNo != null" >
+        #{sCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sContainerNo != null" >
+        #{sContainerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="dContainerNo != null" >
+        #{dContainerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="dCellNo != null" >
+        #{dCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="moveDate != null" >
+        #{moveDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="scanLabelNo != null" >
+        #{scanLabelNo,jdbcType=VARCHAR},
+      </if>
+      <if test="stockType != null" >
+        #{stockType,jdbcType=VARCHAR},
+      </if>
+      <if test="stockValue != null" >
+        #{stockValue,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        #{quality,jdbcType=VARCHAR},
+      </if>      
+      <if test="itemType != null" >
+        #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="brandNo != null" >
+        #{brandNo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillHmPlanDtl" >
+    update BILL_HM_PLAN_DTL
+    <set >
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        ITEM_ID = #{itemId,jdbcType=VARCHAR},
+      </if>
+      <if test="originQty != null" >
+        ORIGIN_QTY = #{originQty,jdbcType=DECIMAL},
+      </if>
+      <if test="sCellNo != null" >
+        S_CELL_NO = #{sCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sContainerNo != null" >
+        S_CONTAINER_NO = #{sContainerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="dContainerNo != null" >
+        D_CONTAINER_NO = #{dContainerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="dCellNo != null" >
+        D_CELL_NO = #{dCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="moveDate != null" >
+        MOVE_DATE = #{moveDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="scanLabelNo != null" >
+        SCAN_LABEL_NO = #{scanLabelNo,jdbcType=VARCHAR},
+      </if>
+      <if test="stockType != null" >
+        STOCK_TYPE = #{stockType,jdbcType=VARCHAR},
+      </if>
+      <if test="stockValue != null" >
+        STOCK_VALUE = #{stockValue,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where PLAN_NO = #{planNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillHmPlanDtl" >
+    update BILL_HM_PLAN_DTL
+    set ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      <!-- ITEM_ID = #{itemId,jdbcType=VARCHAR}, -->
+      ORIGIN_QTY = #{originQty,jdbcType=DECIMAL},
+      S_CELL_NO = #{sCellNo,jdbcType=VARCHAR},
+      S_CONTAINER_NO = #{sContainerNo,jdbcType=VARCHAR},
+      D_CONTAINER_NO = #{dContainerNo,jdbcType=VARCHAR},
+      D_CELL_NO = #{dCellNo,jdbcType=VARCHAR},
+      MOVE_DATE = #{moveDate,jdbcType=TIMESTAMP},
+      SCAN_LABEL_NO = #{scanLabelNo,jdbcType=VARCHAR},
+      STOCK_TYPE = #{stockType,jdbcType=VARCHAR},
+      STOCK_VALUE = #{stockValue,jdbcType=VARCHAR}
+    where PLAN_NO = #{planNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+  
+  <insert id="insertByWmPlan" parameterType="map" >
+	   insert into bill_hm_plan_dtl
+	  (locno,
+	   owner_no,
+	   plan_no,
+	   row_id,
+	   move_date,
+	   item_no,
+	   size_no,
+	   origin_qty,
+	   s_cell_no,
+	   d_cell_no,
+	   quality,
+	   item_type,
+	   brand_no)
+	   <foreach collection="list" item="item" index="index"  
+	            separator="union all">  
+	            select
+		            #{item.locno,jdbcType=VARCHAR},
+					#{item.ownerNo,jdbcType=VARCHAR},
+					#{item.planNo,jdbcType=VARCHAR},
+					#{item.rowId,jdbcType=DECIMAL},
+					sysdate,
+					#{item.itemNo,jdbcType=VARCHAR},
+					#{item.sizeNo,jdbcType=VARCHAR},
+					#{item.originQty,jdbcType=DECIMAL},
+					#{item.sCellNo,jdbcType=VARCHAR},
+					#{item.dCellNo,jdbcType=VARCHAR},
+					#{item.quality,jdbcType=VARCHAR},
+					#{item.itemType,jdbcType=VARCHAR},
+					#{item.brandNo,jdbcType=VARCHAR}
+	             from DUAL
+        </foreach>
+   
+  <!--  
+  select wp.locno,
+         wp.owner_no,
+         #{params.planNo,jdbcType=VARCHAR},
+         rownum,
+         sysdate,
+         vc.item_no,
+         vc.size_no,
+         vc.qty - vc.outstock_qty,
+         vc.cell_no,
+         #{params.cellNo,jdbcType=VARCHAR},
+         vc.quality,
+         vc.item_type,
+         wpd.brand_no
+    from bill_wm_plan wp
+   inner join bill_wm_plan_dtl wpd
+      on wp.locno = wpd.locno
+     and wp.owner_no = wpd.owner_no
+     and wp.plan_no = wpd.plan_no
+   inner join v_content vc
+      on wpd.locno = vc.locno
+     and wpd.owner_no = vc.owner_no
+     and wpd.item_no = vc.item_no
+   inner join CM_DEFCELL cdc
+      on vc.locno = cdc.locno
+     and vc.owner_no = cdc.owner_no
+     and vc.cell_no = cdc.cell_no
+   inner join cm_defarea cda
+      on cdc.area_no = cda.area_no
+     and cdc.locno = cda.locno
+     and cdc.ware_no = cda.ware_no
+   where cdc.cell_status = '0'
+     and cdc.check_status = '0'
+     and vc.hm_manual_flag = '1'
+     and vc.flag = '0'
+     and vc.status = '0'
+     and (vc.qty - vc.outstock_qty) > 0
+     and cda.attribute_type = '0'
+     and cda.area_attribute = '0'
+     and cda.area_usetype = '1'
+        
+     and wp.locno = #{params.locno,jdbcType=VARCHAR}
+     and wp.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+     and wp.plan_no = #{params.wmPlanNo,jdbcType=VARCHAR}
+     and vc.item_type = #{params.itemType,jdbcType=VARCHAR}
+     
+     <if test="null!=params.sourceType and ''!=params.sourceType" >
+     	<if test="params.sourceType == 11 or params.sourceType == 13" >
+      		and cdc.AREA_QUALITY = 'A'
+      	</if>
+      	<if test="params.sourceType == 12 or params.sourceType == 14" >
+      		and (cdc.AREA_QUALITY = '0' or cdc.AREA_QUALITY = 'A')
+      	</if>
+     </if>
+     -->
+  </insert>
+  
+  
+  <!-- 退厂申请转移库计划，查询需要插入移库计划的信息 -->
+  <select id="selectInsertHmPlan4WmPlan" resultMap="BaseResultMap" parameterType="map">
+    	  select wp.locno,
+		         wp.owner_no,
+		         vc.item_no,
+		         vc.size_no,
+		         (vc.qty - vc.outstock_qty) origin_qty,
+		         vc.cell_no as sCellNo,
+		         vc.quality as quality,
+		         vc.item_type as itemType,
+		         wpd.brand_no 
+		    from bill_wm_plan wp
+		   inner join bill_wm_plan_dtl wpd
+		      on wp.locno = wpd.locno
+		     and wp.owner_no = wpd.owner_no
+		     and wp.plan_no = wpd.plan_no
+		   inner join v_content vc
+		      on wpd.locno = vc.locno
+		     and wpd.owner_no = vc.owner_no
+		     and wpd.item_no = vc.item_no
+		   inner join CM_DEFCELL cdc
+		      on vc.locno = cdc.locno
+		     and vc.owner_no = cdc.owner_no
+		     and vc.cell_no = cdc.cell_no
+		   inner join cm_defarea cda
+		      on cdc.area_no = cda.area_no
+		     and cdc.locno = cda.locno
+		     and cdc.ware_no = cda.ware_no
+		   where cdc.cell_status = '0'
+		     and cdc.check_status = '0'
+		     and vc.hm_manual_flag = '1'
+		     and vc.flag = '0'
+		     and vc.status = '0'
+		     and (vc.qty - vc.outstock_qty) > 0
+		     and cda.attribute_type = '0'
+		     and cda.area_attribute = '0'
+		     and cda.area_usetype = '1'
+		     and wp.locno = #{params.locno,jdbcType=VARCHAR}
+		     and wp.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+		     and wp.plan_no = #{params.wmPlanNo,jdbcType=VARCHAR}
+		     and vc.item_type = #{params.itemType,jdbcType=VARCHAR}
+		     <if test="null!=params.sourceType and ''!=params.sourceType" >
+		     	<if test="params.sourceType == 11 or params.sourceType == 13" >
+		      		and cdc.AREA_QUALITY = 'A'
+		      	</if>
+		      	<if test="params.sourceType == 12 or params.sourceType == 14" >
+		      		and (cdc.AREA_QUALITY = '0' or cdc.AREA_QUALITY = 'A')
+		      	</if>
+		     </if>
+  </select>
+  
+  
+  <!-- 来源储位与目的储位商品属性不一致或储位盘点锁定,不允许移库 -->
+  <select id="selectCheckHwPlanCellNoItemType" resultMap="BaseResultMap" parameterType="map">
+      select 
+      	  <include refid="Base_Column_List_Pd" />
+		  from bill_hm_plan_dtl pd
+		  where pd.LOCNO = #{params.locno,jdbcType=VARCHAR}
+      		and pd.PLAN_NO = #{params.planNo,jdbcType=VARCHAR} 
+		    and (exists (select 'X'
+		          from cm_defcell cd
+		         inner join cm_defarea cda
+		            on cd.locno = cda.locno
+		           and cd.ware_no = cda.ware_no
+		           and cd.area_no = cda.area_no
+		         where cd.locno = pd.locno
+		           and cd.cell_no = pd.d_cell_no
+		           and (cd.item_type != pd.item_type
+		           or cda.AREA_ATTRIBUTE != '0'
+		           or cda.ATTRIBUTE_TYPE != '0'
+		           or cda.AREA_USETYPE != '3')))
+		   
+  </select>
+  
+  <!-- 来源储位与目的储位商品属性不一致或储位盘点锁定,不允许移库 -->
+  <select id="selectCheckHwPlanCellNo" resultMap="BaseResultMap" parameterType="map">
+      select 
+      	  <include refid="Base_Column_List_Pd" />
+		  from bill_hm_plan_dtl pd
+		  where pd.LOCNO = #{params.locno,jdbcType=VARCHAR}
+      		and pd.PLAN_NO = #{params.planNo,jdbcType=VARCHAR} 
+		    and (exists (select 'X'
+		          from cm_defcell cd
+		         inner join cm_defarea cda
+		            on cd.locno = cda.locno
+		           and cd.ware_no = cda.ware_no
+		           and cd.area_no = cda.area_no
+		         inner join v_content v
+		            on v.locno = cd.locno
+		           and v.cell_no = cd.cell_no
+		         where cd.locno = pd.locno
+		           and cd.cell_no = pd.d_cell_no
+		           and cd.item_type = pd.item_type
+		           and v.item_no = pd.item_no
+            	   and v.size_no = pd.size_no
+		           and cda.AREA_ATTRIBUTE = '0'
+		           and cda.ATTRIBUTE_TYPE = '0'
+		           and cda.AREA_USETYPE = '3'))
+		   
+  </select>
+	
+</mapper>

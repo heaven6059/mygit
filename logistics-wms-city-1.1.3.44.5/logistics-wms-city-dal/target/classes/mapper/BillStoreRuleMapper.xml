@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BillStoreRuleMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillStoreRule" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="TEMP_NO" property="tempNo" jdbcType="VARCHAR" />
+    <id column="RULE_NO" property="ruleNo" jdbcType="VARCHAR" />
+    <result column="RULE_NAME" property="ruleName" jdbcType="VARCHAR" />
+    <result column="STORE_BASIC" property="storeBasic" jdbcType="VARCHAR" />
+    <result column="STORE_SORT" property="storeSort" jdbcType="DECIMAL" />
+    <result column="BOX_BASIC" property="boxBasic" jdbcType="VARCHAR" />
+    <result column="BOX_FLAG" property="boxFlag" jdbcType="DECIMAL" />
+    <result column="CARGO_BASIC" property="cargoBasic" jdbcType="VARCHAR" />
+    <result column="CARGO_SORT" property="cargoSort" jdbcType="DECIMAL" />
+    <result column="BOX_SORT" property="boxSort" jdbcType="DECIMAL" />
+    <result column="BOX_TYPE" property="boxType" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="GROUP_A" property="groupA" jdbcType="DECIMAL" />
+    <result column="GROUP_B" property="groupB" jdbcType="DECIMAL" />
+    <result column="GROUP_C" property="groupC" jdbcType="DECIMAL" />
+    <result column="GROUP_D" property="groupD" jdbcType="DECIMAL" />
+    <result column="GROUP_E" property="groupE" jdbcType="DECIMAL" />
+    <result column="GROUP_F" property="groupF" jdbcType="DECIMAL" />
+    <result column="GROUP_G" property="groupG" jdbcType="DECIMAL" />
+    <result column="GROUP_H" property="groupH" jdbcType="DECIMAL" />
+    <result column="GROUP_I" property="groupI" jdbcType="DECIMAL" />
+    <result column="GROUP_J" property="groupJ" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, TEMP_NO, RULE_NO, RULE_NAME, STORE_BASIC, STORE_SORT, BOX_BASIC, BOX_FLAG, CARGO_BASIC, CARGO_SORT, 
+    BOX_SORT, BOX_TYPE, STATUS, GROUP_A, GROUP_B, GROUP_C, GROUP_D, GROUP_E, GROUP_F, 
+    GROUP_G, GROUP_H, GROUP_I, GROUP_J
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+       <if test="null!=params.locno and ''!=params.locno" >
+			and LOCNO = #{params.locno,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.tempNo and ''!=params.tempNo" >
+            and TEMP_NO = #{params.tempNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ruleNo and ''!=params.ruleNo" >
+            and RULE_NO = #{params.ruleNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ruleName and ''!=params.ruleName" >
+            and RULE_NAME LIKE '%${params.ruleName}%'
+      </if>
+      <if test="null!=params.ruleNoCheck and ''!=params.ruleNoCheck" >
+            and RULE_NO not in (#{params.ruleNoCheck,jdbcType=VARCHAR})
+      </if>
+      <if test="null!=params.ruleNameCheck and ''!=params.ruleNameCheck" >
+            and RULE_NAME = #{params.ruleNameCheck,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.status and ''!=params.status" >
+            and STATUS = #{params.status,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_STORE_RULE
+    where 1 = 1
+    AND LOCNO = #{locno,jdbcType=VARCHAR}
+    AND TEMP_NO = #{tempNo,jdbcType=VARCHAR}
+    AND RULE_NO = #{ruleNo,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_STORE_RULE where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from BILL_STORE_RULE where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_STORE_RULE where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from BILL_STORE_RULE
+    where 1 = 1
+    AND LOCNO = #{locno,jdbcType=VARCHAR}
+    AND TEMP_NO = #{tempNo,jdbcType=VARCHAR}
+    AND RULE_NO = #{ruleNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillStoreRule" >
+    delete from BILL_STORE_RULE
+    where 1 = 1
+    AND LOCNO = #{locno,jdbcType=VARCHAR}
+    AND TEMP_NO = #{tempNo,jdbcType=VARCHAR}
+    AND RULE_NO = #{ruleNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillStoreRule" >
+    insert into BILL_STORE_RULE (
+      LOCNO,TEMP_NO,
+      RULE_NO, RULE_NAME, STORE_BASIC, 
+      STORE_SORT, BOX_BASIC, BOX_FLAG, 
+      CARGO_BASIC, CARGO_SORT, BOX_SORT, 
+      BOX_TYPE, STATUS,
+      GROUP_A, 
+      GROUP_B, GROUP_C, GROUP_D, 
+      GROUP_E, GROUP_F, GROUP_G, 
+      GROUP_H, GROUP_I, GROUP_J
+      )
+    values (#{locno,jdbcType=VARCHAR}, #{tempNo,jdbcType=VARCHAR},
+      #{ruleNo,jdbcType=VARCHAR}, #{ruleName,jdbcType=VARCHAR}, #{storeBasic,jdbcType=VARCHAR}, 
+      #{storeSort,jdbcType=DECIMAL}, #{boxBasic,jdbcType=VARCHAR}, #{boxFlag,jdbcType=DECIMAL}, 
+      #{cargoBasic,jdbcType=VARCHAR}, #{cargoSort,jdbcType=DECIMAL}, #{boxSort,jdbcType=DECIMAL}, 
+      #{boxType,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{groupA,jdbcType=DECIMAL}, 
+      #{groupB,jdbcType=DECIMAL}, #{groupC,jdbcType=DECIMAL}, #{groupD,jdbcType=DECIMAL}, 
+      #{groupE,jdbcType=DECIMAL}, #{groupF,jdbcType=DECIMAL}, #{groupG,jdbcType=DECIMAL}, 
+      #{groupH,jdbcType=DECIMAL}, #{groupI,jdbcType=DECIMAL}, #{groupJ,jdbcType=DECIMAL}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillStoreRule" >
+    insert into BILL_STORE_RULE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ruleNo != null" >
+        RULE_NO,
+      </if>
+      <if test="ruleName != null" >
+        RULE_NAME,
+      </if>
+      <if test="storeBasic != null" >
+        STORE_BASIC,
+      </if>
+      <if test="storeSort != null" >
+        STORE_SORT,
+      </if>
+      <if test="boxBasic != null" >
+        BOX_BASIC,
+      </if>
+      <if test="boxFlag != null" >
+        BOX_FLAG,
+      </if>
+      <if test="cargoBasic != null" >
+        CARGO_BASIC,
+      </if>
+      <if test="cargoSort != null" >
+        CARGO_SORT,
+      </if>
+      <if test="boxSort != null" >
+        BOX_SORT,
+      </if>
+      <if test="boxType != null" >
+        BOX_TYPE,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="tempNo != null" >
+        TEMP_NO,
+      </if>
+      <if test="groupA != null" >
+        GROUP_A,
+      </if>
+      <if test="groupB != null" >
+        GROUP_B,
+      </if>
+      <if test="groupC != null" >
+        GROUP_C,
+      </if>
+      <if test="groupD != null" >
+        GROUP_D,
+      </if>
+      <if test="groupE != null" >
+        GROUP_E,
+      </if>
+      <if test="groupF != null" >
+        GROUP_F,
+      </if>
+      <if test="groupG != null" >
+        GROUP_G,
+      </if>
+      <if test="groupH != null" >
+        GROUP_H,
+      </if>
+      <if test="groupI != null" >
+        GROUP_I,
+      </if>
+      <if test="groupJ != null" >
+        GROUP_J,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+       #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ruleNo != null" >
+        #{ruleNo,jdbcType=VARCHAR},
+      </if>
+      <if test="ruleName != null" >
+        #{ruleName,jdbcType=VARCHAR},
+      </if>
+      <if test="storeBasic != null" >
+        #{storeBasic,jdbcType=VARCHAR},
+      </if>
+      <if test="storeSort != null" >
+        #{storeSort,jdbcType=DECIMAL},
+      </if>
+      <if test="boxBasic != null" >
+        #{boxBasic,jdbcType=VARCHAR},
+      </if>
+      <if test="boxFlag != null" >
+        #{boxFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="cargoBasic != null" >
+        #{cargoBasic,jdbcType=VARCHAR},
+      </if>
+      <if test="cargoSort != null" >
+        #{cargoSort,jdbcType=DECIMAL},
+      </if>
+      <if test="boxSort != null" >
+        #{boxSort,jdbcType=DECIMAL},
+      </if>
+      <if test="boxType != null" >
+        #{boxType,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="tempNo != null" >
+        #{tempNo,jdbcType=VARCHAR},
+      </if>
+      <if test="groupA != null" >
+        #{groupA,jdbcType=DECIMAL},
+      </if>
+      <if test="groupB != null" >
+        #{groupB,jdbcType=DECIMAL},
+      </if>
+      <if test="groupC != null" >
+        #{groupC,jdbcType=DECIMAL},
+      </if>
+      <if test="groupD != null" >
+        #{groupD,jdbcType=DECIMAL},
+      </if>
+      <if test="groupE != null" >
+        #{groupE,jdbcType=DECIMAL},
+      </if>
+      <if test="groupF != null" >
+        #{groupF,jdbcType=DECIMAL},
+      </if>
+      <if test="groupG != null" >
+        #{groupG,jdbcType=DECIMAL},
+      </if>
+      <if test="groupH != null" >
+        #{groupH,jdbcType=DECIMAL},
+      </if>
+      <if test="groupI != null" >
+        #{groupI,jdbcType=DECIMAL},
+      </if>
+      <if test="groupJ != null" >
+        #{groupJ,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillStoreRule" >
+    update BILL_STORE_RULE
+    <set >
+      <if test="ruleName != null" >
+        RULE_NAME = #{ruleName,jdbcType=VARCHAR},
+      </if>
+      <if test="storeBasic != null" >
+        STORE_BASIC = #{storeBasic,jdbcType=VARCHAR},
+      </if>
+      <if test="storeSort != null" >
+        STORE_SORT = #{storeSort,jdbcType=DECIMAL},
+      </if>
+      <if test="boxBasic != null" >
+        BOX_BASIC = #{boxBasic,jdbcType=VARCHAR},
+      </if>
+      <if test="boxFlag != null" >
+        BOX_FLAG = #{boxFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="cargoBasic != null" >
+        CARGO_BASIC = #{cargoBasic,jdbcType=VARCHAR},
+      </if>
+      <if test="cargoSort != null" >
+        CARGO_SORT = #{cargoSort,jdbcType=DECIMAL},
+      </if>
+      <if test="boxSort != null" >
+        BOX_SORT = #{boxSort,jdbcType=DECIMAL},
+      </if>
+      <if test="boxType != null" >
+        BOX_TYPE = #{boxType,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="groupA != null" >
+        GROUP_A = #{groupA,jdbcType=DECIMAL},
+      </if>
+      <if test="groupB != null" >
+        GROUP_B = #{groupB,jdbcType=DECIMAL},
+      </if>
+      <if test="groupC != null" >
+        GROUP_C = #{groupC,jdbcType=DECIMAL},
+      </if>
+      <if test="groupD != null" >
+        GROUP_D = #{groupD,jdbcType=DECIMAL},
+      </if>
+      <if test="groupE != null" >
+        GROUP_E = #{groupE,jdbcType=DECIMAL},
+      </if>
+      <if test="groupF != null" >
+        GROUP_F = #{groupF,jdbcType=DECIMAL},
+      </if>
+      <if test="groupG != null" >
+        GROUP_G = #{groupG,jdbcType=DECIMAL},
+      </if>
+      <if test="groupH != null" >
+        GROUP_H = #{groupH,jdbcType=DECIMAL},
+      </if>
+      <if test="groupI != null" >
+        GROUP_I = #{groupI,jdbcType=DECIMAL},
+      </if>
+      <if test="groupJ != null" >
+        GROUP_J = #{groupJ,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where 1 = 1
+    AND LOCNO = #{locno,jdbcType=VARCHAR}
+    AND TEMP_NO = #{tempNo,jdbcType=DECIMAL}
+    AND RULE_NO = #{ruleNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillStoreRule" >
+    update BILL_STORE_RULE
+    set RULE_NAME = #{ruleName,jdbcType=VARCHAR},
+      STORE_BASIC = #{storeBasic,jdbcType=VARCHAR},
+      STORE_SORT = #{storeSort,jdbcType=DECIMAL},
+      BOX_BASIC = #{boxBasic,jdbcType=VARCHAR},
+      BOX_FLAG = #{boxFlag,jdbcType=DECIMAL},
+      CARGO_BASIC = #{cargoBasic,jdbcType=VARCHAR},
+      CARGO_SORT = #{cargoSort,jdbcType=DECIMAL},
+      BOX_SORT = #{boxSort,jdbcType=DECIMAL},
+      BOX_TYPE = #{boxType,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      TEMP_NO = #{tempNo,jdbcType=VARCHAR},
+      GROUP_A = #{groupA,jdbcType=DECIMAL},
+      GROUP_B = #{groupB,jdbcType=DECIMAL},
+      GROUP_C = #{groupC,jdbcType=DECIMAL},
+      GROUP_D = #{groupD,jdbcType=DECIMAL},
+      GROUP_E = #{groupE,jdbcType=DECIMAL},
+      GROUP_F = #{groupF,jdbcType=DECIMAL},
+      GROUP_G = #{groupG,jdbcType=DECIMAL},
+      GROUP_H = #{groupH,jdbcType=DECIMAL},
+      GROUP_I = #{groupI,jdbcType=DECIMAL},
+      GROUP_J = #{groupJ,jdbcType=DECIMAL}
+    where 1 = 1
+    AND LOCNO = #{locno,jdbcType=VARCHAR}
+    AND TEMP_NO = #{tempNo,jdbcType=DECIMAL}
+    AND RULE_NO = #{ruleNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

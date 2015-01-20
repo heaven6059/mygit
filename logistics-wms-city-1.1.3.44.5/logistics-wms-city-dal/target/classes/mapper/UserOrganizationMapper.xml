@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.UserOrganizationMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.AuthorityUserOrganization" >
+    <id column="AUTHORITY_USER_ORGANIZATION_ID" property="authorityUserOrganizationId" jdbcType="DECIMAL" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    <result column="ORGANIZATION_TYPE" property="organizationType" jdbcType="DECIMAL" />
+    <result column="ORGANIZATION_NO" property="organizationNo" jdbcType="VARCHAR" />
+    <result column="ORGANIZATION_CODE" property="organizationCode" jdbcType="VARCHAR" />
+    <result column="SYSTEM_ID" property="systemId" jdbcType="DECIMAL" />
+    <result column="AREA_SYSTEM_ID" property="areaSystemId" jdbcType="DECIMAL" />
+    <result column="SYSTEM_CODE" property="systemCode" jdbcType="VARCHAR" />
+    <result column="ORGANIZATION_NAME" property="organizationName" jdbcType="VARCHAR" />
+    <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP" />
+    <result column="GMT_UPDATE" property="gmtUpdate" jdbcType="TIMESTAMP" />
+    <result column="CREATE_USER_ID" property="createUserId" jdbcType="VARCHAR" />
+    <result column="UPDATE_USER_ID" property="updateUserId" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="ExtendResultMap" type="com.yougou.logistics.city.common.dto.AuthorityUserOrganizationDto" extends="BaseResultMap">
+    <result column="STORE_NAME" property="storeName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    AUTHORITY_USER_ORGANIZATION_ID, USER_ID, ORGANIZATION_TYPE, ORGANIZATION_NO, ORGANIZATION_CODE, 
+    SYSTEM_ID, AREA_SYSTEM_ID, SYSTEM_CODE, ORGANIZATION_NAME, GMT_CREATE, GMT_UPDATE, 
+    CREATE_USER_ID, UPDATE_USER_ID, STATUS
+  </sql>
+  <sql id="Extend_Column_List" >
+    o.AUTHORITY_USER_ORGANIZATION_ID, o.USER_ID, o.ORGANIZATION_TYPE, o.ORGANIZATION_NO, o.ORGANIZATION_CODE, 
+    o.SYSTEM_ID, o.AREA_SYSTEM_ID, o.SYSTEM_CODE, o.ORGANIZATION_NAME, o.GMT_CREATE, o.GMT_UPDATE, 
+    o.CREATE_USER_ID, o.UPDATE_USER_ID, o.STATUS, s.STORE_NAME
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.userId and ''!=params.userId">
+	  	and USER_ID=#{params.userId,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.organizationType and ''!=params.organizationType">
+	  	and ORGANIZATION_TYPE=#{params.organizationType,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.systemId and ''!=params.systemId">
+	  	and SYSTEM_ID=#{params.systemId,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.areaSystemId and ''!=params.areaSystemId">
+	  	and AREA_SYSTEM_ID=#{params.areaSystemId,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.status and ''!=params.status">
+	  	and STATUS=#{params.status,jdbcType=VARCHAR}
+	  </if>
+    </if>
+  </sql>
+  <sql id="extendCondition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.userId and ''!=params.userId">
+	  	and o.USER_ID=#{params.userId,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.organizationType and ''!=params.organizationType">
+	  	and o.ORGANIZATION_TYPE=#{params.organizationType,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.systemId and ''!=params.systemId">
+	  	and o.SYSTEM_ID=#{params.systemId,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.areaSystemId and ''!=params.areaSystemId">
+	  	and o.AREA_SYSTEM_ID=#{params.areaSystemId,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.status and ''!=params.status">
+	  	and o.STATUS=#{params.status,jdbcType=VARCHAR}
+	  </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from AUTHORITY_USER_ORGANIZATION
+    where AUTHORITY_USER_ORGANIZATION_ID = #{authorityUserOrganizationId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from AUTHORITY_USER_ORGANIZATION where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from AUTHORITY_USER_ORGANIZATION where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from AUTHORITY_USER_ORGANIZATION where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <select id="selectUserOrganizationByParams" resultMap="ExtendResultMap" parameterType="map" >
+    select 
+    <include refid="Extend_Column_List" />
+     from AUTHORITY_USER_ORGANIZATION o
+     LEFT join store s 
+     on o.organization_no=s.store_no 
+     where 1=1 
+    <include refid="extendCondition" />
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from AUTHORITY_USER_ORGANIZATION
+    where AUTHORITY_USER_ORGANIZATION_ID = #{authorityUserOrganizationId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.AuthorityUserOrganization" >
+    delete from AUTHORITY_USER_ORGANIZATION
+    where AUTHORITY_USER_ORGANIZATION_ID = #{authorityUserOrganizationId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.AuthorityUserOrganization" >
+    insert into AUTHORITY_USER_ORGANIZATION (AUTHORITY_USER_ORGANIZATION_ID, USER_ID, 
+      ORGANIZATION_TYPE, ORGANIZATION_NO, ORGANIZATION_CODE, 
+      SYSTEM_ID, AREA_SYSTEM_ID, SYSTEM_CODE, 
+      ORGANIZATION_NAME, GMT_CREATE, GMT_UPDATE, 
+      CREATE_USER_ID, UPDATE_USER_ID, STATUS
+      )
+    values (#{authorityUserOrganizationId,jdbcType=DECIMAL}, #{userId,jdbcType=VARCHAR}, 
+      #{organizationType,jdbcType=DECIMAL}, #{organizationNo,jdbcType=VARCHAR}, #{organizationCode,jdbcType=VARCHAR}, 
+      #{systemId,jdbcType=DECIMAL}, #{areaSystemId,jdbcType=DECIMAL}, #{systemCode,jdbcType=VARCHAR}, 
+      #{organizationName,jdbcType=VARCHAR}, #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtUpdate,jdbcType=TIMESTAMP}, 
+      #{createUserId,jdbcType=VARCHAR}, #{updateUserId,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.AuthorityUserOrganization" >
+    insert into AUTHORITY_USER_ORGANIZATION
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="authorityUserOrganizationId != null" >
+        AUTHORITY_USER_ORGANIZATION_ID,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="organizationType != null" >
+        ORGANIZATION_TYPE,
+      </if>
+      <if test="organizationNo != null" >
+        ORGANIZATION_NO,
+      </if>
+      <if test="organizationCode != null" >
+        ORGANIZATION_CODE,
+      </if>
+      <if test="systemId != null" >
+        SYSTEM_ID,
+      </if>
+      <if test="areaSystemId != null" >
+        AREA_SYSTEM_ID,
+      </if>
+      <if test="systemCode != null" >
+        SYSTEM_CODE,
+      </if>
+      <if test="organizationName != null" >
+        ORGANIZATION_NAME,
+      </if>
+      <if test="gmtCreate != null" >
+        GMT_CREATE,
+      </if>
+      <if test="gmtUpdate != null" >
+        GMT_UPDATE,
+      </if>
+      <if test="createUserId != null" >
+        CREATE_USER_ID,
+      </if>
+      <if test="updateUserId != null" >
+        UPDATE_USER_ID,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="authorityUserOrganizationId != null" >
+        #{authorityUserOrganizationId,jdbcType=DECIMAL},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="organizationType != null" >
+        #{organizationType,jdbcType=DECIMAL},
+      </if>
+      <if test="organizationNo != null" >
+        #{organizationNo,jdbcType=VARCHAR},
+      </if>
+      <if test="organizationCode != null" >
+        #{organizationCode,jdbcType=VARCHAR},
+      </if>
+      <if test="systemId != null" >
+        #{systemId,jdbcType=DECIMAL},
+      </if>
+      <if test="areaSystemId != null" >
+        #{areaSystemId,jdbcType=DECIMAL},
+      </if>
+      <if test="systemCode != null" >
+        #{systemCode,jdbcType=VARCHAR},
+      </if>
+      <if test="organizationName != null" >
+        #{organizationName,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreate != null" >
+        #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUpdate != null" >
+        #{gmtUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        #{createUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.AuthorityUserOrganization" >
+    update AUTHORITY_USER_ORGANIZATION
+    <set >
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="organizationType != null" >
+        ORGANIZATION_TYPE = #{organizationType,jdbcType=DECIMAL},
+      </if>
+      <if test="organizationNo != null" >
+        ORGANIZATION_NO = #{organizationNo,jdbcType=VARCHAR},
+      </if>
+      <if test="organizationCode != null" >
+        ORGANIZATION_CODE = #{organizationCode,jdbcType=VARCHAR},
+      </if>
+      <if test="systemId != null" >
+        SYSTEM_ID = #{systemId,jdbcType=DECIMAL},
+      </if>
+      <if test="areaSystemId != null" >
+        AREA_SYSTEM_ID = #{areaSystemId,jdbcType=DECIMAL},
+      </if>
+      <if test="systemCode != null" >
+        SYSTEM_CODE = #{systemCode,jdbcType=VARCHAR},
+      </if>
+      <if test="organizationName != null" >
+        ORGANIZATION_NAME = #{organizationName,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreate != null" >
+        GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtUpdate != null" >
+        GMT_UPDATE = #{gmtUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUserId != null" >
+        CREATE_USER_ID = #{createUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUserId != null" >
+        UPDATE_USER_ID = #{updateUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where AUTHORITY_USER_ORGANIZATION_ID = #{authorityUserOrganizationId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.AuthorityUserOrganization" >
+    update AUTHORITY_USER_ORGANIZATION
+    set USER_ID = #{userId,jdbcType=VARCHAR},
+      ORGANIZATION_TYPE = #{organizationType,jdbcType=DECIMAL},
+      ORGANIZATION_NO = #{organizationNo,jdbcType=VARCHAR},
+      ORGANIZATION_CODE = #{organizationCode,jdbcType=VARCHAR},
+      SYSTEM_ID = #{systemId,jdbcType=DECIMAL},
+      AREA_SYSTEM_ID = #{areaSystemId,jdbcType=DECIMAL},
+      SYSTEM_CODE = #{systemCode,jdbcType=VARCHAR},
+      ORGANIZATION_NAME = #{organizationName,jdbcType=VARCHAR},
+      GMT_CREATE = #{gmtCreate,jdbcType=TIMESTAMP},
+      GMT_UPDATE = #{gmtUpdate,jdbcType=TIMESTAMP},
+      CREATE_USER_ID = #{createUserId,jdbcType=VARCHAR},
+      UPDATE_USER_ID = #{updateUserId,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR}
+    where AUTHORITY_USER_ORGANIZATION_ID = #{authorityUserOrganizationId,jdbcType=DECIMAL}
+  </update>
+</mapper>

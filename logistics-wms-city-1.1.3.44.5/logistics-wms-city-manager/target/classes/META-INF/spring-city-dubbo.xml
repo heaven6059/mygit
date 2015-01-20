@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+			http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+	<dubbo:protocol name="dubbo" port="${dubbo.port}"/>
+	
+	<dubbo:annotation />
+	<!--
+		注解相关请参考
+		http://code.alibabatech.com/wiki/display/dubbo/Annotation+Config
+	 -->
+	 
+	<!-- 生成远程服务代理   调用服务 可使用注解： @Reference(version="1.0.0")
+	<dubbo:reference id="activeApiService" interface="com.yougou.active.api.IActiveApiService" version="2.0" />
+	 -->
+	<!-- 声明需要暴露的服务接口  公开服务 @Service(version="1.0.0")
+	<dubbo:service interface="com.yougou.logistics.uc.common.interfaces.AuthorityUserApi" ref="authorityUserApi" version="1.0"/>
+	-->
+	<!-- 
+	<bean id="billStatusLogServiceApi" class="com.yougou.logistics.city.manager.api.BillStatusLogServiceApiImpl" />--> 
+	
+	<!-- 业务单据状态传输Dubbo接口 consumer-lmp -->
+	<dubbo:service interface="com.yougou.logistics.city.common.api.BillStatusLogServiceApi" version="1.0.0" ref="billStatusLogServiceApi"/>
+	<!-- 异常监控报表汇总查询Dubbo接口  consumer-lmp-->
+	<dubbo:service interface="com.yougou.logistics.city.common.api.BillAggregateServiceApi" ref="billAggregateServiceApi" retries="0" version="1.0.0"/>
+	<!-- 基础数据接口核对报表传输Dubbo接口 consumer-lmp -->
+	<dubbo:service interface="com.yougou.logistics.city.common.api.BaseLmp2WmsServiceApi" version="1.0.0" ref="baseLmp2WmsServiceApi"/>
+	<!-- 单据业务对照  物流到分销  consumer-lmp-->
+	<dubbo:service interface="com.yougou.logistics.city.common.api.BillWms2LmpServiceApi" version="1.0.0" ref="billWms2LmpServiceApi" timeout="60000"/>
+	<!-- 分销到物流dubbo接口 consumer-lmp -->
+	<dubbo:service interface="com.yougou.logistics.city.common.api.BillLmp2WmsServiceApi" version="1.0.0" ref="billLmp2WmsServiceApi"/>
+	<!--库存记账 consumer-lmp -->
+<!-- 	<dubbo:service interface="com.yougou.logistics.city.common.api.AccInventoryConSkuServiceApi" version="1.0.0" ref="accInventoryConSkuServiceApi"/>
+ -->	
+</beans>

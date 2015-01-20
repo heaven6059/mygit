@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillOmLoadproposeDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillOmLoadproposeDtl" >
+    <result column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <result column="LOADPROPOSE_NO" property="loadproposeNo" jdbcType="VARCHAR" />
+    <result column="STORE_NO" property="storeNo" jdbcType="VARCHAR" />
+    <result column="SUB_STORE_NO" property="subStoreNo" jdbcType="VARCHAR" />
+    <result column="CONTAINER_TYPE" property="containerType" jdbcType="CHAR" />
+    <result column="CONTAINER_NO" property="containerNo" jdbcType="VARCHAR" />
+    <result column="LOAD_ORDER" property="loadOrder" jdbcType="DECIMAL" />
+    <result column="EXP_NO" property="expNo" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="DELIVER_OBJ" property="deliverObj" jdbcType="VARCHAR" />
+    <result column="LOAD_NAME" property="loadName" jdbcType="VARCHAR" />
+    <result column="LOAD_DATE" property="loadDate" jdbcType="TIMESTAMP" />
+    <result column="ASSIGN_NAME" property="assignName" jdbcType="VARCHAR" />
+    <result column="EXP_DATE" property="expDate" jdbcType="TIMESTAMP" />
+    <result column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+    <result column="CATE_NO" property="cateNo" jdbcType="VARCHAR" />
+    <result column="BOX_NO" property="boxNo" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_OM_LOADPROPOSE_DTL where 1=1 
+    <include refid="condition" />
+  </select>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillOmLoadproposeDtl" >
+    insert into BILL_OM_LOADPROPOSE_DTL (LOCNO, LOADPROPOSE_NO, STORE_NO, 
+      SUB_STORE_NO, CONTAINER_TYPE, CONTAINER_NO, 
+      LOAD_ORDER, EXP_NO, STATUS, 
+      DELIVER_OBJ, LOAD_NAME, LOAD_DATE, 
+      ASSIGN_NAME, EXP_DATE, ROW_ID, 
+      CATE_NO, BOX_NO)
+    values (#{locno,jdbcType=VARCHAR}, #{loadproposeNo,jdbcType=VARCHAR}, #{storeNo,jdbcType=VARCHAR}, 
+      #{subStoreNo,jdbcType=VARCHAR}, #{containerType,jdbcType=CHAR}, #{containerNo,jdbcType=VARCHAR}, 
+      #{loadOrder,jdbcType=DECIMAL}, #{expNo,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{deliverObj,jdbcType=VARCHAR}, #{loadName,jdbcType=VARCHAR}, #{loadDate,jdbcType=TIMESTAMP}, 
+      #{assignName,jdbcType=VARCHAR}, #{expDate,jdbcType=TIMESTAMP}, #{rowId,jdbcType=DECIMAL}, 
+      #{cateNo,jdbcType=VARCHAR}, #{boxNo,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillOmLoadproposeDtl" >
+    insert into BILL_OM_LOADPROPOSE_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="loadproposeNo != null" >
+        LOADPROPOSE_NO,
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO,
+      </if>
+      <if test="subStoreNo != null" >
+        SUB_STORE_NO,
+      </if>
+      <if test="containerType != null" >
+        CONTAINER_TYPE,
+      </if>
+      <if test="containerNo != null" >
+        CONTAINER_NO,
+      </if>
+      <if test="loadOrder != null" >
+        LOAD_ORDER,
+      </if>
+      <if test="expNo != null" >
+        EXP_NO,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="deliverObj != null" >
+        DELIVER_OBJ,
+      </if>
+      <if test="loadName != null" >
+        LOAD_NAME,
+      </if>
+      <if test="loadDate != null" >
+        LOAD_DATE,
+      </if>
+      <if test="assignName != null" >
+        ASSIGN_NAME,
+      </if>
+      <if test="expDate != null" >
+        EXP_DATE,
+      </if>
+      <if test="rowId != null" >
+        ROW_ID,
+      </if>
+      <if test="cateNo != null" >
+        CATE_NO,
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="loadproposeNo != null" >
+        #{loadproposeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo != null" >
+        #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="subStoreNo != null" >
+        #{subStoreNo,jdbcType=VARCHAR},
+      </if>
+      <if test="containerType != null" >
+        #{containerType,jdbcType=CHAR},
+      </if>
+      <if test="containerNo != null" >
+        #{containerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="loadOrder != null" >
+        #{loadOrder,jdbcType=DECIMAL},
+      </if>
+      <if test="expNo != null" >
+        #{expNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="deliverObj != null" >
+        #{deliverObj,jdbcType=VARCHAR},
+      </if>
+      <if test="loadName != null" >
+        #{loadName,jdbcType=VARCHAR},
+      </if>
+      <if test="loadDate != null" >
+        #{loadDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="assignName != null" >
+        #{assignName,jdbcType=VARCHAR},
+      </if>
+      <if test="expDate != null" >
+        #{expDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="rowId != null" >
+        #{rowId,jdbcType=DECIMAL},
+      </if>
+      <if test="cateNo != null" >
+        #{cateNo,jdbcType=VARCHAR},
+      </if>
+      <if test="boxNo != null" >
+        #{boxNo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

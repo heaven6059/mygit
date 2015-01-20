@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BizBillDetailsReportMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BizBillDetailsReport" >
+    <result property="itemNo" column="item_no" jdbcType="VARCHAR" />
+    <result property="sizeNo" column="size_no" jdbcType="VARCHAR" />
+    <result property="boxNo" column="box_no" jdbcType="VARCHAR" />
+    <result property="brandName" column="brand_name" jdbcType="VARCHAR" />
+  </resultMap>
+  
+   
+  <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and it.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <sql id="condition">	
+  		<if test="null!=params.startDate and ''!=params.startDate">
+				<![CDATA[
+					and v.createtm >= to_date('${params.startDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="null!=params.endDate and ''!=params.endDate">
+				<![CDATA[
+					and v.createtm <= to_date('${params.endDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>		
+		
+		<if test="null!=params.billType and ''!=params.billType">
+			and v.billType = #{params.billType,jdbcType=VARCHAR}
+		</if>	
+		<if test="null!=params.finishStatus and ''!=params.finishStatus">
+			and v.finishStatus = #{params.finishStatus,jdbcType=VARCHAR}
+		</if>	
+		<if test="null!=params.billNo and ''!=params.billNo">
+			and v.billNo = #{params.billNo,jdbcType=VARCHAR}
+		</if>	
+		<if test="null!=params.sourceBillNo and ''!=params.sourceBillNo">
+			and v.sourceBillNo = #{params.sourceBillNo,jdbcType=VARCHAR}
+		</if>	
+		<if test="null!=params.boxNo and ''!=params.boxNo">
+			and v.box_no = #{params.boxNo,jdbcType=VARCHAR}
+		</if>	
+		
+		<if test="null!=params.sysNo and ''!=params.sysNo">
+			and it.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+		</if>	
+		<if test="null!=params.itemNo and ''!=params.itemNo">
+			and it.item_no like '%${params.itemNo}%'
+		</if>
+  		<if test="params.brandNoValues != null">
+  		 	and it.brand_no in
+			<foreach collection="params.brandNoValues" item="brandNo" open="(" close=")" separator=",">
+				#{brandNo}
+			</foreach>
+		</if>
+		<if test="params.qualityValues != null">
+  		 	and v.quality in
+			<foreach collection="params.qualityValues" item="quality" open="(" close=")" separator=",">
+				#{quality}
+			</foreach>
+		</if>
+		<choose>
+	 		<when test="params.cateThreeValues != null">
+		 		<foreach collection="params.cateThreeValues" item="value" open=" and (" close=")" separator="or">
+					c.search_code like '${value}%'
+				</foreach>
+	 		</when>
+	 		<when test="params.cateTwoValues != null">
+	 			<foreach collection="params.cateTwoValues" item="value" open="and (" close=")" separator="or">
+					c.search_code like '${value}%'
+				</foreach>
+	 		</when>
+	 		<when test="params.cateOneValues != null">
+	 			<foreach collection="params.cateOneValues" item="value" open="and (" close=")" separator="or">
+					c.search_code like '${value}%'
+				</foreach>
+	 		</when>
+	 		<otherwise>
+	 		</otherwise>
+	 	</choose> 
+		
+		<if test="null!=params.years and ''!=params.years">
+			and s3.itemname LIKE '%${params.years}%'
+		</if>
+		<!-- <if test="null!=params.season and ''!=params.season">
+			and s1.itemname LIKE '%${params.season}%'
+		</if>
+		<if test="null!=params.gender and ''!=params.gender">
+			and s2.itemname LIKE '%${params.gender}%'
+		</if> -->
+		<if test="params.seasonValues != null">
+  		 	and it.season in
+			<foreach collection="params.seasonValues" item="season" open="(" close=")" separator=",">
+				#{season}
+			</foreach>
+		</if>
+		<if test="params.genderValues != null">
+  		 	and it.gender in
+			<foreach collection="params.genderValues" item="gender" open="(" close=")" separator=",">
+				#{gender}
+			</foreach>
+		</if>
+		<include refid="AuthorityCondition" />
+   </sql>
+   
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from (
+	  <include refid="Base_Sql" />
+	  )
+  </select>
+
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map">
+		select B.* from (select 
+		A.*,rownum rn from(
+		<include refid="Base_Sql" />
+		 <choose>
+		    <when test="orderByField != null and ''!=orderByField">
+		        order by ${orderByField}
+				<if test="orderByField">
+				${orderBy}
+				</if>
+			</when>
+			<otherwise>
+				order by v.CREATETM desc,v.BILLNO desc
+			</otherwise>
+	    </choose>
+		) A where rownum &lt; #{page.endRowNum}) B where rn &gt;
+		#{page.startRowNum}
+  </select>
+    
+  <sql id="Base_Sql" >
+  		select v.*,b.brand_name	               
+		from v_biz_billdetails_report v 
+		inner join item it on it.item_no = v.item_no
+		left join brand b on b.brand_no = it.brand_no
+		left join category c on it.cate_no=c.cate_no		
+	  	left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+			from LOOKUPDTL ld
+			where ld.lookupcode = 'SEASON') s1
+			on it.season = s1.itemval
+	    left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+			from LOOKUPDTL ld
+			where ld.lookupcode = 'GENDER') s2
+			on it.gender = s2.itemval
+		left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+			from LOOKUPDTL ld
+			where ld.lookupcode = 'YEARS') s3
+		on it.years = s3.itemval
+		WHERE v.locno=#{params.locno,jdbcType=VARCHAR}
+		<include refid="condition" />	
+  </sql>
+  
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+		select 
+			sum(t.planQty) planQty,
+ 			sum(t.realQty) realQty
+        from (<include refid="Base_Sql" />) t
+  </select>  
+</mapper>

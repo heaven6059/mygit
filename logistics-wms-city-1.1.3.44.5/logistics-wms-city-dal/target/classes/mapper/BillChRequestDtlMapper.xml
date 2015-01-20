@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BillChRequestDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillChRequestDtl" >
+    <result column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <result column="REQUEST_NO" property="requestNo" jdbcType="VARCHAR" />
+    <result column="WARE_NO" property="wareNo" jdbcType="VARCHAR" />
+    <result column="AREA_NO" property="areaNo" jdbcType="VARCHAR" />
+    <result column="STOCK_NO" property="stockNo" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="CATE_NO" property="cateNo" jdbcType="VARCHAR" />
+    <result column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+    <result column="REQUEST_ID" property="requestId" jdbcType="DECIMAL" />
+    <result column="BARCODE" property="barcode" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="condition" >
+    <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+      ${params.queryCondition}
+    </if>
+  </sql>
+  <sql id="Base_Column_List">
+  	LOCNO,OWNER_NO,REQUEST_NO,WARE_NO,AREA_NO,STOCK_NO,SIZE_NO,ITEM_NAME,CATE_NO,CELL_NO,REQUEST_ID,BARCODE
+  </sql>
+  <select id="selectCountForJoinItem" resultType="java.lang.Integer">
+  	select count(1) s
+	  from v_content cc
+	 inner join (select rd.request_no,
+	                    rd.ware_no,
+	                    rd.area_no,
+	                    rd.stock_no,
+	                    rd.cell_no
+	               from bill_ch_request_dtl rd
+	              where 1=1
+	              <if test="null!=params">
+			      	<if test="null != params.requestNo and '' != params.requestNo">
+						and rd.request_no = #{params.requestNo,jdbcType=VARCHAR}
+					</if>
+			      	<if test="null != params.locno and '' != params.locno">
+						and rd.locno = #{params.locno,jdbcType=VARCHAR}
+					</if>
+			      </if>) A
+	    on cc.cell_no = A.Cell_No
+	 inner join item i
+	    on i.item_no = cc.item_no
+  </select>
+  <select id="selectForJoinItemByPage" resultMap="BaseResultMap" parameterType="map">
+  	select C.*
+	  from (select A.*,
+	               cc.item_no,
+	               i.item_name,
+	               cc.barcode,
+	               cc.size_no,
+	               rownum rn
+	          from v_content cc
+	         inner join (select rd.request_no,
+	                           rd.ware_no,
+	                           rd.area_no,
+	                           rd.stock_no,
+	                           rd.cell_no
+	                      from bill_ch_request_dtl rd
+	                     where 1=1
+	                     <if test="null!=params">
+	                     	<if test="null != params.requestNo and '' != params.requestNo">
+				            	and rd.request_no = #{params.requestNo,jdbcType=VARCHAR}
+				            </if>
+	                     	<if test="null != params.locno and '' != params.locno">
+				            	and rd.locno = #{params.locno,jdbcType=VARCHAR}
+				            </if>
+	                     </if>) A
+	            on cc.cell_no = A.Cell_No	       	        
+	         inner join item i
+	            on i.item_no = cc.item_no) C
+	 where C.rn &lt; #{page.endRowNum}
+	   and C.rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_CH_REQUEST_DTL where 1=1 
+    <include refid="condition" />
+  </select>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillChRequestDtl" >
+    insert into BILL_CH_REQUEST_DTL (LOCNO, OWNER_NO, REQUEST_NO, 
+      WARE_NO, AREA_NO, STOCK_NO, 
+      ITEM_NO, SIZE_NO, CATE_NO, 
+      CELL_NO, REQUEST_ID, BARCODE
+      )
+    values (#{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, #{requestNo,jdbcType=VARCHAR}, 
+      #{wareNo,jdbcType=VARCHAR}, #{areaNo,jdbcType=VARCHAR}, #{stockNo,jdbcType=VARCHAR}, 
+      #{itemNo,jdbcType=VARCHAR}, #{sizeNo,jdbcType=VARCHAR}, #{cateNo,jdbcType=VARCHAR}, 
+      #{cellNo,jdbcType=VARCHAR}, #{requestId,jdbcType=DECIMAL}, #{barcode,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillChRequestDtl" >
+    insert into BILL_CH_REQUEST_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="requestNo != null" >
+        REQUEST_NO,
+      </if>
+      <if test="wareNo != null" >
+        WARE_NO,
+      </if>
+      <if test="areaNo != null" >
+        AREA_NO,
+      </if>
+      <if test="stockNo != null" >
+        STOCK_NO,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="cateNo != null" >
+        CATE_NO,
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO,
+      </if>
+      <if test="requestId != null" >
+        REQUEST_ID,
+      </if>
+      <if test="barcode != null" >
+        BARCODE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="requestNo != null" >
+        #{requestNo,jdbcType=VARCHAR},
+      </if>
+      <if test="wareNo != null" >
+        #{wareNo,jdbcType=VARCHAR},
+      </if>
+      <if test="areaNo != null" >
+        #{areaNo,jdbcType=VARCHAR},
+      </if>
+      <if test="stockNo != null" >
+        #{stockNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cateNo != null" >
+        #{cateNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="requestId != null" >
+        #{requestId,jdbcType=DECIMAL},
+      </if>
+      <if test="barcode != null" >
+        #{barcode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

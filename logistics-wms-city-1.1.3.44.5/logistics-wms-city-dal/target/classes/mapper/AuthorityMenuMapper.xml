@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.AuthorityMenuMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.AuthorityMenu" >
+    <id column="MENU_ID" property="menuId" jdbcType="DECIMAL" />
+    <result column="MENU_NAME" property="menuName" jdbcType="VARCHAR" />
+    <result column="PARENT_ID" property="parentId" jdbcType="DECIMAL" />
+    <result column="MENU_REMARK" property="menuRemark" jdbcType="VARCHAR" />
+    <result column="MENU_SORT" property="menuSort" jdbcType="DECIMAL" />
+    <result column="MENU_TYPE" property="menuType" jdbcType="VARCHAR" />
+    <result column="MENU_ISLEAF" property="menuIsleaf" jdbcType="VARCHAR" />
+    <result column="MENU_FLAG" property="menuFlag" jdbcType="VARCHAR" />
+    <result column="MENU_LEVEL" property="menuLevel" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    MENU_ID, MENU_NAME, PARENT_ID, MENU_REMARK, MENU_SORT, MENU_TYPE, MENU_ISLEAF, MENU_FLAG, 
+    MENU_LEVEL
+  </sql>
+  <sql id="Base_Column_List_Alias">
+ 	  MENU_ID     as menuId,
+      MENU_NAME   as menuName,
+      PARENT_ID   as parentId,
+      MENU_REMARK as menuRemark,
+      MENU_SORT   as menuSort,
+      MENU_TYPE   as menuType,
+      MENU_ISLEAF as menuIsleaf,
+      MENU_FLAG   as menuFlag,
+      MENU_LEVEL  as menuLevel
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from AUTHORITY_MENU
+    where MENU_ID = #{menuId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from AUTHORITY_MENU where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from AUTHORITY_MENU where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from AUTHORITY_MENU where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectCountByParentId" resultType="int" parameterType="com.yougou.logistics.city.common.model.AuthorityMenu" >
+    select 
+    count(1) as s
+     from AUTHORITY_MENU where PARENT_ID=#{parentId}
+  </select>
+  <select id="selectByPrimaryKey4Dto" resultType="com.yougou.logistics.city.common.dto.AuthorityMenuDto" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List_Alias" />
+    from AUTHORITY_MENU
+    where MENU_ID = #{menuId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectByParentId" resultType="com.yougou.logistics.city.common.dto.AuthorityMenuDto" parameterType="int">
+  	select MENU_ID     as menuId,
+       MENU_NAME   as menuName,
+       PARENT_ID   as parentId,
+       MENU_REMARK as menuRemark,
+       MENU_SORT   as menuSort,
+       MENU_TYPE   as menuType,
+       MENU_ISLEAF as menuIsleaf,
+       MENU_FLAG   as menuFlag,
+       MENU_LEVEL  as menuLevel
+  	from AUTHORITY_MENU where PARENT_ID=#{parentId} order by MENU_SORT asc
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from AUTHORITY_MENU
+    where MENU_ID = #{menuId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.AuthorityMenu" >
+    delete from AUTHORITY_MENU
+    where MENU_ID = #{menuId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.AuthorityMenu" >
+  	<selectKey keyProperty="menuId" resultType="int" order="BEFORE">
+  		select SEQ_AUTHORITY_MENU_ID.Nextval as moduleId from dual
+  	</selectKey>
+    insert into AUTHORITY_MENU (MENU_ID, MENU_NAME, PARENT_ID, 
+      MENU_REMARK, MENU_SORT, MENU_TYPE, 
+      MENU_ISLEAF, MENU_FLAG, MENU_LEVEL
+      )
+    values (#{menuId,jdbcType=DECIMAL}, #{menuName,jdbcType=VARCHAR}, #{parentId,jdbcType=DECIMAL}, 
+      #{menuRemark,jdbcType=VARCHAR}, #{menuSort,jdbcType=DECIMAL}, #{menuType,jdbcType=VARCHAR}, 
+      #{menuIsleaf,jdbcType=VARCHAR}, #{menuFlag,jdbcType=VARCHAR}, #{menuLevel,jdbcType=DECIMAL}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.AuthorityMenu" >
+  	<selectKey keyProperty="menuId" resultType="int" order="BEFORE">
+  		select SEQ_AUTHORITY_MENU_ID.Nextval as moduleId from dual
+  	</selectKey>
+    insert into AUTHORITY_MENU
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="menuId != null" >
+        MENU_ID,
+      </if>
+      <if test="menuName != null" >
+        MENU_NAME,
+      </if>
+      <if test="parentId != null" >
+        PARENT_ID,
+      </if>
+      <if test="menuRemark != null" >
+        MENU_REMARK,
+      </if>
+      <if test="menuSort != null" >
+        MENU_SORT,
+      </if>
+      <if test="menuType != null" >
+        MENU_TYPE,
+      </if>
+      <if test="menuIsleaf != null" >
+        MENU_ISLEAF,
+      </if>
+      <if test="menuFlag != null" >
+        MENU_FLAG,
+      </if>
+      <if test="menuLevel != null" >
+        MENU_LEVEL,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="menuId != null" >
+        #{menuId,jdbcType=DECIMAL},
+      </if>
+      <if test="menuName != null" >
+        #{menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=DECIMAL},
+      </if>
+      <if test="menuRemark != null" >
+        #{menuRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="menuSort != null" >
+        #{menuSort,jdbcType=DECIMAL},
+      </if>
+      <if test="menuType != null" >
+        #{menuType,jdbcType=VARCHAR},
+      </if>
+      <if test="menuIsleaf != null" >
+        #{menuIsleaf,jdbcType=VARCHAR},
+      </if>
+      <if test="menuFlag != null" >
+        #{menuFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="menuLevel != null" >
+        #{menuLevel,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.AuthorityMenu" >
+    update AUTHORITY_MENU
+    <set >
+      <if test="menuName != null" >
+        MENU_NAME = #{menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        PARENT_ID = #{parentId,jdbcType=DECIMAL},
+      </if>
+      <if test="menuRemark != null" >
+        MENU_REMARK = #{menuRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="menuSort != null" >
+        MENU_SORT = #{menuSort,jdbcType=DECIMAL},
+      </if>
+      <if test="menuType != null" >
+        MENU_TYPE = #{menuType,jdbcType=VARCHAR},
+      </if>
+      <if test="menuIsleaf != null" >
+        MENU_ISLEAF = #{menuIsleaf,jdbcType=VARCHAR},
+      </if>
+      <if test="menuFlag != null" >
+        MENU_FLAG = #{menuFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="menuLevel != null" >
+        MENU_LEVEL = #{menuLevel,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where MENU_ID = #{menuId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.AuthorityMenu" >
+    update AUTHORITY_MENU
+    set MENU_NAME = #{menuName,jdbcType=VARCHAR},
+      PARENT_ID = #{parentId,jdbcType=DECIMAL},
+      MENU_REMARK = #{menuRemark,jdbcType=VARCHAR},
+      MENU_SORT = #{menuSort,jdbcType=DECIMAL},
+      MENU_TYPE = #{menuType,jdbcType=VARCHAR},
+      MENU_ISLEAF = #{menuIsleaf,jdbcType=VARCHAR},
+      MENU_FLAG = #{menuFlag,jdbcType=VARCHAR},
+      MENU_LEVEL = #{menuLevel,jdbcType=DECIMAL}
+    where MENU_ID = #{menuId,jdbcType=DECIMAL}
+  </update>
+</mapper>

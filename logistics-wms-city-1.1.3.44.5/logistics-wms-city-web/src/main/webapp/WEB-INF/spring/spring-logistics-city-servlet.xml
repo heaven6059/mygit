@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<!-- Scans the classpath of this application for @Components to deploy as 
+		beans -->
+	<import resource="classpath*:META-INF/spring-city-web.xml"/>
+	<import resource="spring-logistics-city-dubbo-client.xml" />	
+	<!-- 扫描本工程下的bean -->
+	<context:component-scan base-package="com.yougou.logistics.city.web.controller" />
+
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+
+	<mvc:interceptors>
+		<bean class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+			<property name="cacheSeconds" value="0" />
+			<property name="useExpiresHeader" value="true" />
+			<property name="useCacheControlHeader" value="true" />
+			<property name="useCacheControlNoStore" value="true" />
+			<property name="alwaysUseFullPath" value="true" />
+
+		</bean>
+		
+		<bean id="sessionCheckInterceptor"
+			class="com.yougou.logistics.city.web.interceptor.SessionCheckInterceptor">
+			<property name="sessionKey" value="session_user"/>
+			<property name="redirectUrl" value="${session.checked.redirect.url}"/>
+		</bean>
+		
+		<bean id="annotationInitpowerInterceptor"
+			class="com.yougou.logistics.city.web.interceptor.AnnotationInitpowerInterceptor">
+			<property name="sessionKey" value="session_user"/>
+			<property name="redirectUrl" value="${session.checked.redirect.url}"/>
+		</bean>
+		 
+	</mvc:interceptors>
+
+	<!-- 操作权限拦截器-->
+	<!-- 
+	<mvc:interceptors>
+        <bean id="moduleVerifyInterceptor"
+            class="com.yougou.logistics.city.web.interceptor.ModuleVerifyInterceptor">
+        </bean>
+	</mvc:interceptors>
+	 -->
+	
+	 
+	<!-- Enables the Spring MVC @Controller programming model validator="validator" -->
+	<mvc:annotation-driven />
+	<!-- <mvc:annotation-driven validator="validator" conversion-service="xiuConversionService"/> -->
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving 
+		up static resources in the ${webappRoot}/resources directory
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+ 	-->
+ 	
+	<!-- 视图解析器，根据视图的名称new ModelAndView(name)，在配置文件查找对应的bean配置 -->
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="1" />
+	</bean>
+
+	<bean
+		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<property name="order" value="2" />
+		<!-- 用于开启 /userinfo/123?format=json 的支持 默认是true -->
+		<property name="favorParameter" value="true" />
+		<!-- 用于关闭 /userinfo/123.json 的支持 默认是true -->
+		<property name="favorPathExtension" value="false" />
+		<!-- 设置为true以忽略对Accept Header的支持 -->
+		<property name="ignoreAcceptHeader" value="true" />
+
+		<!-- 在没有扩展名时即: "/user/1" 时的默认展现形式 -->
+		<property name="defaultContentType" value="text/html" />
+
+		<!-- 扩展名至mimeType的映射,即 /user.json => application/json -->
+		<property name="mediaTypes">
+			<map>
+				<entry key="json" value="application/json" />
+				<entry key="jsonp" value="application/javascript" />
+			</map>
+		</property>
+	</bean>
+
+	<!-- 设置freeMarker的配置文件路径 -->
+	<bean id="freemarkerConfiguration"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="location" value="classpath:freemarker.properties" />
+	</bean>
+
+	<!-- 配置freeMarker的模板路径 -->
+	<bean id="freemarkerConfig"
+		class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<property name="freemarkerSettings" ref="freemarkerConfiguration" />
+		<property name="templateLoaderPath">
+			<value>/</value>
+		</property>
+		<!-- <property name="freemarkerSettings"> <props> <prop key="defaultEncoding">UTF-8</prop> 
+			<prop key="url_escaping_charset">UTF-8</prop> <prop key="datetime_format">yyyy-MM-dd</prop> 
+			<prop key="number_format">0.######</prop> <prop key="city_update_delay">0</prop> 
+			</props> </property> -->
+		<property name="freemarkerVariables">
+			<map>
+				<entry key="xml_escape" value-ref="fmXmlEscape" />
+				<entry key="domainStatic" value="${domain.static}" />
+				<entry key="resourceVersion" value="${resources.version}" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="fmXmlEscape" class="freemarker.template.utility.XmlEscape" />
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+		<!-- use default setting now -->
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.freemarker.FreeMarkerView" />
+		<property name="order" value="3" />
+		<property name="prefix" value="WEB-INF/ftl/pages/" />
+		<property name="suffix" value=".ftl" />
+		<property name="contentType" value="text/html; charset=utf-8" />
+		<property name="attributesMap">  
+        <map>  
+            <!-- 定义Freemarker方法的名称 -->  
+            <entry key="checkPower">  
+                <!-- 关联到我们之前定义的工具类 -->  
+                <bean class="com.yougou.logistics.city.web.utils.EncodeURLMethod" />  
+            </entry>  
+        </map>  
+    </property>  
+	</bean>
+
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<util:list id="beanList">
+				<bean
+					class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+					<property name="supportedMediaTypes">
+						<list>
+							<value>text/html;charset=UTF-8</value>
+						</list>
+					</property>
+				</bean>
+			</util:list>
+		</property>
+	</bean>
+
+	<bean name="jsonView"
+		class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
+		<property name="encoding">
+			<value type="org.codehaus.jackson.JsonEncoding">UTF8</value>
+		</property>
+		<property name="extractValueFromSingleKeyModel" value="true"></property>
+		<property name="contentType" value="application/json;charset=UTF-8" />
+	</bean>
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
+	<bean id="annotationMethodHandlerAdapter"
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<!-- TODO: 需确认messageConverters是否可被删除 -->
+		<property name="messageConverters">
+			<list>
+				<ref bean="stringHttpMessageConverter" />
+			</list>
+		</property>
+	</bean>
+	<!-- 需确认restTemplate的配置是否可被删除 -->
+	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+		<property name="messageConverters">
+			<list>
+				<!-- -->
+				<ref bean="stringHttpMessageConverter" />
+				<bean id="formHttpMessageConverter"
+					class="org.springframework.http.converter.FormHttpMessageConverter" />
+			</list>
+		</property>
+	</bean>
+	<bean id="stringHttpMessageConverter"
+		class="org.springframework.http.converter.StringHttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>application/json;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+
+</beans>

@@ -1,0 +1,1113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillWmRecedeDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillWmRecedeDtl" >
+    <id column="RECEDE_NO" property="recedeNo" jdbcType="VARCHAR" />
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="PO_ID" property="poId" jdbcType="DECIMAL" />
+    <result column="OWNER_ITEM_NO" property="ownerItemNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="itemName" property="itemName" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="PACK_QTY" property="packQty" jdbcType="DECIMAL" />
+    <result column="LOT_NO" property="lotNo" jdbcType="VARCHAR" />
+    <result column="QUALITY" property="quality" jdbcType="VARCHAR" />
+    <result column="RESERVED1" property="reserved1" jdbcType="VARCHAR" />
+    <result column="RESERVED2" property="reserved2" jdbcType="VARCHAR" />
+    <result column="RESERVED3" property="reserved3" jdbcType="VARCHAR" />
+    <result column="RESERVED4" property="reserved4" jdbcType="VARCHAR" />
+    <result column="PRODUCE_DATE" property="produceDate" jdbcType="TIMESTAMP" />
+    <result column="EXPIRE_DATE" property="expireDate" jdbcType="TIMESTAMP" />
+    <result column="RECEDE_QTY" property="recedeQty" jdbcType="DECIMAL" />
+    <result column="OUTSTOCK_QTY" property="outstockQty" jdbcType="DECIMAL" />
+    <result column="REAL_QTY" property="realQty" jdbcType="DECIMAL" />
+    <result column="UNIT_COST" property="unitCost" jdbcType="DECIMAL" />
+    <result column="RECEDE_DES" property="recedeDes" jdbcType="VARCHAR" />
+    <result column="ERROR_STATUS" property="errorStatus" jdbcType="VARCHAR" />
+    <result column="BATCH_SERIAL_NO" property="batchSerialNo" jdbcType="VARCHAR" />
+    <result column="BOX_NO" property="boxNo" jdbcType="VARCHAR" />
+    <result column="colorNoStr" property="colorNoStr" jdbcType="VARCHAR" />
+    <result column="brandNoStr" property="brandNoStr" jdbcType="VARCHAR" />
+    <result column="STYLE_NO" property="styleNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+    <result column="SUPPLIER_NO" property="supplierNo" jdbcType="VARCHAR" />
+    <result column="sys_no" property="sysNo" jdbcType="VARCHAR" />
+    <result column="barcode" property="barcode" jdbcType="VARCHAR" />
+    <result column="conContentQty" property="conContentQty" jdbcType="DECIMAL" />
+    <result column="brandNo" property="brandNo" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="BaseResultDTOMap" type="com.yougou.logistics.city.common.dto.BillWmRecedeDtlDto" >
+   <id column="RECEDE_NO" property="recedeNo" jdbcType="VARCHAR" />
+    <id column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <id column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="RECEDE_QTY" property="recedeQty" jdbcType="DECIMAL" />
+    
+    <result column="colorNoStr" property="colorNoStr" jdbcType="VARCHAR" />
+    <result column="brandNoStr" property="brandNoStr" jdbcType="VARCHAR" />
+    <result column="STYLE_NO" property="styleNo" jdbcType="VARCHAR" />
+    
+    <result column="itemName" property="itemName" jdbcType="VARCHAR" />
+    <result column="sysNo" property="sysNo" jdbcType="VARCHAR" />
+    <result column="sizeKind" property="sizeKind" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+  <!-- 出库调度 -->
+  <resultMap id="BaseResultDispatchDtoMap" type="com.yougou.logistics.city.common.dto.BillWmRecedeDispatchDtlDTO" >
+    <result column="LOCNO_NO" property="locno" jdbcType="VARCHAR" />
+    <result column="RECEDE_NO" property="recedeNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+    <result column="SIZE_DESC" property="sizeDesc" jdbcType="VARCHAR" />
+    <result column="STYLE_NO" property="styleNo" jdbcType="VARCHAR" />
+    <result column="COLOR_DESC" property="colorDesc" jdbcType="VARCHAR" />
+    <result column="COLOR_NAME" property="colorName" jdbcType="VARCHAR" />
+    <result column="RECEDE_QTY" property="recedeQty" jdbcType="DECIMAL" />
+    <result column="AVAILABLE_RECEDE_QTY" property="availableRecedeQty" jdbcType="DECIMAL" />
+    <result column="NO_ENOUGH_QTY" property="noenoughQty" jdbcType="DECIMAL" />
+    <result column="DIFFERENCE_QTY" property="differenceQty" jdbcType="DECIMAL" />
+    <result column="VOLUMN" property="volume" jdbcType="DECIMAL" />
+    <result column="WEIGHT" property="weight" jdbcType="DECIMAL" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="USABLE_QTY" property="usableQty" jdbcType="DECIMAL" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    RECEDE_NO, LOCNO, OWNER_NO, PO_ID, OWNER_ITEM_NO, ITEM_NO, SIZE_NO, PACK_QTY, LOT_NO, 
+    QUALITY, RESERVED1, RESERVED2, RESERVED3, RESERVED4, PRODUCE_DATE, EXPIRE_DATE, RECEDE_QTY, 
+    OUTSTOCK_QTY, REAL_QTY, UNIT_COST, RECEDE_DES, ERROR_STATUS, BATCH_SERIAL_NO, BOX_NO
+  </sql>
+  
+  <sql id="Base_Dispatch_Column_List" >
+   		v.LOCNO_NO,v.RECEDE_NO,v.ITEM_NO,v.ITEM_NAME,v.SIZE_DESC,v.STYLE_NO,
+   		v.COLOR_DESC,v.RECEDE_QTY,v.AVAILABLE_RECEDE_QTY,
+   		v.NO_ENOUGH_QTY,v.DIFFERENCE_QTY,v.VOLUMN,v.WEIGHT
+  </sql>
+  
+  <sql id="Base_Dispatch_Column_List_2" >
+   		d.ITEM_NO,max(it.ITEM_NAME) item_name,d.SIZE_NO,max(ci.COLOR_NAME) color_name,
+   		sum(nvl(d.RECEDE_QTY,0)) RECEDE_QTY
+  </sql>
+  
+  <sql id="condition" >
+    <if test="null!=params" >
+       <if test="null!=params.recedeNo and ''!=params.recedeNo" >
+        AND d.RECEDE_NO = #{params.recedeNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+        AND d.LOCNO = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        AND d.OWNER_NO = #{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.itemNo and ''!=params.itemNo" >
+        AND d.ITEM_NO = #{params.itemNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.sizeNo and ''!=params.sizeNo" >
+        AND d.SIZE_NO = #{params.sizeNo,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+  
+  <sql id="recedeDispatchCondition">
+    <if test="null!=params">
+      <if test="null!=params.locno and ''!=params.locno" >
+            and e.LOCNO=#{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.recedeNo and ''!=params.recedeNo" >
+            and e.RECEDE_NO=#{params.recedeNo,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillWmRecedeDtlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_WM_RECEDE_DTL
+    where RECEDE_NO = #{recedeNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and PO_ID = #{poId,jdbcType=DECIMAL}
+  </select>
+  
+  <!--权限过滤查询条件-->
+  <sql id="d_AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and d.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_WM_RECEDE_DTL d where 1=1 
+    <include refid="condition" />
+    <include refid="d_AuthorityCondition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( 
+    		select  distinct d.*,c.STYLE_NO, c.item_name as itemName,
+    			      (select br.Brand_Name from Brand br where br.Brand_NO = c.Brand_NO) as brandNoStr,
+   					  (select ci.Color_Name from Color_Info ci where ci.Color_NO = c.COLOR_NO) as colorNoStr,
+   					  
+   					    <!-- 计算可退厂数量  -->
+   					  (
+				         select sum(v.qty - nvl(v.outstock_qty, 0)) as conContentQty from item tc
+						 inner join size_info s on s.size_kind = tc.size_kind and s.sys_no = tc.sys_no
+						 inner join v_content v on v.item_no = tc.item_no and v.size_no = s.size_no
+						 inner join cm_defcell cd on cd.cell_no = v.cell_no and cd.locno = v.locno
+						 inner join cm_defarea cda on cda.locno = cd.locno and cda.ware_no = cd.ware_no and cda.area_no = cd.area_no
+						 where (cda.area_usetype = '3' and cda.area_attribute = '0' and  cda.attribute_type = '0')
+						   and (cd.cell_status = '0' and cd.check_status = '0')
+						   and v.qty - nvl(v.outstock_qty, 0) > 0
+						   and v.item_no = d.item_no and v.size_no = d.size_no and v.locno = d.locno						   
+						   <if test="null!=params.supplierNo and ''!=params.supplierNo" >
+					            and tc.SUPPLIER_NO=#{params.supplierNo}
+					      </if>
+					      <if test="null!=params.sysNo and ''!=params.sysNo" >
+					            and tc.sys_no=#{params.sysNo}
+					      </if>
+					      <if test="null!=params.areaQuality and ''!=params.areaQuality" >
+					            and cd.AREA_QUALITY = #{params.areaQuality}
+					      </if>
+					      <if test="null!=params.itemType and ''!=params.itemType" >
+					             and cd.ITEM_TYPE = #{params.itemType}	
+					      </if>	   
+				         ) as conContentQty
+    			from  BILL_WM_RECEDE_DTL d, item c
+    			where d.ITEM_NO = c.item_no
+    <include refid="condition" />
+    <include refid="d_AuthorityCondition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  
+  <!--权限过滤查询条件-->
+  <sql id="dispatch_AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and d.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <!-- 退厂调度的查询条件 -->
+  <sql id="dispatch_recedeDispatchCondition">
+    <if test="null!=params">
+      <if test="null!=params.locno and ''!=params.locno" >
+            and d.LOCNO=#{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.recedeNo and ''!=params.recedeNo" >
+            and d.RECEDE_NO=#{params.recedeNo,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+  
+  <!-- 查询出库调度信息分页总数 -->
+  <select id="selectWmRecedeDtlDispatchCount" resultType="java.lang.Integer">
+    select count(1) as s from 
+    (
+    	select 
+	      d.ITEM_NO,d.SIZE_NO,d.owner_no
+	     from BILL_WM_RECEDE_DTL d 
+	     inner join item it on it.item_no=d.item_no
+	     left join color_info ci 
+	     	on ci.color_no=it.color_no
+	     where 1=1 and d.status='10'
+	    <include refid="dispatch_recedeDispatchCondition" />
+	    <include refid="dispatch_AuthorityCondition" />
+    	  group by d.ITEM_NO,d.SIZE_NO,d.owner_no
+    )
+    
+  </select>
+  
+  
+   <!-- 查询出库调度信息分页 -->
+  <select id="selectWmRecedeDtlDispatchByPage" parameterType="map" resultMap="BaseResultDispatchDtoMap">
+    select B.* from (select 
+    A.*,
+    case when (A.RECEDE_QTY-NVL(A.DIFFERENCE_QTY,0))>0 then (A.RECEDE_QTY-NVL(A.DIFFERENCE_QTY,0)) else 0 end noenoughQty,
+    rownum rn 
+    from( 
+    	select 
+	    <include refid="Base_Dispatch_Column_List_2" />,
+	    max(nvl(sub.qty,0)) as DIFFERENCE_QTY,
+	    max(nvl(sub.usable_Qty, 0)) as usable_Qty
+	     from BILL_WM_RECEDE_DTL d 
+	     left join  <include refid="selectdifferenceleftjoin" /> sub
+         on d.item_no=sub.item_no
+         and d.size_no=sub.size_no
+	     inner join item it on it.item_no=d.item_no
+	     left join color_info ci 
+	     	on ci.color_no=it.color_no
+	     where 1=1 and d.status='10'
+	     <include refid="dispatch_recedeDispatchCondition" /> 
+	    <include refid="dispatch_AuthorityCondition" />
+	    group by d.ITEM_NO,d.SIZE_NO,d.locno,d.owner_no
+		<if test="orderByField != null and ''!=orderByField">
+	      order by ${orderByField}
+	      <if test="orderByField">
+	        ${orderBy}
+	      </if>
+	    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  
+  <!-- 查询调度的明细总数 -->
+  <select id="selectDispatchSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+  	select 
+  		sum(nvl(aa.RECEDE_QTY,0)) RECEDE_QTY,
+  		sum(nvl(aa.DIFFERENCE_QTY,0)) DIFFERENCE_QTY,
+  		sum(nvl(aa.noenoughQty,0)) NOENOUGH_QTY,
+  		sum(nvl(aa.usable_Qty,0)) usable_Qty
+	  	from(
+	  	
+	  		select 
+	  			dd.RECEDE_QTY,
+	  			dd.DIFFERENCE_QTY,
+	  			dd.usable_Qty,
+	  			case when (dd.RECEDE_QTY-NVL(dd.DIFFERENCE_QTY,0))>0 then (dd.RECEDE_QTY-NVL(dd.DIFFERENCE_QTY,0)) else 0 end noenoughQty
+	  			from (
+		  			select 
+					    d.ITEM_NO,
+					    d.SIZE_NO,
+				   		sum(nvl(d.RECEDE_QTY,0)) RECEDE_QTY,
+					    max(nvl(sub.qty,0)) as DIFFERENCE_QTY,
+					    max(nvl(sub.usable_Qty,0)) as usable_Qty
+					     from BILL_WM_RECEDE_DTL d 
+					     left join  <include refid="selectdifferenceleftjoin" /> sub
+                          on d.item_no=sub.item_no
+                          and d.size_no=sub.size_no
+					     where d.status='10'
+					    <include refid="dispatch_recedeDispatchCondition" /> 
+	    				<include refid="dispatch_AuthorityCondition" />
+			    	group by d.ITEM_NO,d.SIZE_NO,d.locno,d.owner_no
+	  			
+	  			)dd
+	  		
+	  	)aa
+  </select>
+  
+  
+  <!--
+           获取可调度数量:
+    1、存储区库存:库区属性-作业区，属性类型-存储区，库区用途-退货区
+    2、可调度数量=存储区库存+(当前客户已冻结-已调度库存）
+    -->
+  <sql id="selectdifferenceleftjoin" >
+  		
+  	  (select sum(temp.qty) as qty,
+                           sum(temp.usable_Qty) as usable_Qty,
+                           temp.item_no,
+                           temp.size_no
+                      from (select (sub_vc.qty - sub_vc.outstock_qty) as qty,
+                                   (sub_vc.qty + sub_vc.instock_qty -
+                                   sub_vc.outstock_qty + sub_vc.unusual_qty) as usable_Qty,
+                                   sub_oed.item_no,
+                                   sub_oed.size_no
+                              from (select distinct locno,
+                                                    owner_no,
+                                                    item_no,
+                                                    size_no
+                                    
+                                      from BILL_WM_RECEDE_DTL
+                                     where locno = #{params.locno,jdbcType=VARCHAR}
+                                       and RECEDE_NO = #{params.recedeNo,jdbcType=VARCHAR}) sub_oed
+                             inner join v_content sub_vc
+                                on sub_oed.locno = sub_vc.locno
+                               and sub_oed.owner_no = sub_vc.owner_no
+                               and sub_oed.item_no = sub_vc.item_no
+                               and sub_oed.size_no = sub_vc.size_no
+                            
+                             inner join cm_defcell sub_cdc
+                                on sub_cdc.locno = sub_vc.locno
+                               and sub_cdc.CELL_NO = sub_vc.CELL_NO
+                             inner join cm_defarea sub_cda
+                                on sub_cdc.locno = sub_cda.locno
+                               and sub_cdc.ware_no = sub_cda.ware_no
+                               and sub_cdc.area_no = sub_cda.area_no
+                             where (sub_cda.area_usetype = '3' and
+                                   sub_cda.area_attribute = '0' and
+                                   sub_cda.attribute_type = '0')                              
+                               and sub_cdc.CELL_STATUS = '0'
+                               and sub_cdc.CHECK_STATUS = '0'
+                               and sub_vc.STATUS = '0'
+                               and sub_vc.FLAG = '0'
+                               and sub_vc.HM_MANUAL_FLAG = '1'
+                               <if test="11==params.recedeType or 13==params.recedeType" >
+       						   		and sub_vc.quality = 'A'
+    						   </if>
+    						   <choose>
+								    <when test="13==params.recedeType or 14==params.recedeType">
+								      and sub_vc.item_type = '0'
+								    </when>
+								    <otherwise>
+								      and sub_vc.item_type = '9'
+								    </otherwise>
+							  </choose>
+                               
+                               UNION ALL
+                               
+                               select (sub_csd.item_qty - sub_csd.real_qty) as qty,
+                                   0 as usable_Qty,
+                                   sub_oed.item_no,
+                                   sub_oed.size_no
+                              from (select distinct WR.locno,
+                                                    WR.owner_no,
+                                                    WR.Recede_Type,
+                                                    WRD.item_no,
+                                                    WRD.size_no
+                                      from BILL_WM_RECEDE_DTL WRD
+                                     inner join BILL_WM_RECEDE WR
+                                        ON WRD.LOCNO = WR.LOCNO
+                                       AND WRD.RECEDE_NO = WR.RECEDE_NO
+                                     where WR.locno = #{params.locno,jdbcType=VARCHAR}
+                                       and WR.Recede_No = #{params.recedeNo,jdbcType=VARCHAR}) sub_oed
+                             inner join bill_con_storelock sub_csm
+                                on sub_oed.locno = sub_csm.locno
+                               and sub_oed.owner_no = sub_csm.owner_no
+                               and sub_oed.Recede_Type = sub_csm.source_type
+                             inner join bill_con_storelock_dtl sub_csd
+                                on sub_csm.locno = sub_csd.locno
+                               and sub_csm.owner_no = sub_csd.owner_no
+                               and sub_csm.storelock_no =
+                                   sub_csd.storelock_no
+                               and sub_oed.item_no = sub_csd.item_no
+                               and sub_oed.size_no = sub_csd.size_no
+                             inner join cm_defcell sub_cdc
+                                on sub_cdc.locno = sub_csd.locno
+                               and sub_cdc.cell_no = sub_csd.cell_no
+                             inner join cm_defarea sub_cda
+                                on sub_cdc.locno = sub_cda.locno
+                               and sub_cdc.ware_no = sub_cda.ware_no
+                               and sub_cdc.area_no = sub_cda.area_no
+                             where sub_csm.status = '11'
+                               and sub_csd.status = '10'
+                               and sub_csm.storelock_type = '1'
+                               and (sub_cda.area_usetype = '3' and
+                                   sub_cda.area_attribute = '0' and
+                                   sub_cda.attribute_type = '0')
+                               
+                               ) temp
+                     group by temp.item_no,
+                              temp.size_no)	
+  		
+  </sql>
+  
+  
+  <!-- 根据业主编码，仓别编码，通知单号，查询明细记录最大的行号 -->
+  <select id="selectMaxPid" resultType="java.lang.Short" parameterType="com.yougou.logistics.city.common.model.BillWmRecedeDtlKey" >
+    select 
+    NVL(max(dd.po_id),0) as s
+    from bill_wm_recede_dtl dd
+    where dd.LOCNO = #{locno,jdbcType=VARCHAR}
+      and dd.OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and dd.recede_no = #{recedeNo,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_WM_RECEDE_DTL d where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <!--权限过滤查询条件-->
+  <sql id="dd_AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and dd.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  
+  <select id="selectCountMx" resultType="java.lang.Integer" >
+     select count(1)  as s
+			from(
+				select dd.recede_no,dd.item_no  
+				from bill_wm_recede_dtl  dd 
+				where dd.recede_no = #{dto.recedeNo,jdbcType=VARCHAR}
+                <include refid="dd_AuthorityCondition" />
+				group by  dd.recede_no,dd.item_no  	
+			)
+  </select>
+  
+  <select id="queryBillWmRecedeDtlDtoGroupBy" resultMap="BaseResultDTOMap" >
+     select B.* from (select A.*,rownum rn from(
+	    	select dd.recede_no,dd.item_no  
+			from bill_wm_recede_dtl  dd 
+			where dd.recede_no = #{dto.recedeNo,jdbcType=VARCHAR}
+            <include refid="dd_AuthorityCondition" />
+			group by  dd.recede_no,dd.item_no
+		    order by dd.ITEM_NO
+	  ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <select id="queryBillWmRecedeDtlDtoByExpNo" resultMap="BaseResultDTOMap" parameterType="com.yougou.logistics.city.common.dto.BillWmRecedeDtlDto" >
+      select  distinct kk.recede_no,kk.item_no,kk.size_no,kk.recede_qty,c.STYLE_NO, 
+            c.size_kind as sizeKind, c.item_name as itemName, c.sys_no as sysNo,
+    			  (select br.Brand_Name from Brand br where br.Brand_NO = c.Brand_NO) as brandNoStr,
+   					(select ci.Color_Name from Color_Info ci where ci.Color_NO = c.COLOR_NO) as colorNoStr   
+    			from  BILL_WM_RECEDE_DTL kk, item c
+    			where kk.ITEM_NO = c.item_no
+	    			<if test="null!= recedeNo and ''!= recedeNo" >
+					      and  kk.recede_no = #{recedeNo,jdbcType=VARCHAR}
+					</if>
+			     	<if test="null!=itemNo and ''!=itemNo" >
+					      and  kk.ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+					</if>
+  </select>
+  
+  
+  <!-- 查询出库调度信息分页总数 -->
+  <select id="selectBillWmRecedeDtlDispatchCount" resultType="java.lang.Integer">
+    select count(1) as s from 
+    (
+    	select 
+      		 <include refid="Base_Dispatch_Column_List" />
+    	from V_WM_RECEDE_D v 
+    	inner join bill_wm_recede_dtl dtl on v.recede_no=dtl.recede_no 
+    	and v.SIZE_DESC=dtl.size_no and v.ITEM_NO=dtl.item_no
+    	and dtl.pack_qty=v.pack_qty and dtl.owner_no=v.owner_no
+    	and dtl.locno=v.locno
+    	where 1=1
+    	<include refid="recedeDispatchCondition" />
+    )
+    
+  </select>
+  
+  <!-- 查询出库调度信息分页 -->
+  <select id="selectBillWmRecedeDtlDispatchByPage" parameterType="map" resultMap="BaseResultMap">
+    select B.* from (select A.*,rownum rn from( 
+    	select 
+      		 <include refid="Base_Dispatch_Column_List" />
+    	from V_WM_RECEDE_D v 
+    	inner join bill_wm_recede_dtl dtl on v.recede_no=dtl.recede_no 
+    	and v.SIZE_DESC=dtl.size_no and v.ITEM_NO=dtl.item_no
+    	and dtl.pack_qty=v.pack_qty and dtl.owner_no=v.owner_no
+    	and dtl.locno=v.locno
+    	where 1=1
+    	<include refid="recedeDispatchCondition" />
+		<if test="orderByField != null and ''!=orderByField">
+	      order by ${orderByField}
+	      <if test="orderByField">
+	        ${orderBy}
+	      </if>
+	    </if>
+		group by r.locno,r.owner_no,r.recede_no,r.po_no,recede_type,r.recede_date
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <select id="batchInsertDtl" parameterType="java.util.List">  
+        insert into BILL_WM_RECEDE_DTL  
+        (RECEDE_NO,LOCNO,OWNER_NO,PO_ID,ITEM_NO,SIZE_NO,PACK_QTY,RECEDE_QTY)  
+        <foreach collection="list" item="item" index="index"  
+            separator="union all">  
+            select
+             #{item.recedeNo,jdbcType=VARCHAR},
+             #{item.locno,jdbcType=VARCHAR},
+             #{item.ownerNo,jdbcType=VARCHAR},
+             #{item.poId,jdbcType=DECIMAL},
+             #{item.itemNo,jdbcType=VARCHAR},
+             #{item.sizeNo,jdbcType=VARCHAR},
+             #{item.packQty,jdbcType=DECIMAL},
+             #{item.recedeQty,jdbcType=DECIMAL}
+             from DUAL
+        </foreach>  
+   </select>
+    
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillWmRecedeDtlKey" >
+    delete from BILL_WM_RECEDE_DTL
+    where RECEDE_NO = #{recedeNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      <if test="null!=poId and ''!=poId" >
+      	and PO_ID = #{poId,jdbcType=DECIMAL}
+      </if>
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillWmRecedeDtl" >
+    delete from BILL_WM_RECEDE_DTL
+    where RECEDE_NO = #{recedeNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      <if test="null!=poId and ''!=poId" >
+      	and PO_ID = #{poId,jdbcType=DECIMAL}
+      </if>
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillWmRecedeDtl" >
+    insert into BILL_WM_RECEDE_DTL (RECEDE_NO, LOCNO, OWNER_NO, 
+      PO_ID, OWNER_ITEM_NO, ITEM_NO, 
+      SIZE_NO, PACK_QTY, LOT_NO, 
+      QUALITY, RESERVED1, RESERVED2, 
+      RESERVED3, RESERVED4, PRODUCE_DATE, 
+      EXPIRE_DATE, RECEDE_QTY, OUTSTOCK_QTY, 
+      REAL_QTY, UNIT_COST, RECEDE_DES, 
+      ERROR_STATUS, BATCH_SERIAL_NO, BOX_NO
+      )
+    values (#{recedeNo,jdbcType=VARCHAR}, #{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, 
+      #{poId,jdbcType=DECIMAL}, #{ownerItemNo,jdbcType=VARCHAR}, #{itemNo,jdbcType=VARCHAR}, 
+      #{sizeNo,jdbcType=VARCHAR}, #{packQty,jdbcType=DECIMAL}, #{lotNo,jdbcType=VARCHAR}, 
+      #{quality,jdbcType=VARCHAR}, #{reserved1,jdbcType=VARCHAR}, #{reserved2,jdbcType=VARCHAR}, 
+      #{reserved3,jdbcType=VARCHAR}, #{reserved4,jdbcType=VARCHAR}, #{produceDate,jdbcType=TIMESTAMP}, 
+      #{expireDate,jdbcType=TIMESTAMP}, #{recedeQty,jdbcType=DECIMAL}, #{outstockQty,jdbcType=DECIMAL}, 
+      #{realQty,jdbcType=DECIMAL}, #{unitCost,jdbcType=DECIMAL}, #{recedeDes,jdbcType=VARCHAR}, 
+      #{errorStatus,jdbcType=VARCHAR}, #{batchSerialNo,jdbcType=VARCHAR}, #{boxNo,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillWmRecedeDtl" >
+    insert into BILL_WM_RECEDE_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="recedeNo != null" >
+        RECEDE_NO,
+      </if>
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="poId != null" >
+        PO_ID,
+      </if>
+      <if test="ownerItemNo != null" >
+        OWNER_ITEM_NO,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY,
+      </if>
+      <if test="lotNo != null" >
+        LOT_NO,
+      </if>
+      <if test="quality != null" >
+        QUALITY,
+      </if>
+      <if test="reserved1 != null" >
+        RESERVED1,
+      </if>
+      <if test="reserved2 != null" >
+        RESERVED2,
+      </if>
+      <if test="reserved3 != null" >
+        RESERVED3,
+      </if>
+      <if test="reserved4 != null" >
+        RESERVED4,
+      </if>
+      <if test="produceDate != null" >
+        PRODUCE_DATE,
+      </if>
+      <if test="expireDate != null" >
+        EXPIRE_DATE,
+      </if>
+      <if test="recedeQty != null" >
+        RECEDE_QTY,
+      </if>
+      <if test="outstockQty != null" >
+        OUTSTOCK_QTY,
+      </if>
+      <if test="realQty != null" >
+        REAL_QTY,
+      </if>
+      <if test="unitCost != null" >
+        UNIT_COST,
+      </if>
+      <if test="recedeDes != null" >
+        RECEDE_DES,
+      </if>
+      <if test="errorStatus != null" >
+        ERROR_STATUS,
+      </if>
+      <if test="batchSerialNo != null" >
+        BATCH_SERIAL_NO,
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO,
+      </if>
+      <if test="brandNo != null" >
+        BRAND_NO,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="recedeNo != null" >
+        #{recedeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="poId != null" >
+        #{poId,jdbcType=DECIMAL},
+      </if>
+      <if test="ownerItemNo != null" >
+        #{ownerItemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="packQty != null" >
+        #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="lotNo != null" >
+        #{lotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="reserved1 != null" >
+        #{reserved1,jdbcType=VARCHAR},
+      </if>
+      <if test="reserved2 != null" >
+        #{reserved2,jdbcType=VARCHAR},
+      </if>
+      <if test="reserved3 != null" >
+        #{reserved3,jdbcType=VARCHAR},
+      </if>
+      <if test="reserved4 != null" >
+        #{reserved4,jdbcType=VARCHAR},
+      </if>
+      <if test="produceDate != null" >
+        #{produceDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expireDate != null" >
+        #{expireDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="recedeQty != null" >
+        #{recedeQty,jdbcType=DECIMAL},
+      </if>
+      <if test="outstockQty != null" >
+        #{outstockQty,jdbcType=DECIMAL},
+      </if>
+      <if test="realQty != null" >
+        #{realQty,jdbcType=DECIMAL},
+      </if>
+      <if test="unitCost != null" >
+        #{unitCost,jdbcType=DECIMAL},
+      </if>
+      <if test="recedeDes != null" >
+        #{recedeDes,jdbcType=VARCHAR},
+      </if>
+      <if test="errorStatus != null" >
+        #{errorStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="batchSerialNo != null" >
+        #{batchSerialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="boxNo != null" >
+        #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="brandNo != null" >
+        #{brandNo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillWmRecedeDtl" >
+    update BILL_WM_RECEDE_DTL
+    <set >
+      <if test="ownerItemNo != null" >
+        OWNER_ITEM_NO = #{ownerItemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="lotNo != null" >
+        LOT_NO = #{lotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        QUALITY = #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="reserved1 != null" >
+        RESERVED1 = #{reserved1,jdbcType=VARCHAR},
+      </if>
+      <if test="reserved2 != null" >
+        RESERVED2 = #{reserved2,jdbcType=VARCHAR},
+      </if>
+      <if test="reserved3 != null" >
+        RESERVED3 = #{reserved3,jdbcType=VARCHAR},
+      </if>
+      <if test="reserved4 != null" >
+        RESERVED4 = #{reserved4,jdbcType=VARCHAR},
+      </if>
+      <if test="produceDate != null" >
+        PRODUCE_DATE = #{produceDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expireDate != null" >
+        EXPIRE_DATE = #{expireDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="recedeQty != null" >
+        RECEDE_QTY = #{recedeQty,jdbcType=DECIMAL},
+      </if>
+      <if test="outstockQty != null" >
+        OUTSTOCK_QTY = #{outstockQty,jdbcType=DECIMAL},
+      </if>
+      <if test="realQty != null" >
+        REAL_QTY = #{realQty,jdbcType=DECIMAL},
+      </if>
+      <if test="unitCost != null" >
+        UNIT_COST = #{unitCost,jdbcType=DECIMAL},
+      </if>
+      <if test="recedeDes != null" >
+        RECEDE_DES = #{recedeDes,jdbcType=VARCHAR},
+      </if>
+      <if test="errorStatus != null" >
+        ERROR_STATUS = #{errorStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="batchSerialNo != null" >
+        BATCH_SERIAL_NO = #{batchSerialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO = #{boxNo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where RECEDE_NO = #{recedeNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and PO_ID = #{poId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillWmRecedeDtl" >
+    update BILL_WM_RECEDE_DTL
+    set OWNER_ITEM_NO = #{ownerItemNo,jdbcType=VARCHAR},
+      ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      LOT_NO = #{lotNo,jdbcType=VARCHAR},
+      QUALITY = #{quality,jdbcType=VARCHAR},
+      RESERVED1 = #{reserved1,jdbcType=VARCHAR},
+      RESERVED2 = #{reserved2,jdbcType=VARCHAR},
+      RESERVED3 = #{reserved3,jdbcType=VARCHAR},
+      RESERVED4 = #{reserved4,jdbcType=VARCHAR},
+      PRODUCE_DATE = #{produceDate,jdbcType=TIMESTAMP},
+      EXPIRE_DATE = #{expireDate,jdbcType=TIMESTAMP},
+      RECEDE_QTY = #{recedeQty,jdbcType=DECIMAL},
+      OUTSTOCK_QTY = #{outstockQty,jdbcType=DECIMAL},
+      REAL_QTY = #{realQty,jdbcType=DECIMAL},
+      UNIT_COST = #{unitCost,jdbcType=DECIMAL},
+      RECEDE_DES = #{recedeDes,jdbcType=VARCHAR},
+      ERROR_STATUS = #{errorStatus,jdbcType=VARCHAR},
+      BATCH_SERIAL_NO = #{batchSerialNo,jdbcType=VARCHAR},
+      BOX_NO = #{boxNo,jdbcType=VARCHAR}
+    where RECEDE_NO = #{recedeNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and PO_ID = #{poId,jdbcType=DECIMAL}
+  </update>
+  
+  <!--权限过滤查询条件-->
+  <sql id="c_AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and c.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <!-- 查询出库调度信息分页总数 -->
+  <select id="selectItemCount" resultType="java.lang.Integer">
+    select count(1) as s from 
+    (
+    		select c.item_no, 
+    		   v.size_no
+	          from item c
+			 inner join size_info s
+			    on s.size_kind = c.size_kind
+			   and s.sys_no = c.sys_no
+			 inner join v_content v
+			    on v.item_no = c.item_no
+			   and v.size_no = s.size_no
+			 inner join cm_defcell cd
+			    on cd.cell_no = v.cell_no
+			   and cd.locno = v.locno
+			 inner join cm_defarea cda
+			    on cda.locno = cd.locno
+			   and cda.ware_no = cd.ware_no
+			   and cda.area_no = cd.area_no
+         	 where (cda.area_usetype = '3' and cda.area_attribute = '0' and cda.attribute_type='0')
+			   and (cd.cell_status = '0' and cd.check_status = '0')
+			   and v.qty - nvl(v.outstock_qty,0) > 0
+           <if test="null!=params">
+           	  <if test="null!=params.locno and ''!=params.locno" >
+        			and v.locno = #{params.locno,jdbcType=VARCHAR}
+      		  </if>
+		      <if test="null!=params.supplierNo and ''!=params.supplierNo" >
+		            and c.SUPPLIER_NO=#{params.supplierNo,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.sysNo and ''!=params.sysNo" >
+		            and c.sys_no=#{params.sysNo,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.itemNo and ''!=params.itemNo" >
+		      		and c.item_no=#{params.itemNo,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.barcode and ''!=params.barcode" >
+		        	and v.barcode=#{params.barcode,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.itemName and ''!=params.itemName" >
+		        	and c.item_name like '%${params.itemName}%'
+		      </if>
+		      <if test="null!=params.brandNo and ''!=params.brandNo" >
+	      			and c.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+		  	  </if>	  	  
+		      <if test="null!=params.areaQuality and ''!=params.areaQuality" >
+	      			and cd.AREA_QUALITY = #{params.areaQuality,jdbcType=VARCHAR}
+		  	  </if>
+		      <if test="null!=params.itemType and ''!=params.itemType" >
+	      			and cd.ITEM_TYPE = #{params.itemType,jdbcType=VARCHAR}
+		  	  </if>
+		  </if>
+		  <include refid="c_AuthorityCondition" />
+         group by 	c.item_no, 
+         			v.size_no
+         order by c.item_no, v.size_no) A
+  </select>
+  
+  <!-- 查询出库调度信息分页 -->
+  <select id="selectItem" parameterType="map" resultMap="BaseResultMap">
+    select B.* from (select A.*,rownum rn from( 
+    	select c.item_no, 
+    		   v.size_no, 
+    		   max(c.sys_no) sys_no, 
+    		   max(v.barcode) barcode,
+    		   max(c.item_name) item_name,
+               max(c.Brand_NO) Brand_NO,
+               max(c.Color_NO) Color_NO,
+               sum(v.qty - nvl(v.outstock_qty,0)) as conContentQty,
+               max(br.Brand_Name) as brandNoStr,
+               max(ci.Color_Name) as colorNoStr
+	          from item c
+			 inner join size_info s
+			    on s.size_kind = c.size_kind
+			   and s.sys_no = c.sys_no
+			 inner join v_content v
+			    on v.item_no = c.item_no
+			   and v.size_no = s.size_no
+			 inner join cm_defcell cd
+			    on cd.cell_no = v.cell_no
+			   and cd.locno = v.locno
+			 inner join cm_defarea cda
+			    on cda.locno = cd.locno
+			   and cda.ware_no = cd.ware_no
+			   and cda.area_no = cd.area_no
+			 left join Color_Info ci 
+			    on ci.Color_No = c.COLOR_No 
+			 left join Brand br 
+			    on br.Brand_No = c.Brand_No
+         	 where (cda.area_usetype = '3' and cda.area_attribute = '0' and cda.attribute_type='0')
+			   and (cd.cell_status = '0' and cd.check_status = '0')
+			   and v.qty - nvl(v.outstock_qty,0) > 0
+         
+           <if test="null!=params">
+           	  <if test="null!=params.locno and ''!=params.locno" >
+        			and v.locno = #{params.locno,jdbcType=VARCHAR}
+      		  </if>
+		      <if test="null!=params.supplierNo and ''!=params.supplierNo" >
+		            and c.SUPPLIER_NO=#{params.supplierNo,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.sysNo and ''!=params.sysNo" >
+		            and c.sys_no=#{params.sysNo,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.itemNo and ''!=params.itemNo" >
+		      		and c.item_no=#{params.itemNo,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.barcode and ''!=params.barcode" >
+		        	and v.barcode=#{params.barcode,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.itemName and ''!=params.itemName" >
+		        	and c.item_name like '%${params.itemName}%'
+		      </if>
+		      <if test="null!=params.brandNo and ''!=params.brandNo" >
+	      			and c.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+		  	  </if>		  	  
+		      <if test="null!=params.areaQuality and ''!=params.areaQuality" >
+	      			and cd.AREA_QUALITY = #{params.areaQuality,jdbcType=VARCHAR}
+		  	  </if>
+		      <if test="null!=params.itemType and ''!=params.itemType" >
+	      			and cd.ITEM_TYPE = #{params.itemType,jdbcType=VARCHAR}
+		  	  </if>
+		  </if>
+		  <include refid="c_AuthorityCondition" />
+         group by 	c.item_no, 
+         			v.size_no
+         order by c.item_no, v.size_no
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  
+  
+  
+  
+  
+    <!-- 查询库存表(演示用，同findItemAndSize,体验后删除) -->
+  <select id="selectItemCountTest" resultType="java.lang.Integer">
+    select count(1) as s from 
+    (
+    		select c.item_no, 
+    		   iba.size_no      
+				from item c		
+						  left join item_barcode iba
+						    on iba.item_no = c.item_no
+						   and iba.package_id = '0'
+						  left join v_content v
+						    on v.item_no = c.item_no
+						   and v.size_no = iba.size_no
+						  left join cm_defcell cd
+						    on cd.cell_no = v.cell_no
+						   and cd.locno = v.locno
+						  left join cm_defarea cda
+						    on cda.locno = cd.locno
+						   and cda.ware_no = cd.ware_no
+						   and cda.area_no = cd.area_no
+						 where (v.cell_no is null or
+						       ((cda.area_usetype = '3' and cda.area_attribute = '0' and
+						       cda.attribute_type = '0') and
+						       (cd.cell_status = '0' and cd.check_status = '0')))
+				         
+				           <if test="null!=params">
+				           	  <if test="null!=params.locno and ''!=params.locno" >
+				        			and (v.locno = #{params.locno,jdbcType=VARCHAR} or v.locno is null)
+				      		  </if>
+						      <if test="null!=params.supplierNo and ''!=params.supplierNo" >
+						            and c.SUPPLIER_NO=#{params.supplierNo,jdbcType=VARCHAR}
+						      </if>
+						      <if test="null!=params.sysNo and ''!=params.sysNo" >
+						            and c.sys_no=#{params.sysNo,jdbcType=VARCHAR}
+						      </if>
+						      <if test="null!=params.itemNo and ''!=params.itemNo" >
+						      		and c.item_no=#{params.itemNo,jdbcType=VARCHAR}
+						      </if>
+						      <if test="null!=params.barcode and ''!=params.barcode" >
+						        	and iba.barcode=#{params.barcode,jdbcType=VARCHAR}
+						      </if>
+						      <if test="null!=params.itemName and ''!=params.itemName" >
+						        	and c.item_name like '%${params.itemName}%'
+						      </if>
+						      <if test="null!=params.brandNo and ''!=params.brandNo" >
+					      			and c.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+						  	  </if>	
+						  </if>
+						  <include refid="c_AuthorityCondition" />
+				         group by 	c.item_no, 
+				         			iba.size_no) A
+  </select>
+  
+  <!-- 查询库存表(演示用，同findItemAndSize,体验后删除) -->
+  <select id="selectItemTest" parameterType="map" resultMap="BaseResultMap">
+    select B.* from (select A.*,rownum rn from( 
+    	select c.item_no,
+		       iba.size_no,
+		       max(c.sys_no) sys_no,
+		       max(iba.barcode) barcode,
+		       max(c.item_name) item_name,
+		       max(c.Brand_NO) Brand_NO,
+		       max(c.Color_NO) Color_NO,
+		       sum(v.qty - nvl(v.outstock_qty, 0)) as conContentQty,
+		       max(br.Brand_Name) as brandNoStr,
+		       max(ci.Color_Name) as colorNoStr
+		  from item c		
+		  left join item_barcode iba
+		    on iba.item_no = c.item_no
+		   and iba.package_id = '0'
+		  left join v_content v
+		    on v.item_no = c.item_no
+		   and v.size_no = iba.size_no
+		  left join cm_defcell cd
+		    on cd.cell_no = v.cell_no
+		   and cd.locno = v.locno
+		  left join cm_defarea cda
+		    on cda.locno = cd.locno
+		   and cda.ware_no = cd.ware_no
+		   and cda.area_no = cd.area_no
+		  left join Color_Info ci
+		    on ci.Color_No = c.COLOR_No
+		  left join Brand br
+		    on br.Brand_No = c.Brand_No
+		 where (v.cell_no is null or
+		       ((cda.area_usetype = '3' and cda.area_attribute = '0' and
+		       cda.attribute_type = '0') and
+		       (cd.cell_status = '0' and cd.check_status = '0')))
+         
+           <if test="null!=params">
+           	  <if test="null!=params.locno and ''!=params.locno" >
+        			and (v.locno = #{params.locno,jdbcType=VARCHAR} or v.locno is null)
+      		  </if>
+		      <if test="null!=params.supplierNo and ''!=params.supplierNo" >
+		            and c.SUPPLIER_NO=#{params.supplierNo,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.sysNo and ''!=params.sysNo" >
+		            and c.sys_no=#{params.sysNo,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.itemNo and ''!=params.itemNo" >
+		      		and c.item_no=#{params.itemNo,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.barcode and ''!=params.barcode" >
+		        	and iba.barcode=#{params.barcode,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.itemName and ''!=params.itemName" >
+		        	and c.item_name like '%${params.itemName}%'
+		      </if>
+		      <if test="null!=params.brandNo and ''!=params.brandNo" >
+	      			and c.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+		  	  </if>	
+		  </if>
+		  <include refid="c_AuthorityCondition" />
+         group by 	c.item_no, 
+         			iba.size_no
+         order by c.item_no, iba.size_no
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <!-- 导入校验商品 -->
+  <select id="checkItem" parameterType="map" resultType="java.lang.Integer">
+    	 select  count(1)
+	          from item c
+			 inner join v_content v
+			    on v.item_no = c.item_no
+          AND v.size_no  = #{params.sizeNo,jdbcType=VARCHAR}
+			 inner join cm_defcell cd
+			    on cd.cell_no = v.cell_no
+			   and cd.locno = v.locno
+			 inner join cm_defarea cda
+			    on cda.locno = cd.locno
+			   and cda.ware_no = cd.ware_no
+			   and cda.area_no = cd.area_no
+         	 where (cda.area_usetype = '3' and cda.area_attribute = '0' and cda.attribute_type='0')
+			   and (cd.cell_status = '0' and cd.check_status = '0')
+			   and v.qty - nvl(v.outstock_qty,0) > = #{params.recedeQty,jdbcType=DECIMAL}
+           <if test="null!=params">
+           	  <if test="null!=params.locno and ''!=params.locno" >
+        			and v.locno = #{params.locno,jdbcType=VARCHAR}
+      		  </if>
+		      <if test="null!=params.supplierNo and ''!=params.supplierNo" >
+		            and c.SUPPLIER_NO=#{params.supplierNo,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.sysNo and ''!=params.sysNo" >
+		            and c.sys_no=#{params.sysNo,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.itemNo and ''!=params.itemNo" >
+		      		and c.item_no=#{params.itemNo,jdbcType=VARCHAR}
+		      </if>
+		     <if test="null!=params.itemType and ''!=params.itemType" >
+	      			and cd.ITEM_TYPE = #{params.itemType,jdbcType=VARCHAR}
+		  	  </if>
+		      <if test="null!=params.areaQuality and ''!=params.areaQuality" >
+	      			and cd.AREA_QUALITY = #{params.areaQuality,jdbcType=VARCHAR}
+		  	  </if>
+		  </if>
+  </select>
+</mapper>

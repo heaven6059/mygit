@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BillContainerTaskMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillContainerTask" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="CONTASK_NO" property="contaskNo" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATORNAME" property="creatorname" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="EDITORNAME" property="editorname" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="USE_TYPE" property="useType" jdbcType="VARCHAR" />
+    <result column="AUDITOR" property="auditor" jdbcType="VARCHAR" />
+    <result column="AUDITORNAME" property="auditorname" jdbcType="VARCHAR" />
+    <result column="AUDITTM" property="audittm" jdbcType="TIMESTAMP" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="BUSINESS_TYPE" property="businessType" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, CONTASK_NO, STATUS, CREATOR,CREATORNAME, CREATETM, EDITOR,EDITORNAME, EDITTM, USE_TYPE, AUDITOR,AUDITORNAME, 
+    AUDITTM, REMARK, BUSINESS_TYPE
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillContainerTaskKey" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM BILL_CONTAINER_TASK
+    WHERE LOCNO = #{locno,jdbcType=VARCHAR}
+      AND CONTASK_NO = #{contaskNo,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    SELECT COUNT(1) as s FROM BILL_CONTAINER_TASK WHERE 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    SELECT B.* from (SELECT A.*,ROWNUM rn FROM( SELECT 
+    <include refid="Base_Column_List" />
+     FROM BILL_CONTAINER_TASK WHERE 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      ORDER BY ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A WHERE ROWNUM &lt; #{page.endRowNum}) B WHERE rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+     FROM BILL_CONTAINER_TASK WHERE 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillContainerTaskKey" >
+    DELETE FROM BILL_CONTAINER_TASK
+    WHERE LOCNO = #{locno,jdbcType=VARCHAR}
+      AND CONTASK_NO = #{contaskNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillContainerTask" >
+    DELETE FROM BILL_CONTAINER_TASK
+    WHERE LOCNO = #{locno,jdbcType=VARCHAR}
+      AND CONTASK_NO = #{contaskNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillContainerTask" >
+    INSERT INTO BILL_CONTAINER_TASK (LOCNO, CONTASK_NO, STATUS, 
+      CREATOR,CREATORNAME, CREATETM, EDITOR,EDITORNAME, 
+      EDITTM, USE_TYPE, AUDITOR, AUDITORNAME,
+      AUDITTM, REMARK, BUSINESS_TYPE
+      )
+    VALUES (#{locno,jdbcType=VARCHAR}, #{contaskNo,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{creator,jdbcType=VARCHAR},#{creatorname,jdbcType=VARCHAR}, #{createtm,jdbcType=TIMESTAMP}, #{editor,jdbcType=VARCHAR}, #{editorname,jdbcType=VARCHAR}, 
+      #{edittm,jdbcType=TIMESTAMP}, #{useType,jdbcType=VARCHAR}, #{auditor,jdbcType=VARCHAR}, #{auditorname,jdbcType=VARCHAR}, 
+      #{audittm,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}, #{businessType,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillContainerTask" >
+    INSERT INTO BILL_CONTAINER_TASK
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="contaskNo != null" >
+        CONTASK_NO,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="creatorname != null" >
+        CREATORNAME,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="editorname != null" >
+        EDITORNAME,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="useType != null" >
+        USE_TYPE,
+      </if>
+      <if test="auditor != null" >
+        AUDITOR,
+      </if>
+      <if test="auditorname != null" >
+        AUDITORNAME,
+      </if>
+      <if test="audittm != null" >
+        AUDITTM,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+      <if test="businessType != null" >
+        BUSINESS_TYPE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="contaskNo != null" >
+        #{contaskNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorname != null" >
+        #{creatorname,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorname != null" >
+        #{editorname,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="useType != null" >
+        #{useType,jdbcType=VARCHAR},
+      </if>
+      <if test="auditor != null" >
+        #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorname != null" >
+        #{auditorname,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        #{audittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="businessType != null" >
+        #{businessType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillContainerTask" >
+    UPDATE BILL_CONTAINER_TASK
+    <set >
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorname != null" >
+        CREATORNAME = #{creatorname,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorname != null" >
+        EDITORNAME = #{editorname,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="useType != null" >
+        USE_TYPE = #{useType,jdbcType=VARCHAR},
+      </if>
+      <if test="auditor != null" >
+        AUDITOR = #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorname != null" >
+        AUDITORNAME = #{auditorname,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="businessType != null" >
+        BUSINESS_TYPE = #{businessType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    WHERE LOCNO = #{locno,jdbcType=VARCHAR}
+      AND CONTASK_NO = #{contaskNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillContainerTask" >
+    UPDATE BILL_CONTAINER_TASK
+    SET STATUS = #{status,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATORNAME = #{creatorname,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITORNAME = #{editorname,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      USE_TYPE = #{useType,jdbcType=VARCHAR},
+      AUDITOR = #{auditor,jdbcType=VARCHAR},
+      AUDITORNAME = #{auditorname,jdbcType=VARCHAR},
+      AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      REMARK = #{remark,jdbcType=VARCHAR},
+      BUSINESS_TYPE = #{businessType,jdbcType=VARCHAR}
+    WHERE LOCNO = #{locno,jdbcType=VARCHAR}
+      AND CONTASK_NO = #{contaskNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

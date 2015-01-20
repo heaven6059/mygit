@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.ConBoxDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.ConBoxDtl" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="BOX_NO" property="boxNo" jdbcType="VARCHAR" />
+    <id column="BOX_ID" property="boxId" jdbcType="DECIMAL" />
+    <result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <result column="OWNER_NAME" property="ownerName" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="STYLE_NO" property="styleNo" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="QTY" property="qty" jdbcType="DECIMAL" />
+    <result column="DIVIDE_QTY" property="divideQty" jdbcType="DECIMAL" />
+    <result column="UNIT_COST" property="unitCost" jdbcType="DECIMAL" />
+    <result column="supplierNo" property="supplierNo" jdbcType="VARCHAR" />
+     <result column="IMPORT_NO" property="importNo" jdbcType="VARCHAR" />
+     <result column="BRAND_NO" property="brandNo" jdbcType="VARCHAR" />
+     <result column="ADD_FLAG" property="addFlag" jdbcType="VARCHAR" />
+     <result column="quality" property="quality" jdbcType="VARCHAR" />
+     <result column="item_type" property="itemType" jdbcType="VARCHAR" />
+     <result column="item_name" property="itemName" jdbcType="VARCHAR" />
+     <result column="cell_no" property="cellNo" jdbcType="VARCHAR" />
+     <result column="pan_no" property="panNo" jdbcType="VARCHAR" />
+     <result column="barcode" property="barcode" jdbcType="VARCHAR" />
+     <result column="sys_no" property="sysNo" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, BOX_NO, BOX_ID, OWNER_NO, ITEM_NO, STYLE_NO, SIZE_NO, QTY, UNIT_COST,IMPORT_NO,DIVIDE_QTY
+  </sql>
+  <sql id="Extend_dtl_Column_List" >
+    LOCNO, BOX_NO, BOX_ID, OWNER_NO, ITEM_NO, STYLE_NO, SIZE_NO, QTY, UNIT_COST, IMPORT_NO, DIVIDE_QTY,
+    item_type,quality,barcode,item_name,brand_no,cell_no,pan_no
+  </sql>
+  <sql id="Extend_Base_Column_List" >
+    d.LOCNO, d.BOX_NO, d.BOX_ID, d.OWNER_NO, d.ITEM_NO, d.STYLE_NO, d.SIZE_NO, d.QTY, d.UNIT_COST,d.IMPORT_NO,i.brand_no
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.boxNo and ''!=params.boxNo" >
+        and BOX_NO=#{params.boxNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+        and LOCNO=#{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.barcode and ''!=params.barcode" >
+        and barcode=#{params.barcode,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.panNo and ''!=params.panNo" >
+        and pan_no=#{params.panNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.cellNo and ''!=params.cellNo" >
+        and cell_no=#{params.cellNo,jdbcType=VARCHAR}
+      </if>
+       <if test="null!=params.itemType and ''!=params.itemType" >
+        and item_type=#{params.itemType,jdbcType=VARCHAR}
+      </if>
+       <if test="null!=params.quality and ''!=params.quality" >
+        and quality=#{params.quality,jdbcType=VARCHAR}
+      </if>
+       <if test="null!=params.itemName and ''!=params.itemName" >
+        and item_name=#{params.itemName,jdbcType=VARCHAR}
+      </if>
+       <if test="null!=params.itemNo and ''!=params.itemNo" >
+        and item_no=#{params.itemNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.brandNo and ''!=params.brandNo" >
+        and BRAND_NO=#{params.brandNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.sysNo and ''!=params.sysNo" >
+		AND sys_no=#{params.sysNo,jdbcType=VARCHAR}
+	  </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.ConBoxDtlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from CON_BOX_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and BOX_NO = #{boxNo,jdbcType=VARCHAR}
+      and BOX_ID = #{boxId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from  <include refid="selectBoxDtl" /> where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Extend_dtl_Column_List" />
+     from <include refid="selectBoxDtl" /> where 1=1 
+    <include refid="condition" />
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map" >
+    select sum(qty) as qty from  <include refid="selectBoxDtl" /> where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <sql id="selectBoxDtl">
+		(select dtl.LOCNO, dtl.BOX_NO, dtl.BOX_ID, dtl.OWNER_NO,
+	      dtl.ITEM_NO, dtl.STYLE_NO, dtl.SIZE_NO, dtl.QTY, dtl.UNIT_COST,t.pan_no,
+	      dtl.IMPORT_NO, dtl.DIVIDE_QTY,t.cell_no,t.item_type,t.quality,ib.barcode,i.item_name,i.brand_no,i.sys_no
+	    from CON_BOX_DTL dtl inner join con_box t
+	    on dtl.locno=t.locno and dtl.box_no=t.box_no
+	    inner join item_barcode ib on dtl.item_no=ib.item_no and dtl.size_no=ib.size_no and ib.package_id=0
+	    inner join item i on i.item_no=dtl.item_no
+	    where 1 = 1
+	    <include refid="iAuthorityCondition" />
+	    and t.LOCNO=#{params.locno,jdbcType=VARCHAR}
+	    and t.owner_no='BL'
+	    and t.status='2'
+	    order by t.creat_date DESC)
+  </sql>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from CON_BOX_DTL where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="findByParam" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Extend_Base_Column_List" />
+     from CON_BOX_DTL d left join item i on d.item_no=i.item_no where 1=1 
+     <if test="null!=boxNo and ''!=boxNo" >
+        and d.BOX_NO=#{boxNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=locno and ''!=locno" >
+        and d.LOCNO=#{locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=ownerNo and ''!=ownerNo" >
+        and d.OWNER_NO=#{ownerNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=isQty and ''!=isQty" >
+        and d.qty > 0
+      </if>
+  </select>
+   <!--权限过滤查询条件-->
+  <sql id="iAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and i.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+    <!--  查询箱子下面的商品编码信息 -->
+  <select id="countItemAndSize" resultType="java.lang.Integer" >
+     select count(1) as s from(
+			  select cd.box_no,cd.locno,cd.owner_no, sum(nvl(cd.qty,0)) as qty  
+	           from  con_box_dtl  cd,con_box m ,item i,bm_defowner bm
+	           where 1=1
+	        	and m.locno= cd.locno
+	      		and m.owner_no = cd.owner_no
+				and m.box_no = cd.box_no
+	        	and i.item_no = cd.item_no
+	        	and bm.owner_no  = cd.owner_no
+				and (cd.import_no is null or cd.import_no = '')
+				and m.status = '0'
+			    <if test="null!=params" >
+				      <if test="null!=params.locno and ''!=params.locno" >
+				            AND cd.locno=#{params.locno,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+				            AND cd.owner_no=#{params.ownerNo,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.sysNo and ''!=params.sysNo" >
+				            AND i.sys_no=#{params.sysNo,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.supplierNo and ''!=params.supplierNo" >
+				            AND i.supplier_no=#{params.supplierNo,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.boxNo and ''!=params.boxNo" >
+				            AND cd.box_no=#{params.boxNo,jdbcType=VARCHAR}
+				      </if>
+			    </if>	
+			    <include refid="iAuthorityCondition" />
+			    group by cd.box_no,cd.locno,cd.owner_no,bm.owner_name
+			)
+  </select>
+  
+  <!-- 查询箱子下面的商品编码信息（带分页） -->
+  <select id="findCnBoxAndNumPage" resultMap="BaseResultMap" >
+		select B.* from (select A.*,rownum rn from(  
+	           select cd.box_no,cd.locno,cd.owner_no,bm.owner_name,sum(nvl(cd.qty,0)) as qty  
+	           from   con_box_dtl  cd,con_box m ,item i,bm_defowner bm
+	           where 1=1
+	        	and m.locno= cd.locno
+	      		and m.owner_no = cd.owner_no
+				and m.box_no = cd.box_no
+	        	and i.item_no = cd.item_no
+	        	and bm.owner_no  = cd.owner_no
+				and (cd.import_no is null or cd.import_no = '')
+				and m.status = '0'
+			    <if test="null!=params" >
+				      <if test="null!=params.locno and ''!=params.locno" >
+				            AND cd.locno=#{params.locno,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+				            AND cd.owner_no=#{params.ownerNo,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.sysNo and ''!=params.sysNo" >
+				            AND i.sys_no=#{params.sysNo,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.supplierNo and ''!=params.supplierNo" >
+				            AND i.supplier_no=#{params.supplierNo,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.boxNo and ''!=params.boxNo" >
+				            AND cd.box_no=#{params.boxNo,jdbcType=VARCHAR}
+				      </if>
+			    </if>	
+			    <include refid="iAuthorityCondition" />
+			    group by cd.box_no,cd.locno,cd.owner_no,bm.owner_name
+			    order by cd.box_no desc
+        ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}	
+  </select>
+  
+   
+  <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and i.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+    <!--  店退仓查询箱子下商品信息 -->
+  <select id="selectItem4umuntreadCount" resultType="java.lang.Integer" >
+     select count(1) as s from(
+			    
+	           select cd.box_no,cd.locno,sum(nvl(cd.qty,0)) as qty  
+	           from   con_box_dtl  cd inner join item i on i.item_no = cd.item_no
+	           where cd.box_no in(select distinct dd.box_no from con_box dd,con_box_dtl d where 1=1
+	           and dd.locno = d.locno and dd.owner_no = d.owner_no and dd.box_no = d.box_no  and dd.status='0'
+			    <if test="null!=params" >
+				      <if test="null!=params.locno and ''!=params.locno" >
+				            AND dd.locno=#{params.locno,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+				            AND dd.owner_no=#{params.ownerNo,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.itemNo and ''!=params.itemNo" >
+				            AND d.item_no=#{params.itemNo,jdbcType=VARCHAR}
+				      </if>
+				       <if test="null!=params.boxNo and ''!=params.boxNo" >
+				            AND dd.box_no=#{params.boxNo,jdbcType=VARCHAR}
+				      </if>
+			    </if>)
+			     <include refid="AuthorityCondition" />
+			    group by cd.box_no,cd.locno,cd.owner_no
+			    order by cd.box_no desc
+			) A where 1 = 1 and qty > 0
+  </select>
+  
+ 
+  
+  <select id="selectItem4umuntread" resultMap="BaseResultMap" >
+		select B.* from (select A.*,rownum rn from(  
+	           select cd.box_no,cd.locno,sum(nvl(cd.qty,0)) as qty  
+	           from   con_box_dtl  cd  inner join item i on i.item_no = cd.item_no
+	           where cd.box_no in(select distinct dd.box_no from con_box dd,con_box_dtl d where 1=1
+	           and dd.locno = d.locno and dd.owner_no = d.owner_no and dd.box_no = d.box_no  and dd.status='0'
+			    <if test="null!=params" >
+				      <if test="null!=params.locno and ''!=params.locno" >
+				            AND dd.locno=#{params.locno,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+				            AND dd.owner_no=#{params.ownerNo,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.itemNo and ''!=params.itemNo" >
+				            AND d.item_no=#{params.itemNo,jdbcType=VARCHAR}
+				      </if>
+				       <if test="null!=params.boxNo and ''!=params.boxNo" >
+				            AND dd.box_no=#{params.boxNo,jdbcType=VARCHAR}
+				      </if>
+			    </if>) 
+			     <include refid="AuthorityCondition" />
+			    group by cd.box_no,cd.locno,cd.owner_no
+			    order by cd.box_no desc
+        ) A where 1 = 1 and qty > 0
+         and rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}	
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.ConBoxDtlKey" >
+    delete from CON_BOX_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and BOX_NO = #{boxNo,jdbcType=VARCHAR}
+      and BOX_ID = #{boxId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.ConBoxDtl" >
+    delete from CON_BOX_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and BOX_NO = #{boxNo,jdbcType=VARCHAR}
+      and BOX_ID = #{boxId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.ConBoxDtl" >
+    insert into CON_BOX_DTL (LOCNO, BOX_NO, BOX_ID, 
+      OWNER_NO, ITEM_NO, STYLE_NO, 
+      SIZE_NO, QTY, ADD_FLAG, UNIT_COST
+      )
+    values (#{locno,jdbcType=VARCHAR}, #{boxNo,jdbcType=VARCHAR}, #{boxId,jdbcType=DECIMAL}, 
+      #{ownerNo,jdbcType=VARCHAR}, #{itemNo,jdbcType=VARCHAR}, #{styleNo,jdbcType=VARCHAR}, 
+      #{sizeNo,jdbcType=VARCHAR}, #{qty,jdbcType=DECIMAL}, #{addFlag,jdbcType=VARCHAR}, #{unitCost,jdbcType=DECIMAL}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.ConBoxDtl" >
+    insert into CON_BOX_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO,
+      </if>
+      <if test="boxId != null" >
+        BOX_ID,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="styleNo != null" >
+        STYLE_NO,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="qty != null" >
+        QTY,
+      </if>
+      <if test="addFlag != null" >
+        ADD_FLAG,
+      </if>
+      <if test="unitCost != null" >
+        UNIT_COST,
+      </if>
+      <if test="divideQty != null" >
+        DIVIDE_QTY,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="boxNo != null" >
+        #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="boxId != null" >
+        #{boxId,jdbcType=DECIMAL},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="styleNo != null" >
+        #{styleNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="qty != null" >
+        #{qty,jdbcType=DECIMAL},
+      </if>
+      <if test="addFlag != null" >
+        #{addFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="unitCost != null" >
+        #{unitCost,jdbcType=DECIMAL},
+      </if>
+      <if test="divideQty != null" >
+        #{divideQty,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.ConBoxDtl" >
+    update CON_BOX_DTL
+    <set >
+      <if test="ownerNo != null" >
+        OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="styleNo != null" >
+        STYLE_NO = #{styleNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="qty != null" >
+        QTY = #{qty,jdbcType=DECIMAL},
+      </if>
+      <if test="unitCost != null" >
+        UNIT_COST = #{unitCost,jdbcType=DECIMAL},
+      </if>
+      <if test="importNo != null" >
+        IMPORT_NO = #{importNo,jdbcType=VARCHAR},
+      </if>
+      <if test="divideQty != null" >
+        DIVIDE_QTY = #{divideQty,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+       <if test="boxNo != null" >
+      	and BOX_NO = #{boxNo,jdbcType=VARCHAR}
+       </if>
+       <if test="boxId != null" >
+      	and BOX_ID = #{boxId,jdbcType=DECIMAL}
+       </if>
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.ConBoxDtl" >
+    update CON_BOX_DTL
+    set OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      STYLE_NO = #{styleNo,jdbcType=VARCHAR},
+      SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      QTY = #{qty,jdbcType=DECIMAL},
+      UNIT_COST = #{unitCost,jdbcType=DECIMAL},
+      IMPORT_NO = #{importNo,jdbcType=VARCHAR}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and BOX_NO = #{boxNo,jdbcType=VARCHAR}
+      and BOX_ID = #{boxId,jdbcType=DECIMAL}
+  </update>
+  
+  <!-- 查询标签明细 -->
+  <select id="selectBoxDtl4Recheck" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from CON_BOX_DTL
+    where LOCNO = #{params.locno,jdbcType=VARCHAR}
+      and BOX_NO = #{params.boxNo,jdbcType=VARCHAR}
+      and ITEM_NO = #{params.itemNo,jdbcType=VARCHAR}
+      and SIZE_NO = #{params.sizeNo,jdbcType=VARCHAR}
+      and ROWNUM = 1
+  </select>
+  
+  <delete id="deleteBoxDtl4Recheck" parameterType="map" >
+    delete from CON_BOX_DTL
+    where LOCNO = #{params.locno,jdbcType=VARCHAR}
+      and BOX_NO = #{params.boxNo,jdbcType=VARCHAR}
+      and QTY = 0
+  </delete>
+  
+  <!--查询最大的rowId-->
+  <select id="selectMaxBoxId" resultType="java.lang.Integer"  parameterType="com.yougou.logistics.city.common.model.ConBoxDtl">
+    select nvl(max(BOX_ID),0) as s from CON_BOX_DTL 
+      where LOCNO = #{locno,jdbcType=VARCHAR}
+        and BOX_NO = #{boxNo,jdbcType=VARCHAR}
+  </select>
+  
+</mapper>

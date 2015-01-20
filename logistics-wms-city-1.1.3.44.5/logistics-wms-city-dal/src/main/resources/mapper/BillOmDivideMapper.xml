@@ -1,0 +1,793 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BillOmDivideMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillOmDivide" >
+    <id column="DIVIDE_NO" property="divideNo" jdbcType="VARCHAR" />
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <result column="OPERATE_DATE" property="operateDate" jdbcType="TIMESTAMP" />
+    <result column="DIVIDE_TYPE" property="divideType" jdbcType="VARCHAR" />
+    <result column="BATCH_NO" property="batchNo" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATORNAME" property="creatorname" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="EDITORNAME" property="editorname" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="EXP_DATE" property="expDate" jdbcType="TIMESTAMP" />
+    <result column="AUDITOR" property="auditor" jdbcType="VARCHAR" />
+    <result column="AUDITORNAME" property="auditorname" jdbcType="VARCHAR" />
+    <result column="AUDITTM" property="audittm" jdbcType="TIMESTAMP" />
+    <result column="BUSINESS_TYPE" property="businessType" jdbcType="VARCHAR" />
+    <result column="locnoStr" property="locnoStr" jdbcType="TIMESTAMP" />
+    <result column="assignNames" property="assignNames" jdbcType="VARCHAR" />
+    <result column="startCreatetm" property="startCreatetm" jdbcType="TIMESTAMP" />
+    <result column="endCreatetm" property="endCreatetm" jdbcType="TIMESTAMP" />
+    <result column="startAudittm" property="startAudittm" jdbcType="TIMESTAMP" />
+    <result column="endAudittm" property="endAudittm" jdbcType="TIMESTAMP" />
+    <result column="startExpDate" property="startExpDate" jdbcType="TIMESTAMP" />
+    <result column="endExpDate" property="endExpDate" jdbcType="TIMESTAMP" />
+    <result column="ownerNo" property="ownerNo" jdbcType="VARCHAR" />
+    <result column="userid" property="userid" jdbcType="DECIMAL" />
+    <result column="boxTatalCount" property="boxTatalCount" jdbcType="DECIMAL" />
+    <result column="itemTotalCount" property="itemTotalCount" jdbcType="DECIMAL" />
+    <result column="store_name" property="storeName" jdbcType="VARCHAR" />
+    <result column="store_no" property="storeNo" jdbcType="VARCHAR" />
+    <result column="ASSIGN_NAME" property="assignName" jdbcType="VARCHAR" />
+    <result column="ASSIGN_NAME_CH" property="assignNameCh" jdbcType="VARCHAR" />
+    <result column="brandNo" property="brandNo" jdbcType="VARCHAR" />
+    <result column="ownerName" property="ownerName" jdbcType="VARCHAR" />
+    <result column="rule_name" property="ruleName" jdbcType="VARCHAR" />
+    <!-- 
+    <collection property="listBillOmDivideDtlDto" javaType="ArrayList" column="DIVIDE_NO" 
+    ofType="com.yougou.logistics.city.common.dto.bill.BillOmDivideDtlDto" select="selectBillOmDivideDtl"/>
+    -->
+    
+  </resultMap>
+  
+  <resultMap id="BaseResultMap2" type="com.yougou.logistics.city.common.dto.bill.BillOmDivideDtlDto" >
+  	<result column="DIVIDE_NO" property="divideNo" jdbcType="VARCHAR" />
+  	<result column="ASSIGN_NAME" property="assignName" jdbcType="VARCHAR" />
+	<result column="DIVIDE_NAME" property="divideName" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="StoreResultMap" type="com.yougou.logistics.city.common.model.Store" >
+    <id column="STORE_NO" property="storeNo" jdbcType="VARCHAR" />
+    <result column="STORE_NAME" property="storeName" jdbcType="VARCHAR" />
+  </resultMap>
+   <resultMap id="DtlResultMap" type="com.yougou.logistics.city.common.model.BillOmDivideDtl" >
+	    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+	    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+	    <id column="DIVIDE_NO" property="divideNo" jdbcType="VARCHAR" />
+	    <id column="DIVIDE_ID" property="divideId" jdbcType="DECIMAL" />
+	    <result column="PACK_QTY" property="packQty" jdbcType="DECIMAL" />
+	    <result column="EXP_NO" property="expNo" jdbcType="VARCHAR" />
+	    <result column="EXP_TYPE" property="expType" jdbcType="VARCHAR" />
+	    <result column="LINE_NO" property="lineNo" jdbcType="VARCHAR" />
+	    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+	    <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+	    <result column="ITEM_QTY" property="itemQty" jdbcType="DECIMAL" />
+	    <result column="REAL_QTY" property="realQty" jdbcType="DECIMAL" />
+	    <result column="BOX_NO" property="boxNo" jdbcType="VARCHAR" />
+	    <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+	    <result column="STYLE_NO" property="styleNo" jdbcType="VARCHAR" />
+	    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+	    <result column="COLOR_NO" property="colorNo" jdbcType="VARCHAR" />
+	    <result column="COLOR_NAME" property="colorName" jdbcType="VARCHAR" />
+	    <result column="PO_NO" property="poNo" jdbcType="VARCHAR" />
+	    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+	    <result column="DIFF_QTY" property="diffQty" jdbcType="DECIMAL" />
+	    <result column="ownerName" property="ownerName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    bill.DIVIDE_NO, bill.LOCNO, bill.OPERATE_DATE, bill.DIVIDE_TYPE, bill.BATCH_NO, bill.STATUS,
+    bill.CREATOR,bill.CREATORNAME, bill.CREATETM, bill.EDITOR,bill.EDITORNAME, EDITTM, bill.EXP_DATE, bill.AUDITOR,bill.AUDITORNAME, bill.AUDITTM,
+    bill.BUSINESS_TYPE
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+            and bill.LOCNO=#{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.status and ''!=params.status" >
+            and bill.STATUS=#{params.status,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.divideNo and ''!=params.divideNo" >
+            and bill.DIVIDE_NO LIKE '%${params.divideNo}%'
+      </if>
+      <if test="null!=params.creator and ''!=params.creator" >
+            and bill.CREATOR LIKE '%${params.creator}%'
+      </if>
+      <if test="null!=params.auditor and ''!=params.auditor" >
+            and bill.AUDITOR LIKE '%${params.auditor}%'
+      </if>
+      <if test="null!=params.startCreatetm and ''!=params.startCreatetm" >
+       <![CDATA[
+        and bill.CREATETM >= to_date('${params.startCreatetm} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+     	]]>	 
+      </if>
+      <if test="null!=params.endCreatetm and ''!=params.endCreatetm" >
+       <![CDATA[
+        and bill.CREATETM <= to_date('${params.endCreatetm} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+     	]]>	 
+      </if>
+      <if test="null!=params.startAudittm and ''!=params.startAudittm" >
+       <![CDATA[
+        and bill.AUDITTM >= to_date('${params.startAudittm} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+     	]]>	 
+      </if>
+      <if test="null!=params.endAudittm and ''!=params.endAudittm" >
+       <![CDATA[
+        and bill.AUDITTM <= to_date('${params.endAudittm} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+     	]]>	 
+      </if>
+      <if test="null!=params.startExpDate and ''!=params.startExpDate" >
+       <![CDATA[
+        and bill.EXP_DATE >= to_date('${params.startExpDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+     	]]>	 
+      </if>
+      <if test="null!=params.endExpDate and ''!=params.endExpDate" >
+       <![CDATA[
+        and bill.EXP_DATE <= to_date('${params.endExpDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+     	]]>	 
+      </if>
+      <!-- 
+      <if test="null!=params.startCreatetm and ''!=params.startCreatetm and null!=params.endCreatetm and ''!=params.endCreatetm" >
+            and to_char(params.startCreatetm,'YYYY-MM-DD')&gt;=CREATETM and to_char(params.endCreatetm,'YYYY-MM-DD')&lt;=CREATETM 
+      </if>
+      <if test="null!=params.startAudittm and ''!=params.startAudittm and null!=params.endAudittm and ''!=params.endAudittm" >
+            and to_char(params.startAudittm,'YYYY-MM-DD')&gt;=AUDITTM and to_char(params.endAudittm,'YYYY-MM-DD')&lt;=AUDITTM
+      </if>
+      <if test="null!=params.startExpDate and ''!=params.startExpDate and null!=params.endExpDate and ''!=params.endExpDate" >
+            and to_char(params.startExpDate,'YYYY-MM-DD')&gt;=EXP_DATE and to_char(params.endExpDate,'YYYY-MM-DD')&lt;=EXP_DATE
+      </if>
+       -->
+    </if>
+  </sql>
+  
+  <select id="selectBillOmDivideDtl" parameterType="String" resultMap="BaseResultMap2">
+  	SELECT ASSIGN_NAME FROM BILL_OM_DIVIDE_DTL WHERE DIVIDE_NO = #{divideNo} group by ASSIGN_NAME
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillOmDivideKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_OM_DIVIDE bill
+    where DIVIDE_NO = #{divideNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+  </select>
+  
+  <!--权限过滤左连接子查询-->
+  <sql id="selectByPageAuthorityLeftJoin" >
+   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+            left join (select locno, owner_no, divide_no
+                         from BILL_OM_DIVIDE_DTL                         
+                        where brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+                        and LOCNO=#{params.locno,jdbcType=VARCHAR}
+                         group by locno, owner_no, divide_no
+                        ) sub1
+              on sub1.locno = bill.locno
+             and sub1.divide_no = bill.divide_no
+                          
+             left join (select locno, owner_no, divide_no
+                         from BILL_OM_DIVIDE_DTL  
+                         where LOCNO=#{params.locno,jdbcType=VARCHAR}   
+                          group by locno, owner_no, divide_no                    
+                        ) sub2
+              on sub2.locno = bill.locno
+             and sub2.divide_no = bill.divide_no
+    </if>
+  </sql>
+
+  <!--权限过滤查询条件-->
+  <sql id="selectByPageAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and (sub1.divide_no is not null or sub2.divide_no is null)
+    </if>
+  </sql>
+  
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_OM_DIVIDE bill
+	<include refid="selectByPageAuthorityLeftJoin" />
+     inner join (select d.ASSIGN_NAME, d.locno, d.divide_no
+     		from BILL_OM_DIVIDE_DTL d,item it
+     		where d.item_no = it.item_no
+     		<if test="null!=params.brandNo and ''!=params.brandNo" >
+				and it.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=params.sysNo and ''!=params.sysNo" >
+				and it.SYS_NO = #{params.sysNo,jdbcType=VARCHAR}
+			</if>
+     		group by d.ASSIGN_NAME, d.locno, d.divide_no) dtl
+    	on dtl.locno = bill.locno
+        and dtl.divide_no = bill.divide_no
+        left join (select distinct divide_no,rule_no from bill_store_group) bsg
+			    on bsg.divide_no = bill.divide_no
+			 inner join (select distinct locno,rule_no,rule_name from bill_store_rule ) bsr
+			    on bsr.rule_no = bsg.rule_no
+			    and bsr.locno = bill.locno
+    where 1=1 
+    <include refid="condition" />
+    <include refid="selectByPageAuthorityCondition" />
+    <if test="(null!=params.expNo and ''!=params.expNo) || (null!=params.receiptNo and ''!=params.receiptNo)" >
+         	AND EXISTS
+         		(select bod.DIVIDE_NO
+                  from BILL_OM_DIVIDE bod, BILL_OM_DIVIDE_DTL boddtl
+                 where bod.DIVIDE_NO = boddtl.DIVIDE_NO
+                   and bod.locno = boddtl.locno
+                   <if test="null!=params.locno and ''!=params.locno" >
+           		   	and bod.LOCNO=#{params.locno,jdbcType=VARCHAR}
+      			   </if>
+                   <if test="null!=params.expNo and ''!=params.expNo" >
+                    and boddtl.EXP_NO LIKE '%${params.expNo}%'
+                   </if>
+                   <if test="null!=params.receiptNo and ''!=params.receiptNo" >
+                    and boddtl.source_no LIKE '%${params.receiptNo}%'
+                   </if>
+                   and bod.divide_no = bill.DIVIDE_NO
+                   and bod.locno = bill.locno
+                 group by bod.DIVIDE_NO)
+  	</if>
+  </select>
+  
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from(
+		select dtl.assign_name,dtl.assign_name_ch,
+	     <include refid="Base_Column_List" />,
+	     (select ld.ITEMNAME from LOOKUPDTL ld where bill.status = ld.itemval and ld.lookupcode = 'CITY_DIVIDE_STATUS' and rownum = 1) as statusStr,
+	     (select ld.ITEMNAME from LOOKUPDTL ld where bill.business_type = ld.itemval and ld.lookupcode = 'CITY_IM_RECEIPT_BUSINESS_TYPE' and rownum = 1) as businessTypeStr,
+	     bsr.rule_name
+	     from BILL_OM_DIVIDE bill
+	     <include refid="selectByPageAuthorityLeftJoin" />
+	     inner join (select d.ASSIGN_NAME,MAX(d.ASSIGN_NAME_CH) ASSIGN_NAME_CH, d.locno, d.divide_no
+	     		from BILL_OM_DIVIDE_DTL d ,item it
+	     		where d.item_no = it.item_no
+	     		<if test="null!=params.brandNo and ''!=params.brandNo" >
+					and it.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+				</if>
+				<if test="null!=params.sysNo and ''!=params.sysNo" >
+					and it.SYS_NO = #{params.sysNo,jdbcType=VARCHAR}
+				</if>
+	     		group by d.ASSIGN_NAME, d.locno, d.divide_no) dtl
+	     	on dtl.locno = bill.locno
+	        and dtl.divide_no = bill.divide_no
+	        left join (select distinct divide_no,rule_no from bill_store_group) bsg
+			    on bsg.divide_no = bill.divide_no
+			 inner join (select distinct locno,rule_no,rule_name from bill_store_rule) bsr
+			    on bsr.rule_no = bsg.rule_no
+			    and bsr.locno = bill.locno
+	     where 1=1 
+	     <include refid="condition" />
+	     <include refid="selectByPageAuthorityCondition" />
+	     <if test="(null!=params.expNo and ''!=params.expNo) || (null!=params.receiptNo and ''!=params.receiptNo)" >
+         	AND EXISTS
+         		(select bod.DIVIDE_NO
+                  from BILL_OM_DIVIDE bod, BILL_OM_DIVIDE_DTL boddtl
+                 where bod.DIVIDE_NO = boddtl.DIVIDE_NO
+                   and bod.locno = boddtl.locno
+                   <if test="null!=params.locno and ''!=params.locno" >
+           		   	and bod.LOCNO=#{params.locno,jdbcType=VARCHAR}
+      			   </if>
+                   <if test="null!=params.expNo and ''!=params.expNo" >
+                    and boddtl.EXP_NO LIKE '%${params.expNo}%'
+                   </if>
+                   <if test="null!=params.receiptNo and ''!=params.receiptNo" >
+                    and boddtl.source_no LIKE '%${params.receiptNo}%'
+                   </if>
+                   and bod.divide_no = bill.DIVIDE_NO
+                   and bod.locno = bill.locno
+                 group by bod.DIVIDE_NO)
+	     </if>
+	     <choose>
+		    <when test="orderByField != null and ''!=orderByField">
+				order by ${orderByField}
+				<if test="orderByField">
+				${orderBy}
+				</if>
+			</when>
+			<otherwise>
+				order by bill.CREATETM desc,bill.DIVIDE_NO desc
+			</otherwise>
+	     </choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <!--权限过滤查询条件-->
+  <sql id="selectDivideAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and t2.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+    <select id="selectDivideCollectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from(
+    	select ttt.*,t3.exp_date from (
+	     	select tt.divide_no, count(tt.box_no) as boxTatalCount, sum(tt.qty) as itemTotalCount,tt.locno,tt.status,tt.createtm,
+	     	 (select ld.ITEMNAME from LOOKUPDTL ld where tt.status = ld.itemval and ld.lookupcode = 'CITY_DIVIDE_STATUS' and rownum = 1) as statusStr
+			  from (select t1.divide_no, t1.locno, t2.box_no, sum(t2.item_qty) as qty,t1.status,t1.createtm
+			          from bill_om_divide t1, bill_om_divide_dtl t2
+			         where t2.locno = t1.locno
+			           and t2.divide_no = t1.divide_no
+			           and (t1.status = '10' or t1.status = '40')
+				<if test="null!=params.startDivideDate and ''!=params.startDivideDate" >
+			       <![CDATA[
+			        and t1.OPERATE_DATE >= to_date('${params.startDivideDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+			     	]]>	 
+			    </if>
+			    <if test="null!=params.endDivideDate and ''!=params.endDivideDate" >
+			       <![CDATA[
+			        and t1.OPERATE_DATE <= to_date('${params.endDivideDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			     	]]>	 
+			    </if>
+			      <if test="null!=params.boxNo and ''!=params.boxNo" >
+			             and t2.box_no=#{params.boxNo,jdbcType=VARCHAR}
+			      </if>
+			       <if test="null!=params.itemNo and ''!=params.itemNo" >
+			             and t2.item_no=#{params.itemNo,jdbcType=VARCHAR}
+			      </if>
+			      <if test="null!=params.locno and ''!=params.locno" >
+			             and t1.locno=#{params.locno,jdbcType=VARCHAR}
+			      </if>
+			      <include refid="selectDivideAuthorityCondition" />
+				  group by t1.locno, t1.divide_no, t2.box_no,t1.status,t1.createtm) tt
+			 group by tt.divide_no, tt.locno,tt.status,tt.createtm) ttt,
+		 bill_om_divide t3
+		 where ttt.divide_no=t3.divide_no and ttt.locno=t3.locno
+		 order by ttt.createtm desc
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectDivideCollectCount" resultType="java.lang.Integer" >
+    select count(1) from(
+     	select tt.divide_no, count(tt.box_no) as boxTatalCount, sum(tt.qty) as itemTotalCount, tt.locno,tt.status,tt.createtm,
+		  (select ld.ITEMNAME from LOOKUPDTL ld where tt.status = ld.itemval and ld.lookupcode = 'CITY_DIVIDE_STATUS' and rownum = 1) as statusStr
+		  from (select t1.divide_no, t1.locno, t2.box_no, sum(t2.item_qty) as qty,t1.status,t1.createtm
+		          from bill_om_divide t1, bill_om_divide_dtl t2
+		         where t2.locno = t1.locno
+		           and t2.divide_no = t1.divide_no
+		           and (t1.status = '10' or t1.status = '40')
+		     	<if test="null!=params.startDivideDate and ''!=params.startDivideDate" >
+			       <![CDATA[
+			        and t1.OPERATE_DATE >= to_date('${params.startDivideDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+			     	]]>	 
+			    </if>
+			    <if test="null!=params.endDivideDate and ''!=params.endDivideDate" >
+			       <![CDATA[
+			        and t1.OPERATE_DATE <= to_date('${params.endDivideDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			     	]]>	 
+			    </if>
+		      <if test="null!=params.boxNo and ''!=params.boxNo" >
+		             and t2.box_no=#{params.boxNo,jdbcType=VARCHAR}
+		      </if>
+		       <if test="null!=params.itemNo and ''!=params.itemNo" >
+		             and t2.item_no=#{params.itemNo,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.locno and ''!=params.locno" >
+			         and t1.locno=#{params.locno,jdbcType=VARCHAR}
+			  </if>
+			  <include refid="selectDivideAuthorityCondition" />
+		      group by t1.locno, t1.divide_no, t2.box_no,t1.status,t1.createtm) tt
+		 	  group by tt.divide_no, tt.locno,tt.status,tt.createtm
+		 	  order by tt.createtm desc
+    ) ttt
+  </select>
+   <select id="selectStoreByParam" resultMap="StoreResultMap" parameterType="map" >
+    select tt.*, st.store_name
+	  from (select distinct t1.locno, t1.divide_no, t2.store_no
+	          from bill_om_divide t1, bill_om_divide_dtl t2
+	          where t1.locno = t2.locno
+	          and t1.divide_no = t2.divide_no
+	          and t2.ITEM_QTY > NVL(t2.REAL_QTY,0)
+	          <if test="null!=params.divideNo and ''!=params.divideNo" >
+		             and t1.divide_no =#{params.divideNo,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.locno and ''!=params.locno" >
+		             and t1.locno=#{params.locno,jdbcType=VARCHAR}
+		      </if>
+		      <if test="params.selectType==1" >
+		      	and t2.store_no not in
+            	(select bor.STORE_NO from bill_om_recheck bor where bor.locno=t1.locno and bor.divide_no=t1.divide_no and bor.status='10')
+		      </if>
+		      <include refid="selectDivideAuthorityCondition" />
+	           ) tt,
+	       store st
+	 where st.store_no = tt.store_no
+  </select>
+  
+  
+  <select id="queryRecheckBoxItem" resultMap="DtlResultMap" parameterType="map" >
+	    <include refid="sqlQueryDivideItem" />
+  </select>
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_OM_DIVIDE  bill where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillOmDivideKey" >
+    delete from BILL_OM_DIVIDE
+    where DIVIDE_NO = #{divideNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillOmDivide" >
+    delete from BILL_OM_DIVIDE
+    where DIVIDE_NO = #{divideNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillOmDivide" >
+    insert into BILL_OM_DIVIDE (DIVIDE_NO, LOCNO, OPERATE_DATE, 
+      DIVIDE_TYPE, BATCH_NO, STATUS, 
+      CREATOR,CREATORNAME, CREATETM, EDITOR,EDITORNAME, 
+      EDITTM, EXP_DATE, AUDITOR,AUDITORNAME, 
+      AUDITTM)
+    values (#{divideNo,jdbcType=VARCHAR}, #{locno,jdbcType=VARCHAR}, #{operateDate,jdbcType=TIMESTAMP}, 
+      #{divideType,jdbcType=VARCHAR}, #{batchNo,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{creator,jdbcType=VARCHAR},#{creatorname,jdbcType=VARCHAR}, #{createtm,jdbcType=TIMESTAMP}, #{editor,jdbcType=VARCHAR}, #{editorname,jdbcType=VARCHAR},
+      #{edittm,jdbcType=TIMESTAMP}, #{expDate,jdbcType=TIMESTAMP}, #{auditor,jdbcType=VARCHAR}, #{auditorname,jdbcType=VARCHAR}, 
+      #{audittm,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillOmDivide" >
+    insert into BILL_OM_DIVIDE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="divideNo != null" >
+        DIVIDE_NO,
+      </if>
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="operateDate != null" >
+        OPERATE_DATE,
+      </if>
+      <if test="divideType != null" >
+        DIVIDE_TYPE,
+      </if>
+      <if test="batchNo != null" >
+        BATCH_NO,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="creatorname != null" >
+        CREATORNAME,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="editorname != null" >
+        EDITORNAME,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="expDate != null" >
+        EXP_DATE,
+      </if>
+      <if test="auditor != null" >
+        AUDITOR,
+      </if>
+      <if test="auditorname != null" >
+        AUDITORNAME,
+      </if>
+      <if test="audittm != null" >
+        AUDITTM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="divideNo != null" >
+        #{divideNo,jdbcType=VARCHAR},
+      </if>
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="operateDate != null" >
+        #{operateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="divideType != null" >
+        #{divideType,jdbcType=VARCHAR},
+      </if>
+      <if test="batchNo != null" >
+        #{batchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorname != null" >
+        #{creatorname,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorname != null" >
+        #{editorname,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expDate != null" >
+        #{expDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditor != null" >
+        #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorname != null" >
+        #{auditorname,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        #{audittm,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillOmDivide" >
+    update BILL_OM_DIVIDE
+    <set >
+      <if test="operateDate != null" >
+        OPERATE_DATE = #{operateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="divideType != null" >
+        DIVIDE_TYPE = #{divideType,jdbcType=VARCHAR},
+      </if>
+      <if test="batchNo != null" >
+        BATCH_NO = #{batchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorname != null" >
+        CREATORNAME = #{creatorname,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorname != null" >
+        EDITORNAME = #{editorname,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expDate != null" >
+        EXP_DATE = #{expDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditor != null" >
+        AUDITOR = #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorname != null" >
+        AUDITORNAME = #{auditorname,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where DIVIDE_NO = #{divideNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillOmDivide" >
+    update BILL_OM_DIVIDE
+    set OPERATE_DATE = #{operateDate,jdbcType=TIMESTAMP},
+      DIVIDE_TYPE = #{divideType,jdbcType=VARCHAR},
+      BATCH_NO = #{batchNo,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATORNAME = #{creatorname,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITORNAME = #{editorname,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      EXP_DATE = #{expDate,jdbcType=TIMESTAMP},
+      AUDITOR = #{auditor,jdbcType=VARCHAR},
+      AUDITORNAME = #{auditorname,jdbcType=VARCHAR},
+      AUDITTM = #{audittm,jdbcType=TIMESTAMP}
+    where DIVIDE_NO = #{divideNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 创建分货任务单调用存储过程 -->
+  <select id="insertBillOmDivide" statementType="CALLABLE" parameterType="com.yougou.logistics.city.common.model.BillOmDivide" resultMap="BaseResultMap" >
+		<![CDATA[
+			{call PKG_WMS_BOX_CARGO_EXP.proc_RevertDivideBox (
+				#{locno, mode=IN, jdbcType=VARCHAR},
+				#{ownerNo, mode=IN, jdbcType=VARCHAR},
+				#{divideNoS, mode=IN, jdbcType=VARCHAR},
+				#{serialNo, mode=IN, jdbcType=VARCHAR},
+			 	#{receiptNo, mode=IN, jdbcType=VARCHAR},
+			 	#{expNo, mode=IN, jdbcType=VARCHAR},
+			 	#{ruleNo, mode=IN, jdbcType=VARCHAR},
+			 	#{flag, mode=IN, jdbcType=VARCHAR},
+			 	#{creator, mode=IN, jdbcType=VARCHAR},
+			 	#{divideNo, mode=OUT, jdbcType=VARCHAR},
+			 	#{strOutMsg, mode=OUT, jdbcType=VARCHAR}
+			 )} 
+		]]>
+  </select>
+  
+  <!-- 创建分货任务单调用存储过程(库存分货) -->
+  <select id="insertBillOmDivideBoxCC" statementType="CALLABLE" parameterType="com.yougou.logistics.city.common.model.BillOmDivide" resultMap="BaseResultMap" >
+		<![CDATA[
+			{call PKG_WMS_BOX_CARGO_EXP.proc_RevertDivideBoxCC (
+				#{locno, mode=IN, jdbcType=VARCHAR},
+				#{ownerNo, mode=IN, jdbcType=VARCHAR},
+				#{divideNoS, mode=IN, jdbcType=VARCHAR},
+				#{serialNo, mode=IN, jdbcType=VARCHAR},
+			 	#{receiptNo, mode=IN, jdbcType=VARCHAR},
+			 	#{expNo, mode=IN, jdbcType=VARCHAR},
+			 	#{ruleNo, mode=IN, jdbcType=VARCHAR},
+			 	#{flag, mode=IN, jdbcType=VARCHAR},
+			 	#{creator, mode=IN, jdbcType=VARCHAR},
+			 	#{divideNo, mode=OUT, jdbcType=VARCHAR},
+			 	#{strOutMsg, mode=OUT, jdbcType=VARCHAR}
+			 )} 
+		]]>
+  </select>
+  
+  <!-- 删除分货任务单调用存储过程 -->
+  <select id="deleteBillOmDivide" statementType="CALLABLE" parameterType="com.yougou.logistics.city.common.model.BillOmDivide" >
+		<![CDATA[
+			{call PKG_WMS_BOX_CARGO_EXP.PROC_REVERTDELETEDIVIDE (
+				#{locno, mode=IN, jdbcType=VARCHAR},
+			 	#{divideNo, mode=IN, jdbcType=VARCHAR},
+			 	#{creator, mode=IN, jdbcType=VARCHAR},
+			 	#{strOutMsg, mode=OUT, jdbcType=VARCHAR}
+			 )}
+		]]>
+  </select>
+  
+  <!-- 完结分货任务单调用存储过程 -->
+  <select id="updateCompleteBillOmDivide" statementType="CALLABLE" parameterType="com.yougou.logistics.city.common.model.BillOmDivide" >
+		<![CDATA[
+			{call PKG_IM_CITY_RECEIPT.PROC_IM_CREATECHECKDTL (
+				#{locno, mode=IN, jdbcType=VARCHAR},
+			 	#{divideNo, mode=IN, jdbcType=VARCHAR},
+			 	#{creator, mode=IN, jdbcType=VARCHAR},
+			 	#{strOutMsg, mode=OUT, jdbcType=VARCHAR}
+			 )}
+		]]>
+  </select>
+  
+   <!-- 分货单手工关闭-->
+  <select id="procOmDivideOver" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE" >
+		<![CDATA[
+			{call PKG_OM_CITY_DIVIDE.PROC_OM_OVER_DIVIDE (
+				#{I_locno, mode=IN, jdbcType=VARCHAR},
+				#{I_divideNo, mode=IN, jdbcType=VARCHAR},
+				#{I_creator, mode=IN, jdbcType=VARCHAR},
+			 	#{O_msg, mode=OUT, jdbcType=VARCHAR}
+			 )} 
+		]]>
+  </select>
+  
+  
+  <!--权限过滤查询条件-->
+  <sql id="sqlQueryDivideItemAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and dtl.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <sql id="sqlQueryDivideItem" >
+  		select 
+	    		itm.item_name,
+	    		max(itm.brand_no) as brandNo,
+	    		nvl(sum(dtl.item_qty),0) as itemQty,
+		        nvl(sum(dtl.real_qty),0) as realQty,
+		        itm.style_no,
+		        itm.color_no,
+		        ci.color_name,
+		        <!-- dtl.box_no, -->
+		        dtl.item_no,
+		        <!-- dtl.item_id, -->
+		        dtl.locno,
+		        dtl.owner_no,
+		        dtl.size_no,
+		        <!--dtl.line_no, -->
+		        dtl.exp_no,
+		        dtl.exp_type,
+		        dtl.divide_no,
+		        <!--dtl.divide_id, -->
+		        <!--dtl.box_no, -->
+		        dtl.pack_qty,        
+		        <!--dtl.status, -->
+		        ii.po_no,
+		        (select nvl(sum(ord.real_qty),0) from bill_om_recheck_dtl ord 
+	       			inner join bill_om_recheck bor on bor.locno = ord.locno and bor.recheck_no = ord.recheck_no
+	       			where bor.locno = dtl.locno 
+	       			and bor.divide_no = dtl.divide_no
+	       			and ord.item_no = dtl.item_no
+	       			and ord.size_no = dtl.size_no
+	       			and ord.container_no = 'N') as packageNoRecheckQty,
+		        (select bd.owner_name from bm_defowner bd where bd.owner_no = dtl.owner_no) as ownerName,
+		        abs(nvl(sum(dtl.ITEM_QTY),0) - nvl(sum(dtl.REAL_QTY),0)) as diffQty
+	    from bill_om_divide_dtl dtl
+	    inner join item itm on dtl.item_no = itm.item_no 
+	    left join color_info ci on ci.color_no = itm.color_no
+	    left join con_box cb on cb.locno=dtl.locno and cb.owner_no=dtl.owner_no and cb.box_no=dtl.box_no
+      	left join bill_im_import ii on ii.locno=cb.locno and ii.owner_no=cb.owner_no and ii.import_no=cb.s_import_no
+	    <!-- 
+	    where (nvl(dtl.ITEM_QTY,0) - nvl(dtl.REAL_QTY,0))!=0
+	    and dtl.status = '10'
+	     -->
+	    where 1=1
+	    <if test="null!=params.divideNo and ''!=params.divideNo" >
+		        and dtl.divide_no =#{params.divideNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.locno and ''!=params.locno" >
+		        and dtl.locno=#{params.locno,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.storeNo and ''!=params.storeNo" >
+		 		and dtl.store_no=#{params.storeNo,jdbcType=VARCHAR}
+		</if>
+		<include refid="sqlQueryDivideItemAuthorityCondition" />
+		group by 
+				itm.item_name,
+		        itm.style_no,
+		        itm.color_no,
+		        ci.color_name,
+		        <!--dtl.box_no, -->
+		        dtl.item_no,
+		        dtl.locno,
+		        dtl.owner_no,
+		        dtl.size_no,
+		        dtl.exp_no,
+		        dtl.exp_type,
+		        dtl.divide_no,
+		        dtl.pack_qty,        
+		        ii.po_no
+		order by nvl(sum(dtl.ITEM_QTY),0) - nvl(sum(dtl.REAL_QTY),0) desc
+  </sql>
+  
+  <select id="selectRecheckBoxItemCount" resultType="java.lang.Integer" >
+    select count(1) as s from (
+    	<include refid="sqlQueryDivideItem" />
+    )
+  </select>
+  
+  <select id="selectRecheckBoxItemByPage" resultMap="DtlResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( 
+    	<include refid="sqlQueryDivideItem" />
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <!-- 查询分货明细的总数 -->
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+	select 
+		sum(nvl(dtl.itemQty,0)) ITEM_QTY, 
+		sum(nvl(dtl.realQty,0)) REAL_QTY, 
+		sum(nvl(dtl.diffQty,0)) DIFF_QTY,
+		nvl(sum(dtl.packageNoRecheckQty),0) package_no_recheck_qty
+		from 
+		(
+			<include refid="sqlQueryDivideItem" />
+		)dtl
+  </select>
+  
+  <!-- 查询是否存在手工关闭的波茨 -->
+  <select id="selectOmDivideByExpNo" parameterType="map" resultMap="BaseResultMap">
+		select e.locno,e.divide_no,ed.exp_no from bill_om_divide e
+		inner join bill_om_divide_dtl ed
+			on e.locno = ed.locno
+			and e.divide_no = ed.divide_no
+		where e.locno = #{params.locno,jdbcType=VARCHAR}
+		and ed.exp_no = #{params.expNo,jdbcType=VARCHAR}
+		and e.status != '91'
+		group by e.locno,e.divide_no,ed.exp_no
+  </select>
+  
+</mapper>

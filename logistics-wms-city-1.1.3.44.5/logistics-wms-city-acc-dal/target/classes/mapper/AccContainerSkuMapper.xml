@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.AccContainerSkuMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.AccContainerSku" >
+    <id column="CON_NO" property="conNo" jdbcType="VARCHAR" />
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <id column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+    <id column="BARCODE" property="barcode" jdbcType="VARCHAR" />
+    <id column="ITEM_TYPE" property="itemType" jdbcType="VARCHAR" />
+    <id column="QUALITY" property="quality" jdbcType="VARCHAR" />
+    <result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <result column="SEQ_ID" property="seqId" jdbcType="DECIMAL" />
+    <result column="STYLE_NO" property="styleNo" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="QTY" property="qty" jdbcType="DECIMAL" />
+    <result column="SUPPLIER_NO" property="supplierNo" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="UPDATETM" property="updatetm" jdbcType="TIMESTAMP" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="BRAND_NO" property="brandNo" jdbcType="VARCHAR" />
+    <result column="BRAND_NAME" property="brandName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    CON_NO, LOCNO, ITEM_NO, ITEM_TYPE, QUALITY, OWNER_NO, SEQ_ID, STYLE_NO, 
+    SIZE_NO, QTY,STATUS
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.conNo and ''!=params.conNo" >
+        and CON_NO=#{params.conNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+        and LOCNO=#{params.locno,jdbcType=VARCHAR}
+      </if>
+     <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        and OWNER_NO=#{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.AccContainerSkuKey" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM ACC_CONTAINER_SKU
+    WHERE CON_NO = #{conNo,jdbcType=VARCHAR}
+      AND LOCNO = #{locno,jdbcType=VARCHAR}
+      AND ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+      AND BARCODE = #{barcode,jdbcType=VARCHAR}
+      AND ITEM_TYPE = #{itemType,jdbcType=VARCHAR}
+      AND QUALITY = #{quality,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    SELECT COUNT(1) as s from <include refid="accInventoryDtlView" /> WHERE 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    SELECT B.* from (SELECT A.*,I.ITEM_NAME,I.BRAND_NO,IB.BARCODE,B.BRAND_NAME BRAND_NAME,ROWNUM rn FROM( SELECT 
+    <include refid="Base_Column_List" />
+     FROM 
+     <include refid="accInventoryDtlView" />
+	 WHERE 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      ORDER BY ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A LEFT JOIN ITEM I ON A.ITEM_NO = I.ITEM_NO 
+     LEFT JOIN BRAND B ON  B.BRAND_NO = I.BRAND_NO 
+     LEFT JOIN ITEM_BARCODE IB ON IB.ITEM_NO=I.ITEM_NO AND IB.SIZE_NO=A.SIZE_NO AND IB.PACKAGE_ID='0'
+    WHERE ROWNUM &lt; #{page.endRowNum}) B WHERE rn &gt; #{page.startRowNum}
+  </select>
+  <sql id="accInventoryDtlView">
+ 	 (SELECT  T.BOX_NO CON_NO,T.LOCNO,T.ITEM_NO, T1.ITEM_TYPE, T1.QUALITY, T.OWNER_NO,T.BOX_ID SEQ_ID, T.STYLE_NO, 
+    T.SIZE_NO, T.QTY,T1.PAN_NO,T1.STATUS FROM CON_BOX_DTL T INNER JOIN CON_BOX T1 ON T.LOCNO=T1.LOCNO AND T1.BOX_NO=T.BOX_NO)
+  </sql>
+  <select id="selectPlateCount" resultType="java.lang.Integer"  parameterType="map">
+    SELECT COUNT(1) as s FROM <include refid="accInventoryDtlView" />
+    WHERE PAN_NO=#{params.conNo,jdbcType=VARCHAR} AND LOCNO=#{params.locno,jdbcType=VARCHAR}
+  </select>
+  <select id="selectPlateByPage" resultMap="BaseResultMap" parameterType="map" >
+    SELECT B.* from (SELECT A.*,I.ITEM_NAME,I.BRAND_NO,IB.BARCODE,B.BRAND_NAME BRAND_NAME,ROWNUM rn FROM( SELECT 
+     <include refid="Base_Column_List" />
+     FROM <include refid="accInventoryDtlView" />
+    WHERE PAN_NO=#{params.conNo,jdbcType=VARCHAR} AND LOCNO=#{params.locno,jdbcType=VARCHAR}
+    ) A  LEFT JOIN ITEM I ON A.ITEM_NO = I.ITEM_NO 
+    LEFT JOIN BRAND B ON  B.BRAND_NO = I.BRAND_NO 
+    LEFT JOIN ITEM_BARCODE IB ON IB.ITEM_NO=I.ITEM_NO AND IB.SIZE_NO=A.SIZE_NO AND IB.PACKAGE_ID='0'
+    WHERE ROWNUM &lt; #{page.endRowNum}) B WHERE rn &gt; #{page.startRowNum}
+  </select>
+   <select id="selectPlateSub" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+     T2.PARENT_CON_NO, T2.LOCNO,max(t1.quality) quality,sum(t1.qty) qty,
+     max(t1.item_type) itemType,max(t1.supplier_no)supplierNo
+     FROM ACC_CONTAINER_SKU T1 INNER JOIN BM_CONTAINER_CON T2
+    ON T1.CON_NO = T2.CON_NO AND T1.LOCNO=T2.LOCNO
+    WHERE T2.PARENT_CON_NO=#{params.conNo,jdbcType=VARCHAR} AND T2.LOCNO=#{params.locno,jdbcType=VARCHAR} group by T2.PARENT_CON_NO, T2.LOCNO
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+     FROM ACC_CONTAINER_SKU WHERE 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.AccContainerSkuKey" >
+    DELETE FROM ACC_CONTAINER_SKU
+    WHERE CON_NO = #{conNo,jdbcType=VARCHAR}
+      AND LOCNO = #{locno,jdbcType=VARCHAR}
+      AND ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+      AND BARCODE = #{barcode,jdbcType=VARCHAR}
+      AND ITEM_TYPE = #{itemType,jdbcType=VARCHAR}
+      AND QUALITY = #{quality,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.AccContainerSku" >
+    DELETE FROM ACC_CONTAINER_SKU
+    WHERE CON_NO = #{conNo,jdbcType=VARCHAR}
+      AND LOCNO = #{locno,jdbcType=VARCHAR}
+      AND ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+      AND BARCODE = #{barcode,jdbcType=VARCHAR}
+      AND ITEM_TYPE = #{itemType,jdbcType=VARCHAR}
+      AND QUALITY = #{quality,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.AccContainerSku" >
+    INSERT INTO ACC_CONTAINER_SKU (CON_NO, LOCNO, ITEM_NO, 
+      BARCODE, ITEM_TYPE, QUALITY, 
+      OWNER_NO, SEQ_ID, STYLE_NO, 
+      SIZE_NO, QTY, SUPPLIER_NO, 
+      CREATETM, UPDATETM)
+    VALUES (#{conNo,jdbcType=VARCHAR}, #{locno,jdbcType=VARCHAR}, #{itemNo,jdbcType=VARCHAR}, 
+      #{barcode,jdbcType=VARCHAR}, #{itemType,jdbcType=VARCHAR}, #{quality,jdbcType=VARCHAR}, 
+      #{ownerNo,jdbcType=VARCHAR}, #{seqId,jdbcType=DECIMAL}, #{styleNo,jdbcType=VARCHAR}, 
+      #{sizeNo,jdbcType=VARCHAR}, #{qty,jdbcType=DECIMAL}, #{supplierNo,jdbcType=VARCHAR}, 
+      #{createtm,jdbcType=TIMESTAMP}, #{updatetm,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.AccContainerSku" >
+    INSERT INTO ACC_CONTAINER_SKU
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="conNo != null" >
+        CON_NO,
+      </if>
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="barcode != null" >
+        BARCODE,
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE,
+      </if>
+      <if test="quality != null" >
+        QUALITY,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="seqId != null" >
+        SEQ_ID,
+      </if>
+      <if test="styleNo != null" >
+        STYLE_NO,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="qty != null" >
+        QTY,
+      </if>
+      <if test="supplierNo != null" >
+        SUPPLIER_NO,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="updatetm != null" >
+        UPDATETM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="conNo != null" >
+        #{conNo,jdbcType=VARCHAR},
+      </if>
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null" >
+        #{barcode,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null" >
+        #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="seqId != null" >
+        #{seqId,jdbcType=DECIMAL},
+      </if>
+      <if test="styleNo != null" >
+        #{styleNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="qty != null" >
+        #{qty,jdbcType=DECIMAL},
+      </if>
+      <if test="supplierNo != null" >
+        #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetm != null" >
+        #{updatetm,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.AccContainerSku" >
+    UPDATE ACC_CONTAINER_SKU
+    <set >
+      <if test="ownerNo != null" >
+        OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="seqId != null" >
+        SEQ_ID = #{seqId,jdbcType=DECIMAL},
+      </if>
+      <if test="styleNo != null" >
+        STYLE_NO = #{styleNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="qty != null" >
+        QTY = #{qty,jdbcType=DECIMAL},
+      </if>
+      <if test="supplierNo != null" >
+        SUPPLIER_NO = #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetm != null" >
+        UPDATETM = #{updatetm,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    WHERE CON_NO = #{conNo,jdbcType=VARCHAR}
+      AND LOCNO = #{locno,jdbcType=VARCHAR}
+      AND ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+      AND BARCODE = #{barcode,jdbcType=VARCHAR}
+      AND ITEM_TYPE = #{itemType,jdbcType=VARCHAR}
+      AND QUALITY = #{quality,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.AccContainerSku" >
+    UPDATE ACC_CONTAINER_SKU
+    SET OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      SEQ_ID = #{seqId,jdbcType=DECIMAL},
+      STYLE_NO = #{styleNo,jdbcType=VARCHAR},
+      SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      QTY = #{qty,jdbcType=DECIMAL},
+      SUPPLIER_NO = #{supplierNo,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      UPDATETM = #{updatetm,jdbcType=TIMESTAMP}
+    WHERE CON_NO = #{conNo,jdbcType=VARCHAR}
+      AND LOCNO = #{locno,jdbcType=VARCHAR}
+      AND ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+      AND BARCODE = #{barcode,jdbcType=VARCHAR}
+      AND ITEM_TYPE = #{itemType,jdbcType=VARCHAR}
+      AND QUALITY = #{quality,jdbcType=VARCHAR}
+  </update>
+  <update id="updateLockAccContainerSku" parameterType="com.yougou.logistics.city.common.model.AccContainerSku" >
+    UPDATE ACC_CONTAINER_SKU SET UPDATETM=sysdate
+    WHERE CON_NO = #{conNo,jdbcType=VARCHAR}
+      AND LOCNO = #{locno,jdbcType=VARCHAR}
+      AND ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+      AND BARCODE = #{barcode,jdbcType=VARCHAR}
+      AND ITEM_TYPE = #{itemType,jdbcType=VARCHAR}
+      AND QUALITY = #{quality,jdbcType=VARCHAR}
+  </update>
+</mapper>

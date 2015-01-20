@@ -1,0 +1,908 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BillOmDivideBoxMapper" >
+    
+    <!--公用sql-->
+  <sql id="commonBoxCodeSort" >
+              from bill_im_receipt_dtl brd
+             inner join bill_im_receipt br
+                on brd.locno = br.locno
+               and brd.owner_no = br.owner_no
+               and brd.receipt_no = br.receipt_no
+                <if test="'0'.toString()==params.businessType" >
+                    inner join bill_im_import iid
+                	on iid.locno = br.locno
+               		and iid.owner_no=br.owner_no
+               		and iid.import_no = brd.import_no
+                </if>
+             inner join bill_om_exp_dtl oed
+                on oed.locno = brd.locno
+                and oed.owner_no = brd.owner_no
+               and oed.item_no = brd.item_no
+               and oed.size_no = brd.size_no
+             inner join con_box cb
+                on cb.locno = br.locno
+               and cb.owner_no = br.owner_no
+               and cb.box_no = brd.box_no
+             inner join con_box_dtl cbd
+                on cbd.locno = cb.locno
+               and cbd.owner_no = cb.owner_no
+               and cbd.box_no = cb.box_no
+               <if test="'0'.toString()==params.businessType" >
+               		and cbd.import_no = brd.import_no
+               </if>
+               <if test="'1'.toString()==params.businessType" >
+               		and nvl(cbd.import_no,'N') = nvl(brd.import_no,'N')
+               </if>
+               and cbd.item_no = brd.item_no
+               and cbd.size_no = brd.size_no
+  </sql>
+    
+   <!-- 获取收货单明细数据-->
+  <select id="selectBillImReceiptDtl" resultType="java.util.Map" parameterType="map">
+  	select * from bill_im_receipt_dtl where locno = #{params.locNo,jdbcType=VARCHAR} 
+  	and owner_no = #{params.ownerNo,jdbcType=VARCHAR} 
+  	and receipt_no = #{params.receipNo,jdbcType=VARCHAR} 
+  </select>
+  
+    <!-- 获取发货单数据  -->
+   <select id="selectBillOmExpBoxCodeByMap" parameterType="map" resultType="map">
+   select d.* from bill_om_exp d where d.locno=#{params.locNo,jdbcType=VARCHAR}
+    and instr(',' || #{params.expNo,jdbcType=VARCHAR} || ',', ',' || d.exp_no || ',')>0
+   </select>
+   
+       <!-- 获取发货单明细数据  -->
+   <select id="selectBillOmExpDtl" parameterType="map" resultType="map">
+   select d.* from bill_om_exp_dtl d where d.locno=#{params.locNo,jdbcType=VARCHAR}
+    and instr(',' || #{params.expNo,jdbcType=VARCHAR} || ',', ',' || d.exp_no || ',')>0
+   </select>
+  
+  <!--   查询店铺分组规则 -->
+   <select id="selectStoreRurle" resultType="map" parameterType="map">
+   select d.store_basic,
+               d.store_sort,
+               d.box_basic, 
+               d.box_flag,
+               d.group_a,
+               d.group_b,
+               d.group_c,
+               d.group_d,
+               d.group_e,
+               d.group_f,
+               d.group_g,
+               d.group_h,
+               d.group_i,
+               d.group_j,
+               d.temp_no,
+               d.cargo_basic,
+               d.cargo_sort,
+               d.box_sort,
+               d.box_type,
+               d.status
+               from bill_store_rule d
+         where d.locno =#{params.locNo,jdbcType=VARCHAR}
+           and d.rule_no = #{params.ruleNo,jdbcType=VARCHAR}
+           and d.status = '1'
+   </select>
+   
+      <!--系统生成分货单号存储过程-->
+  <select id="getsheetNo" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call PKG_WMS_BASE.proc_getsheetno
+		    	(#{strlocno,mode=IN,jdbcType=VARCHAR},
+		    		#{strPaperType,mode=IN,jdbcType=VARCHAR},
+		    		#{csheetno,mode=OUT,jdbcType=VARCHAR},
+		    		#{stroutmsg,mode=OUT,jdbcType=VARCHAR})}  
+		]]>  
+  </select>
+  
+ <!-- 新增分货单主表信息 -->
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillOmDivide" >
+    insert into BILL_OM_DIVIDE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="divideNo != null" >
+        DIVIDE_NO,
+      </if>
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+        OPERATE_DATE,
+        DIVIDE_TYPE,
+      <if test="status != null" >
+        STATUS,
+      </if>
+      EXP_DATE,
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="creatorname != null" >
+        CREATORNAME,
+      </if>
+        CREATETM,
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="editorname != null" >
+        EDITORNAME,
+      </if>
+      	EDITTM
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="divideNo != null" >
+        #{divideNo,jdbcType=VARCHAR},
+      </if>
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      sysdate,
+      'C',
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      sysdate,
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorname != null" >
+        #{creatorname,jdbcType=VARCHAR},
+      </if>
+      sysdate,
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorname != null" >
+        #{editorname,jdbcType=VARCHAR},
+      </if>
+      sysdate
+    </trim>
+  </insert>
+  
+   <!-- (整箱)查询箱号从大到小排序 -->
+  <select id="getBoxSort" resultType="java.util.Map" parameterType="map">
+  	select brd.locno,brd.box_no,cb.box_type,br.cell_no,br.receipt_no,br.business_type
+              <include refid="commonBoxCodeSort" />
+               where 1=1
+               <if test="null!=params.serialNo and ''!=params.serialNo" >
+               	 and instr(','||#{params.serialNo,jdbcType=VARCHAR}||',', ','||brd.receipt_no||',')>0
+			   </if>
+			   <if test="null!=params.expNo and ''!=params.expNo" >
+               	 and instr(','||#{params.expNo,jdbcType=VARCHAR}||',', ','||oed.exp_no||',')>0
+			   </if>
+			   <if test="null!=params.locno and ''!=params.locno" >
+               	 and brd.locno = #{params.locno,jdbcType=VARCHAR}
+			   </if>
+			   <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+			     and brd.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+			   </if>
+               and cb.qty-cb.divide_qty>0
+               and cb.status=(case when br.business_type='1' then '22' else '1' end)
+               and oed.status='10'
+             group by brd.locno,brd.box_no,cb.box_type,br.cell_no,br.receipt_no,br.business_type
+             <if test="'1'.toString()==boxSort" >
+            	order by cb.box_type,brd.box_no desc
+             </if>
+             <if test="'2'.toString()==boxSort" >
+             	order by cb.box_type,brd.box_no
+             </if>
+  </select>
+  
+      <!-- 获取所有门店信息（找出了门店和箱的对应  说明这些门店的货可以从这些箱里面分） -->
+  <select id="getStoreInfo" resultType="java.util.Map" parameterType="map">
+  	select sc.store_no, sc.sumqty, sc.cell_no ,brd.box_no
+		  from  (
+          		select oed.store_no, sum(oed.item_qty) as sumqty, v.cell_no
+              from bill_om_exp_dtl oed
+             inner join bill_om_exp oe
+                on oed.locno = oe.locno
+               and oed.owner_no = oe.owner_no
+               and oed.exp_no = oe.exp_no
+             inner join (select distinct brd.locno,
+                                         brd.owner_no,
+                                         br.cell_no,
+                                         brd.item_no,
+                                         brd.size_no,
+                                         brd.pack_qty
+                           from bill_im_receipt_dtl brd
+                          inner join bill_im_receipt br
+                             on brd.locno = br.locno
+                            and brd.owner_no = br.owner_no
+                            and brd.receipt_no = br.receipt_no
+                            <if test="'0'.toString()==params.businessType" >
+	                          inner join bill_im_import imp
+	                             on imp.locno = brd.locno
+	                            and imp.owner_no = brd.owner_no
+	                            and imp.import_no = brd.import_no
+                            </if>
+                          where brd.locno = #{params.locno,jdbcType=VARCHAR}
+                            and brd.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+                            and instr(',' || #{params.serialNo,jdbcType=VARCHAR} || ',', ',' || brd.receipt_no || ',')>0) v
+                on v.locno = oe.locno
+               and v.owner_no = oe.owner_no
+               and v.item_no = oed.item_no
+               and v.size_no = oed.size_no
+               and v.pack_qty = oed.pack_qty
+               where oe.locno = #{params.locno,jdbcType=VARCHAR}
+               and oe.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+               and instr(',' || #{params.expNo,jdbcType=VARCHAR} || ',', ',' || oed.exp_no || ',')>0
+               and oed.status='10'
+               	<if test="'1'.toString()==cargoSort" >
+               		group by oed.store_no,v.cell_no order by sum(oed.item_qty),oed.store_no desc
+            	</if>
+            	<if test="'2'.toString()==cargoSort" >
+           	 	 	group by oed.store_no,v.cell_no order by sum(oed.item_qty) desc,oed.store_no
+            	</if>
+            ) sc 
+		   inner join bill_om_exp_dtl oed
+		    on oed.store_no = sc.store_no
+		    inner join bill_im_receipt_dtl brd 
+		    on brd.locno = oed.locno
+		    and brd.owner_no = oed.owner_no
+		    and brd.item_no = oed.item_no
+		    and brd.size_no = oed.size_no
+		    and brd.pack_qty = oed.pack_qty
+		 where 1 = 1
+		   and oed.locno = #{params.locno,jdbcType=VARCHAR} 
+		   and oed.owner_no = #{params.ownerNo,jdbcType=VARCHAR} 
+		   and instr(','||#{params.expNo,jdbcType=VARCHAR}||',', ',' || oed.exp_no || ',') > 0
+		   and oed.item_qty > oed.schedule_qty
+		   and instr(','||#{params.serialNo,jdbcType=VARCHAR}||',',  ',' || brd.receipt_no || ',') > 0
+	 group by sc.store_no, sc.sumqty, sc.cell_no,brd.box_no
+	 	    <if test="'1'.toString()==cargoSort" >
+          		order by sc.sumqty desc
+            </if>
+            <if test="'2'.toString()==cargoSort" >
+           	 	order by sc.sumqty
+            </if>
+	 
+  </select>
+  
+  <!-- 1、开始配货  配整箱给当前门店  SQL 比较慢  cbd.*, -->
+   <select id="selectBoxMStoreByMap" resultType="java.util.Map"   parameterType="map">
+   select *
+                        from (select distinct
+                         
+                                         cbd.*,
+                        
+                                              cb.s_import_no,
+                                              cb.qty as cqty,
+                                              v.item_qty,
+                                              v.schedule_qty,
+                                              nvl((v.sumqty- (cbd.qty-cbd.divide_qty)), -1) as disqty,
+                                              brd.cell_no,
+                                              brd.cell_id,
+                                              brd.brand_no,
+                                              br.business_type,
+                                              v.batch_no,
+                                              v.exp_type,
+                                              v.exp_no,
+                                              v.store_no,
+                                              v.line_no,
+                                              v.exp_date,
+                                              v.pack_qty 
+                                from con_box cb
+                               inner join con_box_dtl cbd
+                                  on cb.locno = cbd.locno
+                                 and cbd.owner_no = cb.owner_no
+                                 and cbd.box_no = cb.box_no
+                           
+                               inner join bill_im_receipt br
+                                  on br.locno = cb.locno
+                                 and br.owner_no = cb.owner_no 
+                                 and (br.status = decode(br.business_type,'1','11','20')  or br.status = '50' )
+                               inner join bill_im_receipt_dtl brd
+                                  on brd.locno = cbd.locno
+                                 and brd.owner_no = cbd.owner_no
+                                 and brd.item_no = cbd.item_no
+                                 and brd.size_no = cbd.size_no
+                                 and brd.receipt_no = br.receipt_no
+                                 and nvl(brd.import_no,'N') = nvl(cbd.import_no,'N')
+                                 and brd.box_no = cbd.box_no
+                                left join (select oed.*,
+                                                 oe.batch_no,
+                                                 oe.exp_type,
+                                                 oe.line_no,
+                                                 sum(oed.item_qty - oed.schedule_qty) over(partition by oed.locno, oed.owner_no, oed.item_no, oed.size_no, oed.pack_qty, oed.item_type, oed.quality, oed.sys_no, oed.store_no, oed.brand_no) as sumqty
+                                            from bill_om_exp_dtl oed
+                                           inner join bill_om_exp oe
+                                              on oe.locno = oed.locno
+                                             and oe.owner_no = oed.owner_no
+                                             and oe.exp_no = oed.exp_no
+                                             and instr(',' || #{params.expNo,jdbcType=VARCHAR} || ',', ',' || oed.exp_no || ',')>0
+                                             and oed.status = '10'
+                                             and oed.locno = #{params.locNo,jdbcType=VARCHAR}
+                                             and oed.owner_no = #{params.ownerNo,jdbcType=VARCHAR} ) v
+                                  on cbd.locno = v.locno
+                                 and cbd.owner_no = v.owner_no
+                                 and v.item_no = cbd.item_no
+                                 and v.size_no = cbd.size_no
+                         
+                                left join item t
+                                  on t.item_no = cbd.item_no
+                                left join item_barcode bar
+                                  on bar.item_no = cbd.item_no
+                                 and bar.size_no = cbd.size_no
+                                 and bar.pack_qty = t.qmin_operate_packing
+                                 and bar.package_id = 0
+                      
+                                where cb.locno =  #{params.locNo,jdbcType=VARCHAR}
+                                  and cb.owner_no = #{params.ownerNo,jdbcType=VARCHAR} 
+                                  and cbd.qty -cbd.divide_qty>0
+                                  and cb.status = (case when br.business_type='1' then '22' else '1' end)
+                                  and cb.box_no = #{params.boxNo,jdbcType=VARCHAR}) f
+                        order by f.disqty
+   </select>
+   
+   <!-- 2、 配整箱给当前门店  SQL 比较慢  cbd.*,-->
+   <select id="selectBoxMStoreBoxCodeByMap" parameterType="map" resultType="map" >
+   select *
+                  from (select distinct   cbd.*,
+                  
+                              
+                                          
+                                                cb.s_import_no,
+                                                cb.qty as cqty,
+                                                v.schedule_qty,
+                                                (v.item_qty-v.schedule_qty) item_qty,
+                                                nvl((v.item_qty - v.schedule_qty - (cbd.qty-cbd.divide_qty)), -1) as disqty,
+                                                brd.cell_no,
+                                                brd.cell_id,
+                                                brd.brand_no,
+                                                br.business_type,
+                                                v.batch_no,
+                                                v.exp_type,
+                                                v.exp_no,
+                                                v.store_no,
+                                                v.line_no,
+                                                v.exp_date,
+                                                v.pack_qty 
+                                  from con_box cb
+                                 inner join con_box_dtl cbd
+                                    on cb.locno = cbd.locno
+                                   and cbd.owner_no = cb.owner_no
+                                   and cbd.box_no = cb.box_no
+                                 
+                                 inner join bill_im_receipt br
+                                    on br.locno = cb.locno
+                                   and br.owner_no = cb.owner_no 
+                                  and (br.status = decode(br.business_type,'1','11','20')  or br.status = '50' )
+                                 inner join bill_im_receipt_dtl brd
+                                    on brd.locno = cbd.locno
+                                   and brd.owner_no = cbd.owner_no
+                                   and brd.item_no = cbd.item_no
+                                   and brd.size_no = cbd.size_no
+                                   and brd.receipt_no = br.receipt_no
+                                   and nvl(brd.import_no,'N') = nvl(cbd.import_no,'N')
+                                   and brd.box_no = cbd.box_no
+                              
+                                  inner join (select oed.*,
+                                                  
+                                                   oe.batch_no,
+                                                   oe.exp_type,
+                                                   oe.line_no
+                                              from bill_om_exp_dtl oed
+                                             inner join bill_om_exp oe
+                                                on oe.locno = oed.locno
+                                               and oe.owner_no = oed.owner_no
+                                               and oe.exp_no = oed.exp_no
+                                            <if test="null != params.storeNo and '' != params.storeNo">
+                                               and oed.store_no = #{params.storeNo,jdbcType=VARCHAR}
+                                               </if>
+                                              
+                                               and instr(',' || #{params.expNo,jdbcType=VARCHAR} || ',', ',' || oed.exp_no || ',')>0
+                                               and oed.status = '10'
+                                               and oed.locno = #{params.locNo,jdbcType=VARCHAR}
+                                               and oed.owner_no =  #{params.ownerNo,jdbcType=VARCHAR}) v
+                                    on cbd.locno = v.locno
+                                   and cbd.owner_no = v.owner_no
+                                   and v.item_no = cbd.item_no
+                                   and v.size_no = cbd.size_no
+
+                                  left join item t
+                                    on t.item_no = cbd.item_no
+                                  left join item_barcode bar
+                                    on bar.item_no = cbd.item_no
+                                   and bar.size_no = cbd.size_no
+                                   and bar.pack_qty = t.qmin_operate_packing
+                                   and bar.package_id = 0
+                           
+                                  where cb.locno = #{params.locNo,jdbcType=VARCHAR}
+                                    and cb.owner_no =  #{params.ownerNo,jdbcType=VARCHAR}
+                                    and cbd.qty -cbd.divide_qty>0
+                                    and cb.status = (case when br.business_type='1' then '22' else '1' end)
+                                    <if test="null != params.boxNo and '' != params.boxNo">
+                                    and cb.box_no = #{params.boxNo,jdbcType=VARCHAR}
+                                    </if>
+                                    
+                                    ) f
+                          order by  f.disqty
+   </select>
+   
+   <!-- 4、批量写分播单 -->
+    <insert id="insertBillOmDivideByMap" parameterType="java.util.List">
+        insert into bill_om_divide_dtl
+        (divide_id,
+        	locno,
+            owner_no,
+            batch_no,
+            source_no,
+            divide_no,
+            operate_date,
+            store_no,
+            exp_type,
+            exp_no,
+            s_cell_no,
+            s_cell_id,
+            item_no,
+            size_no,
+            pack_qty,
+            item_qty,
+            status,
+            line_no,
+            assign_name,
+            assign_name_ch,
+            exp_date,
+            serial_no,
+            brand_no,
+            box_no) 
+        select SEQ_OM_OUTSTOCK_DIRECT.nextval,A.* from(
+        <foreach collection="list" item="item" index="index" separator="UNION">
+         select #{item.locNo},
+              #{item.ownerNo},
+              #{item.batchNo},
+              #{item.receiptNo},
+              #{item.divideNo},
+              sysdate,
+              #{item.storeNo},
+              #{item.expType},
+              #{item.expNo},
+              #{item.cellNO},
+              #{item.nCellId},
+              #{item.itemNo},
+              #{item.sizeNo},
+              #{item.packQty},
+              #{item.nQty},
+              '10',
+              #{item.lineNo},
+              #{item.userId},
+              #{item.userName},
+              trunc(sysdate),
+              #{item.serailNo},
+              #{item.brandNo},
+             #{item.boxNO} 
+             
+             from dual 
+            </foreach>
+             ) A
+    </insert>
+    
+    <!-- 5、单据跟踪中是否有部分分配的状态 --> 
+       <select id="selectBillStatusCount" resultType="java.lang.Integer" parameterType="map"  >
+               select count(*)  from bill_status_log d where
+                d.locno=#{params.locNo,jdbcType=VARCHAR} 
+                and d.bill_no=#{params.expNo,jdbcType=VARCHAR} 
+                and d.status='12'
+       </select>
+       <!--6、 获取状态中单据最大序列 -->
+          <select id="selectBillStatusMax" resultType="java.lang.Integer" parameterType="map"  >
+            select nvl(max(d.row_id), 0)
+            from bill_status_log d
+           where d.locno = #{params.locNo,jdbcType=VARCHAR}
+             and d.bill_no =#{params.expNo,jdbcType=VARCHAR} 
+             </select>
+        <!--  7、  写单据状态跟踪表   -->
+        <insert id="insertBillStatusLogByMap"  parameterType="map">
+             insert into bill_status_log
+            (locno,
+             bill_no,
+             bill_type,
+             row_id,
+             status,
+             description,
+             operator,
+             operatetm)
+          values
+            (#{params.locNo},
+             #{params.expNo},
+              #{params.billType},
+             #{params.statusID},
+             #{params.status},
+             #{params.description},
+              #{params.userId},
+             sysdate)
+        </insert>
+        
+        <!--   8、  批量更新出货单明细  -->
+      <update id="updateOmExpDtlStatusByMap"   parameterType="java.util.List" >  
+       begin
+        <foreach collection="list" item="params" index="index" open="" close="" separator=";">
+        update bill_om_exp_dtl oed
+            set oed.schedule_qty = oed.schedule_qty + #{params.nQty},
+                oed.status = (case
+                               when oed.item_qty &lt;=
+                                    oed.schedule_qty+#{params.nQty} then
+                                '13'
+                               else
+                                oed.status
+                             end)
+          where oed.locno = #{params.locNo,jdbcType=VARCHAR}
+            and oed.owner_no =  #{params.ownerNo}
+            and oed.item_no = #{params.itemNo} 
+            and oed.size_no =#{params.sizeNo} 
+            and oed.exp_no = #{params.expNo}
+            and oed.store_no =#{params.storeNo} 
+            and oed.status    &lt; '13'
+            and (oed.item_qty-oed.schedule_qty-#{params.nQty})>=0
+            </foreach>
+          ;end;
+      </update>
+      
+      <update id="batchUpdateBoxDtlByList" parameterType="java.util.List">
+          begin
+           <foreach collection="list" item="params" index="index" open="" close="" separator=";">
+         update con_box_dtl cbd
+             set cbd.divide_qty = cbd.divide_qty +#{params.nQty} 
+           where cbd.locno = #{params.locNo,jdbcType=VARCHAR} 
+             and cbd.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+             and cbd.box_no =#{params.boxNo}  
+             and cbd.item_no =#{params.itemNo}  
+             and cbd.size_no =#{params.sizeNo}  
+             and cbd.box_id =#{params.boxId}  
+             and cbd.divide_qty+#{params.nQty} &lt;= cbd.qty
+             </foreach>
+              ;end;
+     </update>
+     
+     <update id="batchUpdateConBoxByList" parameterType="java.util.List">
+      begin
+       <foreach collection="list" item="params" index="index" open="" close="" separator=";">
+          update con_box cb
+             set cb.divide_qty = cb.divide_qty +  #{params.nQty}
+           where cb.locno = #{params.locNo,jdbcType=VARCHAR} 
+             and cb.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+             and cb.box_no = #{params.boxNo}
+             and cb.divide_qty + #{params.nQty} &lt;= cb.qty
+             </foreach>
+              ;end;
+     </update>
+     
+     <update id="batchUpdateBillImReceiptDtlByList"  parameterType="java.util.List">
+       begin
+        <foreach collection="list" item="params" index="index" open="" close="" separator=";">
+               update bill_im_receipt_dtl brd
+             set brd.divide_qty = brd.divide_qty + #{params.nQty}
+           where brd.locno = #{params.locNo,jdbcType=VARCHAR}
+             and brd.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+             and brd.receipt_no = #{params.receiptNo}
+             and brd.box_no =#{params.boxNo}
+             and brd.item_no =#{params.itemNo}
+             and brd.size_no = #{params.sizeNo}
+       </foreach>
+          ;end;
+    </update>   
+    
+     <!-- 3、分货单号、门店找流道编号 -->
+      <select id="selectStoreNoSerialNo" resultType="java.lang.Integer" parameterType="map" >
+      select bg.serial_no  from bill_store_group bg 
+      where bg.store_no=#{params.storeNo,jdbcType=VARCHAR}
+       and bg.divide_no=#{params.divideNo,jdbcType=VARCHAR} and rownum=1
+    </select>  
+    
+    <!--   9、  出货单明细是否全部分货完成  -->
+      <update id="updateOmExpStatusByMap" parameterType="map">
+            update bill_om_exp oe
+             set oe.status = case
+                               when not exists
+                                (select 'X'
+                                       from bill_om_exp_dtl oed
+                                      where oed.locno = #{params.locNo,jdbcType=VARCHAR}
+                                        and oed.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+                                        and oed.exp_no = #{params.expNo,jdbcType=VARCHAR}
+                                        and oed.status = '10') then
+                                '15'
+                               else
+                                '12'
+                             end, 
+                 oe.editor = #{params.userId},
+                 oe.edittm = sysdate
+           where oe.exp_no = #{params.expNo} 
+             and oe.locno = #{params.locNo,jdbcType=VARCHAR}
+             and oe.owner_no =  #{params.ownerNo,jdbcType=VARCHAR}
+      </update>
+      
+      <!-- 更新收货单主单状态 -->
+  <update id="revertUpdtReceipt" parameterType="map">
+    update bill_im_receipt br
+        <set >
+         br.status = (case when exists  (select 'X'  from bill_im_receipt_dtl brd
+                                 where brd.locno = br.locno
+                                   and brd.owner_no = br.owner_no
+                                   and brd.receipt_no = br.receipt_no
+                                   and brd.divide_qty > 0) 
+                   then
+                           '35'
+                   else
+                           br.status
+                   end)
+        </set>
+      where br.locno = #{locNo,jdbcType=VARCHAR} 
+        and br.receipt_no = #{receiptNo,jdbcType=VARCHAR}
+  </update>
+  
+   <!-- 按箱分货  店分组 按发货量  分组  begin -->
+     <!--  proc_RevertStoreByCount begin -->
+    <!-- 1、统计当前流道 -->
+  <select id="selectStorGroupCount" resultType="java.lang.Integer"  parameterType="map" >
+    select count(*) as v_nCount from bill_store_group d 
+    
+    where d.divide_no=#{params.divideNo,jdbcType=VARCHAR} 
+    <!-- count 需要 -->
+      <if test="null != params.receiptNo and '' != params.receiptNo">
+      and d.receipt_no=#{params.receiptNo,jdbcType=VARCHAR}
+    </if>
+    
+  </select>
+   <!--  2、获取当前最大流道ID -->
+  <select id="selectStorGroupMaxCount" resultType="java.lang.Integer"   parameterType="map">
+      select Max(d.serial_no) as v_nSerialNo from bill_store_group d 
+      where d.divide_no=#{params.divideNo,jdbcType=VARCHAR}
+      <!-- count 需要 -->
+      <if test="null != params.receiptNo and '' != params.receiptNo">
+      and d.receipt_no=#{params.receiptNo,jdbcType=VARCHAR}
+    </if>
+  
+  </select>
+  <!--   3、新增门店分组临时表 -->
+  <insert id="insertStroreGroup" parameterType="map">
+  insert into bill_store_group(store_no,group_name,divide_no,receipt_no,serial_no,rule_no) 
+  values(#{params.storeNo,jdbcType=VARCHAR},#{params.groupName,jdbcType=VARCHAR},
+  #{params.divideNo,jdbcType=VARCHAR},#{params.receiptNo,jdbcType=VARCHAR},#{params.serialNo,jdbcType=DECIMAL},
+  #{params.ruleNo,jdbcType=VARCHAR})
+   </insert>
+    
+     <!-- proc_RevertStoreByCount end -->
+     
+     <!-- proc_RevertStoreByQty begin -->
+     <!-- 添加参数   -->
+     <!-- proc_RevertStoreByQty end -->
+     
+     <!-- proc_RevertStoreGrp begin -->
+     <!-- 添加参数   -->
+     <!-- 1、未做店分组 则删除 -->
+     <delete id="deleteStoreGroupByParam" parameterType="map">
+      delete from bill_store_group d where d.divide_no=#{params.divideNo,jdbcType=VARCHAR}
+      </delete>
+      <!-- 2、查询分组名 -->
+       <select id="selectStorGroupByParam" resultType="map"   parameterType="map">
+       select d.group_name   from bill_store_group d where 
+       d.store_no=#{params.storeNo,jdbcType=VARCHAR}  
+        and d.divide_no=#{params.divideNo,jdbcType=VARCHAR}
+        <if test="null != params.receiptNo and '' != params.receiptNo">
+         and d.receipt_no=#{params.receiptNo,jdbcType=VARCHAR}
+        </if>
+       </select>
+       <!-- 根据收货单关联出货单按客户分组统计要货量  [ 预发货量降序或者升序 ] (  门店分组 ) -->
+       <select id="selectStoreSendNumByParam" resultType="map"   parameterType="map">
+         select rownum, store_no, sumqty
+      from (select oed.store_no, sum(oed.item_qty-oed.schedule_qty) as sumqty
+              from bill_om_exp_dtl oed
+             inner join bill_om_exp oe
+                on oed.locno = oe.locno
+               and oed.owner_no = oe.owner_no
+               and oed.exp_no = oe.exp_no
+             where oe.locno =#{params.locNo,jdbcType=VARCHAR} 
+               and oe.owner_no = #{params.ownerNo,jdbcType=VARCHAR} 
+               and instr(',' ||  #{params.expNo,jdbcType=VARCHAR} || ',', ',' || oed.exp_no || ',')>0
+               and oed.status='10'
+             group by oed.store_no
+             order by sum(oed.item_qty-oed.schedule_qty)
+               <!-- 当传入的 排序 不为空 则为 降序-->
+               <if test="null != params.sortType and '' != params.sortType">
+                 desc
+                </if>
+              )
+          order by sumqty 
+            <!-- 当传入的 排序 不为空 则为 降序-->
+              <if test="null != params.sortType and '' != params.sortType">
+                desc
+               </if>
+      </select> 
+      
+         <!-- 根据收货单关联出货单按客户分组统计要货量  [ 门店编号升序 或者降序] (  门店分组 ) -->
+       <select id="selectStoreStoreNoByParam" resultType="map"   parameterType="map">
+      select rownum, store_no, sumqty
+      from (select oed.store_no, sum(oed.item_qty-oed.schedule_qty) as sumqty
+              from bill_om_exp_dtl oed
+             inner join bill_om_exp oe
+                on oed.locno = oe.locno
+               and oed.owner_no = oe.owner_no
+               and oed.exp_no = oe.exp_no
+            where oe.locno = #{params.locNo,jdbcType=VARCHAR} 
+            and oe.owner_no = #{params.ownerNo,jdbcType=VARCHAR} 
+            and instr(',' || #{params.expNo,jdbcType=VARCHAR} || ',', ',' || oed.exp_no || ',')>0
+            and oed.status='10'
+             group by oed.store_no
+             order by oed.store_no
+                 <!-- 当传入的 排序 不为空 则为 降序-->
+               <if test="null != params.sortType and '' != params.sortType">
+                 desc
+                </if>
+              )
+            order by store_no 
+               <!-- 当传入的 排序 不为空 则为 降序-->
+               <if test="null != params.sortType and '' != params.sortType">
+                 desc
+               </if>
+      </select> 
+     <!-- proc_RevertStoreGrp end -->
+     
+     <!-- 新增的 批量插入店分组 -->
+    <insert id="batchInsertStroreGroup" parameterType="java.util.List">
+     insert into bill_store_group(store_no,group_name,divide_no,receipt_no,serial_no,rule_no) 
+   <foreach collection="list" item="params" index="index" separator="union all" >  
+   select
+	  #{params.storeNo,jdbcType=VARCHAR},#{params.groupName,jdbcType=VARCHAR},
+	  #{params.divideNo,jdbcType=VARCHAR},#{params.receiptNo,jdbcType=VARCHAR},#{params.serialNo,jdbcType=DECIMAL},
+	  #{params.ruleNo,jdbcType=VARCHAR}
+    from dual
+  </foreach>
+   </insert>
+   <!-- 按箱分货    店分组 按发货量  分组  end -->
+  
+  <select id="selectBillImReceiptBySerialNo" parameterType="map" resultType="map">
+ 	select brd.receipt_no receipt_no from bill_im_receipt brd where 1=1
+ 		<if test="null!=serialNo and ''!=serialNo" >
+            and instr(',' || #{serialNo} || ',', ',' || brd.receipt_no || ',')>0
+	   </if>
+ 	
+ </select>
+ 
+  <!-- 更新主表状态 -->
+  <update id="updateBillOmDivide" parameterType="map">
+    update bill_om_divide    
+        <set >
+         business_type=#{businessType,jdbcType=VARCHAR}
+        </set>
+        where locno=#{locNo,jdbcType=VARCHAR}
+        and divide_no=#{divideNo,jdbcType=VARCHAR}
+  </update>
+  
+     <!-- 查询箱码按组汇总 -->
+<select id="selectBoxNoByMap" resultType="map"   parameterType="map">
+    select rownum, group_name,serial_no,storeQty, sumQty,box_no
+      from (select bg.group_name,
+                   bg.serial_no,
+                   count(bg.store_no) storeQty,
+                   sum(odd.item_qty) sumQty,
+                   odd.box_no
+              from bill_om_divide_dtl odd
+             inner join bill_om_divide od
+                on odd.locno = od.locno
+               and odd.divide_no = od.divide_no
+             inner join bill_store_group bg
+                on bg.store_no = odd.store_no
+               and bg.divide_no = odd.divide_no
+             where 
+               odd.locno = #{params.locNo,jdbcType=VARCHAR} 
+               and odd.owner_no = #{params.ownerNo,jdbcType=VARCHAR} 
+               and odd.divide_no = #{params.divideNo,jdbcType=VARCHAR}
+                 <if test="null != params.boxNo and  '' != params.boxNo ">
+                and odd.box_no =  #{params.boxNo,jdbcType=VARCHAR}
+               </if>
+      group by bg.group_name,bg.serial_no,odd.box_no)
+      <!-- 1、根据箱码按组汇总门店数量  按发货量降序 -->
+             <if test="null != params.sortType and '1'== params.sortType">
+                     order by sumQty desc, storeQty desc
+            </if>   
+            <!-- 2、根据箱码按门店汇总预发货数量 按门店数降序--> 
+          <if test="null != params.sortType and '2'== params.sortType">
+                   order by storeQty desc, sumQty desc
+           </if>   
+</select>
+   
+     <!-- 2 批量更新更新箱码组别信息 -->
+      <update id="batchUpdateBillOmDivideDtlForGroupNameByMap" parameterType="java.util.List">
+     begin
+     <foreach collection="list" item="params" index="index" open="" close="" separator=";">
+      update bill_om_divide_dtl odd set odd.group_no=#{params.groupName,jdbcType=VARCHAR} 
+      where
+       odd.locno=#{params.locNo,jdbcType=VARCHAR} 
+       and odd.owner_no=#{params.ownerNo,jdbcType=VARCHAR} and 
+       odd.divide_no=#{params.divideNo,jdbcType=VARCHAR}  and 
+       odd.box_no= #{params.boxNo,jdbcType=VARCHAR}
+       </foreach>
+             ;end; 
+      </update>
+       <!-- 3 批量更新箱码状态 -->
+       <update id="batchUpdateConBoxForStatusByMap" parameterType="java.util.List">
+        begin
+     <foreach collection="list" item="params" index="index" open="" close="" separator=";">
+            update con_box cb set cb.status='11'
+             where cb.DIVIDE_QTY > 0 
+             and cb.locno=#{params.locNo,jdbcType=VARCHAR}  
+             and cb.owner_no =#{params.ownerNo,jdbcType=VARCHAR} 
+             and cb.box_no=#{params.boxNo,jdbcType=VARCHAR} 
+           </foreach>
+             ;end;   
+    </update>
+
+    <!--   10、统计出货量  -->     
+ <select id="selectBillOmExpCountByMap" resultType="java.lang.Integer" parameterType="map"  >
+     select count(*)   from bill_om_exp d 
+     where d.locno=#{params.locNo,jdbcType=VARCHAR} 
+     and d.exp_no=#{params.expNo,jdbcType=VARCHAR}  and d.status='15'
+  </select>
+ 
+    <!--   未匹配到的分货箱子 -->
+  <insert id="insertNoDivideBox" parameterType="map">
+     insert into SYS_OM_NoDivideBox(locno,box_no,Receipt_No)
+     select #{params.locNo,jdbcType=VARCHAR} ,v1.box_no,v1.receipt_no from
+      (
+        select b.box_no,b.receipt_no from bill_im_receipt_dtl b
+        where b.locno=#{params.locNo,jdbcType=VARCHAR} 
+              and b.receipt_no in (
+                 select b.source_no FROM bill_om_divide_dtl b
+                 where b.locno=#{params.locNo,jdbcType=VARCHAR}
+                 and b.divide_no=#{params.divideNo,jdbcType=VARCHAR} group by b.source_no)
+        group by b.box_no,b.receipt_no
+      ) v1
+     where  not  exists (select 'x' from bill_om_divide_dtl dtl where dtl.locno=#{params.locNo,jdbcType=VARCHAR}
+      and dtl.divide_no=#{params.divideNo,jdbcType=VARCHAR}
+      and dtl.source_no=v1.receipt_no
+      and dtl.box_no=v1.box_no )
+   </insert>
+   
+   <!-- 查询出未匹配到的分货箱子 -->
+   <select id="selectNoDivideBox" resultType="map" >
+    select rdtl.locno,rdtl.owner_no,rdtl.receipt_no,rdtl.box_no,rdtl.item_no,rdtl.size_no,
+                rdtl.receipt_qty,rdtl.cell_no,rdtl.cell_id,rdtl.item_type,rdtl.quality,
+                m.supplier_no
+             From bill_im_receipt_dtl rdtl
+            inner join SYS_OM_NoDivideBox x
+            on x.locno=rdtl.locno
+            and x.receipt_no=rdtl.receipt_no
+            and x.box_no=rdtl.box_no
+            inner join item m
+            on m.item_no=rdtl.item_no
+            where exists(
+                  select 'X' from bill_im_receipt r
+                         where r.locno = rdtl.locno
+                         and r.owner_no = rdtl.owner_no
+                         and r.receipt_no = rdtl.receipt_no
+                         and r.business_type = '1')
+                         and rdtl.status = '11' <!-- (modi by suyuequn 2014.10.13)新建分货单释放后的不进入循环,因为创建分货任务单,没有匹配的都已经释放了*-->
+   </select>
+   
+   <!-- 修改预分货单明细状态 -->
+   <update id="updateReceiptStatus" parameterType="map">
+    	update bill_im_receipt_dtl dtl set dtl.status='13'
+            where dtl.locno=#{params.locno,jdbcType=VARCHAR} 
+            and dtl.receipt_no=#{params.receipt_no,jdbcType=VARCHAR}
+            and dtl.box_no=#{params.Box_No,jdbcType=VARCHAR} 
+            and dtl.item_no=#{params.item_no,jdbcType=VARCHAR} 
+            and dtl.size_no=#{params.size_no,jdbcType=VARCHAR} 
+  </update>
+  
+     <!-- 修改箱状态，恢复到可用状态    12-05根据存储过程新增  -->   
+    <update id="updateBoxStruts" parameterType="map">
+           update con_box x set x.status='2' where x.locno=#{params.locno,jdbcType=VARCHAR} and x.box_no = #{params.Box_No,jdbcType=VARCHAR} 
+            and x.status='22'
+    </update>
+      
+     <!-- 查询分货完成时流道是否正常顺序 -->
+    <select id="selectDivideSerialNo" parameterType="String" resultType="map" >
+    	select distinct STORE_NO,serial_No from bill_om_divide_dtl d where d.divide_no =#{divideNo}  order by serial_No
+    </select> 
+       
+       <!-- 批量更新分货门店流道信息 -->   
+    <update id="batchUpdateDivideSerialNo" parameterType="java.util.List">
+        begin
+     <foreach collection="list" item="params" index="index" open="" close="" separator=";">
+       update bill_om_divide_dtl set serial_no = #{params.serialNoNew} 
+     	where divide_no =#{params.divideNo} 
+     		  and store_no = #{params.storeNo} 
+     		  and serial_no = #{params.serialNo} 
+           </foreach>
+             ;end;   
+    </update>
+    
+</mapper>

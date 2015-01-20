@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yougou.logistics.city.dal.database.BillOmLocateMapper">
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillOmLocate">
+    <id column="LOCNO" jdbcType="VARCHAR" property="locno" />
+    <id column="LOCATE_NO" jdbcType="VARCHAR" property="locateNo" />
+    <result column="EXP_TYPE" jdbcType="VARCHAR" property="expType" />
+    <result column="STATUS" jdbcType="VARCHAR" property="status" />
+    <result column="LOCATE_NAME" jdbcType="VARCHAR" property="locateName" />
+    <result column="LOCATE_DATE" jdbcType="TIMESTAMP" property="locateDate" />
+    <result column="FAST_FLAG" jdbcType="CHAR" property="fastFlag" />
+    <result column="DIVIDE_FLAG" jdbcType="CHAR" property="divideFlag" />
+    <result column="SPECIFY_CELL" jdbcType="CHAR" property="specifyCell" />
+    <result column="EXP_DATE" jdbcType="TIMESTAMP" property="expDate" />
+    <result column="HM_MANUAL_FLAG" jdbcType="VARCHAR" property="hmManualFlag" />
+    <result column="TASK_BATCH" jdbcType="DECIMAL" property="taskBatch" />
+    <result column="CREATOR" jdbcType="VARCHAR" property="creator" />
+    <result column="CREATORNAME" jdbcType="VARCHAR" property="creatorname" />
+    <result column="CREATETM" jdbcType="TIMESTAMP" property="createtm" />
+    <result column="EDITOR" jdbcType="VARCHAR" property="editor" />
+    <result column="EDITORNAME" jdbcType="VARCHAR" property="editorname" />
+    <result column="EDITTM" jdbcType="TIMESTAMP" property="edittm" />
+    <result column="startCreatetm" jdbcType="TIMESTAMP" property="startCreatetm" />
+    <result column="endCreatetm" jdbcType="TIMESTAMP" property="endCreatetm" />
+    <result column="statusStr" jdbcType="VARCHAR" property="statusStr" />
+    <result column="totalItemQty" jdbcType="DECIMAL" property="totalItemQty" />
+    <result column="totalLocateQty" jdbcType="DECIMAL" property="totalLocateQty" />
+    <result column="totalVolumeQty" jdbcType="DECIMAL" property="totalVolumeQty" />
+    <result column="totalWeightQty" jdbcType="DECIMAL" property="totalWeightQty" />
+    <result column="totalPlanQty" jdbcType="DECIMAL" property="totalPlanQty" />
+    <result column="isContinue" jdbcType="VARCHAR" property="isContinue" />
+    <result column="expNo" jdbcType="VARCHAR" property="expNo" />
+    <result column="poNo" jdbcType="VARCHAR" property="poNo" />
+    <result column="brandNo" jdbcType="VARCHAR" property="brandNo" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    LOCNO, LOCATE_NO, EXP_TYPE, STATUS, LOCATE_NAME, LOCATE_DATE, FAST_FLAG, DIVIDE_FLAG, 
+    SPECIFY_CELL, EXP_DATE, HM_MANUAL_FLAG, TASK_BATCH, CREATOR,CREATORNAME, CREATETM, EDITOR,EDITORNAME, EDITTM
+  </sql>
+  <sql id="condition">
+    <if test="null!=params">
+      <if test="null!=params.queryCondition and ''!=params.queryCondition">
+        ${params.queryCondition}
+      </if>
+    </if>
+  </sql>
+  
+  <sql id="baseCondition">
+    <if test="null!=params">
+      <if test="null!=params.locno and ''!=params.locno" >
+            and locate.LOCNO=#{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.expNo and ''!=params.expNo" >
+            and locateDtl.Exp_No = #{params.expNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+            and locateDtl.OWNER_NO=#{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.locateNo and ''!=params.locateNo" >
+            and locate.LOCATE_NO LIKE '%${params.locateNo}%'
+      </if>
+      <if test="null!=params.status and ''!=params.status">
+		    and locate.STATUS=#{params.status,jdbcType=VARCHAR}
+	  </if>
+      <if test="null!=params.creator and ''!=params.creator" >
+            and locate.CREATOR LIKE '%${params.creator}%'
+      </if>
+      <if test="null!=params.expNo and ''!=params.expNo" >
+           and locateDtl.Exp_No=#{params.expNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.startCreatetmStr and ''!=params.startCreatetmStr" >
+       <![CDATA[
+        	and locate.CREATETM >= to_date('${params.startCreatetmStr}','yyyy-mm-dd hh24:mi:ss')
+     	]]>	 
+      </if>
+      <if test="null!=params.endCreatetmStr and ''!=params.endCreatetmStr" >
+       <![CDATA[
+        	and locate.CREATETM <= to_date('${params.endCreatetmStr}','yyyy-mm-dd hh24:mi:ss')
+     	]]>	 
+      </if>
+      <if test="params.isContinue > 0" >
+      	<![CDATA[
+            and locate.status < '13'
+        ]]>	
+      </if>
+      <if test="null!=params.brandNo and ''!=params.brandNo" >
+			and it.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+	  </if>
+	   <if test="null!=params.sysNo and ''!=params.sysNo" >
+            and it.SYS_NO = #{params.sysNo,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+  
+  
+  <select id="selectByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillOmLocateKey" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_OM_LOCATE
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and LOCATE_NO = #{locateNo,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer">
+    select count(1) as s from BILL_OM_LOCATE where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" parameterType="map" resultMap="BaseResultMap">
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from BILL_OM_LOCATE where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField">
+      order by ${orderByField}
+      <if test="orderByField">
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <!--权限过滤左连接子查询-->
+  <sql id="selectBillOmLocateAuthorityLeftJoin" >
+   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+            left join (select locno, owner_no, locate_no
+                         from bill_om_locate_dtl                         
+                        where 
+                        locno = #{params.locno,jdbcType=VARCHAR}
+                        and brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+                        group by  locno, owner_no, locate_no
+                        ) sub1
+              on sub1.locno = locate.locno
+             and sub1.locate_no = locate.locate_no
+    </if>
+  </sql>
+  <!--权限过滤查询条件-->
+  <sql id="selectBillOmLocateAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and sub1.locate_no is not null 
+    </if>
+  </sql>
+  
+  
+  <!-- 查询波次信息分页总数 -->
+  <select id="selectBillOmLocateCount" resultType="java.lang.Integer">
+    select count(1) as s from 
+    (
+    	<include refid="sqlLocate" />
+    )
+  </select>
+  
+  <!-- 查询波次信息分页 -->
+  <select id="selectBillOmLocateByPage" parameterType="map" resultMap="BaseResultMap">
+    select B.* from (select A.*,rownum rn from( 
+    	<include refid="sqlLocate" />
+   		<choose>
+		    <when test="orderByField != null and ''!=orderByField">
+				order by ${orderByField}
+				<if test="orderByField">
+				${orderBy}
+				</if>
+			</when>
+			<otherwise>
+				order by locate.locate_no desc 
+			</otherwise>
+    	</choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <sql id="sqlLocate">
+  	select 
+    	  locate.locno,
+		  locate.status,
+		  locate.exp_type,
+		  locate.locate_no,
+		  locate.locate_name,
+		  locate.creator,
+		  max(locate.creatorname) creatorname,
+		  locate.createtm,
+		  locate.editor,
+          locate.editorname,
+          locate.edittm,
+		  count(distinct locateDtl.Item_No) totalItemQty,
+		  sum(nvl(locateDtl.Located_Qty,0)) totalLocateQty,
+		  sum(nvl(locateDtl.plan_qty,0)) totalPlanQty,
+		  sum(nvl(p.pack_volum,0)) totalVolumeQty,
+		  sum(nvl(p.pack_weight,0)) totalWeightQty,
+		  (select ld.ITEMNAME from LOOKUPDTL ld where locate.status = ld.itemval and ld.lookupcode = 'BILL_OM_LOCATE' and rownum = 1) as statusStr
+		from bill_om_locate locate
+		<include refid="selectBillOmLocateAuthorityLeftJoin" />
+		inner join bill_om_locate_dtl locateDtl 
+			on locate.locno=locateDtl.Locno 
+			and locate.locate_no=locateDtl.Locate_No
+		inner join item it on it.item_no = locateDtl.item_no
+		<!-- 
+		inner join bill_om_exp_dtl oed
+                    on oed.locno = locate.locno
+                   and oed.exp_no = locateDtl.Exp_No
+		 -->
+		left join item_pack p 
+			on p.pack_qty=locateDtl.Pack_Qty 
+			and p.item_no=locateDtl.Item_No 
+			and p.size_no=locateDtl.Size_No
+		where 1=1
+		<include refid="baseCondition" />
+		<include refid="selectBillOmLocateAuthorityCondition" />
+		group by locate.locno,locate.locate_no,locate.exp_type,locate.locate_name,locate.status,locate.creator,locate.createtm,  locate.editor,  locate.editorname,  locate.edittm
+                     
+                     
+  </sql>
+  
+  <select id="selectByParams" parameterType="map" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_OM_LOCATE where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <!--出库调度存储过程-->
+  <select id="procBillOmExpContinueDispatchQuery" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call PKG_WMS_YG_LOCATE.PROC_STARTOUTSTOCK 
+		    	(#{v_locno,mode=IN,jdbcType=VARCHAR},
+		    		#{v_owner_no,mode=IN,jdbcType=VARCHAR},
+		    		#{v_exp_type,mode=IN,jdbcType=VARCHAR},
+		    		#{v_locate_no,mode=IN,jdbcType=VARCHAR},
+		    		#{v_locate_again,mode=IN,jdbcType=VARCHAR},
+		    		#{v_creator,mode=IN,jdbcType=VARCHAR},
+		    		#{stroutmsg,mode=OUT,jdbcType=VARCHAR})}  
+		]]>
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillOmLocateKey">
+    delete from BILL_OM_LOCATE
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and LOCATE_NO = #{locateNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillOmLocate">
+    delete from BILL_OM_LOCATE
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and LOCATE_NO = #{locateNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillOmLocate">
+    insert into BILL_OM_LOCATE (LOCNO, LOCATE_NO, EXP_TYPE, 
+      STATUS, LOCATE_NAME, LOCATE_DATE, 
+      FAST_FLAG, DIVIDE_FLAG, SPECIFY_CELL, 
+      EXP_DATE, HM_MANUAL_FLAG, TASK_BATCH, 
+      CREATOR,CREATORNAME, CREATETM, EDITOR,EDITORNAME, 
+      EDITTM)
+    values (#{locno,jdbcType=VARCHAR}, #{locateNo,jdbcType=VARCHAR}, #{expType,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{locateName,jdbcType=VARCHAR}, #{locateDate,jdbcType=TIMESTAMP}, 
+      #{fastFlag,jdbcType=CHAR}, #{divideFlag,jdbcType=CHAR}, #{specifyCell,jdbcType=CHAR}, 
+      #{expDate,jdbcType=TIMESTAMP}, #{hmManualFlag,jdbcType=VARCHAR}, #{taskBatch,jdbcType=DECIMAL}, 
+      #{creator,jdbcType=VARCHAR}, #{creatorname,jdbcType=VARCHAR},#{createtm,jdbcType=TIMESTAMP}, #{editor,jdbcType=VARCHAR}, #{editorname,jdbcType=VARCHAR},
+      #{edittm,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillOmLocate">
+    insert into BILL_OM_LOCATE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="locno != null">
+        LOCNO,
+      </if>
+      <if test="locateNo != null">
+        LOCATE_NO,
+      </if>
+      <if test="expType != null">
+        EXP_TYPE,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="locateName != null">
+        LOCATE_NAME,
+      </if>
+      <if test="locateDate != null">
+        LOCATE_DATE,
+      </if>
+      <if test="fastFlag != null">
+        FAST_FLAG,
+      </if>
+      <if test="divideFlag != null">
+        DIVIDE_FLAG,
+      </if>
+      <if test="specifyCell != null">
+        SPECIFY_CELL,
+      </if>
+      <if test="expDate != null">
+        EXP_DATE,
+      </if>
+      <if test="hmManualFlag != null">
+        HM_MANUAL_FLAG,
+      </if>
+      <if test="taskBatch != null">
+        TASK_BATCH,
+      </if>
+      <if test="creator != null">
+        CREATOR,
+      </if>
+      <if test="creatorname != null">
+        CREATORNAME,
+      </if>
+      <if test="createtm != null">
+        CREATETM,
+      </if>
+      <if test="editor != null">
+        EDITOR,
+      </if>
+      <if test="editorname != null">
+        EDITORNAME,
+      </if>
+      <if test="edittm != null">
+        EDITTM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="locno != null">
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="locateNo != null">
+        #{locateNo,jdbcType=VARCHAR},
+      </if>
+      <if test="expType != null">
+        #{expType,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="locateName != null">
+        #{locateName,jdbcType=VARCHAR},
+      </if>
+      <if test="locateDate != null">
+        #{locateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fastFlag != null">
+        #{fastFlag,jdbcType=CHAR},
+      </if>
+      <if test="divideFlag != null">
+        #{divideFlag,jdbcType=CHAR},
+      </if>
+      <if test="specifyCell != null">
+        #{specifyCell,jdbcType=CHAR},
+      </if>
+      <if test="expDate != null">
+        #{expDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="hmManualFlag != null">
+        #{hmManualFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="taskBatch != null">
+        #{taskBatch,jdbcType=DECIMAL},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorname != null">
+        #{creatorname,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null">
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null">
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorname != null">
+        #{editorname,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null">
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillOmLocate">
+    update BILL_OM_LOCATE
+    <set>
+      <if test="expType != null">
+        EXP_TYPE = #{expType,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="locateName != null">
+        LOCATE_NAME = #{locateName,jdbcType=VARCHAR},
+      </if>
+      <if test="locateDate != null">
+        LOCATE_DATE = #{locateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fastFlag != null">
+        FAST_FLAG = #{fastFlag,jdbcType=CHAR},
+      </if>
+      <if test="divideFlag != null">
+        DIVIDE_FLAG = #{divideFlag,jdbcType=CHAR},
+      </if>
+      <if test="specifyCell != null">
+        SPECIFY_CELL = #{specifyCell,jdbcType=CHAR},
+      </if>
+      <if test="expDate != null">
+        EXP_DATE = #{expDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="hmManualFlag != null">
+        HM_MANUAL_FLAG = #{hmManualFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="taskBatch != null">
+        TASK_BATCH = #{taskBatch,jdbcType=DECIMAL},
+      </if>
+      <if test="creator != null">
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorname != null">
+        CREATORname = #{creatorname,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null">
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null">
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorname != null">
+        EDITORNAME = #{editorname,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null">
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and LOCATE_NO = #{locateNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillOmLocate">
+    update BILL_OM_LOCATE
+    set EXP_TYPE = #{expType,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      LOCATE_NAME = #{locateName,jdbcType=VARCHAR},
+      LOCATE_DATE = #{locateDate,jdbcType=TIMESTAMP},
+      FAST_FLAG = #{fastFlag,jdbcType=CHAR},
+      DIVIDE_FLAG = #{divideFlag,jdbcType=CHAR},
+      SPECIFY_CELL = #{specifyCell,jdbcType=CHAR},
+      EXP_DATE = #{expDate,jdbcType=TIMESTAMP},
+      HM_MANUAL_FLAG = #{hmManualFlag,jdbcType=VARCHAR},
+      TASK_BATCH = #{taskBatch,jdbcType=DECIMAL},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATORname = #{creatorname,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITORname = #{editorname,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and LOCATE_NO = #{locateNo,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="checkBillOmLocateOver" resultType="java.lang.Integer">
+  	select count(1)
+	  from bill_om_locate b
+	 where b.locno = #{params.locno,jdbcType=VARCHAR}
+       and b.locate_no = #{params.locateNo,jdbcType=VARCHAR}
+	   and ((exists (select 'X'
+	                   from bill_om_outstock oot
+	                  inner join bill_om_outstock_dtl ood
+	                     on oot.locno = ood.locno
+	                    and oot.outstock_no = ood.outstock_no
+	                  where ood.locate_no = b.locate_no
+	                    and ood.locno = b.locno
+	                    and oot.status = '10')) or
+	       (exists (select 'X'
+	                   from bill_om_recheck bor
+	                  where bor.locno = b.locno
+	                    and bor.divide_no = b.locate_no
+	                    and bor.recheck_type = '1'
+	                    and bor.status = '10')))
+  </select>
+  
+  <!-- 查询波次下已经确认的拣货单，但没有复核单的个数  -->
+  <select id="checkBillOmLocateOverNo" resultType="java.lang.Integer">
+  	select count(1)
+	  from bill_om_locate b
+	 where b.locno = #{params.locno,jdbcType=VARCHAR}
+       and b.locate_no = #{params.locateNo,jdbcType=VARCHAR}
+	   and (( exists (select 'X'
+	                   from bill_om_outstock oot
+	                  inner join bill_om_outstock_dtl ood
+	                     on oot.locno = ood.locno
+	                    and oot.outstock_no = ood.outstock_no
+	                  where ood.locate_no = b.locate_no
+	                    and ood.locno = b.locno)) and
+	       (not exists (select 'X'
+	                   from bill_om_recheck bor
+	                  where bor.locno = b.locno
+	                    and bor.divide_no = b.locate_no
+	                    and bor.recheck_type = '1')))
+  </select>
+  
+  
+  <select id="checkBillOmLocateRecovery" resultType="java.lang.Integer">
+  	select count(1)
+	  from bill_om_locate b
+	 where b.locno = #{params.locno,jdbcType=VARCHAR}
+       and b.locate_no = #{params.locateNo,jdbcType=VARCHAR}
+	   and ((exists (select 'X'
+	                   from bill_om_outstock oot
+	                  inner join bill_om_outstock_dtl ood
+	                     on oot.locno = ood.locno
+	                    and oot.outstock_no = ood.outstock_no
+	                  where ood.locate_no = b.locate_no
+	                    and ood.locno = b.locno
+	                    and oot.status != '10')) or
+	       (exists (select 'X'
+	                   from bill_om_recheck bor
+	                  where bor.locno = b.locno
+	                    and bor.divide_no = b.locate_no
+	                    and bor.recheck_type = '1')))
+  </select>
+  
+  
+  <!-- 查询调度的明细总数 -->
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+  	select 
+		sum(nvl(aa.totalItemQty,0)) totalItemQty,
+		sum(nvl(aa.totalLocateQty,0)) totalLocateQty,
+	    sum(nvl(aa.totalPlanQty,0)) totalPlanQty,
+		sum(nvl(aa.totalVolumeQty,0)) totalVolumeQty,
+		sum(nvl(aa.totalWeightQty,0)) totalWeightQty
+	from(
+  		<include refid="sqlLocate" />
+  	)aa
+  </select>
+  
+  <!-- 查询是否存在手工关闭的波茨 -->
+  <select id="selectOmLocateByExpNo" parameterType="map" resultMap="BaseResultMap">
+		select e.locno,e.locate_no,ed.exp_no from bill_om_locate e
+		inner join bill_om_locate_dtl ed 
+			on e.locno = ed.locno
+			and e.locate_no = ed.locate_no
+		where e.locno = #{params.locno,jdbcType=VARCHAR}
+		and ed.exp_no = #{params.expNo,jdbcType=VARCHAR}
+		and e.status != '91'
+		group by e.locno,e.locate_no,ed.exp_no
+  </select>
+  
+</mapper>

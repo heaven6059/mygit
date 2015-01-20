@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.SizeInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.SizeInfo" >
+    <id column="SIZE_KIND2" property="sizeKind2" jdbcType="DECIMAL" />
+    <id column="SIZE_KIND" property="sizeKind" jdbcType="VARCHAR" />
+    <id column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="SIZE_CODE" property="sizeCode" jdbcType="VARCHAR" />
+    <result column="SIZE_NAME" property="sizeName" jdbcType="VARCHAR" />
+    <result column="SYS_NO" property="sysNo" jdbcType="VARCHAR" />
+    <result column="HCOL_NO" property="hcolNo" jdbcType="DECIMAL" />
+    <result column="WORK_SIZE" property="workSize" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="REMARKS" property="remarks" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="RECIEVETM" property="recievetm" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    SIZE_KIND2, SIZE_KIND, SIZE_NO, SIZE_CODE, SIZE_NAME, SYS_NO, HCOL_NO, WORK_SIZE, 
+    CREATOR, CREATETM, REMARKS, EDITTM, EDITOR,RECIEVETM
+  </sql>
+  <sql id="condition">
+		<if test="null!=params">
+			<if test="null!=params.queryCondition and ''!=params.queryCondition">
+				${params.queryCondition}
+			</if>
+			
+			<if test="null!=params.sysNo and ''!=params.sysNo">
+				and SYS_NO = #{params.sysNo}
+			</if>
+
+			<if test="null!=params.sizeNo and ''!=params.sizeNo">
+				and SIZE_NO = #{params.sizeNo,jdbcType=VARCHAR}
+			</if>
+				
+			<if test="null!=params.sizeCode and ''!=params.sizeCode">
+				and SIZE_CODE = #{params.sizeCode,jdbcType=VARCHAR}
+			</if>
+	
+			<if test="null!=params.sizeName and ''!=params.sizeName">
+				and SIZE_NAME = #{params.sizeName,jdbcType=VARCHAR}
+			</if>
+
+			<if test="null!=params.hcolNo and ''!=params.hcolNo">
+				and HCOL_NO = #{params.hcolNo,jdbcType=DECIMAL}
+			</if>
+
+			<if test="null!=params.workSize and ''!=params.workSize">
+				and WORK_SIZE = #{params.workSize,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=params.creator and ''!=params.creator">
+				and CREATOR=#{params.creator,jdbcType=VARCHAR}
+			</if>
+
+			<if test="null!=params.editor and ''!=params.editor">
+				and EDITOR=#{params.editor,jdbcType=VARCHAR}
+			</if>
+
+			<if test="null!=params.createtmBegin and ''!=params.createtmBegin">
+				and CREATETM &gt;=
+				to_date('${params.createtmBegin}','yyyy-MM-dd')
+			</if>
+
+			<if test="null!=params.createtmEnd and ''!=params.createtmEnd">
+				and CREATETM &lt;
+				(to_date('${params.createtmEnd}','yyyy-MM-dd')+1)
+			</if>
+
+			<if test="null!=params.edittmBegin and ''!=params.edittmBegin">
+				and EDITTM &gt;=
+				to_date('${params.edittmBegin}','yyyy-MM-dd')
+			</if>
+
+			<if test="null!=params.edittmEnd and ''!=params.edittmEnd">
+				and EDITTM &lt;
+				(to_date('${params.edittmEnd}','yyyy-MM-dd')+1)
+			</if>
+
+			<if test="null!=params.sizeKind2 and ''!=params.sizeKind2">
+				and SIZE_KIND2 = #{params.sizeKind2,jdbcType=DECIMAL}
+			</if>
+			<if test="null!=params.sizeKind and ''!=params.sizeKind">
+				and SIZE_KIND = #{params.sizeKind}
+			</if>
+		</if>
+	</sql>
+	
+	 <!--权限过滤查询条件-->
+  
+   <!--权限过滤查询条件-->
+  <sql id="d_AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and exists (select 1 from brand b where a.sys_no=b.sys_no and b.brand_no 
+       in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+       ) 
+    </if>
+  </sql>
+  <!-- 
+  
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.sizeNo and ''!=params.sizeNo" >
+        and SIZE_NO = #{sizeNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.SIZE_NO and ''!=params.SIZE_NO" >
+        and SIZE_KIND = #{sizeKind,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.sizeKind2 and ''!=params.sizeKind2" >
+        and SIZE_KIND2 = #{sizeKind2,jdbcType=DECIMAL}
+      </if>
+      <if test="null!=params.sysNo and ''!=params.sysNo" >
+        and SYS_NO = #{params.sysNo}
+      </if>
+     <if test="null!=params.SIZE_KIND and ''!=params.SIZE_KIND" >
+        and SIZE_KIND = #{params.SIZE_KIND}
+      </if>
+      <if test="null!=params.sizeKind and ''!=params.sizeKind">
+	    and SIZE_KIND = #{params.sizeKind}
+	  </if>
+      <if test="null!=params.sizeKindStr and ''!=params.sizeKindStr" >
+        and SIZE_KIND in (#{params.sizeKindStr})
+      </if>
+    </if>
+  </sql>
+   -->
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.SizeInfo" >
+    select 
+    <include refid="Base_Column_List" />
+    from SIZE_INFO
+    where SIZE_KIND2 = #{sizeKind2,jdbcType=DECIMAL}
+      and SIZE_KIND = #{sizeKind,jdbcType=VARCHAR}
+      and SIZE_NO = #{sizeNo,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectSizeInfoBySizeNoList" resultMap="BaseResultMap">
+  	 SELECT * FROM size_info a WHERE a.sys_no = #{sysNo} AND SIZE_KIND IN 
+	<foreach collection="list" item="item"  open="(" separator="," close=")">  
+        #{item}  
+    </foreach> 
+     <include refid="d_AuthorityCondition" />
+   order by SIZE_KIND,size_no
+  </select>
+  
+  <select id="selectSizeInfoBySizeNo" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.SizeInfo" >
+    select 
+    <include refid="Base_Column_List" />
+    from SIZE_INFO
+    where 1=1
+        and SIZE_NO = #{sizeNo}
+       <include refid="d_AuthorityCondition" />
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from SIZE_INFO  a where 1=1 
+    <include refid="condition" />
+     <include refid="d_AuthorityCondition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from SIZE_INFO a where 1=1 
+    <include refid="condition" />
+    <include refid="d_AuthorityCondition" />
+      <choose>
+		    <when test="orderByField != null and ''!=orderByField and orderBy != null and ''!=orderBy">
+		         order by ${orderByField} ${orderBy}
+		    </when>
+		    <otherwise>
+		         order by HCOL_NO, SIZE_KIND2, SIZE_KIND, SIZE_NO asc
+		    </otherwise>
+     </choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+     
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from SIZE_INFO where 1=1 
+    <include refid="condition" />
+    order by size_kind2,size_no
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.SizeInfo" >
+    delete from SIZE_INFO
+    where SIZE_KIND2 = #{sizeKind2,jdbcType=DECIMAL}
+      and SIZE_KIND = #{sizeKind,jdbcType=VARCHAR}
+      and SIZE_NO = #{sizeNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.SizeInfo" >
+    delete from SIZE_INFO
+    where SIZE_KIND2 = #{sizeKind2,jdbcType=DECIMAL}
+      and SIZE_KIND = #{sizeKind,jdbcType=VARCHAR}
+      and SIZE_NO = #{sizeNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.SizeInfo" >
+    insert into SIZE_INFO (SIZE_KIND2, SIZE_KIND, SIZE_NO, 
+      SIZE_CODE, SIZE_NAME, SYS_NO, 
+      HCOL_NO, WORK_SIZE, CREATOR, 
+      CREATETM, REMARKS, EDITTM, 
+      EDITOR)
+    values (#{sizeKind2,jdbcType=DECIMAL}, #{sizeKind,jdbcType=VARCHAR}, #{sizeNo,jdbcType=VARCHAR}, 
+      #{sizeCode,jdbcType=VARCHAR}, #{sizeName,jdbcType=VARCHAR}, #{sysNo,jdbcType=VARCHAR}, 
+      #{hcolNo,jdbcType=DECIMAL}, #{workSize,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
+      #{createtm,jdbcType=TIMESTAMP}, #{remarks,jdbcType=VARCHAR}, #{edittm,jdbcType=TIMESTAMP}, 
+      #{editor,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.SizeInfo" >
+    insert into SIZE_INFO
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="sizeKind2 != null" >
+        SIZE_KIND2,
+      </if>
+      <if test="sizeKind != null" >
+        SIZE_KIND,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="sizeCode != null" >
+        SIZE_CODE,
+      </if>
+      <if test="sizeName != null" >
+        SIZE_NAME,
+      </if>
+      <if test="sysNo != null" >
+        SYS_NO,
+      </if>
+      <if test="hcolNo != null" >
+        HCOL_NO,
+      </if>
+      <if test="workSize != null" >
+        WORK_SIZE,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="remarks != null" >
+        REMARKS,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="sizeKind2 != null" >
+        #{sizeKind2,jdbcType=DECIMAL},
+      </if>
+      <if test="sizeKind != null" >
+        #{sizeKind,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeCode != null" >
+        #{sizeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeName != null" >
+        #{sizeName,jdbcType=VARCHAR},
+      </if>
+      <if test="sysNo != null" >
+        #{sysNo,jdbcType=VARCHAR},
+      </if>
+      <if test="hcolNo != null" >
+        #{hcolNo,jdbcType=DECIMAL},
+      </if>
+      <if test="workSize != null" >
+        #{workSize,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remarks != null" >
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.SizeInfo" >
+    update SIZE_INFO
+    <set >
+      <if test="sizeCode != null" >
+        SIZE_CODE = #{sizeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeName != null" >
+        SIZE_NAME = #{sizeName,jdbcType=VARCHAR},
+      </if>
+      <if test="sysNo != null" >
+        SYS_NO = #{sysNo,jdbcType=VARCHAR},
+      </if>
+      <if test="hcolNo != null" >
+        HCOL_NO = #{hcolNo,jdbcType=DECIMAL},
+      </if>
+      <if test="workSize != null" >
+        WORK_SIZE = #{workSize,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remarks != null" >
+        REMARKS = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where SIZE_KIND2 = #{sizeKind2,jdbcType=DECIMAL}
+      and SIZE_KIND = #{sizeKind,jdbcType=VARCHAR}
+      and SIZE_NO = #{sizeNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.SizeInfo" >
+    update SIZE_INFO
+    set SIZE_CODE = #{sizeCode,jdbcType=VARCHAR},
+      SIZE_NAME = #{sizeName,jdbcType=VARCHAR},
+      SYS_NO = #{sysNo,jdbcType=VARCHAR},
+      HCOL_NO = #{hcolNo,jdbcType=DECIMAL},
+      WORK_SIZE = #{workSize,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      REMARKS = #{remarks,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR}
+    where SIZE_KIND2 = #{sizeKind2,jdbcType=DECIMAL}
+      and SIZE_KIND = #{sizeKind,jdbcType=VARCHAR}
+      and SIZE_NO = #{sizeNo,jdbcType=VARCHAR}
+  </update>
+  <select id="selectSizeCodeBySysAndKind" parameterType="map" resultType="java.lang.String">
+  		select s.size_code
+		  from size_info s
+		 where s.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+		   and s.size_kind = #{params.sizeKind,jdbcType=VARCHAR}
+		 order by s.hcol_no
+  </select>
+</mapper>

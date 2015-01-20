@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillUmReceiptDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillUmReceiptDtl" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="RECEIPT_NO" property="receiptNo" jdbcType="VARCHAR" />
+    <id column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="item_name" property="itemName" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="ITEM_QTY" property="itemQty" jdbcType="DECIMAL" />
+    <result column="BOX_NO" property="boxNo" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="brand_name" property="brandName" jdbcType="VARCHAR" />
+    <result column="color_name" property="colorName" jdbcType="VARCHAR" />
+    <result column="sum_qty" property="sumQty" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, OWNER_NO, RECEIPT_NO, ROW_ID, ITEM_NO, SIZE_NO, ITEM_QTY, BOX_NO, STATUS
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+        and locno = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.receiptNo and ''!=params.receiptNo" >
+        and receipt_no = #{params.receiptNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        and owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+  <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillUmReceiptDtlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_UM_RECEIPT_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and RECEIPT_NO = #{receiptNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_UM_RECEIPT_DTL where 1=1 
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.LOCNO, A.OWNER_NO ownerNo, A.RECEIPT_NO receiptNo, A.ROW_ID, A.ITEM_NO itemNo, A.SIZE_NO sizeNo, A.ITEM_QTY itemQty, A.BOX_NO boxNo, A.STATUS,rownum rn,
+               (select i.item_name from item i where i.item_no = A.item_no) itemName,
+               (select b.brand_name from item i left join brand b on b.brand_no = i.brand_no where i.item_no = A.item_no) brandName,
+               (select c.color_name from item i left join color_info c on c.color_no = i.color_no where i.item_no = A.item_no) colorName
+    from( select 
+    <include refid="Base_Column_List" />
+     from BILL_UM_RECEIPT_DTL d where 1=1 
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+    ) A where rownum &lt; #{page.endRowNum}
+      <choose>
+	    <when test="orderByField != null and ''!=orderByField">
+			order by ${orderByField}
+			<if test="orderByField">
+			${orderBy}
+			</if>
+		</when>
+		<otherwise>
+			order by A.box_no, A.item_no, A.size_no
+		</otherwise>
+	  </choose>
+    ) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+	select '合计' BOX_NO, NVL(sum(ITEM_QTY), 0) ITEM_QTY
+	  from BILL_UM_RECEIPT_DTL
+	where 1 = 1
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+  </select>
+  <select id="selectCountByBox" resultType="java.lang.Integer" >
+    select count(1)
+  	from (select box_no, sum(item_qty) sum_qty
+          from BILL_UM_RECEIPT_DTL
+         where 1=1
+         <include refid="condition" />
+         group by box_no)
+  </select>
+  <select id="selectByPageByBox" resultMap="BaseResultMap" parameterType="map" >
+  	select B.* from (select A.*,rownum rn
+  	from (select box_no, sum(item_qty) sum_qty
+          from BILL_UM_RECEIPT_DTL
+         where 1=1
+         <include refid="condition" />
+         group by box_no) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_UM_RECEIPT_DTL where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillUmReceiptDtlKey" >
+    delete from BILL_UM_RECEIPT_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and RECEIPT_NO = #{receiptNo,jdbcType=VARCHAR}
+      <if test="rowId != null">
+      	and ROW_ID = #{rowId,jdbcType=DECIMAL}
+      </if>
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillUmReceiptDtl" >
+    delete from BILL_UM_RECEIPT_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and RECEIPT_NO = #{receiptNo,jdbcType=VARCHAR}
+      <if test="rowId != null">
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+      </if>
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillUmReceiptDtl" >
+    insert into BILL_UM_RECEIPT_DTL (LOCNO, OWNER_NO, RECEIPT_NO, 
+      ROW_ID, ITEM_NO, SIZE_NO, 
+      ITEM_QTY, BOX_NO, STATUS,
+      EDITOR,EDITORNAME, EDITTM
+      )
+    values (#{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, #{receiptNo,jdbcType=VARCHAR}, 
+      #{rowId,jdbcType=DECIMAL}, #{itemNo,jdbcType=VARCHAR}, #{sizeNo,jdbcType=VARCHAR}, 
+      #{itemQty,jdbcType=DECIMAL}, #{boxNo,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR},
+      #{editor,jdbcType=VARCHAR},#{editorName,jdbcType=VARCHAR}, #{edittm,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillUmReceiptDtl" >
+    insert into BILL_UM_RECEIPT_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="receiptNo != null" >
+        RECEIPT_NO,
+      </if>
+      <if test="rowId != null" >
+        ROW_ID,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="itemQty != null" >
+        ITEM_QTY,
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="brandNo != null" >
+        brand_no,
+      </if>
+       <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="editorName != null" >
+        EDITORNAME,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="receiptNo != null" >
+        #{receiptNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rowId != null" >
+        #{rowId,jdbcType=DECIMAL},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemQty != null" >
+        #{itemQty,jdbcType=DECIMAL},
+      </if>
+      <if test="boxNo != null" >
+        #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="brandNo != null" >
+        #{brandNo,jdbcType=VARCHAR},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null" >
+        #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillUmReceiptDtl" >
+    update BILL_UM_RECEIPT_DTL
+    <set >
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemQty != null" >
+        ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO = #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null" >
+        EDITORNAME = #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and RECEIPT_NO = #{receiptNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillUmReceiptDtl" >
+    update BILL_UM_RECEIPT_DTL
+    set ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+      BOX_NO = #{boxNo,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITORNAME = #{editorName,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and RECEIPT_NO = #{receiptNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+</mapper>

@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.ItemCollectContentMapper" >
+	<resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.ItemCollectContent" >
+	    <result column="brand_No" property="brandNo" jdbcType="VARCHAR" />
+	    <result column="locno" property="locno" jdbcType="VARCHAR" />
+	    <result column="brand_Name" property="brandName" jdbcType="VARCHAR" />
+	    <result column="cell_No" property="cellNo" jdbcType="VARCHAR" />
+	    <result column="item_No" property="itemNo" jdbcType="VARCHAR" />
+	    <result column="item_Name" property="itemName" jdbcType="VARCHAR" />
+	    <result column="ware_No" property="wareNo" jdbcType="VARCHAR" />
+	    <result column="area_No" property="areaNo" jdbcType="VARCHAR" />
+	    <result column="area_Name" property="areaName" jdbcType="VARCHAR" />
+	    <result column="cate_No" property="cateNo" jdbcType="VARCHAR" />
+	    <result column="cate_Name" property="cateName" jdbcType="VARCHAR" />
+	    <result column="item_Type" property="itemType" jdbcType="VARCHAR" />
+	    <result column="item_Type_name" property="itemTypeName" jdbcType="VARCHAR" />
+	    <result column="quality" property="quality" jdbcType="VARCHAR" />
+	    <result column="barcode" property="barcode" jdbcType="VARCHAR" />
+	    <result column="color_No" property="colorNo" jdbcType="VARCHAR" />
+	    <result column="color_Name" property="colorName" jdbcType="VARCHAR" />
+	    <result column="size_No" property="sizeNo" jdbcType="VARCHAR" />
+	    <result column="qty" property="qty" jdbcType="DECIMAL" />
+	    <result column="outstock_Qty" property="outstockQty" jdbcType="DECIMAL" />
+	    <result column="instock_Qty" property="instockQty" jdbcType="DECIMAL" />
+	    <result column="unusual_Qty" property="unusualQty" jdbcType="DECIMAL" />
+	    <result column="usable_Qty" property="usableQty" jdbcType="DECIMAL" />
+	    
+	    <result column="status" property="status" jdbcType="VARCHAR" />
+	    <result column="statusName" property="statusName" jdbcType="VARCHAR" />
+	    <result column="hm_manual_flag" property="hmManualFlag" jdbcType="VARCHAR" />
+	    <result column="manualName" property="manualName" jdbcType="VARCHAR" />
+	    <result column="years" property="years" jdbcType="VARCHAR" />
+	    <result column="years_name" property="yearsName" jdbcType="VARCHAR" />
+	    <result column="season" property="season" jdbcType="VARCHAR" />
+	    <result column="season_name" property="seasonName" jdbcType="VARCHAR" />
+	    <result column="gender" property="gender" jdbcType="VARCHAR" />
+	    <result column="gender_name" property="genderName" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="condition" >
+		<if test="null!=params" >
+			<if test="null != params.locno and '' != params.locno">
+            	and v.locno = #{params.locno,jdbcType=VARCHAR}
+            </if>
+			<if test="null != params.itemNo and '' != params.itemNo">
+            	and v.item_no like '%${params.itemNo}%'
+            </if>
+            <if test="null != params.itemName and '' != params.itemName">
+            	and i.item_name like '%${params.itemName}%'
+            </if>
+            <if test="null != params.cateNo and '' != params.cateNo">
+            	and i.cate_no in (select cate_no from category where cate_code like '${params.cateNo}%')
+            </if>
+            <if test="null != params.itemType and '' != params.itemType">
+            	and v.item_type = #{params.itemType,jdbcType=VARCHAR}
+            </if>
+            <if test="null != params.quality and '' != params.quality">
+            	and v.quality = #{params.quality,jdbcType=VARCHAR}
+            </if>
+            <if test="null != params.cellNo and '' != params.cellNo">
+            	and v.cell_no = #{params.cellNo,jdbcType=VARCHAR}
+            </if>
+            <if test="null != params.barcode and '' != params.barcode">
+            	and v.barcode like '%${params.barcode}%'
+            </if>
+            <if test="null != params.brandNo and '' != params.brandNo">
+            	and i.brand_no = #{params.brandNo,jdbcType=VARCHAR}
+            </if>
+            <if test="null != params.sysNo and '' != params.sysNo">
+            	and i.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+            </if>
+            <if test="null!=params.yearsName and ''!=params.yearsName" >
+	            and i.years in (select itemval from LOOKUPDTL where lookupcode = 'YEARS' and ITEMNAME like '%${params.yearsName}%')
+	        </if>
+	       <!--  <if test="null!=params.seasonName and ''!=params.seasonName" >
+	            and i.season in (select itemval from LOOKUPDTL where lookupcode = 'SEASON' and ITEMNAME like '%${params.seasonName}%')
+	        </if>
+	        <if test="null!=params.genderName and ''!=params.genderName" >
+	            and i.gender in (select itemval from LOOKUPDTL where lookupcode = 'GENDER' and ITEMNAME like '%${params.genderName}%')
+	        </if> -->
+	        <if test="null != params.seasonValues" >
+		    	and i.season in
+		    	<foreach collection="params.seasonValues" item="seasonName" open="(" close=")" separator=",">
+					#{seasonName}
+				</foreach>
+				
+		  	</if>
+		   	<if test="null != params.genderValues" >
+		   		and i.gender in
+		    	<foreach collection="params.genderValues" item="genderName" open="(" close=")" separator=",">
+					#{genderName}
+				</foreach>
+				
+		   	</if>
+            <choose>
+			 		<when test="params.cateThreeValues != null">
+				 		<foreach collection="params.cateThreeValues" item="value" open=" and (" close=")" separator="or">
+							c.search_code like '${value}%'
+						</foreach>
+			 		</when>
+			 		<when test="params.cateTwoValues != null">
+			 			<foreach collection="params.cateTwoValues" item="value" open="and (" close=")" separator="or">
+							c.search_code like '${value}%'
+						</foreach>
+			 		</when>
+			 		<when test="params.cateOneValues != null">
+			 			<foreach collection="params.cateOneValues" item="value" open="and (" close=")" separator="or">
+							c.search_code like '${value}%'
+						</foreach>
+			 		</when>
+			 		<otherwise>
+			 		</otherwise>
+	 		</choose> 
+            
+            
+		</if>
+     	<if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       		and i.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+   		</if>
+	</sql>
+	<sql id="Base_SQL">
+		from v_content v
+		inner join item i on i.item_no = v.item_no
+		left join cm_defcell cdc on cdc.locno = v.locno
+			and cdc.cell_no = v.cell_no
+		left join cm_defarea cda on cda.locno = v.locno
+			and cda.ware_no = cdc.ware_no
+			and cda.area_no = cdc.area_no
+		left join brand b on b.brand_no = i.brand_no
+       	left join color_info ci on ci.color_no = i.color_no
+        left join category c on i.cate_no=c.cate_no
+		where 1 = 1
+			and v.cell_no != 'N'
+			<include refid="condition" />
+	</sql>
+	<select id="selectCount" resultType="java.lang.Integer" >
+		select count(1) s
+		  from (select v.item_no,
+			          i.item_name,
+			          i.color_no,
+			          ci.color_name,
+			          v.size_no,
+			          i.brand_no,
+			          b.brand_name,
+			          v.item_type,
+			          v.quality,
+			          i.cate_no,
+			          i.years,
+			          i.season,
+			          i.gender,
+			          cdc.area_no,
+			          cda.area_name,
+			          v.barcode,
+			          v.status,
+                  	  v.hm_manual_flag
+					  <include refid="Base_SQL" />
+				 	  group by v.item_no,
+			          i.item_name,
+			          i.color_no,
+			          ci.color_name,
+			          v.size_no,
+			          i.brand_no,
+			          b.brand_name,
+			          v.item_type,
+			          v.quality,
+			          i.cate_no,
+			          i.years,
+			          i.season,
+			          i.gender,
+			          cdc.area_no,
+			          cda.area_name,
+			          v.barcode,
+			          v.status,
+                  	  v.hm_manual_flag
+		         ) A
+	</select>
+	<select id="selectByPage" resultMap="BaseResultMap" parameterType="map">
+		select B.*
+		  from (select A.*,rownum rn
+		          from (select v.item_no,
+					       i.item_name,
+					       i.color_no,
+					       ci.color_name,
+					       v.size_no,
+					       i.brand_no,
+					       b.brand_name,
+					       sum(v.qty) qty,
+						   sum(v.unusual_qty) unusual_qty,
+						   sum(v.instock_qty) instock_qty,
+						   sum(v.outstock_qty) outstock_qty,
+						   sum(v.qty) + sum(v.unusual_qty) + sum(v.instock_qty) - sum(v.outstock_qty) usable_Qty,
+					       v.item_type,
+					       (select l.itemname from lookupdtl l where l.lookupcode = 'ITEM_TYPE' and l.itemval = v.item_type) item_type_name,
+					       v.quality,
+					       i.cate_no,
+					       (select cate.cate_name from CATEGORY cate where cate.cate_no = i.cate_no) cate_name,
+					        i.years,
+			                i.season,
+			                i.gender,
+			                (select ITEMNAME
+			                  from LOOKUPDTL
+			                 where lookupcode = 'YEARS'
+			                   and itemval = i.years) years_Name,
+			                (select ITEMNAME
+			                  from LOOKUPDTL
+			                 where lookupcode = 'SEASON'
+			                   and itemval = i.season) season_Name,
+			                (select ITEMNAME
+			                  from LOOKUPDTL
+			                 where lookupcode = 'GENDER'
+			                   and itemval = i.gender) gender_Name,
+					       cdc.area_no,
+					       cda.area_name,
+					        v.status,
+			               (select l.itemname
+			                  from lookupdtl l
+			                 where l.lookupcode = 'CITY_HM_STATUS'
+			                   and l.itemval = v.status) statusName,
+			               v.hm_manual_flag,
+			               (select l.itemname
+			                  from lookupdtl l
+			                 where l.lookupcode = 'CITY_HM_MANUAL_FLAG'
+                   and l.itemval = v.hm_manual_flag) manualName,
+					       v.barcode
+					  <include refid="Base_SQL" />
+				 	  group by v.item_no,
+			          i.item_name,
+			          i.color_no,
+			          ci.color_name,
+			          v.size_no,
+			          i.brand_no,
+			          b.brand_name,
+			          v.item_type,
+			          v.quality,
+			          i.cate_no,
+			          i.years,
+			          i.season,
+			          i.gender,
+			          cdc.area_no,
+			          cda.area_name,
+			          v.barcode,
+			          v.status,
+                  	  v.hm_manual_flag
+                  	  order by cdc.area_no, cda.area_name, 
+                  	  v.item_no, v.size_no,v.item_type,v.quality
+			 ) A where rownum &lt; #{page.endRowNum}
+			 ) B where rn &gt; #{page.startRowNum}
+	</select>
+
+	<select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+        select
+        sum(v.qty) qty
+        <include refid="Base_SQL" />
+	</select>
+</mapper>

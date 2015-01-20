@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.StaffPerformanceReportMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.StaffPerformanceReport" >
+   	<result property="loginName" column="LOGIN_NAME" jdbcType="VARCHAR" />
+   	<result property="userName" column="USER_NAME" jdbcType="VARCHAR" />
+   	<result property="cateNo" column="CATE_NO" jdbcType="VARCHAR" />
+   	<result property="dhshQty" column="dhsh_qty" jdbcType="DECIMAL" />
+    <result property="shysQty" column="shys_qty" jdbcType="DECIMAL" />
+    <result property="fhfhQty" column="fhfh_qty" jdbcType="DECIMAL" />
+    <result property="jhlQty" column="jhl_qty" jdbcType="DECIMAL" />
+    <result property="fhdbQty" column="fhdb_qty" jdbcType="DECIMAL" />
+    <result property="thshQty" column="thsh_qty" jdbcType="DECIMAL" />
+    <result property="thysQty" column="thys_qty" jdbcType="DECIMAL" />
+    <result property="qtrkQty" column="qtrk_qty" jdbcType="DECIMAL" />
+    <result property="qtckQty" column="qtck_qty" jdbcType="DECIMAL" />
+    <result property="rksjQty" column="rksj_qty" jdbcType="DECIMAL" />
+    <result property="tcsjQty" column="tcsj_qty" jdbcType="DECIMAL" />
+    <result property="jsykQty" column="jsyk_qty" jdbcType="DECIMAL" />
+    <result property="cpQty" column="cp_qty" jdbcType="DECIMAL" />
+    <result property="fpQty" column="fp_qty" jdbcType="DECIMAL" />
+    <result property="totalQty" column="total_qty" jdbcType="DECIMAL" />
+  </resultMap>
+  
+   
+  <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and rp.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <sql id="condition">
+		<if test="null!=params.locno and ''!=params.locno">
+			and rp.locno = #{params.locno,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.loginName and ''!=params.loginName">
+			and rp.login_name = #{params.loginName,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.startDate and ''!=params.startDate">
+			<![CDATA[
+				and rp.search_date >= to_date('${params.startDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+			]]>
+		</if>
+		<if test="null!=params.endDate and ''!=params.endDate">
+			<![CDATA[
+				and rp.search_date <= to_date('${params.endDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			]]>
+		</if>
+		<choose>
+	 		<when test="params.cateThreeValues != null">
+		 		<foreach collection="params.cateThreeValues" item="value" open=" and (" close=")" separator="or">
+					rp.search_code like '${value}%'
+				</foreach>
+	 		</when>
+	 		<when test="params.cateTwoValues != null">
+	 			<foreach collection="params.cateTwoValues" item="value" open="and (" close=")" separator="or">
+					rp.search_code like '${value}%'
+				</foreach>
+	 		</when>
+	 		<when test="params.cateOneValues != null">
+	 			<foreach collection="params.cateOneValues" item="value" open="and (" close=")" separator="or">
+					rp.search_code like '${value}%'
+				</foreach>
+	 		</when>
+	 		<otherwise>
+	 		</otherwise>
+	 	</choose>
+		<include refid="AuthorityCondition" />
+   </sql>
+   
+  
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from (
+	  <include refid="Base_Sql" />
+	)
+  </select>
+
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map">
+		select B.* from (select A.*,rownum rn 
+			<include refid="SelectByPage_Other_Column_List" /> from(
+			<include refid="Base_Sql" />
+		) A where rownum &lt; #{page.endRowNum}) B where rn &gt;#{page.startRowNum}
+  </select>
+  
+  <sql id="Base_Sql" >
+  		select sub.locno,
+		       sub.login_name,
+		       sub.username,
+		       sum(nvl(sub.dhsh_qty, 0)) dhsh_qty,
+		       sum(nvl(sub.shys_qty, 0)) shys_qty,
+		       sum(nvl(sub.fhfh_qty, 0)) fhfh_qty,
+		       sum(nvl(sub.jhl_qty, 0)) jhl_qty,
+		       sum(nvl(sub.fhdb_qty, 0)) fhdb_qty,
+		       sum(nvl(sub.thsh_qty, 0)) thsh_qty,
+		       sum(nvl(sub.thys_qty, 0)) thys_qty,
+		       sum(nvl(sub.qtrk_qty, 0)) qtrk_qty,
+		       sum(nvl(sub.qtck_qty, 0)) qtck_qty,
+		       sum(nvl(sub.rksj_qty, 0)) rksj_qty,
+		       sum(nvl(sub.tcsj_qty, 0)) tcsj_qty,
+		       sum(nvl(sub.jsyk_qty, 0)) jsyk_qty,
+		       sum(nvl(sub.cp_qty, 0)) cp_qty,
+		       sum(nvl(sub.fp_qty, 0)) fp_qty,
+		       (sum(nvl(sub.dhsh_qty, 0)) + sum(nvl(sub.shys_qty, 0)) +
+		       sum(nvl(sub.fhfh_qty, 0)) + sum(nvl(sub.jhl_qty, 0)) +
+		       sum(nvl(sub.fhdb_qty, 0)) + sum(nvl(sub.thsh_qty, 0)) +
+		       sum(nvl(sub.thys_qty, 0)) + sum(nvl(sub.qtrk_qty, 0)) +
+		       sum(nvl(sub.qtck_qty, 0)) + sum(nvl(sub.rksj_qty, 0)) +
+		       sum(nvl(sub.tcsj_qty, 0)) + sum(nvl(sub.jsyk_qty, 0)) +
+		       sum(nvl(sub.cp_qty, 0)) + sum(nvl(sub.fp_qty, 0))) total_qty,
+		       count(distinct sub.box_no) as boxNum
+		       <include refid="Base_Sql_Other_Column_List"/>
+		       from(
+		       		select rp.locno,
+					       rp.login_name,
+					       au.username,
+					       nvl(rp.dhsh_qty, 0) dhsh_qty,
+					       nvl(rp.shys_qty, 0) shys_qty,
+					       nvl(rp.fhfh_qty, 0) fhfh_qty,
+					       nvl(rp.jhl_qty, 0) jhl_qty,
+					       nvl(rp.fhdb_qty, 0) fhdb_qty,
+					       nvl(rp.thsh_qty, 0) thsh_qty,
+					       nvl(rp.thys_qty, 0) thys_qty,
+					       nvl(rp.qtrk_qty, 0) qtrk_qty,
+					       nvl(rp.qtck_qty, 0) qtck_qty,
+					       nvl(rp.rksj_qty, 0) rksj_qty,
+					       nvl(rp.tcsj_qty, 0) tcsj_qty,
+					       nvl(rp.jsyk_qty, 0) jsyk_qty,
+					       nvl(rp.cp_qty, 0) cp_qty,
+					       nvl(rp.fp_qty, 0) fp_qty,
+					       rp.box_no
+					       <include refid="Sub2_Other_Column_List"/>
+					       from authority_userinfo au
+						 inner join v_staff_performance_report rp
+						    on rp.login_name = au.login_name
+						 where 1=1 
+						 <include refid="condition"/>
+		       )sub
+		       group by sub.locno, sub.login_name,sub.username
+				<include refid="Base_Sql_Groupby"/>
+  				<include refid="Base_Sql_Orderby" />
+  
+  		<!-- 
+  		select rp.locno,
+		       rp.login_name,
+		       max(au.username) username,
+		       sum(nvl(rp.dhsh_qty, 0)) dhsh_qty,
+		       sum(nvl(rp.shys_qty, 0)) shys_qty,
+		       sum(nvl(rp.fhfh_qty, 0)) fhfh_qty,
+		       sum(nvl(rp.jhl_qty, 0)) jhl_qty,
+		       sum(nvl(rp.fhdb_qty, 0)) fhdb_qty,
+		       sum(nvl(rp.thsh_qty, 0)) thsh_qty,
+		       sum(nvl(rp.thys_qty, 0)) thys_qty,
+		       sum(nvl(rp.qtrk_qty, 0)) qtrk_qty,
+		       sum(nvl(rp.qtck_qty, 0)) qtck_qty,
+		       sum(nvl(rp.rksj_qty, 0)) rksj_qty,
+		       sum(nvl(rp.tcsj_qty, 0)) tcsj_qty,
+		       sum(nvl(rp.jsyk_qty, 0)) jsyk_qty,
+		       sum(nvl(rp.cp_qty, 0)) cp_qty,
+		       sum(nvl(rp.fp_qty, 0)) fp_qty,
+		       (sum(nvl(rp.dhsh_qty, 0)) + sum(nvl(rp.shys_qty, 0)) +
+		       sum(nvl(rp.fhfh_qty, 0)) + sum(nvl(rp.jhl_qty, 0)) +
+		       sum(nvl(rp.fhdb_qty, 0)) + sum(nvl(rp.thsh_qty, 0)) +
+		       sum(nvl(rp.thys_qty, 0)) + sum(nvl(rp.qtrk_qty, 0)) +
+		       sum(nvl(rp.qtck_qty, 0)) + sum(nvl(rp.rksj_qty, 0)) +
+		       sum(nvl(rp.tcsj_qty, 0)) + sum(nvl(rp.jsyk_qty, 0)) +
+		       sum(nvl(rp.cp_qty, 0)) + sum(nvl(rp.fp_qty, 0))) total_qty
+		      <include refid="Sub2_Other_Column_List"/>
+		  from authority_userinfo au
+		 inner join v_staff_performance_report rp
+		    on rp.login_name = au.login_name
+		 where 1=1 
+		 <include refid="condition"/>
+		 group by rp.locno, rp.login_name
+		 <include refid="Base_Sql_Groupby"/>
+		  -->
+  </sql>
+  
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+		select 
+			sum(nvl(t.dhsh_qty, 0)) dhsh_qty,
+		    sum(nvl(t.shys_qty, 0)) shys_qty,
+		    sum(nvl(t.fhfh_qty, 0)) fhfh_qty,
+		    sum(nvl(t.jhl_qty, 0)) jhl_qty,
+		    sum(nvl(t.fhdb_qty, 0)) fhdb_qty,
+		    sum(nvl(t.thsh_qty, 0)) thsh_qty,
+		    sum(nvl(t.thys_qty, 0)) thys_qty,
+		    sum(nvl(t.qtrk_qty, 0)) qtrk_qty,
+		    sum(nvl(t.qtck_qty, 0)) qtck_qty,
+		    sum(nvl(t.rksj_qty, 0)) rksj_qty,
+		    sum(nvl(t.tcsj_qty, 0)) tcsj_qty,
+		    sum(nvl(t.jsyk_qty, 0)) jsyk_qty,
+		    sum(nvl(t.cp_qty, 0)) cp_qty,
+		    sum(nvl(t.fp_qty, 0)) fp_qty,
+			sum(nvl(t.total_qty, 0)) total_qty
+        from (<include refid="Base_Sql" />) t
+  </select>
+     
+  <sql id="Sub2_Other_Column_List" >  		
+		<if test="null!=params.cateOne and ''!=params.cateOne">
+		    ,(select sub2_c.cate_code from category sub2_c where sub2_c.cate_levelid='1' and instr(rp.search_code,sub2_c.search_code)=1 and rownum=1) as cateCodeOne
+		</if>
+		
+		<if test="null!=params.cateTwo and ''!=params.cateTwo">
+		    ,(select sub2_c.cate_code from category sub2_c where sub2_c.cate_levelid='2' and instr(rp.search_code,sub2_c.search_code)=1 and rownum=1) as cateCodeTwo
+		</if>
+		
+		<if test="null!=params.cateThree and ''!=params.cateThree">
+		    ,(select sub2_c.cate_code from category sub2_c where sub2_c.cate_levelid='3' and instr(rp.search_code,sub2_c.search_code)=1 and rownum=1) as cateCodeThree
+		</if>
+  </sql>
+     
+  <sql id="Base_Sql_Other_Column_List" >
+		<if test="null!=params.cateOne and ''!=params.cateOne">
+		    ,sub.cateCodeOne
+		</if>
+		
+		<if test="null!=params.cateTwo and ''!=params.cateTwo">
+		    ,sub.cateCodeTwo
+		</if>
+		
+		<if test="null!=params.cateThree and ''!=params.cateThree">
+		    ,sub.cateCodeThree
+		</if>
+  </sql>
+  
+  <sql id="SelectByPage_Other_Column_List" >
+		<if test="null!=params.cateOne and ''!=params.cateOne">
+			   ,(select cate_name from category where cate_levelid='1' and cate_code=A.cateCodeOne and rownum=1) as cateOneName
+		</if>
+		
+		<if test="null!=params.cateTwo and ''!=params.cateTwo">
+			   ,(select cate_name from category where cate_levelid='2' and cate_code=A.cateCodeTwo and rownum=1) as cateTwoName
+		</if>
+		
+		<if test="null!=params.cateThree and ''!=params.cateThree">
+			   ,(select cate_name from category where cate_levelid='3' and cate_code=A.cateCodeThree and rownum=1) as cateThreeName
+		</if>
+  </sql>
+  
+  <sql id="Base_Sql_Groupby" >  
+		<if test="null!=params.cateOne and ''!=params.cateOne">
+			,sub.cateCodeOne
+		</if>
+		
+		<if test="null!=params.cateTwo and ''!=params.cateTwo">
+			,sub.cateCodeTwo
+		</if>
+		
+		<if test="null!=params.cateThree and ''!=params.cateThree">
+			,sub.cateCodeThree
+		</if>
+  </sql>
+  
+  <sql id="Base_Sql_Orderby" >
+        <trim prefix="order by" prefixOverrides=",">
+					
+			<if test="null!=params.cateOne and ''!=params.cateOne">
+			    ,sub.cateCodeOne
+			</if>
+		
+			<if test="null!=params.cateTwo and ''!=params.cateTwo">
+			    ,sub.cateCodeTwo
+			</if>
+		
+			<if test="null!=params.cateThree and ''!=params.cateThree">
+			    ,sub.cateCodeThree
+			</if>
+			
+        </trim>
+  </sql>
+    
+</mapper>

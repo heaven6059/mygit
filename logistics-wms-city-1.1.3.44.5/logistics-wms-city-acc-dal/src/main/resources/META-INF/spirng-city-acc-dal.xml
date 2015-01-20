@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<!-- changes from the defaults -->
+		<setting name="lazyLoadingEnabled" value="false"/>
+		<!-- JdbcType enumeration. Most common are: NULL, VARCHAR and OTHER -->
+		<setting name="jdbcTypeForNull" value="NULL"/>
+		<setting name="defaultStatementTimeout" value="600"/>
+	</settings>
+	<mappers>
+        <!-- 容器及sku库存记账 -->
+		<mapper resource="mapper/AccInventorySkuMapper.xml"/>
+		<mapper resource="mapper/AccInventorySkuBookMapper.xml"/>
+		<mapper resource="mapper/AccInventoryConMapper.xml"/>
+		<mapper resource="mapper/AccInventoryConBookMapper.xml"/>
+		<mapper resource="mapper/BillAccListMapper.xml"/>
+  		<mapper resource="mapper/AccTaskMapper.xml"/>
+  		<mapper resource="mapper/AccTaskDtlMapper.xml"/>
+		<mapper resource="mapper/AccCheckDtlMapper.xml"/>
+		<mapper resource="mapper/AccContainerSkuMapper.xml"/>
+		
+  </mappers>
+</configuration>

@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.DateConContentReportMapper" >
+
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.DateConContentReport" >
+  	<result column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="AUDITTM" property="audittm" jdbcType="TIMESTAMP" />
+    <result column="REPORT_TYPE" property="reportType" jdbcType="VARCHAR" />
+    <result column="JHRK_QTY" property="jhrkQty" jdbcType="DECIMAL" />
+    <result column="TCRK_QTY" property="tcrkQty" jdbcType="DECIMAL" />
+    <result column="TCCK_QTY" property="tcckQty" jdbcType="DECIMAL" />
+    <result column="FHCK_QTY" property="fhckQty" jdbcType="DECIMAL" />
+    <result column="QTRK_QTY" property="qtrkQty" jdbcType="DECIMAL" />
+    <result column="BSCK_QTY" property="bsckQty" jdbcType="DECIMAL" />
+    <result column="PYRK_QTY" property="pyrkQty" jdbcType="DECIMAL" />
+    <result column="KPCK_QTY" property="kpckQty" jdbcType="DECIMAL" />
+    <result column="startAudittm" property="startAudittm" jdbcType="VARCHAR" />
+    <result column="endAudittm" property="endAudittm" jdbcType="TIMESTAMP" />
+    <result column="audittmStr" property="audittmStr" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    LOCNO,ITEM_NO, SIZE_NO, AUDITTM, REPORT_TYPE, JHRK_QTY, 
+    TCRK_QTY, TCCK_QTY, FHCK_QTY,QTRK_QTY, BSCK_QTY, PYRK_QTY, KPCK_QTY
+  </sql>
+  
+  <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <sql id="condition" >
+  	<if test="null!=params.startAudittm and ''!=params.startAudittm" >
+	      <![CDATA[
+	        and audittm >= to_date('${params.startAudittm} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+	      ]]>
+	</if>
+	<if test="null!=params.endAudittm and ''!=params.endAudittm" >
+	      <![CDATA[
+	        and audittm <= to_date('${params.endAudittm} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+	      ]]>
+	</if>
+	<include refid="AuthorityCondition" />
+  </sql>
+  
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from (
+    	<include refid="Base_Sql" />
+    )
+  </select>
+  
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from(  
+    	<include refid="Base_Sql" />
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  
+  <sql id="Base_Sql2" >
+  				select a.locno,
+			        to_char(a.audittm, 'yyyy-mm-dd') audittm,
+			        <!-- a.item_no, a.size_no, a.report_type,-->
+			        SUM(a.jhrk_qty) jhrk_qty ,
+			        SUM(a.tcrk_qty) tcrk_qty,
+			        SUM(a.tcck_qty) tcck_qty,
+			        SUM(a.fhck_qty) fhck_qty,
+			        SUM(a.qtrk_qty) qtrk_qty,
+			        SUM(a.bsck_qty) bsck_qty,
+			        SUM(a.pyrk_qty) pyrk_qty,
+			        SUM(a.kpck_qty) kpck_qty
+			   from (
+			        <!-- 进货入库（入库验收表）-->
+			         select  ic.locno,
+			         		 ic.audittm,
+			                 ic_cd.item_no,
+			                 ic_cd.size_no,
+			                 <!--'0' as report_type,-->
+			                 sum(ic_cd.check_qty) as jhrk_qty,
+			                 0 as tcrk_qty,
+			                 0 as tcck_qty,
+			                 0 as fhck_qty,
+			                 0 as qtrk_qty,
+			                 0 as bsck_qty,
+			                 0 as pyrk_qty,
+			                 0 as kpck_qty
+			           from bill_im_check ic
+			          inner join bill_im_check_dtl ic_cd
+			             on ic.locno = ic_cd.locno
+			            and ic.owner_no = ic_cd.owner_no
+			            and ic.check_no = ic_cd.check_no
+			          where 1=1
+			          	and ic.locno = #{params.locno,jdbcType=VARCHAR}
+			            <include refid="condition" />
+			          group by ic.locno,ic.audittm, ic_cd.item_no, ic_cd.size_no
+			         
+			         union all
+			         
+			         <!-- 退仓入库（退仓验收表）-->
+			         select uc.locno,
+			         		uc.audittm,
+			                uc_cd.item_no,
+			                uc_cd.size_no,
+			                <!--'0' as report_type,-->
+			                0 as jhrk_qty,
+			                sum(uc_cd.check_qty) as tcrk_qty,
+			                0 as tcck_qty,
+			                0 as fhck_qty,
+			                0 as qtrk_qty,
+			                0 as bsck_qty,
+			                0 as pyrk_qty,
+			                0 as kpck_qty
+			           from bill_um_check uc
+			          inner join bill_um_check_dtl uc_cd
+			             on uc.locno = uc_cd.locno
+			            and uc.owner_no = uc_cd.owner_no
+			            and uc.check_no = uc_cd.check_no
+			          where 1=1
+			            and uc.locno = #{params.locno,jdbcType=VARCHAR}
+			            <include refid="condition" />
+			          group by uc.locno,uc.audittm, uc_cd.item_no, uc_cd.size_no
+			         
+			         union all
+			         
+			         <!-- 退厂出库（退厂确认（配送表））-->
+			         select wd.locno,
+			         		wd.audittm,
+			                wd_cd.item_no,
+			                wd_cd.size_no,
+			                <!--'1' as report_type,-->
+			                0 as jhrk_qty,
+			                0 as tcrk_qty,
+			                sum(wd_cd.real_qty) as tcck_qty,
+			                0 as fhck_qty,
+			                0 as qtrk_qty,
+			                0 as bsck_qty,
+			                0 as pyrk_qty,
+			                0 as kpck_qty
+			           from bill_wm_deliver wd
+			          inner join bill_wm_deliver_dtl wd_cd
+			             on wd.locno = wd_cd.locno
+			            and wd.owner_no = wd_cd.owner_no
+			            and wd.deliver_no = wd_cd.deliver_no
+			          where 1=1
+			          	and wd.locno = #{params.locno,jdbcType=VARCHAR}
+			            <include refid="condition" />
+			          group by wd.locno,wd.audittm, wd_cd.item_no, wd_cd.size_no
+			         
+			         union all
+			         
+			         <!-- 发货出库（装车出库）-->
+			         select od.locno,
+			         		od.audittm,
+			                od_cd.item_no,
+			                od_cd.size_no,
+			                <!--'1' as report_type,-->
+			                0 as jhrk_qty,
+			                0 as tcrk_qty,
+			                0 as tcck_qty,
+			                sum(od_cd.qty) as fhck_qty,
+			                0 as qtrk_qty,
+			                0 as bsck_qty,
+			                0 as pyrk_qty,
+			                0 as kpck_qty
+			           from bill_om_deliver od
+			          inner join bill_om_deliver_dtl od_cd
+			             on od.locno = od_cd.locno
+			            and od.owner_no = od_cd.owner_no
+			            and od.deliver_no = od_cd.deliver_no
+			          where 1=1
+			          	and od.trans_flag = '20'
+			            and od.locno = #{params.locno,jdbcType=VARCHAR}
+			            <include refid="condition" />
+			          group by od.locno,od.audittm, od_cd.item_no, od_cd.size_no
+			         
+			         union all
+			         
+			         <!-- 其他入库（其他入库表） -->
+			         select so.locno,
+			         		so.audittm,
+			                so_cd.item_no,
+			                so_cd.size_no,
+			                <!--'0' as report_type,-->
+			                0 as jhrk_qty,
+			                0 as tcrk_qty,
+			                0 as tcck_qty,
+			                0 as fhck_qty,
+			                nvl(sum(so_cd.instorage_qty), 0) as qtrk_qty,
+			                0 as bsck_qty,
+			                0 as pyrk_qty,
+			                0 as kpck_qty
+			           from bill_sm_otherin so
+			          inner join bill_sm_otherin_dtl so_cd
+			             on so.locno = so_cd.locno
+			            and so.owner_no = so_cd.owner_no
+			            and so.otherin_no = so_cd.otherin_no
+			          where 1=1
+			            and so.locno = #{params.locno,jdbcType=VARCHAR}
+			            <include refid="condition" />
+			          group by so.locno,so.audittm, so_cd.item_no, so_cd.size_no
+			         
+			         union all
+			         
+			         <!--  报损出库（库存报损表）-->
+			         select sw.locno,
+			         		sw.audittm,
+			                sw_cd.item_no,
+			                sw_cd.size_no,
+			                <!--'1' as report_type,-->
+			                0 as jhrk_qty,
+			                0 as tcrk_qty,
+			                0 as tcck_qty,
+			                0 as fhck_qty,
+			                0 as qtrk_qty,
+			                nvl(sum(sw_cd.waste_qty), 0) as bsck_qty,
+			                0 as pyrk_qty,
+			                0 as kpck_qty
+			           from bill_sm_waste sw
+			          inner join bill_sm_waste_dtl sw_cd
+			             on sw.locno = sw_cd.locno
+			            and sw.owner_no = sw_cd.owner_no
+			            and sw.waste_no = sw_cd.waste_no
+			          where 1=1
+			          	and sw.locno = #{params.locno,jdbcType=VARCHAR}
+			            <include refid="condition" />
+			          group by sw.locno,sw.audittm, sw_cd.item_no, sw_cd.size_no
+			         
+			         union all
+			         
+			         <!--   盘盈入库（盘点差异表）-->
+			         select cd1.locno,
+			         		cd1.audittm,
+			                cd_cd1.item_no,
+			                cd_cd1.size_no,
+			                <!--'0' as report_type,-->
+			                0 as jhrk_qty,
+			                0 as tcrk_qty,
+			                0 as tcck_qty,
+			                0 as fhck_qty,
+			                0 as qtrk_qty,
+			                0 as bsck_qty,
+			                abs(nvl(sum(cd_cd1.real_qty - cd_cd1.item_qty), 0)) as pyrk_qty,
+			                0 as kpck_qty
+			           from bill_ch_different cd1
+			          inner join bill_ch_different_dtl cd_cd1
+			             on cd1.locno = cd_cd1.locno
+			            and cd1.owner_no = cd_cd1.owner_no
+			            and cd1.different_no = cd_cd1.different_no
+			          where 1 = 1
+			          	and cd1.locno = #{params.locno,jdbcType=VARCHAR}
+			          	and cd_cd1.real_qty - cd_cd1.item_qty &gt; 0
+			            <include refid="condition" />
+			          group by cd1.locno,cd1.audittm, cd_cd1.item_no, cd_cd1.size_no
+			         
+			         union all
+			         
+			         <!--   盘亏出库（盘点差异表）-->
+			         select cd2.locno,
+			         		cd2.audittm,
+			                cd_cd2.item_no,
+			                cd_cd2.size_no,
+			                <!--'1' as report_type,-->
+			                0 as jhrk_qty,
+			                0 as tcrk_qty,
+			                0 as tcck_qty,
+			                0 as fhck_qty,
+			                0 as qtrk_qty,
+			                0 as bsck_qty,
+			                0 as pyrk_qty,
+			                abs(nvl(sum(cd_cd2.real_qty - cd_cd2.item_qty), 0)) as kpck_qty
+			           from bill_ch_different cd2
+			          inner join bill_ch_different_dtl cd_cd2
+			             on cd2.locno = cd_cd2.locno
+			            and cd2.owner_no = cd_cd2.owner_no
+			            and cd2.different_no = cd_cd2.different_no
+			          where 1 = 1
+			            and cd2.locno = #{params.locno,jdbcType=VARCHAR}
+			            and cd_cd2.real_qty - cd_cd2.item_qty &lt; 0
+			            <include refid="condition" />
+			          group by cd2.locno,cd2.audittm, cd_cd2.item_no, cd_cd2.size_no
+			         ) a
+			    inner join item itm on itm.item_no = a.item_no    
+			  	where a.locno = #{params.locno,jdbcType=VARCHAR}
+			  	and a.audittm is not null
+			  	<if test="null!=params.itemNo and ''!=params.itemNo" >
+					and a.item_no = #{params.itemNo,jdbcType=VARCHAR}
+				</if>
+				<if test="null!=params.brandNo and ''!=params.brandNo" >
+					and itm.brand_no = #{params.brandNo,jdbcType=VARCHAR}
+				</if>
+				
+			  	group by a.locno,to_char(a.audittm, 'yyyy-mm-dd')<!--, a.item_no, a.size_no, a.report_type-->
+  </sql>
+  <sql id="Base_Sql" >
+  	select x.locno,
+		x.audittm as audittmStr,
+		<!--x.item_no, x.size_no, x.report_type,-->
+        NVL(SUM(x.jhrk_qty),0) jhrk_qty,
+        NVL(SUM(x.tcrk_qty),0) tcrk_qty,
+        NVL(SUM(x.tcck_qty),0) tcck_qty,
+        NVL(SUM(x.fhck_qty),0) fhck_qty,
+        NVL(SUM(x.qtrk_qty),0) qtrk_qty,
+        NVL(SUM(x.bsck_qty),0) bsck_qty,
+        NVL(SUM(x.pyrk_qty),0) pyrk_qty,
+        NVL(SUM(x.kpck_qty),0) kpck_qty
+        from (<include refid="Base_Sql2" />) x
+  		group by x.locno, x.audittm
+  		order by x.audittm desc
+  </sql>
+  
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+		select 
+        NVL(SUM(x.jhrk_qty),0) jhrk_qty,
+        NVL(SUM(x.tcrk_qty),0) tcrk_qty,
+        NVL(SUM(x.tcck_qty),0) tcck_qty,
+        NVL(SUM(x.fhck_qty),0) fhck_qty,
+        NVL(SUM(x.qtrk_qty),0) qtrk_qty,
+        NVL(SUM(x.bsck_qty),0) bsck_qty,
+        NVL(SUM(x.pyrk_qty),0) pyrk_qty,
+        NVL(SUM(x.kpck_qty),0) kpck_qty
+        from (<include refid="Base_Sql2" />) x
+  </select>
+</mapper>

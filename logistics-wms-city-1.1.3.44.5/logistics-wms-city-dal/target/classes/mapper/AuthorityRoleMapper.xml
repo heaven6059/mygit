@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.AuthorityRoleMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.AuthorityRole" >
+    <id column="ROLE_ID" property="roleId" jdbcType="DECIMAL" />
+    <result column="ROLE_NAME" property="roleName" jdbcType="VARCHAR" />
+    <result column="NO" property="no" jdbcType="VARCHAR" />
+    <result column="ROLE_CREATEDATE" property="roleCreatedate" jdbcType="TIMESTAMP" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  
+
+
+ 
+  
+  
+  
+  <sql id="Base_Column_List" >
+    ROLE_ID, ROLE_NAME, NO, ROLE_CREATEDATE, REMARK
+  </sql>
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from AUTHORITY_ROLE where 1=1 
+  </select>
+  
+  
+  <select id="queryMyRoleByUserId" resultMap="BaseResultMap" parameterType="Long" >
+    select 
+    <include refid="Base_Column_List" />
+       from authority_role u
+       where exists (select 1 from system_user_role ur where u.role_id=ur.roleid and ur.userid=#{userId} )
+  </select>
+  
+  <select id="queryNoMyRoleByUserId" resultMap="BaseResultMap" parameterType="Long" >
+      select 
+    <include refid="Base_Column_List" />
+       from authority_role u
+       where not exists (select 1 from system_user_role ur where u.role_id=ur.roleid and ur.userid=#{userId} ) 
+  </select>
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from  AUTHORITY_ROLE
+    where ROLE_ID = #{roleId,jdbcType=DECIMAL}
+  </select>
+  
+  <select id="queryRoleList" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.AuthorityRole" >
+    select 
+    <include refid="Base_Column_List" />
+    from  AUTHORITY_ROLE
+    where 1=1
+    <if test="roleName != null" >
+        and  ROLE_NAME  like CONCAT(CONCAT('%','${roleName}'),'%') 
+    </if>
+        order by ROLE_CREATEDATE desc
+    
+  </select>
+  
+  <delete id="removeSelective" parameterType="Long" >
+    delete from  AUTHORITY_ROLE
+    where ROLE_ID = #{roleId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.AuthorityRole" >
+    <selectKey keyProperty="roleId" order="BEFORE" resultType="java.lang.Long">
+  		select SEQ_AUTHORITY_ROLE_ID.nextval as roleId from dual 
+  	</selectKey>
+   
+    insert into AUTHORITY_ROLE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="roleId != null" >
+        ROLE_ID,
+      </if>
+      <if test="roleName != null" >
+        ROLE_NAME,
+      </if>
+      <if test="no != null" >
+        NO,
+      </if>
+      <if test="roleCreatedate != null" >
+        ROLE_CREATEDATE,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="roleId != null" >
+        #{roleId,jdbcType=DECIMAL},
+      </if>
+      <if test="roleName != null" >
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="no != null" >
+        #{no,jdbcType=VARCHAR},
+      </if>
+      <if test="roleCreatedate != null" >
+        #{roleCreatedate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateSelective" parameterType="com.yougou.logistics.city.common.model.AuthorityRole" >
+    update AUTHORITY_ROLE
+    <set >
+      <if test="roleName != null" >
+        ROLE_NAME = #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="no != null" >
+        NO = #{no,jdbcType=VARCHAR},
+      </if>
+      <if test="roleCreatedate != null" >
+        ROLE_CREATEDATE = #{roleCreatedate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ROLE_ID = #{roleId,jdbcType=DECIMAL}
+  </update>
+  
+   <delete id="removeAuthorityRoleMenu" parameterType="Long" >
+        delete from authority_role_menu where 1=1
+        and ROLE_ID = #{roleId,jdbcType=DECIMAL}
+  </delete>
+   <insert id="insertAuthorityRoleMenu"  >
+        insert into authority_role_menu(role_id,menu_id) values(#{roleId},#{menuId})
+          
+  </insert>
+  
+
+   
+  
+  
+
+  
+  
+
+   
+ 
+</mapper>

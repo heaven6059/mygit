@@ -1,0 +1,1505 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillOmExpMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillOmExp" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="EXP_NO" property="expNo" jdbcType="VARCHAR" />
+    <id column="EXP_TYPE" property="expType" jdbcType="VARCHAR" />
+    <result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <result column="OWNER_STORE_NO" property="ownerStoreNo" jdbcType="VARCHAR" />
+    <result column="STORE_NO" property="storeNo" jdbcType="VARCHAR" />
+    <result column="SUB_STORE_NO" property="subStoreNo" jdbcType="VARCHAR" />
+    <result column="SOURCEEXP_TYPE" property="sourceexpType" jdbcType="VARCHAR" />
+    <result column="SOURCEEXP_NO" property="sourceexpNo" jdbcType="VARCHAR" />
+    <result column="EXP_DATE" property="expDate" jdbcType="TIMESTAMP" />
+    <result column="FAST_FLAG" property="fastFlag" jdbcType="DECIMAL" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="SYS_NO" property="sysNo" jdbcType="VARCHAR" />
+    <result column="PRIORITY" property="priority" jdbcType="DECIMAL" />
+    <result column="ADD_EXP_NO" property="addExpNo" jdbcType="VARCHAR" />
+    <result column="CLASS" property="classType" jdbcType="VARCHAR" />
+    <result column="IMPORT_NO" property="importNo" jdbcType="VARCHAR" />
+    <result column="DELIVER_TYPE" property="deliverType" jdbcType="VARCHAR" />
+    <result column="TRANSPORT_TYPE" property="transportType" jdbcType="VARCHAR" />
+    <result column="BATCH_NO" property="batchNo" jdbcType="VARCHAR" />
+    <result column="LINE_NO" property="lineNo" jdbcType="VARCHAR" />
+    <result column="FULL_LINE_NAME" property="fullLineName" jdbcType="VARCHAR" />
+    <result column="CUST_ADDRESS" property="custAddress" jdbcType="VARCHAR" />
+    <result column="CUST_ADDRESS_CODE" property="custAddressCode" jdbcType="VARCHAR" />
+    <result column="CONTACTOR_NAME" property="contactorName" jdbcType="VARCHAR" />
+    <result column="CUST_PHONE" property="custPhone" jdbcType="VARCHAR" />
+    <result column="CUST_MAIL" property="custMail" jdbcType="VARCHAR" />
+    <result column="ERROR_STATUS" property="errorStatus" jdbcType="VARCHAR" />
+    <result column="CREATE_FLAG" property="createFlag" jdbcType="VARCHAR" />
+    <result column="RETURN_FLAG" property="returnFlag" jdbcType="VARCHAR" />
+    <result column="EXP_REMARK" property="expRemark" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATORNAME" property="creatorname" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="EDITORNAME" property="editorname" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="BELONG_FLAG" property="belongFlag" jdbcType="VARCHAR" />
+    <result column="SEND_FLAG" property="sendFlag" jdbcType="VARCHAR" />
+    <result column="BUFFER_LINE_NO" property="bufferLineNo" jdbcType="VARCHAR" />
+    <result column="SPECIAL_ARTICLE_GROUP" property="specialArticleGroup" jdbcType="VARCHAR" />
+    <result column="EXP_STATUS" property="expStatus" jdbcType="VARCHAR" />
+    <result column="STOCK_TYPE" property="stockType" jdbcType="VARCHAR" />
+    <result column="ORDER_PERIOD" property="orderPeriod" jdbcType="DECIMAL" />
+    <result column="FINANCE_TYPE" property="financeType" jdbcType="VARCHAR" />
+    <result column="KICK_FLAG" property="kickFlag" jdbcType="VARCHAR" />
+    <result column="STATUS_TRANS" property="statusTrans" jdbcType="VARCHAR" />
+    <result column="SHIPPER_NO" property="shipperNo" jdbcType="VARCHAR" />
+    <result column="AUDITOR" property="auditor" jdbcType="VARCHAR" />
+    <result column="AUDITORNAME" property="auditorname" jdbcType="VARCHAR" />
+    <result column="AUDITTM" property="audittm" jdbcType="TIMESTAMP" />
+    <result column="storeName" property="storeName" jdbcType="VARCHAR" />
+    <result column="totalItemQty" jdbcType="DECIMAL" property="totalItemQty" />
+    <result column="totalExpQty" jdbcType="DECIMAL" property="totalExpQty" />
+    <result column="totalVolumeQty" jdbcType="DECIMAL" property="totalVolumeQty" />
+    <result column="totalWeightQty" jdbcType="DECIMAL" property="totalWeightQty" />
+    <result column="totalNoenoughQty" jdbcType="DECIMAL" property="totalNoenoughQty" />
+    <result column="totalDifferenceQty" jdbcType="DECIMAL" property="totalDifferenceQty" />
+    <result column="statusStr" jdbcType="VARCHAR" property="statusStr" />
+    <result column="classTypeStr" jdbcType="VARCHAR" property="classTypeStr" />
+    <result column="PO_NO" property="poNo" jdbcType="VARCHAR" />
+    <result column="brandNo" property="brandNo" jdbcType="VARCHAR" />
+    <result column="BUSINESS_TYPE" property="businessType" jdbcType="VARCHAR" />
+    <result column="deliver_no" property="deliverNo" jdbcType="VARCHAR" />
+    <result column="isPoNo" property="isPoNo" jdbcType="VARCHAR" />
+    <result column="item_qty" property="itemQty" jdbcType="DECIMAL" />
+    <result column="real_qty" property="realQty" jdbcType="DECIMAL" />
+    <result column="SOURCE_TYPE" property="sourceType" jdbcType="VARCHAR" />
+    <result column="SOURCE_NO" property="sourceNo" jdbcType="VARCHAR" />
+    <result column="SPLIT_STATUS" property="splitStatus" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    e.LOCNO, e.EXP_NO, e.EXP_TYPE, e.OWNER_NO, e.OWNER_STORE_NO, e.STORE_NO, e.SUB_STORE_NO, e.SOURCEEXP_TYPE, 
+    e.SOURCEEXP_NO, e.EXP_DATE, e.FAST_FLAG, e.STATUS, e.SYS_NO, e.PRIORITY, e.ADD_EXP_NO, e.CLASS, e.IMPORT_NO, 
+    e.DELIVER_TYPE, e.TRANSPORT_TYPE, e.BATCH_NO, e.LINE_NO, e.FULL_LINE_NAME, e.CUST_ADDRESS, e.CUST_ADDRESS_CODE, 
+    e.CONTACTOR_NAME, e.CUST_PHONE, e.CUST_MAIL, e.ERROR_STATUS, e.CREATE_FLAG, e.RETURN_FLAG, e.EXP_REMARK, 
+    e.CREATOR,e.CREATORNAME, e.CREATETM, e.EDITOR,e.EDITORNAME, e.EDITTM, e.BELONG_FLAG, e.SEND_FLAG, e.BUFFER_LINE_NO, e.SPECIAL_ARTICLE_GROUP, 
+    e.EXP_STATUS, e.STOCK_TYPE, e.ORDER_PERIOD, e.FINANCE_TYPE, e.KICK_FLAG, e.STATUS_TRANS, 
+    e.SHIPPER_NO, e.AUDITOR,e.AUDITORNAME, e.AUDITTM, e.BUSINESS_TYPE,e.SOURCE_TYPE,e.SOURCE_NO,e.SPLIT_STATUS
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.locno and ''!=params.locno" >
+        and e.LOCNO=#{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        and e.OWNER_NO=#{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.status and ''!=params.status" >
+        and e.STATUS=#{params.status,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.creator and ''!=params.creator" >
+        and e.CREATOR like '%${params.creator}%'
+      </if>
+      <if test="null!=params.auditor and ''!=params.auditor" >
+        and e.AUDITOR like '%${params.auditor}%'
+      </if>
+      <if test="null!=params.expNo and ''!=params.expNo" >
+        and e.EXP_NO=#{params.expNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.fastFlag and ''!=params.fastFlag" >
+        and e.FAST_FLAG=#{params.fastFlag,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.storeNo and ''!=params.storeNo" >
+        and e.STORE_NO like '%${params.storeNo}%'
+      </if>
+      <if test="null!=params.classType and ''!=params.classType" >
+        and e.CLASS=#{params.classType,jdbcType=VARCHAR}
+      </if>
+       <if test="null!=params.sourceexpNo and ''!=params.sourceexpNo" >
+        and e.SOURCEEXP_NO=#{params.sourceexpNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.poNo and ''!=params.poNo" >
+        	and ed.po_no = #{params.poNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.businessType and ''!=params.businessType" >
+        and e.BUSINESS_TYPE = #{params.businessType,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.sourceType and ''!=params.sourceType" >
+        and e.SOURCE_TYPE=#{params.sourceType,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.splitStatus and ''!=params.splitStatus" >
+        and e.SPLIT_STATUS=#{params.splitStatus,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.createtmBegin and ''!=params.createtmBegin" >
+	       <![CDATA[
+	        and e.CREATETM >= to_date('${params.createtmBegin} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+	     	]]>	 
+	      </if>
+	      <if test="null!=params.createtmEnd and ''!=params.createtmEnd" >
+	       <![CDATA[
+	        and e.CREATETM <= to_date('${params.createtmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+	     	]]>	 
+	      </if>
+	      <if test="null!=params.audittmBegin and ''!=params.audittmBegin" >
+	       <![CDATA[
+	        and e.AUDITTM >= to_date('${params.audittmBegin} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+	     	]]>	
+	      </if>
+	      <if test="null!=params.audittmEnd and ''!=params.audittmEnd" >
+	        <![CDATA[
+	        and e.AUDITTM <= to_date('${params.audittmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+	     	]]>
+	  </if>
+      <if test="null!=params.expDateBegin and ''!=params.expDateBegin" >
+        <![CDATA[
+        and e.EXP_DATE >= to_date('${params.expDateBegin} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+     	]]>
+      </if>
+      <if test="null!=params.expDateEnd and ''!=params.expDateEnd" >
+        <![CDATA[
+        and e.EXP_DATE <= to_date('${params.expDateEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+     	]]>
+      </if>
+      
+    </if>
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillOmExpKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_OM_EXP e
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and EXP_NO = #{expNo,jdbcType=VARCHAR}
+      and EXP_TYPE = #{expType,jdbcType=VARCHAR}
+  </select>
+  
+  <sql id="exp_joinIn">
+  	<choose>
+	    	<when test="null!=params.joinIn and 'true'==params.joinIn">
+     			inner join (select dtl.locno, dtl.owner_no, dtl.exp_no, 
+     				sum(dtl.item_qty) item_qty,sum(dtl.real_qty) real_qty
+                      from BILL_OM_EXP_dtl dtl,item it
+                     where 1 = 1 and dtl.item_no = it.item_no
+                      <if test="null!=params.locno and ''!=params.locno" >
+				      	and dtl.LOCNO=#{params.locno,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.poNo and ''!=params.poNo" >
+				      	and dtl.po_no=#{params.poNo,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.brandNo and ''!=params.brandNo" >
+				      	and it.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+					  </if>
+					  <if test="null!=params.sysNo and ''!=params.sysNo" >
+				      	and it.sys_NO = #{params.sysNo,jdbcType=VARCHAR}
+					  </if>
+					  <include refid="AuthorityCondition" />
+                     group by dtl.locno, dtl.owner_no, dtl.exp_no) ed
+            	on ed.locno = e.locno
+           		and ed.owner_no = e.owner_no
+           		and ed.exp_no = e.exp_no
+     			where 1=1
+	    	</when>
+			<otherwise>
+			 	left join (select dtl.locno, dtl.owner_no, dtl.exp_no, 
+			 		sum(dtl.item_qty) item_qty,sum(dtl.real_qty) real_qty
+                      from BILL_OM_EXP_dtl dtl,item it
+                     where 1 = 1 and dtl.item_no = it.item_no
+                      <if test="null!=params.locno and ''!=params.locno" >
+				      	and dtl.LOCNO=#{params.locno,jdbcType=VARCHAR}
+				      </if>
+					  <include refid="AuthorityCondition" />
+                     group by dtl.locno, dtl.owner_no, dtl.exp_no) ed
+            		on ed.locno = e.locno
+           			and ed.owner_no = e.owner_no
+           			and ed.exp_no = e.exp_no
+           		left join (select dtl.locno, dtl.owner_no, dtl.exp_no
+                      from BILL_OM_EXP_dtl dtl
+                     where 1 = 1
+                       <if test="null!=params.locno and ''!=params.locno" >
+				      	and dtl.LOCNO=#{params.locno,jdbcType=VARCHAR}
+				       </if>
+                     group by dtl.locno, dtl.owner_no, dtl.exp_no) ed1
+                	on ed1.locno = e.locno
+           			and ed1.owner_no = e.owner_no
+           			and ed1.exp_no = e.exp_no
+     			where 1=1 
+     			and (ed1.exp_no is null or ed.exp_no is not null)
+			</otherwise>
+     	</choose>
+     	<include refid="condition" />
+  </sql>
+  <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+	 	and dtl.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+	 </if>
+  </sql>
+  
+  <select id="selectSumQty" resultType="java.util.Map" parameterType="map">
+ 		select sum(A.item_qty) item_qty, sum(A.real_qty) real_qty
+  			from (select distinct e.LOCNO,
+                        e.EXP_NO,
+                        e.EXP_TYPE,
+                        e.OWNER_NO,
+                        nvl(ed.item_qty, 0) item_qty,
+                        nvl(ed.real_qty, 0) real_qty
+          		from BILL_OM_EXP e
+        	 	<include refid="exp_joinIn" />
+         ) A
+   </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+     select count(*) as s
+  		from (select distinct e.exp_no, e.locno, e.owner_no
+          		from BILL_OM_EXP e
+   				<include refid="exp_joinIn" />
+     	) A
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from(
+    	select distinct <include refid="Base_Column_List" />,
+    		(select ld.ITEMNAME from LOOKUPDTL ld where e.status = ld.itemval and ld.lookupcode = 'CITY_OEM_STATUS' and rownum = 1) as statusStr,
+    		(select ld.ITEMNAME from LOOKUPDTL ld where e.class = ld.itemval and ld.lookupcode = 'EXP_CLASS' and rownum = 1) as classTypeStr,
+    		(select ld.ITEMNAME from LOOKUPDTL ld where e.source_type = ld.itemval and ld.lookupcode = 'CITY_OM_EXP_SOURCE_TYPE' and rownum = 1) as sourceTypeStr,
+    		(select ld.ITEMNAME from LOOKUPDTL ld where e.split_status = ld.itemval and ld.lookupcode = 'CITY_OM_EXP_SPLIT_STATUS' and rownum = 1) as splitStatusStr,
+    		(select ld.ITEMNAME from LOOKUPDTL ld where e.sys_no = ld.itemval and ld.lookupcode = 'SYS_NO' and rownum = 1) as sysNoName,
+    		nvl(ed.item_qty,0) item_qty, nvl(ed.real_qty,0) real_qty
+     	from BILL_OM_EXP e 
+    	<include refid="exp_joinIn" />
+    <choose>
+	    <when test="orderByField != null and ''!=orderByField">
+			order by ${orderByField}
+			<if test="orderByField">
+			${orderBy}
+			</if>
+		</when>
+		<otherwise>
+			order by e.CREATETM desc,e.EXP_NO desc
+		</otherwise>
+    </choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <!--权限过滤左连接子查询-->
+  <sql id="selectBillOmExpDispatchAuthorityLeftJoin" >
+   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+            left join (select locno, owner_no, exp_no
+                         from bill_om_exp_dtl                         
+                        where 
+                        locno = #{params.locno,jdbcType=VARCHAR}
+                        and brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+                        group by  locno, owner_no, exp_no
+                        ) sub1
+              on sub1.locno = e.locno
+             and sub1.owner_no = e.owner_no
+             and sub1.exp_no = e.exp_no
+    </if>
+  </sql>
+  <!--权限过滤查询条件-->
+  <sql id="selectBillOmExpDispatchAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and sub1.exp_no is not null 
+    </if>
+  </sql>
+  
+  <!-- 查询出库调度信息分页总数 -->
+  <select id="selectBillOmExpDispatchCount" resultType="java.lang.Integer">
+    select count(1) from bill_om_exp t
+ 	where exists (select exp_no
+	      from bill_om_exp_dtl dtl
+	      where t.exp_no = dtl.exp_no
+	       and dtl.locno = #{params.locno,jdbcType=VARCHAR} 
+	       and dtl.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+      <include refid="expDispatchConditionDtl" /> 
+      )and t.CLASS = '0'
+	   and t.add_exp_no = 'N' and t.stock_type = '1' and t.STATUS = '10'
+	   and t.LOCNO = #{params.locno,jdbcType=VARCHAR}
+	   <include refid="expDispatchCondition" />
+  </select>
+  
+  <!-- 查询出库调度信息分页 -->
+  <select id="selectBillOmExpDispatchByPage" parameterType="map" resultMap="BaseResultMap">
+    select B.* from (select A.*,rownum rn from (
+	select t1.exp_no,t1.exp_type,t1.locno,t1.owner_no,t1.createtm,t1.sourceexp_no,t2.totalItemQty,t2.totalExpQty   from 
+   (
+    select EXP_NO, sum(d.item_qty) - sum(d.locate_qty) totalExpQty,count(distinct d.item_no) totalItemQty
+     from bill_om_exp_dtl d
+     where d.status=10 and d.locno =#{params.locno,jdbcType=VARCHAR} group by EXP_NO
+    ) t2 inner join 
+    (select t.exp_no,t.exp_type,t.locno,t.owner_no,t.createtm,t.sourceexp_no
+     from bill_om_exp t
+      where exists(select exp_no 
+      from bill_om_exp_dtl dtl
+      where t.exp_no = dtl.exp_no and dtl.locno = #{params.locno,jdbcType=VARCHAR}
+        and dtl.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+        <include refid="expDispatchConditionDtl" /> )
+        and t.LOCNO = #{params.locno,jdbcType=VARCHAR}  and t.STATUS = '10'
+        and t.CLASS = '0'
+        and t.stock_type = '1'
+        and t.add_exp_no = 'N'
+       <include refid="expDispatchCondition" />
+    ) t1 on t1.exp_no = t2.exp_no order by t1.createtm desc 
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <sql id="expDispatchCondition">
+    <if test="null!=params">
+      <if test="null!=params.expNo and ''!=params.expNo" >
+            and t.EXP_NO LIKE '%${params.expNo}%'
+      </if>
+	  <if test="null!=params.expType and ''!=params.expType">
+		    and t.EXP_TYPE = #{params.expType,jdbcType=VARCHAR}
+	  </if>
+      <if test="null!=params.storeNo and ''!=params.storeNo" >
+        	and t.STORE_NO like '%${params.storeNo}%'
+      </if>
+    </if>
+  </sql>
+  <sql id="expDispatchConditionDtl">
+   	  <if test="null!=params">
+	  	  <if test="null!=params.poNo and ''!=params.poNo" >
+	        	and dtl.po_no = #{params.poNo,jdbcType=VARCHAR}
+	      </if>
+	      <if test="null!=params.brandNo and ''!=params.brandNo and (null==params.sysNo or ''==params.sysNo) " >
+			    and exists(select 'X' from item i where i.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR} and i.item_no=dtl.item_no)
+		  </if>
+		  <if test="null!=params.sysNo and ''!=params.sysNo and (null==params.brandNo or ''==params.brandNo)" >
+		   		and exists(select 'X' from item i where i.SYS_NO = #{params.sysNo,jdbcType=VARCHAR} and i.item_no=dtl.item_no)
+	      </if>
+	      <if test="null!=params.sysNo and ''!=params.sysNo and null!=params.brandNo and ''!=params.brandNo" >
+		   		and exists(select 'X' from item i where i.SYS_NO = #{params.sysNo,jdbcType=VARCHAR} 
+		   		and i.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR} and i.item_no=dtl.item_no)
+	      </if>
+      </if>
+  </sql>
+  
+  <!-- 复核 查询出库单 更新状态 -->
+  <select id="selectBillOmExpUpdateStatus" parameterType="map" resultMap="BaseResultMap">
+  		 select e.locno,e.exp_no,e.exp_type,e.status
+		   from bill_om_exp e
+		  inner join bill_om_exp_dtl dtl
+		     on e.locno = dtl.locno
+		    and e.exp_no = dtl.exp_no
+		  where nvl(dtl.item_qty, 0) > nvl(dtl.real_qty, 0)
+		  and e.LOCNO=#{locno,jdbcType=VARCHAR}
+		  and e.EXP_NO=#{expNo,jdbcType=VARCHAR}
+		  and e.EXP_TYPE=#{expType,jdbcType=VARCHAR}
+		  group by e.locno,e.exp_no,e.exp_type,e.status
+  </select>
+  
+   <!-- 查询出库调度信息分页 -->
+  <select id="selectBillOmExpViewTotalQty" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillOmExp" >
+  		select 
+    		
+      		sum(nvl(v.VOLUMN,0)) totalVolumeQty,
+      		sum(nvl(v.WEIGHT,0)) totalWeightQty,
+      		sum(nvl(v.NO_ENOUGH_QTY,0)) totalNoenoughQty,
+      		sum(nvl(v.DIFFERENCE_QTY,0)) totalDifferenceQty
+   
+	    	from v_export_d v where 1=1 
+	    	and v.LOCNO = #{locno,jdbcType=VARCHAR}
+            and v.EXP_NO = #{expNo,jdbcType=VARCHAR}
+	    	
+  </select>
+  
+  <!--出库调度存储过程-->
+  <select id="procBillOmExpDispatchQuery" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call PKG_WMS_YG_LOCATE.PROC_CREATELOCATEORDER 
+		    	(#{v_locno,mode=IN,jdbcType=VARCHAR},
+		    		#{v_owner_no,mode=IN,jdbcType=VARCHAR},
+		    		#{v_exp_type,mode=IN,jdbcType=VARCHAR},
+		    		#{v_exp_no,mode=IN,jdbcType=VARCHAR},
+		    		#{v_divide_flag,mode=IN,jdbcType=VARCHAR},
+		    		#{v_creator,mode=IN,jdbcType=VARCHAR},
+		    		#{stroutmsg,mode=OUT,jdbcType=VARCHAR})}  
+		]]>  
+  </select>
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_OM_EXP e where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  
+  <!-- 查询待定位的发货通知单中，是否存在不同的品质和属性 -->
+  <select id="selectIsDiffAttribute" resultType="java.lang.Integer">
+      select count(*)
+        from (select 1
+                from bill_om_exp_dtl d
+               where d.locno = #{locno,jdbcType=VARCHAR}
+                 and d.exp_no in 
+                 <foreach collection="expNos" item="expNo" open="(" close=")" separator=",">
+				   #{expNo}
+			     </foreach>
+               group by d.item_type, d.quality) sub
+    
+  </select>
+   <!-- 查询待定位的发货通知单中，是否存在不同的品质和属性 -->
+  <select id="selectIsExpSysNo" resultType="java.lang.Integer">
+      select count(*)
+        from (select 1
+                from bill_om_exp d
+               where d.locno =#{locno,jdbcType=VARCHAR}
+                 and d.exp_no in 
+                 <foreach collection="expNos" item="expNo" open="(" close=")" separator=",">
+				   #{expNo}
+			     </foreach>
+               group by d.sys_no) sub
+    
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillOmExpKey" >
+    delete from BILL_OM_EXP
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and EXP_NO = #{expNo,jdbcType=VARCHAR}
+      and EXP_TYPE = #{expType,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillOmExp" >
+    delete from BILL_OM_EXP
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and EXP_NO = #{expNo,jdbcType=VARCHAR}
+      and EXP_TYPE = #{expType,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillOmExp" >
+    insert into BILL_OM_EXP (LOCNO, EXP_NO, EXP_TYPE, 
+      OWNER_NO, OWNER_STORE_NO, STORE_NO, 
+      SUB_STORE_NO, SOURCEEXP_TYPE, SOURCEEXP_NO, 
+      EXP_DATE, FAST_FLAG, STATUS, SYS_NO,
+      PRIORITY, ADD_EXP_NO, CLASS, 
+      IMPORT_NO, DELIVER_TYPE, TRANSPORT_TYPE, 
+      BATCH_NO, LINE_NO, FULL_LINE_NAME, 
+      CUST_ADDRESS, CUST_ADDRESS_CODE, CONTACTOR_NAME, 
+      CUST_PHONE, CUST_MAIL, ERROR_STATUS, 
+      CREATE_FLAG, RETURN_FLAG, EXP_REMARK, 
+      CREATOR,CREATORNAME, CREATETM, EDITOR,EDITORNAME, 
+      EDITTM, BELONG_FLAG, SEND_FLAG, 
+      BUFFER_LINE_NO, SPECIAL_ARTICLE_GROUP, EXP_STATUS, 
+      STOCK_TYPE, ORDER_PERIOD, FINANCE_TYPE, 
+      KICK_FLAG,  STATUS_TRANS, 
+      SHIPPER_NO, AUDITOR,AUDITORNAME, AUDITTM, BUSINESS_TYPE
+      )
+    values (#{locno,jdbcType=VARCHAR}, #{expNo,jdbcType=VARCHAR}, #{expType,jdbcType=VARCHAR}, 
+      #{ownerNo,jdbcType=VARCHAR}, #{ownerStoreNo,jdbcType=VARCHAR}, #{storeNo,jdbcType=VARCHAR}, 
+      #{subStoreNo,jdbcType=VARCHAR}, #{sourceexpType,jdbcType=VARCHAR}, #{sourceexpNo,jdbcType=VARCHAR}, 
+      #{expDate,jdbcType=TIMESTAMP}, #{fastFlag,jdbcType=DECIMAL}, #{status,jdbcType=VARCHAR}, #{sysNo,jdbcType=VARCHAR}, 
+      #{priority,jdbcType=DECIMAL}, #{addExpNo,jdbcType=VARCHAR}, #{classType,jdbcType=VARCHAR}, 
+      #{importNo,jdbcType=VARCHAR}, #{deliverType,jdbcType=VARCHAR}, #{transportType,jdbcType=VARCHAR}, 
+      #{batchNo,jdbcType=VARCHAR}, #{lineNo,jdbcType=VARCHAR}, #{fullLineName,jdbcType=VARCHAR}, 
+      #{custAddress,jdbcType=VARCHAR}, #{custAddressCode,jdbcType=VARCHAR}, #{contactorName,jdbcType=VARCHAR}, 
+      #{custPhone,jdbcType=VARCHAR}, #{custMail,jdbcType=VARCHAR}, #{errorStatus,jdbcType=VARCHAR}, 
+      #{createFlag,jdbcType=VARCHAR}, #{returnFlag,jdbcType=VARCHAR}, #{expRemark,jdbcType=VARCHAR}, 
+      #{creator,jdbcType=VARCHAR},#{creatorname,jdbcType=VARCHAR}, #{createtm,jdbcType=TIMESTAMP}, #{editor,jdbcType=VARCHAR}, #{editorname,jdbcType=VARCHAR}, 
+      #{edittm,jdbcType=TIMESTAMP}, #{belongFlag,jdbcType=VARCHAR}, #{sendFlag,jdbcType=VARCHAR}, 
+      #{bufferLineNo,jdbcType=VARCHAR}, #{specialArticleGroup,jdbcType=VARCHAR}, #{expStatus,jdbcType=VARCHAR}, 
+      #{stockType,jdbcType=VARCHAR}, #{orderPeriod,jdbcType=DECIMAL}, #{financeType,jdbcType=VARCHAR}, 
+      #{kickFlag,jdbcType=VARCHAR}, #{statusTrans,jdbcType=VARCHAR}, 
+      #{shipperNo,jdbcType=VARCHAR}, #{auditor,jdbcType=VARCHAR},#{auditorname,jdbcType=VARCHAR}, #{audittm,jdbcType=TIMESTAMP},
+      #{businessType,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillOmExp" >
+    insert into BILL_OM_EXP
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="expNo != null" >
+        EXP_NO,
+      </if>
+      <if test="expType != null" >
+        EXP_TYPE,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="ownerStoreNo != null" >
+        OWNER_STORE_NO,
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO,
+      </if>
+      <if test="subStoreNo != null" >
+        SUB_STORE_NO,
+      </if>
+      <if test="sourceexpType != null" >
+        SOURCEEXP_TYPE,
+      </if>
+      <if test="sourceexpNo != null" >
+        SOURCEEXP_NO,
+      </if>
+      <if test="expDate != null" >
+        EXP_DATE,
+      </if>
+      <if test="fastFlag != null" >
+        FAST_FLAG,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="sysNo != null" >
+        SYS_NO,
+      </if>
+      <if test="priority != null" >
+        PRIORITY,
+      </if>
+      <if test="addExpNo != null" >
+        ADD_EXP_NO,
+      </if>
+      <if test="classType != null" >
+        CLASS,
+      </if>
+      <if test="importNo != null" >
+        IMPORT_NO,
+      </if>
+      <if test="deliverType != null" >
+        DELIVER_TYPE,
+      </if>
+      <if test="transportType != null" >
+        TRANSPORT_TYPE,
+      </if>
+      <if test="batchNo != null" >
+        BATCH_NO,
+      </if>
+      <if test="lineNo != null" >
+        LINE_NO,
+      </if>
+      <if test="fullLineName != null" >
+        FULL_LINE_NAME,
+      </if>
+      <if test="custAddress != null" >
+        CUST_ADDRESS,
+      </if>
+      <if test="custAddressCode != null" >
+        CUST_ADDRESS_CODE,
+      </if>
+      <if test="contactorName != null" >
+        CONTACTOR_NAME,
+      </if>
+      <if test="custPhone != null" >
+        CUST_PHONE,
+      </if>
+      <if test="custMail != null" >
+        CUST_MAIL,
+      </if>
+      <if test="errorStatus != null" >
+        ERROR_STATUS,
+      </if>
+      <if test="createFlag != null" >
+        CREATE_FLAG,
+      </if>
+      <if test="returnFlag != null" >
+        RETURN_FLAG,
+      </if>
+      <if test="expRemark != null" >
+        EXP_REMARK,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="creatorname != null" >
+        CREATORNAME,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="editorname != null" >
+        EDITORNAME,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="belongFlag != null" >
+        BELONG_FLAG,
+      </if>
+      <if test="sendFlag != null" >
+        SEND_FLAG,
+      </if>
+      <if test="bufferLineNo != null" >
+        BUFFER_LINE_NO,
+      </if>
+      <if test="specialArticleGroup != null" >
+        SPECIAL_ARTICLE_GROUP,
+      </if>
+      <if test="expStatus != null" >
+        EXP_STATUS,
+      </if>
+      <if test="stockType != null" >
+        STOCK_TYPE,
+      </if>
+      <if test="orderPeriod != null" >
+        ORDER_PERIOD,
+      </if>
+      <if test="financeType != null" >
+        FINANCE_TYPE,
+      </if>
+      <if test="kickFlag != null" >
+        KICK_FLAG,
+      </if>
+      <if test="statusTrans != null" >
+        STATUS_TRANS,
+      </if>
+      <if test="shipperNo != null" >
+        SHIPPER_NO,
+      </if>
+      <if test="auditor != null" >
+        AUDITOR,
+      </if>
+      <if test="auditorname != null" >
+        AUDITORNAME,
+      </if>
+      <if test="audittm != null" >
+        AUDITTM,
+      </if>
+      <if test="businessType != null" >
+        BUSINESS_TYPE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="expNo != null" >
+        #{expNo,jdbcType=VARCHAR},
+      </if>
+      <if test="expType != null" >
+        #{expType,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerStoreNo != null" >
+        #{ownerStoreNo,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo != null" >
+        #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="subStoreNo != null" >
+        #{subStoreNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceexpType != null" >
+        #{sourceexpType,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceexpNo != null" >
+        #{sourceexpNo,jdbcType=VARCHAR},
+      </if>
+      <if test="expDate != null" >
+        #{expDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fastFlag != null" >
+        #{fastFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="sysNo != null" >
+        #{sysNo,jdbcType=VARCHAR},
+      </if>
+      <if test="priority != null" >
+        #{priority,jdbcType=DECIMAL},
+      </if>
+      <if test="addExpNo != null" >
+        #{addExpNo,jdbcType=VARCHAR},
+      </if>
+      <if test="classType != null" >
+        #{classType,jdbcType=VARCHAR},
+      </if>
+      <if test="importNo != null" >
+        #{importNo,jdbcType=VARCHAR},
+      </if>
+      <if test="deliverType != null" >
+        #{deliverType,jdbcType=VARCHAR},
+      </if>
+      <if test="transportType != null" >
+        #{transportType,jdbcType=VARCHAR},
+      </if>
+      <if test="batchNo != null" >
+        #{batchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="lineNo != null" >
+        #{lineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fullLineName != null" >
+        #{fullLineName,jdbcType=VARCHAR},
+      </if>
+      <if test="custAddress != null" >
+        #{custAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="custAddressCode != null" >
+        #{custAddressCode,jdbcType=VARCHAR},
+      </if>
+      <if test="contactorName != null" >
+        #{contactorName,jdbcType=VARCHAR},
+      </if>
+      <if test="custPhone != null" >
+        #{custPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="custMail != null" >
+        #{custMail,jdbcType=VARCHAR},
+      </if>
+      <if test="errorStatus != null" >
+        #{errorStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="createFlag != null" >
+        #{createFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="returnFlag != null" >
+        #{returnFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="expRemark != null" >
+        #{expRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorname != null" >
+        #{creatorname,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorname != null" >
+        #{editorname,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="belongFlag != null" >
+        #{belongFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="sendFlag != null" >
+        #{sendFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="bufferLineNo != null" >
+        #{bufferLineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="specialArticleGroup != null" >
+        #{specialArticleGroup,jdbcType=VARCHAR},
+      </if>
+      <if test="expStatus != null" >
+        #{expStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="stockType != null" >
+        #{stockType,jdbcType=VARCHAR},
+      </if>
+      <if test="orderPeriod != null" >
+        #{orderPeriod,jdbcType=DECIMAL},
+      </if>
+      <if test="financeType != null" >
+        #{financeType,jdbcType=VARCHAR},
+      </if>
+      <if test="kickFlag != null" >
+        #{kickFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="statusTrans != null" >
+        #{statusTrans,jdbcType=VARCHAR},
+      </if>
+      <if test="shipperNo != null" >
+        #{shipperNo,jdbcType=VARCHAR},
+      </if>
+      <if test="auditor != null" >
+        #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorname != null" >
+        #{auditorname,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        #{audittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="businessType != null" >
+        #{businessType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillOmExp" >
+    update BILL_OM_EXP
+    <set >
+      <if test="ownerNo != null" >
+        OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerStoreNo != null" >
+        OWNER_STORE_NO = #{ownerStoreNo,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="subStoreNo != null" >
+        SUB_STORE_NO = #{subStoreNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceexpType != null" >
+        SOURCEEXP_TYPE = #{sourceexpType,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceexpNo != null" >
+        SOURCEEXP_NO = #{sourceexpNo,jdbcType=VARCHAR},
+      </if>
+      <if test="expDate != null" >
+        EXP_DATE = #{expDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fastFlag != null" >
+        FAST_FLAG = #{fastFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="priority != null" >
+        PRIORITY = #{priority,jdbcType=DECIMAL},
+      </if>
+      <if test="addExpNo != null" >
+        ADD_EXP_NO = #{addExpNo,jdbcType=VARCHAR},
+      </if>
+      <if test="classType != null" >
+        CLASS = #{classType,jdbcType=VARCHAR},
+      </if>
+      <if test="importNo != null" >
+        IMPORT_NO = #{importNo,jdbcType=VARCHAR},
+      </if>
+      <if test="deliverType != null" >
+        DELIVER_TYPE = #{deliverType,jdbcType=VARCHAR},
+      </if>
+      <if test="transportType != null" >
+        TRANSPORT_TYPE = #{transportType,jdbcType=VARCHAR},
+      </if>
+      <if test="batchNo != null" >
+        BATCH_NO = #{batchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="lineNo != null" >
+        LINE_NO = #{lineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="fullLineName != null" >
+        FULL_LINE_NAME = #{fullLineName,jdbcType=VARCHAR},
+      </if>
+      <if test="custAddress != null" >
+        CUST_ADDRESS = #{custAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="custAddressCode != null" >
+        CUST_ADDRESS_CODE = #{custAddressCode,jdbcType=VARCHAR},
+      </if>
+      <if test="contactorName != null" >
+        CONTACTOR_NAME = #{contactorName,jdbcType=VARCHAR},
+      </if>
+      <if test="custPhone != null" >
+        CUST_PHONE = #{custPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="custMail != null" >
+        CUST_MAIL = #{custMail,jdbcType=VARCHAR},
+      </if>
+      <if test="errorStatus != null" >
+        ERROR_STATUS = #{errorStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="createFlag != null" >
+        CREATE_FLAG = #{createFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="returnFlag != null" >
+        RETURN_FLAG = #{returnFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="expRemark != null" >
+        EXP_REMARK = #{expRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorname != null" >
+        CREATORNAME = #{creatorname,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorname != null" >
+        EDITORNAME = #{editorname,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="belongFlag != null" >
+        BELONG_FLAG = #{belongFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="sendFlag != null" >
+        SEND_FLAG = #{sendFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="bufferLineNo != null" >
+        BUFFER_LINE_NO = #{bufferLineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="specialArticleGroup != null" >
+        SPECIAL_ARTICLE_GROUP = #{specialArticleGroup,jdbcType=VARCHAR},
+      </if>
+      <if test="expStatus != null" >
+        EXP_STATUS = #{expStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="stockType != null" >
+        STOCK_TYPE = #{stockType,jdbcType=VARCHAR},
+      </if>
+      <if test="orderPeriod != null" >
+        ORDER_PERIOD = #{orderPeriod,jdbcType=DECIMAL},
+      </if>
+      <if test="financeType != null" >
+        FINANCE_TYPE = #{financeType,jdbcType=VARCHAR},
+      </if>
+      <if test="kickFlag != null" >
+        KICK_FLAG = #{kickFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="statusTrans != null" >
+        STATUS_TRANS = #{statusTrans,jdbcType=VARCHAR},
+      </if>
+      <if test="shipperNo != null" >
+        SHIPPER_NO = #{shipperNo,jdbcType=VARCHAR},
+      </if>
+      <if test="auditor != null" >
+        AUDITOR = #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorname != null" >
+        AUDITORNAME = #{auditorname,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="splitStatus != null" >
+        SPLIT_STATUS = #{splitStatus,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and EXP_NO = #{expNo,jdbcType=VARCHAR}
+      and EXP_TYPE = #{expType,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillOmExp" >
+    update BILL_OM_EXP
+    set OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      OWNER_STORE_NO = #{ownerStoreNo,jdbcType=VARCHAR},
+      STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      SUB_STORE_NO = #{subStoreNo,jdbcType=VARCHAR},
+      SOURCEEXP_TYPE = #{sourceexpType,jdbcType=VARCHAR},
+      SOURCEEXP_NO = #{sourceexpNo,jdbcType=VARCHAR},
+      EXP_DATE = #{expDate,jdbcType=TIMESTAMP},
+      FAST_FLAG = #{fastFlag,jdbcType=DECIMAL},
+      STATUS = #{status,jdbcType=VARCHAR},
+      PRIORITY = #{priority,jdbcType=DECIMAL},
+      ADD_EXP_NO = #{addExpNo,jdbcType=VARCHAR},
+      CLASS = #{classType,jdbcType=VARCHAR},
+      IMPORT_NO = #{importNo,jdbcType=VARCHAR},
+      DELIVER_TYPE = #{deliverType,jdbcType=VARCHAR},
+      TRANSPORT_TYPE = #{transportType,jdbcType=VARCHAR},
+      BATCH_NO = #{batchNo,jdbcType=VARCHAR},
+      LINE_NO = #{lineNo,jdbcType=VARCHAR},
+      FULL_LINE_NAME = #{fullLineName,jdbcType=VARCHAR},
+      CUST_ADDRESS = #{custAddress,jdbcType=VARCHAR},
+      CUST_ADDRESS_CODE = #{custAddressCode,jdbcType=VARCHAR},
+      CONTACTOR_NAME = #{contactorName,jdbcType=VARCHAR},
+      CUST_PHONE = #{custPhone,jdbcType=VARCHAR},
+      CUST_MAIL = #{custMail,jdbcType=VARCHAR},
+      ERROR_STATUS = #{errorStatus,jdbcType=VARCHAR},
+      CREATE_FLAG = #{createFlag,jdbcType=VARCHAR},
+      RETURN_FLAG = #{returnFlag,jdbcType=VARCHAR},
+      EXP_REMARK = #{expRemark,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATORNAME = #{creatorname,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITORNAME = #{editorname,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      BELONG_FLAG = #{belongFlag,jdbcType=VARCHAR},
+      SEND_FLAG = #{sendFlag,jdbcType=VARCHAR},
+      BUFFER_LINE_NO = #{bufferLineNo,jdbcType=VARCHAR},
+      SPECIAL_ARTICLE_GROUP = #{specialArticleGroup,jdbcType=VARCHAR},
+      EXP_STATUS = #{expStatus,jdbcType=VARCHAR},
+      STOCK_TYPE = #{stockType,jdbcType=VARCHAR},
+      ORDER_PERIOD = #{orderPeriod,jdbcType=DECIMAL},
+      FINANCE_TYPE = #{financeType,jdbcType=VARCHAR},
+      KICK_FLAG = #{kickFlag,jdbcType=VARCHAR},
+      STATUS_TRANS = #{statusTrans,jdbcType=VARCHAR},
+      SHIPPER_NO = #{shipperNo,jdbcType=VARCHAR},
+      AUDITOR = #{auditor,jdbcType=VARCHAR},
+      AUDITORNAME = #{auditorname,jdbcType=VARCHAR},
+      AUDITTM = #{audittm,jdbcType=TIMESTAMP}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and EXP_NO = #{expNo,jdbcType=VARCHAR}
+      and EXP_TYPE = #{expType,jdbcType=VARCHAR}
+  </update>
+  
+  
+  <!--权限过滤查询条件-->
+  <sql id="selectExpAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and oed.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+   <sql id="selectExp" >
+   		select e.EXP_NO, e.owner_no, e.createtm, e.exp_remark, e.status,
+                       (select ld.ITEMNAME
+                          from LOOKUPDTL ld
+                         where e.status = ld.itemval
+                           and ld.lookupcode = 'CITY_OEM_STATUS'
+                           and rownum = 1) as statusStr,
+                        (select ld.ITEMNAME
+				          from LOOKUPDTL ld
+				         where it.SYS_NO = ld.itemval
+				           and ld.lookupcode = 'SYS_NO'
+				           and rownum = 1) as sysNoName,
+    				 sum(oed.item_qty) as totalItemQty,
+                     sum(oed.item_qty) - sum(oed.SCHEDULE_QTY) as totalExpQty 
+		          from bill_om_exp e
+		         inner join bill_om_exp_dtl oed
+		            on e.locno = oed.locno
+		           and e.owner_no = oed.owner_no
+		           and e.exp_no = oed.exp_no
+		         inner join item it
+		            on it.item_no = oed.item_no
+		         where 1 = 1
+		         	and e.status in ('10', '12', '40', '50')
+		         	and e.class != '0'
+		         	and e.split_status = '0'
+		           <if test="null!=params.locno and ''!=params.locno" >
+				 		and e.locno=#{params.locno,jdbcType=VARCHAR}
+				   </if>
+				   <if test="null!=params.expNo and ''!=params.expNo" >
+				 		 and e.exp_no=#{params.expNo,jdbcType=VARCHAR}
+				   </if>
+				   <if test="null!=params.status and ''!=params.status" >
+			        	and e.STATUS=#{params.status,jdbcType=VARCHAR}
+			       </if>
+				   <if test="null!=params.brandNo and ''!=params.brandNo" >
+				 		and it.brand_no=#{params.brandNo,jdbcType=VARCHAR}
+				   </if>
+				   <if test="null!=params.createtmBegin and ''!=params.createtmBegin" >
+				       <![CDATA[
+				        and e.CREATETM >= to_date('${params.createtmBegin} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+				     	]]>	 
+				    </if>
+				    <if test="null!=params.createtmEnd and ''!=params.createtmEnd" >
+				       <![CDATA[
+				        and e.CREATETM <= to_date('${params.createtmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+				     	]]>	 
+				    </if>
+				    <include refid="selectExpAuthorityCondition" />
+		           AND EXISTS (select rit.brand_no
+		                  from bill_im_receipt br
+		                 inner join bill_im_receipt_dtl brt
+		                    on br.locno = brt.locno
+		                   and br.owner_no = brt.owner_no
+		                   and br.receipt_no = brt.receipt_no
+		                 inner join item rit
+		                    on rit.item_no = brt.item_no
+		                  
+		                   inner join (
+                                    select bit.locno,
+                                            bit.owner_no,
+                                            bit.import_no,
+                                            bit.deliver_no
+                                      from bill_im_import_dtl bit
+                                     group by bit.locno,
+                                               bit.owner_no,
+                                               bit.import_no,
+                                               bit.deliver_no
+                                    
+                                    ) bit
+                            on bit.locno = brt.locno
+                           and bit.owner_no = brt.owner_no
+                           and bit.import_no = brt.import_no
+		                    
+		                 <!-- su.yq 20140809-->
+		                 <!--  
+		                 inner join bill_im_import bi
+		                    on br.locno = bi.locno
+		                   and br.owner_no = bi.owner_no
+		                   and brt.import_no = bi.import_no
+		                 inner join bill_im_import_dtl bit
+		                    on bit.locno = bi.locno
+		                   and bit.owner_no = bi.owner_no
+		                   and bit.import_no = bi.import_no
+		                 -->
+		                   
+		                 where 1 = 1
+		                  <!--  add by zuo.sw 2014-05-20 发补丁  and br.status = '20'  --> 
+		                   and it.brand_no = rit.brand_no
+                           and br.locno = e.locno
+                           and br.owner_no = e.owner_no
+                           	<if test="null!=params.isPoNo and ''!=params.isPoNo" >
+                           		and bit.deliver_no = oed.po_no
+                           	</if>
+		                   	<if test="null!=params.locno and ''!=params.locno" >
+								and br.locno=#{params.locno,jdbcType=VARCHAR}
+						   	</if>
+						   	<if test="null!=params.receiptNos and ''!=params.receiptNos" >
+								and br.receipt_no in (${params.receiptNos})
+							</if>
+							<if test="null!=params.deliverNo and ''!=params.deliverNo" >
+					          	and bit.deliver_no=#{params.deliverNo,jdbcType=VARCHAR}
+					        </if>
+		                 group by rit.brand_no)
+		         group by e.EXP_NO, e.owner_no, e.createtm, e.exp_remark, e.status,it.sys_no
+		         order by e.EXP_NO desc, e.createtm desc
+   </sql>
+   
+   <!-- 库存分货 -->
+   <sql id="selectStockExp" >
+		select e.EXP_NO,
+			e.owner_no,
+			e.createtm,
+			e.exp_remark,
+			e.status,
+			(select ld.ITEMNAME
+			from LOOKUPDTL ld
+			where e.status = ld.itemval
+			and ld.lookupcode = 'CITY_OEM_STATUS'
+			and rownum = 1) as statusStr,
+			(select ld.ITEMNAME
+			from LOOKUPDTL ld
+			where it.SYS_NO = ld.itemval
+			and ld.lookupcode = 'SYS_NO'
+			and rownum = 1) as sysNoName,
+			sum(oed.item_qty) as totalItemQty,
+			sum(oed.item_qty) - sum(oed.SCHEDULE_QTY) as totalExpQty
+		from bill_om_exp e
+		inner join bill_om_exp_dtl oed
+			on e.locno = oed.locno
+			and e.owner_no = oed.owner_no
+			and e.exp_no = oed.exp_no
+		inner join item it
+			on it.item_no = oed.item_no
+		where 1 = 1
+			and e.status in ('10', '12', '40', '50')
+			and e.split_status = '0'
+		<if test="null!=params.locno and ''!=params.locno">
+			and e.locno=#{params.locno,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.expNo and ''!=params.expNo">
+			and e.exp_no=#{params.expNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.status and ''!=params.status">
+			and e.STATUS=#{params.status,jdbcType=VARCHAR}
+		</if>
+		
+		<if test="null!=params.brandNo and ''!=params.brandNo">
+			and it.brand_no=#{params.brandNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.createtmBegin and ''!=params.createtmBegin">
+			<![CDATA[
+				and e.CREATETM >= to_date('${params.createtmBegin} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+			]]>
+		</if>
+		<if test="null!=params.createtmEnd and ''!=params.createtmEnd">
+			<![CDATA[
+				and e.CREATETM <= to_date('${params.createtmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			]]>
+		</if>
+		<include refid="selectExpAuthorityCondition" />
+		AND EXISTS (select rit.brand_no
+			from bill_im_receipt br
+			inner join bill_im_receipt_dtl brt
+				on br.locno = brt.locno
+				and br.owner_no = brt.owner_no
+				and br.receipt_no = brt.receipt_no
+			inner join item rit
+				on rit.item_no = brt.item_no
+			where 1 = 1
+				<!-- and br.status = '11'  add by zuo.sw 2014-05-20 发补丁   -->
+				and it.brand_no = rit.brand_no
+				and br.locno = e.locno
+				and br.owner_no = e.owner_no
+		<if test="null!=params.locno and ''!=params.locno">
+			and br.locno=#{params.locno,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.receiptNos and ''!=params.receiptNos">
+			and br.receipt_no in (${params.receiptNos})
+		</if>
+		group by rit.brand_no)
+		
+		<!-- 预分货单不能选已做调度的发货通知单 -->
+		AND NOT EXISTS(
+			select 'x' from bill_om_locate_dtl od
+				where od.locno = e.locno
+				and od.exp_no = e.exp_no
+		)
+		
+		group by e.EXP_NO, e.owner_no, e.createtm, e.exp_remark, e.status,it.sys_no
+		order by e.EXP_NO desc, e.createtm desc
+   </sql>
+   
+  <select id="selectCountExp" resultType="java.lang.Integer" parameterType="com.yougou.logistics.city.common.model.BillOmExp">
+  		select count(*) as s from (
+  			<choose>
+			    <when test="params.businessType == 1">
+			    	<include refid="selectStockExp" />
+				</when>
+				<otherwise>
+					<include refid="selectExp" />
+				</otherwise>
+		    </choose>
+		) A where 1 = 1 and A.totalExpQty > 0
+  </select>
+  <select id="selectByPageExp" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillOmExp" >
+    select B.* from (select A.*,rownum rn from(
+    	<choose>
+			<when test="params.businessType == 1">
+			    <include refid="selectStockExp" />
+			</when>
+			<otherwise>
+				<include refid="selectExp" />
+			</otherwise>
+		</choose>
+    ) A where 1 = 1 and A.totalExpQty > 0
+    and rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <!-- 预分货单新建的时候查询发货通知单 -->
+  <select id="selectCountExpPre" resultType="java.lang.Integer" parameterType="com.yougou.logistics.city.common.model.BillOmExp">
+  		select count(*) as s from (
+  			select e.EXP_NO,
+			e.owner_no,
+			e.createtm,
+			e.exp_remark,
+			e.status,
+			(select ld.ITEMNAME
+			from LOOKUPDTL ld
+			where e.status = ld.itemval
+			and ld.lookupcode = 'CITY_OEM_STATUS'
+			and rownum = 1) as statusStr,
+			sum(oed.item_qty) as totalItemQty,
+			sum(oed.item_qty) - sum(oed.SCHEDULE_QTY) as totalExpQty
+		from bill_om_exp e
+		inner join bill_om_exp_dtl oed
+			on e.locno = oed.locno
+			and e.owner_no = oed.owner_no
+			and e.exp_no = oed.exp_no
+		inner join item it
+			on it.item_no = oed.item_no
+		where 1 = 1
+			and e.status in ('10', '12', '40', '50')
+			and e.split_status = '0'
+		<if test="null!=params.locno and ''!=params.locno">
+			and e.locno=#{params.locno,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.expNo and ''!=params.expNo">
+			and e.exp_no=#{params.expNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.status and ''!=params.status">
+			and e.STATUS=#{params.status,jdbcType=VARCHAR}
+		</if>
+		
+		<if test="null!=params.brandNo and ''!=params.brandNo">
+			and it.brand_no=#{params.brandNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.createtmBegin and ''!=params.createtmBegin">
+			<![CDATA[
+				and e.CREATETM >= to_date('${params.createtmBegin} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+			]]>
+		</if>
+		<if test="null!=params.createtmEnd and ''!=params.createtmEnd">
+			<![CDATA[
+				and e.CREATETM <= to_date('${params.createtmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			]]>
+		</if>
+		<include refid="selectExpAuthorityCondition" />
+		<!-- 预分货单不能选已做调度的发货通知单 -->
+		AND NOT EXISTS(
+			select 'x' from bill_om_locate_dtl od
+				where od.locno = e.locno
+				and od.exp_no = e.exp_no
+		)
+		
+		group by e.EXP_NO, e.owner_no, e.createtm, e.exp_remark, e.status
+		order by e.EXP_NO desc, e.createtm desc
+		) A where 1 = 1 and A.totalExpQty > 0
+  </select>
+  
+  <!-- 预分货单新建的时候查询发货通知单 -->
+  <select id="selectByPageExpPre" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillOmExp" >
+    select B.* from (select A.*,rownum rn from(
+    	select e.EXP_NO,
+			e.owner_no,
+			e.createtm,
+			e.exp_remark,
+			e.status,
+			(select ld.ITEMNAME
+			from LOOKUPDTL ld
+			where e.status = ld.itemval
+			and ld.lookupcode = 'CITY_OEM_STATUS'
+			and rownum = 1) as statusStr,
+			sum(oed.item_qty) as totalItemQty,
+			sum(oed.item_qty) - sum(oed.SCHEDULE_QTY) as totalExpQty
+		from bill_om_exp e
+		inner join bill_om_exp_dtl oed
+			on e.locno = oed.locno
+			and e.owner_no = oed.owner_no
+			and e.exp_no = oed.exp_no
+		inner join item it
+			on it.item_no = oed.item_no
+		where 1 = 1
+			and e.status in ('10', '12', '40', '50')
+			and e.split_status = '0'
+		<if test="null!=params.locno and ''!=params.locno">
+			and e.locno=#{params.locno,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.expNo and ''!=params.expNo">
+			and e.exp_no=#{params.expNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.status and ''!=params.status">
+			and e.STATUS=#{params.status,jdbcType=VARCHAR}
+		</if>
+		
+		<if test="null!=params.brandNo and ''!=params.brandNo">
+			and it.brand_no=#{params.brandNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.createtmBegin and ''!=params.createtmBegin">
+			<![CDATA[
+				and e.CREATETM >= to_date('${params.createtmBegin} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+			]]>
+		</if>
+		<if test="null!=params.createtmEnd and ''!=params.createtmEnd">
+			<![CDATA[
+				and e.CREATETM <= to_date('${params.createtmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			]]>
+		</if>
+		<include refid="selectExpAuthorityCondition" />
+		<!-- 预分货单不能选已做调度的发货通知单 -->
+		AND NOT EXISTS(
+			select 'x' from bill_om_locate_dtl od
+				where od.locno = e.locno
+				and od.exp_no = e.exp_no
+		)
+		
+		group by e.EXP_NO, e.owner_no, e.createtm, e.exp_remark, e.status
+		order by e.EXP_NO desc, e.createtm desc
+    ) A where 1 = 1 and A.totalExpQty > 0
+    and rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <update id="updateOmExpStatusByExpNo" parameterType="com.yougou.logistics.city.common.model.BillOmExp" >
+  		update bill_om_exp e 
+  			set e.status = #{status,jdbcType=VARCHAR}
+  		where e.locno = #{locno,jdbcType=VARCHAR}
+  			and e.exp_no = #{expNo,jdbcType=VARCHAR}
+  </update>
+  
+  
+  <insert id="insertSplitByExp" parameterType="com.yougou.logistics.city.common.model.BillOmExp" >
+  		
+  		insert into bill_om_exp
+		  (exp_type,
+		   locno,
+		   exp_no,
+		   owner_no,
+		   owner_store_no,
+		   store_no,
+		   sub_store_no,
+		   sourceexp_type,
+		   sourceexp_no,
+		   exp_date,
+		   fast_flag,
+		   status,
+		   priority,
+		   add_exp_no,
+		   class,
+		   import_no,
+		   deliver_type,
+		   transport_type,
+		   batch_no,
+		   line_no,
+		   full_line_name,
+		   cust_address,
+		   cust_address_code,
+		   contactor_name,
+		   cust_phone,
+		   cust_mail,
+		   error_status,
+		   create_flag,
+		   return_flag,
+		   exp_remark,
+		   creator,
+		   creatorname,
+		   createtm,
+		   editor,
+		   editorname,
+		   edittm,
+		   belong_flag,
+		   send_flag,
+		   buffer_line_no,
+		   special_article_group,
+		   exp_status,
+		   stock_type,
+		   order_period,
+		   finance_type,
+		   kick_flag,
+		   status_trans,
+		   shipper_no,
+		   auditor,
+		   auditorname,
+		   audittm,
+		   m3_division,
+		   sys_no,
+		   mid_locno,
+		   business_type,
+		   status_report,
+		   source_type,
+		   source_no,
+		   split_status)
+		   
+		  select exp_type,
+		   locno,
+		   #{expNo,jdbcType=VARCHAR},
+		   owner_no,
+		   owner_store_no,
+		   store_no,
+		   sub_store_no,
+		   sourceexp_type,
+		   sourceexp_no,
+		   exp_date,
+		   fast_flag,
+		   '10',
+		   priority,
+		   add_exp_no,
+		   #{classType,jdbcType=VARCHAR},
+		   import_no,
+		   deliver_type,
+		   transport_type,
+		   batch_no,
+		   line_no,
+		   full_line_name,
+		   cust_address,
+		   cust_address_code,
+		   contactor_name,
+		   cust_phone,
+		   cust_mail,
+		   error_status,
+		   create_flag,
+		   return_flag,
+		   exp_remark,
+		   #{creator,jdbcType=VARCHAR},
+		   #{creatorname,jdbcType=VARCHAR},
+		   sysdate,
+		   #{editor,jdbcType=VARCHAR},
+		   #{editorname,jdbcType=VARCHAR},
+		   sysdate,
+		   belong_flag,
+		   send_flag,
+		   buffer_line_no,
+		   special_article_group,
+		   exp_status,
+		   stock_type,
+		   order_period,
+		   finance_type,
+		   kick_flag,
+		   status_trans,
+		   shipper_no,
+		   auditor,
+		   auditorname,
+		   audittm,
+		   m3_division,
+		   sys_no,
+		   mid_locno,
+		   business_type,
+		   status_report,
+		   #{sourceType,jdbcType=VARCHAR},
+		   #{sourceNo,jdbcType=VARCHAR},
+		   split_status
+		  from bill_om_exp 
+		     where locno = #{locno,jdbcType=VARCHAR}
+		     and exp_type = #{expType,jdbcType=VARCHAR}
+		     and exp_no = #{sourceNo,jdbcType=VARCHAR}
+  </insert>
+  
+</mapper>

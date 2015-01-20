@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillUmDirectMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillUmDirect" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="UNTREAD_MM_NO" property="untreadMmNo" jdbcType="VARCHAR" />
+    <id column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+    <result column="EST_QTY" property="estQty" jdbcType="DECIMAL" />
+    <result column="DIS_QTY" property="disQty" jdbcType="DECIMAL" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="PACK_QTY" property="packQty" jdbcType="DECIMAL" />
+    <result column="CELL_ID" property="cellId" jdbcType="DECIMAL" />
+    
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <result column="item_name" property="itemName" jdbcType="VARCHAR" />
+    <result column="untread_type" property="untreadType" jdbcType="VARCHAR" />
+    <result column="quality" property="quality" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, UNTREAD_MM_NO, ROW_ID,  b.ITEM_NO,i.item_name, SIZE_NO, CELL_NO, EST_QTY, DIS_QTY,  b.CREATETM, 
+    PACK_QTY, CELL_ID
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.cellNo and ''!=params.cellNo " >
+         and CELL_NO='N'
+      </if>
+      <if test="null==params.cellNo or ''==params.cellNo " >
+         and CELL_NO!='N'
+      </if>
+      <if test="null!=params.untreadMmNo and ''!=params.untreadMmNo " >
+         and UNTREAD_MM_NO = #{params.untreadMmNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno " >
+         and LOCNO = #{params.locno,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillUmDirectKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_UM_DIRECT
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and UNTREAD_MM_NO = #{untreadMmNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_UM_DIRECT  where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from BILL_UM_DIRECT b left join item i on i.item_no=b.item_no where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    <if test="orderByField == null or ''==orderByField" >
+      order by ITEM_NO,SIZE_NO
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+	  select sum(nvl(b.est_Qty,0)) est_Qty 
+	  from BILL_UM_DIRECT b where 1=1
+  	<include refid="condition" />
+  </select> 
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_UM_DIRECT where 1=1 
+    <include refid="condition" />
+  </select>
+  <!-- 查询最大rowID-->
+ <select id="selectMaxRowId" resultType="java.lang.Integer" parameterType="com.yougou.logistics.city.common.model.BillUmUntreadMm">
+  	select nvl(max(row_id),0) from BILL_UM_DIRECT where UNTREAD_MM_NO = #{params.untreadMmNo} and locno = #{params.locno}
+  </select>
+  
+  <sql id="condition4direct" >
+    <if test="null!=params" >
+      <!--退仓通知单-->
+      <if test="null!=params.untreadMmNo and ''!=params.untreadMmNo " >
+         and UNTREAD_MM_NO = #{params.untreadMmNo,jdbcType=VARCHAR}
+      </if>
+      <!--单据编号-->
+      <if test="null!=params.receiptNo and ''!=params.receiptNo" >
+        and m.untread_mm_no=#{params.receiptNo,jdbcType=VARCHAR}
+      </if>
+      <!--仓别-->
+      <if test="null!=params.locno and ''!=params.locno" >
+         and m.LOCNO=#{params.locno,jdbcType=VARCHAR}
+      </if>
+      <!--委托业主-->
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        and m.OWNER_NO=#{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+      <!--状态-->
+      <if test="null!=params.status and ''!=params.status" >
+        and m.status=#{params.status,jdbcType=VARCHAR}
+      </if>
+      <!--收货日期-->
+      <if test="null!=params.startTm and ''!=params.startTm" >
+		<![CDATA[
+         and m.createtm >=to_date('${params.startTm} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+		]]>	
+      </if>
+      <!--收货日期end-->
+      <if test="null!=params.endTm and ''!=params.endTm" >
+      	<![CDATA[
+       	 and m.createtm <=to_date('${params.endTm} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+        ]]>	
+      </if>
+       <if test="null!=params.quality and ''!=params.quality" >
+         and m.quality = #{params.quality}
+      </if>
+      <if test="null!=params.untreadType and ''!=params.untreadType" >
+         and m.UNTREAD_TYPE = #{params.untreadType}
+      </if>
+      <!--所属品牌-->
+      <if test="null!=params.brandNo and ''!=params.brandNo" >
+      	<![CDATA[
+      		and EXISTS (
+      			select 1 from BILL_UM_DIRECT u,item i
+      				where u.LOCNO = m.LOCNO 
+      				and u.UNTREAD_MM_NO = m.UNTREAD_MM_NO 
+      				and u.ITEM_NO = i.ITEM_NO
+      				and i.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+      				and rownum=1
+      		)
+      	]]>
+	  </if>
+	   <if test="null!=params.sysNo and ''!=params.sysNo" >
+        <![CDATA[
+            and EXISTS (
+                select 1 from BILL_UM_DIRECT u,item i
+                    where u.LOCNO = m.LOCNO 
+                    and u.UNTREAD_MM_NO = m.UNTREAD_MM_NO 
+                    and u.ITEM_NO = i.ITEM_NO
+                    and i.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+                    and rownum=1
+            )
+        ]]>
+      </if>
+    </if>
+  </sql>
+  
+  <select id="selectCount4Direct" resultType="java.lang.Integer" >
+    select count(1) as s from  BILL_UM_UNTREAD_MM m where m.status in('11','20','25')
+    <include refid="condition4direct" />
+  </select>
+  <select id="selectByPage4Direct" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from(select m.untread_mm_no,m.status,m.createtm,m.owner_no,m.quality,m.untread_type untread_type
+    		from  BILL_UM_UNTREAD_MM m where m.status in('11','20','25')
+  <include refid="condition4direct" />
+    <if test="params.orderByField == null or ''==params.orderByField" >
+      	   order by m.untread_mm_no desc
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillUmDirectKey" >
+    delete from BILL_UM_DIRECT
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and UNTREAD_MM_NO = #{untreadMmNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillUmDirect" >
+    delete from BILL_UM_DIRECT
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and UNTREAD_MM_NO = #{untreadMmNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillUmDirect" >
+    insert into BILL_UM_DIRECT (LOCNO, UNTREAD_MM_NO, ROW_ID, 
+      ITEM_NO, SIZE_NO, CELL_NO, 
+      EST_QTY, DIS_QTY, CREATETM, 
+      PACK_QTY, CELL_ID)
+    values (#{locno,jdbcType=VARCHAR}, #{untreadMmNo,jdbcType=VARCHAR}, #{rowId,jdbcType=DECIMAL}, 
+      #{itemNo,jdbcType=VARCHAR}, #{sizeNo,jdbcType=VARCHAR}, #{cellNo,jdbcType=VARCHAR}, 
+      #{estQty,jdbcType=DECIMAL}, #{disQty,jdbcType=DECIMAL}, #{createtm,jdbcType=TIMESTAMP}, 
+      #{packQty,jdbcType=DECIMAL}, #{cellId,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillUmDirect" >
+    insert into BILL_UM_DIRECT
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="untreadMmNo != null" >
+        UNTREAD_MM_NO,
+      </if>
+      <if test="rowId != null" >
+        ROW_ID,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO,
+      </if>
+      <if test="estQty != null" >
+        EST_QTY,
+      </if>
+      <if test="disQty != null" >
+        DIS_QTY,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY,
+      </if>
+      <if test="cellId != null" >
+        CELL_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="untreadMmNo != null" >
+        #{untreadMmNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rowId != null" >
+        #{rowId,jdbcType=DECIMAL},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="estQty != null" >
+        #{estQty,jdbcType=DECIMAL},
+      </if>
+      <if test="disQty != null" >
+        #{disQty,jdbcType=DECIMAL},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="packQty != null" >
+        #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="cellId != null" >
+        #{cellId,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillUmDirect" >
+    update BILL_UM_DIRECT
+    <set >
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO = #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="estQty != null" >
+        EST_QTY = #{estQty,jdbcType=DECIMAL},
+      </if>
+      <if test="disQty != null" >
+        DIS_QTY = #{disQty,jdbcType=DECIMAL},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="cellId != null" >
+        CELL_ID = #{cellId,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and UNTREAD_MM_NO = #{untreadMmNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillUmDirect" >
+    update BILL_UM_DIRECT
+    set ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      CELL_NO = #{cellNo,jdbcType=VARCHAR},
+      EST_QTY = #{estQty,jdbcType=DECIMAL},
+      DIS_QTY = #{disQty,jdbcType=DECIMAL},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      CELL_ID = #{cellId,jdbcType=DECIMAL}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and UNTREAD_MM_NO = #{untreadMmNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+</mapper>

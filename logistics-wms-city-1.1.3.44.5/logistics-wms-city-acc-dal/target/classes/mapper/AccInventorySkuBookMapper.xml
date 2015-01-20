@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.AccInventorySkuBookMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.AccInventorySkuBook" >
+    <id column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+    <result column="CELL_ID" property="cellId" jdbcType="DECIMAL" />
+    <result column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <result column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="BARCODE" property="barcode" jdbcType="VARCHAR" />
+    <result column="ITEM_TYPE" property="itemType" jdbcType="VARCHAR" />
+    <result column="QUALITY" property="quality" jdbcType="VARCHAR" />
+    <result column="SUPPLIER_NO" property="supplierNo" jdbcType="VARCHAR" />
+    <result column="CON_NO" property="conNo" jdbcType="VARCHAR" />
+    <result column="DIRECTION" property="direction" jdbcType="DECIMAL" />
+    <result column="MOVE_QTY" property="moveQty" jdbcType="DECIMAL" />
+    <result column="BALANCE_QTY" property="balanceQty" jdbcType="DECIMAL" />
+    <result column="BILL_NO" property="billNo" jdbcType="VARCHAR" />
+    <result column="BILL_TYPE" property="billType" jdbcType="VARCHAR" />
+    <result column="IO_FLAG" property="ioFlag" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="CREATEDT" property="createdt" jdbcType="TIMESTAMP" />
+    <result column="PRE_FLAG" property="preFlag" jdbcType="VARCHAR" />
+    <result column="SEQ_ID" property="seqId" jdbcType="DECIMAL" />
+    <result column="TERMINAL_FLAG" property="terminalFlag" jdbcType="VARCHAR" />
+    <result column="STATUS_TRANS" property="statusTrans" jdbcType="VARCHAR" />
+    <result column="PACK_QTY" property="packQty" jdbcType="DECIMAL" />
+  </resultMap>
+  
+
+  <sql id="Base_Column_List" >
+    ROW_ID, CELL_ID, LOCNO, OWNER_NO, CELL_NO, ITEM_NO, BARCODE, ITEM_TYPE, QUALITY, 
+    SUPPLIER_NO, CON_NO, DIRECTION, MOVE_QTY, BALANCE_QTY, BILL_NO, BILL_TYPE, IO_FLAG, 
+    CREATOR, CREATETM, CREATEDT, PRE_FLAG, SEQ_ID, TERMINAL_FLAG, STATUS_TRANS, PACK_QTY
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+        and LOCNO=#{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        and OWNER_NO=#{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.itemNo and ''!=params.itemNo" >
+        and ITEM_NO=#{params.itemNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.barcode and ''!=params.barcode" >
+        and BARCODE=#{params.barcode,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.cellNo and ''!=params.cellNo" >
+        and CELL_NO=#{params.cellNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.quality and ''!=params.quality" >
+        and QUALITY=#{params.quality,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.itemType and ''!=params.itemType" >
+        and ITEM_TYPE=#{params.itemType,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.preFlag and ''!=params.preFlag" >
+        and PRE_FLAG=#{params.preFlag,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.supplierNo and ''!=params.supplierNo" >
+        and SUPPLIER_NO=#{params.supplierNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.conNo and ''!=params.conNo" >
+        and CON_NO=#{params.conNo,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM ACC_INVENTORY_SKU_BOOK
+    WHERE ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    SELECT COUNT(1) as s FROM ACC_INVENTORY_SKU_BOOK WHERE 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    SELECT B.* from (SELECT A.*,ROWNUM rn FROM( SELECT 
+    <include refid="Base_Column_List" />
+     FROM ACC_INVENTORY_SKU_BOOK WHERE 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      ORDER BY ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A WHERE ROWNUM &lt; #{page.endRowNum}) B WHERE rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+     FROM ACC_INVENTORY_SKU_BOOK WHERE 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectLatestOneforUpdateByParams" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+     FROM ACC_INVENTORY_SKU_BOOK WHERE row_id=(
+       select max(row_id) from ACC_INVENTORY_SKU_BOOK
+		where 1=1
+    	<include refid="condition" />
+    	) for update
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    DELETE FROM ACC_INVENTORY_SKU_BOOK
+    WHERE ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.AccInventorySkuBook" >
+    DELETE FROM ACC_INVENTORY_SKU_BOOK
+    WHERE ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.AccInventorySkuBook" >
+    <selectKey keyProperty="rowId" resultType="long" order="BEFORE">
+  		select SEQ_CON_CONTENT_MOVE.Nextval from dual
+  	</selectKey>
+    INSERT INTO ACC_INVENTORY_SKU_BOOK (ROW_ID, CELL_ID, LOCNO, 
+      OWNER_NO, CELL_NO, ITEM_NO, 
+      BARCODE, ITEM_TYPE, QUALITY, 
+      SUPPLIER_NO, CON_NO, DIRECTION, 
+      MOVE_QTY, BALANCE_QTY, BILL_NO, 
+      BILL_TYPE, IO_FLAG, CREATOR, 
+      CREATETM, CREATEDT, PRE_FLAG, 
+      SEQ_ID, TERMINAL_FLAG, STATUS_TRANS, 
+      PACK_QTY)
+    VALUES (#{rowId,jdbcType=DECIMAL}, #{cellId,jdbcType=DECIMAL}, #{locno,jdbcType=VARCHAR}, 
+      #{ownerNo,jdbcType=VARCHAR}, #{cellNo,jdbcType=VARCHAR}, #{itemNo,jdbcType=VARCHAR}, 
+      #{barcode,jdbcType=VARCHAR}, #{itemType,jdbcType=VARCHAR}, #{quality,jdbcType=VARCHAR}, 
+      #{supplierNo,jdbcType=VARCHAR}, #{conNo,jdbcType=VARCHAR}, #{direction,jdbcType=DECIMAL}, 
+      #{moveQty,jdbcType=DECIMAL}, #{balanceQty,jdbcType=DECIMAL}, #{billNo,jdbcType=VARCHAR}, 
+      #{billType,jdbcType=VARCHAR}, #{ioFlag,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
+      #{createtm,jdbcType=TIMESTAMP}, #{createdt,jdbcType=TIMESTAMP}, #{preFlag,jdbcType=VARCHAR}, 
+      #{seqId,jdbcType=DECIMAL}, #{terminalFlag,jdbcType=VARCHAR}, #{statusTrans,jdbcType=VARCHAR}, 
+      #{packQty,jdbcType=DECIMAL})
+  </insert>
+   <!-- 批量插入 -->
+  <select id="batchInsertSkuBook" parameterType="java.util.List">
+	INSERT INTO ACC_INVENTORY_SKU_BOOK (ROW_ID, CELL_ID, LOCNO,
+	OWNER_NO, CELL_NO, ITEM_NO,
+	BARCODE, ITEM_TYPE, QUALITY,
+	SUPPLIER_NO, CON_NO, DIRECTION,
+	MOVE_QTY, BALANCE_QTY, BILL_NO,
+	BILL_TYPE, IO_FLAG, CREATOR,
+	CREATETM, CREATEDT, PRE_FLAG,
+	SEQ_ID, TERMINAL_FLAG, STATUS_TRANS,
+	PACK_QTY)
+	select SEQ_CON_CONTENT_MOVE.NEXTVAL,A.* from(
+	<foreach collection="list" item="item" index="index" separator="union">
+		select
+		#{item.cellId,jdbcType=DECIMAL}, #{item.locno,jdbcType=VARCHAR},
+		#{item.ownerNo,jdbcType=VARCHAR}, #{item.cellNo,jdbcType=VARCHAR}, #{item.itemNo,jdbcType=VARCHAR},
+		#{item.barcode,jdbcType=VARCHAR}, #{item.itemType,jdbcType=VARCHAR},
+		#{item.quality,jdbcType=VARCHAR},
+		#{item.supplierNo,jdbcType=VARCHAR}, #{item.conNo,jdbcType=VARCHAR}, #{item.direction,jdbcType=DECIMAL},
+		#{item.moveQty,jdbcType=DECIMAL}, #{item.balanceQty,jdbcType=DECIMAL},
+		#{item.billNo,jdbcType=VARCHAR},
+		#{item.billType,jdbcType=VARCHAR}, #{item.ioFlag,jdbcType=VARCHAR}, #{item.creator,jdbcType=VARCHAR},
+		#{item.createtm,jdbcType=TIMESTAMP},
+		#{item.createdt,jdbcType=TIMESTAMP}, #{item.preFlag,jdbcType=VARCHAR},
+		#{item.seqId,jdbcType=DECIMAL}, #{item.terminalFlag,jdbcType=VARCHAR},
+		#{item.statusTrans,jdbcType=VARCHAR},
+		#{item.packQty,jdbcType=DECIMAL}
+		from DUAL
+	</foreach>
+	)A
+  </select>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.AccInventorySkuBook" >
+    INSERT INTO ACC_INVENTORY_SKU_BOOK
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="rowId != null" >
+        ROW_ID,
+      </if>
+      <if test="cellId != null" >
+        CELL_ID,
+      </if>
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="barcode != null" >
+        BARCODE,
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE,
+      </if>
+      <if test="quality != null" >
+        QUALITY,
+      </if>
+      <if test="supplierNo != null" >
+        SUPPLIER_NO,
+      </if>
+      <if test="conNo != null" >
+        CON_NO,
+      </if>
+      <if test="direction != null" >
+        DIRECTION,
+      </if>
+      <if test="moveQty != null" >
+        MOVE_QTY,
+      </if>
+      <if test="balanceQty != null" >
+        BALANCE_QTY,
+      </if>
+      <if test="billNo != null" >
+        BILL_NO,
+      </if>
+      <if test="billType != null" >
+        BILL_TYPE,
+      </if>
+      <if test="ioFlag != null" >
+        IO_FLAG,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="createdt != null" >
+        CREATEDT,
+      </if>
+      <if test="preFlag != null" >
+        PRE_FLAG,
+      </if>
+      <if test="seqId != null" >
+        SEQ_ID,
+      </if>
+      <if test="terminalFlag != null" >
+        TERMINAL_FLAG,
+      </if>
+      <if test="statusTrans != null" >
+        STATUS_TRANS,
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="rowId != null" >
+        #{rowId,jdbcType=DECIMAL},
+      </if>
+      <if test="cellId != null" >
+        #{cellId,jdbcType=DECIMAL},
+      </if>
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null" >
+        #{barcode,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null" >
+        #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="conNo != null" >
+        #{conNo,jdbcType=VARCHAR},
+      </if>
+      <if test="direction != null" >
+        #{direction,jdbcType=DECIMAL},
+      </if>
+      <if test="moveQty != null" >
+        #{moveQty,jdbcType=DECIMAL},
+      </if>
+      <if test="balanceQty != null" >
+        #{balanceQty,jdbcType=DECIMAL},
+      </if>
+      <if test="billNo != null" >
+        #{billNo,jdbcType=VARCHAR},
+      </if>
+      <if test="billType != null" >
+        #{billType,jdbcType=VARCHAR},
+      </if>
+      <if test="ioFlag != null" >
+        #{ioFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdt != null" >
+        #{createdt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="preFlag != null" >
+        #{preFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="seqId != null" >
+        #{seqId,jdbcType=DECIMAL},
+      </if>
+      <if test="terminalFlag != null" >
+        #{terminalFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="statusTrans != null" >
+        #{statusTrans,jdbcType=VARCHAR},
+      </if>
+      <if test="packQty != null" >
+        #{packQty,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.AccInventorySkuBook" >
+    UPDATE ACC_INVENTORY_SKU_BOOK
+    <set >
+      <if test="cellId != null" >
+        CELL_ID = #{cellId,jdbcType=DECIMAL},
+      </if>
+      <if test="locno != null" >
+        LOCNO = #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO = #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null" >
+        BARCODE = #{barcode,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        QUALITY = #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        SUPPLIER_NO = #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="conNo != null" >
+        CON_NO = #{conNo,jdbcType=VARCHAR},
+      </if>
+      <if test="direction != null" >
+        DIRECTION = #{direction,jdbcType=DECIMAL},
+      </if>
+      <if test="moveQty != null" >
+        MOVE_QTY = #{moveQty,jdbcType=DECIMAL},
+      </if>
+      <if test="balanceQty != null" >
+        BALANCE_QTY = #{balanceQty,jdbcType=DECIMAL},
+      </if>
+      <if test="billNo != null" >
+        BILL_NO = #{billNo,jdbcType=VARCHAR},
+      </if>
+      <if test="billType != null" >
+        BILL_TYPE = #{billType,jdbcType=VARCHAR},
+      </if>
+      <if test="ioFlag != null" >
+        IO_FLAG = #{ioFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdt != null" >
+        CREATEDT = #{createdt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="preFlag != null" >
+        PRE_FLAG = #{preFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="seqId != null" >
+        SEQ_ID = #{seqId,jdbcType=DECIMAL},
+      </if>
+      <if test="terminalFlag != null" >
+        TERMINAL_FLAG = #{terminalFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="statusTrans != null" >
+        STATUS_TRANS = #{statusTrans,jdbcType=VARCHAR},
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      </if>
+    </set>
+    WHERE ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.AccInventorySkuBook" >
+    UPDATE ACC_INVENTORY_SKU_BOOK
+    SET CELL_ID = #{cellId,jdbcType=DECIMAL},
+      LOCNO = #{locno,jdbcType=VARCHAR},
+      OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      CELL_NO = #{cellNo,jdbcType=VARCHAR},
+      ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      BARCODE = #{barcode,jdbcType=VARCHAR},
+      ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+      QUALITY = #{quality,jdbcType=VARCHAR},
+      SUPPLIER_NO = #{supplierNo,jdbcType=VARCHAR},
+      CON_NO = #{conNo,jdbcType=VARCHAR},
+      DIRECTION = #{direction,jdbcType=DECIMAL},
+      MOVE_QTY = #{moveQty,jdbcType=DECIMAL},
+      BALANCE_QTY = #{balanceQty,jdbcType=DECIMAL},
+      BILL_NO = #{billNo,jdbcType=VARCHAR},
+      BILL_TYPE = #{billType,jdbcType=VARCHAR},
+      IO_FLAG = #{ioFlag,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      CREATEDT = #{createdt,jdbcType=TIMESTAMP},
+      PRE_FLAG = #{preFlag,jdbcType=VARCHAR},
+      SEQ_ID = #{seqId,jdbcType=DECIMAL},
+      TERMINAL_FLAG = #{terminalFlag,jdbcType=VARCHAR},
+      STATUS_TRANS = #{statusTrans,jdbcType=VARCHAR},
+      PACK_QTY = #{packQty,jdbcType=DECIMAL}
+    WHERE ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+</mapper>

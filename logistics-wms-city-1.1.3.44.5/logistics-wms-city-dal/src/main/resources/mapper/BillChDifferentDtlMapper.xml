@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BillChDifferentDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillChDifferentDtl" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="DIFFERENT_NO" property="differentNo" jdbcType="VARCHAR" />
+    <id column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+    <id column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <id column="BARCODE" property="barcode" jdbcType="VARCHAR" />
+    <id column="PACK_QTY" property="packQty" jdbcType="DECIMAL" />
+    <id column="LOT_NO" property="lotNo" jdbcType="VARCHAR" />
+    <id column="QUALITY" property="quality" jdbcType="VARCHAR" />
+    <id column="PRODUCE_DATE" property="produceDate" jdbcType="TIMESTAMP" />
+    <id column="EXPIRE_DATE" property="expireDate" jdbcType="TIMESTAMP" />
+    <id column="ITEM_TYPE" property="itemType" jdbcType="VARCHAR" />
+    <id column="BATCH_SERIAL_NO" property="batchSerialNo" jdbcType="VARCHAR" />
+    <id column="STOCK_VALUE" property="stockValue" jdbcType="VARCHAR" />
+    <id column="LABEL_NO" property="labelNo" jdbcType="VARCHAR" />
+    <result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <result column="ITEM_QTY" property="itemQty" jdbcType="DECIMAL" />
+    <result column="REAL_QTY" property="realQty" jdbcType="DECIMAL" />
+    <result column="STOCK_TYPE" property="stockType" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+    <result column="item_Name" property="itemName" jdbcType="VARCHAR" />
+    <result column="color_name" property="colorName" jdbcType="VARCHAR" />
+    <result column="diff_qty" property="diffQty" jdbcType="DECIMAL" />
+    <result column="brand_name" property="brandName" jdbcType="VARCHAR" />
+    <result column="brand_no" property="brandNo" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, DIFFERENT_NO, CELL_NO, ITEM_NO, BARCODE, PACK_QTY, LOT_NO, QUALITY, PRODUCE_DATE, 
+    EXPIRE_DATE, ITEM_TYPE, BATCH_SERIAL_NO, STOCK_VALUE, LABEL_NO, OWNER_NO, ITEM_QTY, 
+    REAL_QTY, STOCK_TYPE, SIZE_NO, ROW_ID, BRAND_NO
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+      ${params.queryCondition}
+    </if>
+    <if test="null!=params">
+    	<if test="null!=params.locno and ''!=params.locno">
+    		and LOCNO = #{params.locno,jdbcType=VARCHAR}
+    	</if>
+    	<if test="null!=params.differentNo and ''!=params.differentNo">
+    		and DIFFERENT_NO = #{params.differentNo,jdbcType=VARCHAR}
+    	</if>
+    </if>
+  </sql>
+  <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillChDifferentDtlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_CH_DIFFERENT_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and DIFFERENT_NO = #{differentNo,jdbcType=VARCHAR}
+      and CELL_NO = #{cellNo,jdbcType=VARCHAR}
+      and ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+      and BARCODE = #{barcode,jdbcType=VARCHAR}
+      and PACK_QTY = #{packQty,jdbcType=DECIMAL}
+      and LOT_NO = #{lotNo,jdbcType=VARCHAR}
+      and QUALITY = #{quality,jdbcType=VARCHAR}
+      and PRODUCE_DATE = #{produceDate,jdbcType=TIMESTAMP}
+      and EXPIRE_DATE = #{expireDate,jdbcType=TIMESTAMP}
+      and ITEM_TYPE = #{itemType,jdbcType=VARCHAR}
+      and BATCH_SERIAL_NO = #{batchSerialNo,jdbcType=VARCHAR}
+      and STOCK_VALUE = #{stockValue,jdbcType=VARCHAR}
+      and LABEL_NO = #{labelNo,jdbcType=VARCHAR}
+    <include refid="condition" />
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_CH_DIFFERENT_DTL where 1=1 
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn 
+    ,(select i.item_name from item i where i.item_no = A.Item_No) item_Name
+  	,(select ci.color_name from color_info ci inner join item i on ci.color_no = i.color_no where i.item_no = A.Item_No) color_name
+  	,nvl((A.Real_Qty - A.Item_Qty),0) diff_qty
+  	,(select b.brand_name from brand b inner join item i on b.brand_no = i.brand_no where i.item_no = A.Item_No) brand_name
+    from( select 
+    <include refid="Base_Column_List" />
+     from BILL_CH_DIFFERENT_DTL where 1=1 
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+	  select nvl(sum(Real_Qty-item_qty),0) diff_Qty,nvl(sum(real_qty),0) real_Qty,nvl(sum(item_qty),0) item_Qty from BILL_CH_DIFFERENT_DTL 
+  	  where 1=1 
+     <include refid="condition" />
+     <include refid="AuthorityCondition" />
+  </select>	
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_CH_DIFFERENT_DTL where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillChDifferentDtlKey" >
+    delete from BILL_CH_DIFFERENT_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and DIFFERENT_NO = #{differentNo,jdbcType=VARCHAR}
+      and CELL_NO = #{cellNo,jdbcType=VARCHAR}
+      and ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+      and BARCODE = #{barcode,jdbcType=VARCHAR}
+      and PACK_QTY = #{packQty,jdbcType=DECIMAL}
+      and LOT_NO = #{lotNo,jdbcType=VARCHAR}
+      and QUALITY = #{quality,jdbcType=VARCHAR}
+      and PRODUCE_DATE = #{produceDate,jdbcType=TIMESTAMP}
+      and EXPIRE_DATE = #{expireDate,jdbcType=TIMESTAMP}
+      and ITEM_TYPE = #{itemType,jdbcType=VARCHAR}
+      and BATCH_SERIAL_NO = #{batchSerialNo,jdbcType=VARCHAR}
+      and STOCK_VALUE = #{stockValue,jdbcType=VARCHAR}
+      and LABEL_NO = #{labelNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillChDifferentDtl" >
+    delete from BILL_CH_DIFFERENT_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and DIFFERENT_NO = #{differentNo,jdbcType=VARCHAR}
+      and CELL_NO = #{cellNo,jdbcType=VARCHAR}
+      and ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+      and BARCODE = #{barcode,jdbcType=VARCHAR}
+      and PACK_QTY = #{packQty,jdbcType=DECIMAL}
+      and LOT_NO = #{lotNo,jdbcType=VARCHAR}
+      and QUALITY = #{quality,jdbcType=VARCHAR}
+      and PRODUCE_DATE = #{produceDate,jdbcType=TIMESTAMP}
+      and EXPIRE_DATE = #{expireDate,jdbcType=TIMESTAMP}
+      and ITEM_TYPE = #{itemType,jdbcType=VARCHAR}
+      and BATCH_SERIAL_NO = #{batchSerialNo,jdbcType=VARCHAR}
+      and STOCK_VALUE = #{stockValue,jdbcType=VARCHAR}
+      and LABEL_NO = #{labelNo,jdbcType=VARCHAR}
+  </delete>
+  <!-- 批量插入差异信息 -->
+  <select id="batchInsertDtl" parameterType="java.util.List">
+  	insert into bill_ch_different_dtl   
+        (LOCNO,OWNER_NO,DIFFERENT_NO,CELL_NO,ITEM_NO,BARCODE,PACK_QTY,LOT_NO,PRODUCE_DATE,EXPIRE_DATE,QUALITY,
+        ITEM_QTY,REAL_QTY,ITEM_TYPE,BATCH_SERIAL_NO,STOCK_TYPE,STOCK_VALUE,SIZE_NO,ROW_ID,LABEL_NO,BRAND_NO)  
+        <foreach collection="list" item="item" index="index"  
+            separator="union all">  
+            select
+             	#{item.locno,jdbcType=VARCHAR},
+				#{item.ownerNo,jdbcType=VARCHAR},
+				#{item.differentNo,jdbcType=VARCHAR},
+				#{item.cellNo,jdbcType=VARCHAR},
+				#{item.itemNo,jdbcType=VARCHAR},
+				#{item.barcode,jdbcType=VARCHAR},
+				#{item.packQty,jdbcType=DECIMAL},
+				#{item.lotNo,jdbcType=VARCHAR},
+				#{item.produceDate,jdbcType=TIMESTAMP},
+				#{item.expireDate,jdbcType=TIMESTAMP},
+				<if test="item.quality == null or item.quality == ''">
+             		'0',
+	            </if>
+	            <if test="item.quality != null and item.quality != ''">
+	            	#{item.quality,jdbcType=VARCHAR},
+	            </if>
+				#{item.itemQty,jdbcType=DECIMAL},
+				#{item.realQty,jdbcType=DECIMAL},
+				<if test="item.itemType == null or item.itemType == ''">
+             		'0',
+	            </if>
+	            <if test="item.itemType != null and item.itemType != ''">
+	            	#{item.itemType,jdbcType=VARCHAR},
+	            </if>
+	            <if test="item.batchSerialNo == null or item.batchSerialNo == ''">
+             		'N',
+	            </if>
+	            <if test="item.batchSerialNo != null and item.batchSerialNo != ''">
+	            	#{item.batchSerialNo,jdbcType=VARCHAR},
+	            </if>
+	            <if test="item.stockType == null or item.stockType == ''">
+             		'1',
+	            </if>
+	            <if test="item.stockType != null and item.stockType != ''">
+	            	#{item.stockType,jdbcType=VARCHAR},
+	            </if>
+	            <if test="item.stockValue == null or item.stockValue == ''">
+             		'N',
+	            </if>
+	            <if test="item.stockValue != null and item.stockValue != ''">
+	            	#{item.stockValue,jdbcType=VARCHAR},
+	            </if>
+				#{item.sizeNo,jdbcType=VARCHAR},
+				#{item.rowId,jdbcType=DECIMAL},
+				<if test="item.labelNo == null or item.labelNo == ''">
+             		'N',
+	            </if>
+	            <if test="item.labelNo != null and item.labelNo != ''">
+	            	#{item.labelNo,jdbcType=VARCHAR},
+	            </if>
+	            #{item.brandNo,jdbcType=VARCHAR}
+             from DUAL
+        </foreach>
+  </select>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillChDifferentDtl" >
+    insert into BILL_CH_DIFFERENT_DTL (LOCNO, DIFFERENT_NO, CELL_NO, 
+      ITEM_NO, BARCODE, PACK_QTY, 
+      LOT_NO, QUALITY, PRODUCE_DATE, 
+      EXPIRE_DATE, ITEM_TYPE, BATCH_SERIAL_NO, 
+      STOCK_VALUE, LABEL_NO, OWNER_NO, 
+      ITEM_QTY, REAL_QTY, STOCK_TYPE, 
+      SIZE_NO, ROW_ID)
+    values (#{locno,jdbcType=VARCHAR}, #{differentNo,jdbcType=VARCHAR}, #{cellNo,jdbcType=VARCHAR}, 
+      #{itemNo,jdbcType=VARCHAR}, #{barcode,jdbcType=VARCHAR}, #{packQty,jdbcType=DECIMAL}, 
+      #{lotNo,jdbcType=VARCHAR}, #{quality,jdbcType=VARCHAR}, #{produceDate,jdbcType=TIMESTAMP}, 
+      #{expireDate,jdbcType=TIMESTAMP}, #{itemType,jdbcType=VARCHAR}, #{batchSerialNo,jdbcType=VARCHAR}, 
+      #{stockValue,jdbcType=VARCHAR}, #{labelNo,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, 
+      #{itemQty,jdbcType=DECIMAL}, #{realQty,jdbcType=DECIMAL}, #{stockType,jdbcType=VARCHAR}, 
+      #{sizeNo,jdbcType=VARCHAR}, #{rowId,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillChDifferentDtl" >
+    insert into BILL_CH_DIFFERENT_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="differentNo != null" >
+        DIFFERENT_NO,
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="barcode != null" >
+        BARCODE,
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY,
+      </if>
+      <if test="lotNo != null" >
+        LOT_NO,
+      </if>
+      <if test="quality != null" >
+        QUALITY,
+      </if>
+      <if test="produceDate != null" >
+        PRODUCE_DATE,
+      </if>
+      <if test="expireDate != null" >
+        EXPIRE_DATE,
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE,
+      </if>
+      <if test="batchSerialNo != null" >
+        BATCH_SERIAL_NO,
+      </if>
+      <if test="stockValue != null" >
+        STOCK_VALUE,
+      </if>
+      <if test="labelNo != null" >
+        LABEL_NO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="itemQty != null" >
+        ITEM_QTY,
+      </if>
+      <if test="realQty != null" >
+        REAL_QTY,
+      </if>
+      <if test="stockType != null" >
+        STOCK_TYPE,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="rowId != null" >
+        ROW_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="differentNo != null" >
+        #{differentNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null" >
+        #{barcode,jdbcType=VARCHAR},
+      </if>
+      <if test="packQty != null" >
+        #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="lotNo != null" >
+        #{lotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="produceDate != null" >
+        #{produceDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expireDate != null" >
+        #{expireDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="itemType != null" >
+        #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="batchSerialNo != null" >
+        #{batchSerialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="stockValue != null" >
+        #{stockValue,jdbcType=VARCHAR},
+      </if>
+      <if test="labelNo != null" >
+        #{labelNo,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemQty != null" >
+        #{itemQty,jdbcType=DECIMAL},
+      </if>
+      <if test="realQty != null" >
+        #{realQty,jdbcType=DECIMAL},
+      </if>
+      <if test="stockType != null" >
+        #{stockType,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rowId != null" >
+        #{rowId,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillChDifferentDtl" >
+    update BILL_CH_DIFFERENT_DTL
+    <set >
+      <if test="ownerNo != null" >
+        OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemQty != null" >
+        ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+      </if>
+      <if test="realQty != null" >
+        REAL_QTY = #{realQty,jdbcType=DECIMAL},
+      </if>
+      <if test="stockType != null" >
+        STOCK_TYPE = #{stockType,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rowId != null" >
+        ROW_ID = #{rowId,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and DIFFERENT_NO = #{differentNo,jdbcType=VARCHAR}
+      and CELL_NO = #{cellNo,jdbcType=VARCHAR}
+      and ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+      and BARCODE = #{barcode,jdbcType=VARCHAR}
+      and PACK_QTY = #{packQty,jdbcType=DECIMAL}
+      and LOT_NO = #{lotNo,jdbcType=VARCHAR}
+      and QUALITY = #{quality,jdbcType=VARCHAR}
+      and PRODUCE_DATE = #{produceDate,jdbcType=TIMESTAMP}
+      and EXPIRE_DATE = #{expireDate,jdbcType=TIMESTAMP}
+      and ITEM_TYPE = #{itemType,jdbcType=VARCHAR}
+      and BATCH_SERIAL_NO = #{batchSerialNo,jdbcType=VARCHAR}
+      and STOCK_VALUE = #{stockValue,jdbcType=VARCHAR}
+      and LABEL_NO = #{labelNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillChDifferentDtl" >
+    update BILL_CH_DIFFERENT_DTL
+    set OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+      REAL_QTY = #{realQty,jdbcType=DECIMAL},
+      STOCK_TYPE = #{stockType,jdbcType=VARCHAR},
+      SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      ROW_ID = #{rowId,jdbcType=DECIMAL}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and DIFFERENT_NO = #{differentNo,jdbcType=VARCHAR}
+      and CELL_NO = #{cellNo,jdbcType=VARCHAR}
+      and ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+      and BARCODE = #{barcode,jdbcType=VARCHAR}
+      and PACK_QTY = #{packQty,jdbcType=DECIMAL}
+      and LOT_NO = #{lotNo,jdbcType=VARCHAR}
+      and QUALITY = #{quality,jdbcType=VARCHAR}
+      and PRODUCE_DATE = #{produceDate,jdbcType=TIMESTAMP}
+      and EXPIRE_DATE = #{expireDate,jdbcType=TIMESTAMP}
+      and ITEM_TYPE = #{itemType,jdbcType=VARCHAR}
+      and BATCH_SERIAL_NO = #{batchSerialNo,jdbcType=VARCHAR}
+      and STOCK_VALUE = #{stockValue,jdbcType=VARCHAR}
+      and LABEL_NO = #{labelNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,1323 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillOmDeliverDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillOmDeliverDtl" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="DELIVER_NO" property="deliverNo" jdbcType="VARCHAR" />
+    <id column="CONTAINER_NO" property="containerNo" jdbcType="VARCHAR" />
+    <id column="CONTAINER_ID" property="containerId" jdbcType="DECIMAL" />
+    <result column="EXP_TYPE" property="expType" jdbcType="VARCHAR" />
+    <result column="EXP_NO" property="expNo" jdbcType="VARCHAR" />
+    <result column="LOCATE_NO" property="locateNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="item_Name" property="itemName" jdbcType="VARCHAR" />
+    <result column="size_no" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="SUPPLIER_NO" property="supplierNo" jdbcType="VARCHAR" />
+    <result column="BARCODE" property="barcode" jdbcType="VARCHAR" />
+    <result column="PACK_QTY" property="packQty" jdbcType="DECIMAL" />
+    <result column="LOT_NO" property="lotNo" jdbcType="VARCHAR" />
+    <result column="PRODUCE_DATE" property="produceDate" jdbcType="TIMESTAMP" />
+    <result column="EXPIRE_DATE" property="expireDate" jdbcType="TIMESTAMP" />
+    <result column="QUALITY" property="quality" jdbcType="VARCHAR" />
+    <result column="IMPORT_BATCH_NO" property="importBatchNo" jdbcType="VARCHAR" />
+    <result column="BATCH_SERIAL_NO" property="batchSerialNo" jdbcType="VARCHAR" />
+    <result column="EXT_BARCODE_NO" property="extBarcodeNo" jdbcType="VARCHAR" />
+    <result column="QTY" property="qty" jdbcType="DECIMAL" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATORname" property="creatorname" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="EDITORname" property="editorname" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+    <result column="ITEM_TYPE" property="itemType" jdbcType="VARCHAR" />
+    <result column="EXP_DATE" property="expDate" jdbcType="TIMESTAMP" />
+    <result column="STATUS" property="status" jdbcType="CHAR" />
+    <result column="REAL_QTY" property="realQty" jdbcType="DECIMAL" />
+    <result column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+    <result column="BOX_NO" property="boxNo" jdbcType="VARCHAR" />
+    <result column="VOLUME" property="volume" jdbcType="DECIMAL" />
+    <result column="WEIGHT" property="weight" jdbcType="DECIMAL" />
+    <result column="STORE_NO" property="storeNo" jdbcType="VARCHAR" />
+    <result column="store_name" property="storeName" jdbcType="VARCHAR" />
+    <result column="recheck_no" property="recheckNo" jdbcType="VARCHAR" />
+    <result column="circle_No" property="circleNo" jdbcType="VARCHAR" />
+    <result column="circle" property="circle" jdbcType="VARCHAR" />
+    <result column="LOADPROPOSE_NO" property="loadproposeNo" jdbcType="VARCHAR" />
+    <result column="TMS_DELIVER_NO" property="tmsDeliverNo" jdbcType="VARCHAR" />
+    
+    <result column="LINE_NO" property="lineNo" jdbcType="VARCHAR" />
+    <result column="M3_TRANS_STATUS" property="m3TransStatus" jdbcType="CHAR" />
+    
+    <result column="BRAND_NO" property="brandNo" jdbcType="VARCHAR" />
+    <result column="brandName" property="brandName" jdbcType="VARCHAR" />
+    <result column="SYS_NO" property="sysNo" jdbcType="VARCHAR" />
+    <result column="label_no" property="boxNo" jdbcType="VARCHAR" />
+  </resultMap>
+<!--   <resultMap id="dtlResultView" type="com.yougou.logistics.city.common.model.BillOmDeliverDtl" > -->
+<!--    <result column="BOX_NO" property="boxNo" jdbcType="VARCHAR" /> -->
+<!--    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" /> -->
+<!--    <result column="STORE_NO" property="storeNo" jdbcType="VARCHAR" /> -->
+<!--    <result column="BRAND_NO" property="brandNo" jdbcType="VARCHAR" /> -->
+<!--    <result column="QTY" property="qty" jdbcType="DECIMAL" /> -->
+<!--   </resultMap> -->
+  
+  
+  <sql id="Base_Column_List" >
+    LOCNO, OWNER_NO, DELIVER_NO, CONTAINER_NO, CONTAINER_ID, EXP_TYPE, EXP_NO, LOCATE_NO, 
+    ITEM_NO, SUPPLIER_NO, BARCODE, PACK_QTY, LOT_NO, PRODUCE_DATE, EXPIRE_DATE, QUALITY, 
+    IMPORT_BATCH_NO, BATCH_SERIAL_NO, EXT_BARCODE_NO, QTY, CREATOR,CREATORNAME, CREATETM, EDITOR,EDITORNAME, 
+    EDITTM, ITEM_ID, ITEM_TYPE, EXP_DATE, STATUS, REAL_QTY, ROW_ID, BOX_NO, VOLUME, WEIGHT, 
+    STORE_NO,SIZE_NO, LINE_NO, M3_TRANS_STATUS
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+       <if test="null!=params.deliverNo and ''!=params.deliverNo" >
+       and d.DELIVER_NO=#{params.deliverNo,jdbcType=VARCHAR}
+      </if>
+       <if test="null!=params.locno and ''!=params.locno" >
+        and d.LOCNO=#{params.locno,jdbcType=VARCHAR}
+      </if>
+       <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        and d.OWNER_NO=#{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+       <if test="null!=params.expNo and ''!=params.expNo" >
+        and d.EXP_NO=#{params.expNo,jdbcType=VARCHAR}
+      </if>
+      
+      <if test="null!=params.containerNo and ''!=params.containerNo" >
+        and d.CONTAINER_NO=#{params.containerNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.boxNo and ''!=params.boxNo" >
+        and d.BOX_NO=#{params.boxNo,jdbcType=VARCHAR}
+      </if>
+       <if test="null!=params.storeNo and ''!=params.storeNo" >
+        and d.STORE_NO=#{params.storeNo,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillOmDeliverDtlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_OM_DELIVER_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and DELIVER_NO = #{deliverNo,jdbcType=VARCHAR}
+      and CONTAINER_NO = #{containerNo,jdbcType=VARCHAR}
+      and CONTAINER_ID = #{containerId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from (
+    	select d.LOCNO,
+               d.OWNER_NO,
+               d.DELIVER_NO,
+               d.BOX_NO,
+               d.Store_No,
+               d.ITEM_NO,
+               d.SIZE_NO,
+               MAX(i1.item_name) as item_name,
+               MAX(s1.store_name) as store_name,
+               s1.CIRCLE_NO,
+               (select c.CIRCLE_NAME
+                  from BM_CIRCLE c
+                 where c.CIRCLE_NO = s1.CIRCLE_NO
+                   and c.locno = d.locno
+                   and rownum = 1) as CIRCLE,
+               sum(d.qty) qty,
+               d.LOADPROPOSE_NO,
+               (select lp.TMS_DELIVER_NO
+                  from BILL_OM_LOADPROPOSE lp
+                 where lp.locno = d.locno
+                   and lp.LOADPROPOSE_NO = d.LOADPROPOSE_NO) as tmsDeliverNo
+          from BILL_OM_DELIVER_DTL d
+          LEFT join item i1
+            on i1.item_no = d.item_no
+          LEFT join store s1
+            on s1.store_no = d.Store_No
+         where 1 = 1
+           <include refid="condition" />
+           <include refid="AuthorityCondition" />
+         group by d.LOCNO,
+                  d.OWNER_NO,
+                  d.DELIVER_NO,
+                  d.BOX_NO,
+                  d.Store_No,
+                  d.ITEM_NO,
+                  d.SIZE_NO,
+                  s1.CIRCLE_NO,
+                  d.LOADPROPOSE_NO
+    ) A
+  </select>
+   <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+	 	and d.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+	 </if>
+  </sql>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*, rownum rn from(
+    	select d.LOCNO,
+               d.OWNER_NO,
+               d.DELIVER_NO,
+               d.BOX_NO,
+               d.Store_No,
+               d.ITEM_NO,
+               d.SIZE_NO,
+               max(d.creator) creator,
+               max(d.creatorname) creatorname,
+               max(d.editor) editor,
+               max(d.editorname) editorname,
+               MAX(i1.item_name) as item_name,
+               MAX(s1.store_name) as store_name,
+               s1.CIRCLE_NO,
+               (select c.CIRCLE_NAME
+                  from BM_CIRCLE c
+                 where c.CIRCLE_NO = s1.CIRCLE_NO
+                   and c.locno = d.locno
+                   and rownum = 1) as CIRCLE,
+               sum(d.qty) qty,
+               d.LOADPROPOSE_NO,
+               (select lp.TMS_DELIVER_NO
+                  from BILL_OM_LOADPROPOSE lp
+                 where lp.locno = d.locno
+                   and lp.LOADPROPOSE_NO = d.LOADPROPOSE_NO) as tmsDeliverNo
+          from BILL_OM_DELIVER_DTL d
+          LEFT join item i1
+            on i1.item_no = d.item_no
+          LEFT join store s1
+            on s1.store_no = d.Store_No
+         where 1 = 1
+           <include refid="condition" />
+           <include refid="AuthorityCondition" />
+         group by d.LOCNO,
+                  d.OWNER_NO,
+                  d.DELIVER_NO,
+                  d.BOX_NO,
+                  d.Store_No,
+                  d.ITEM_NO,
+                  d.SIZE_NO,
+                  s1.CIRCLE_NO,
+                  d.LOADPROPOSE_NO
+	    <choose>
+	    <when test="orderByField != null and ''!=orderByField">
+			order by ${orderByField}
+			<if test="orderByField">
+			${orderBy}
+			</if>
+		</when>
+		<otherwise>
+			order by d.BOX_NO, d.ITEM_NO, d.SIZE_NO
+		</otherwise>
+	  </choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_OM_DELIVER_DTL d where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectDtl4SizeHorizontal" parameterType="java.lang.String" resultType="com.yougou.logistics.city.common.model.BillOmDeliverDtlSizeDto">
+  		select 
+		       d.item_no itemNo,
+		       d.size_no sizeNo,
+		       d.store_no storeNo,
+		       max(st.store_name) storeName,
+		       sum(d.qty) qty,
+		       max(s.size_kind) sizeKind,
+		       max(s.size_code) sizeCode,
+		       substr(d.brand_no, 0, 2) sysNo
+		  from bill_om_deliver_dtl d
+		  inner join item i
+    on i.item_no = d.item_no
+		 inner join size_info s
+		    on s.sys_no = substr(d.brand_no, 0, 2)
+		   and s.size_no = d.size_no
+		   and s.size_kind = i.size_kind
+		  left join store st
+		    on d.store_no = st.store_no
+		 where 1=1 and d.deliver_no = #{deliverNo,jdbcType=VARCHAR}
+		 group by d.LOCNO,
+		          d.OWNER_NO,
+		          d.DELIVER_NO,
+		          d.Store_No,
+		          d.ITEM_NO,
+		          d.SIZE_NO,
+		          d.LOADPROPOSE_NO,
+		          d.brand_no
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillOmDeliverDtlKey" >
+    delete from BILL_OM_DELIVER_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and DELIVER_NO = #{deliverNo,jdbcType=VARCHAR}
+      and CONTAINER_NO = #{containerNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillOmDeliverDtl" >
+    delete from BILL_OM_DELIVER_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and DELIVER_NO = #{deliverNo,jdbcType=VARCHAR}
+      and CONTAINER_NO = #{containerNo,jdbcType=VARCHAR}
+      and CONTAINER_ID = #{containerId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillOmDeliverDtl" >
+    insert into BILL_OM_DELIVER_DTL (LOCNO, OWNER_NO, DELIVER_NO, 
+      CONTAINER_NO, CONTAINER_ID, EXP_TYPE, 
+      EXP_NO, LOCATE_NO, ITEM_NO, 
+      SUPPLIER_NO, BARCODE, PACK_QTY, 
+      LOT_NO, PRODUCE_DATE, EXPIRE_DATE, 
+      QUALITY, IMPORT_BATCH_NO, BATCH_SERIAL_NO, 
+      EXT_BARCODE_NO, QTY, CREATOR, CREATORNAME, 
+      CREATETM, EDITOR,EDITORNAME, EDITTM, 
+      ITEM_ID, ITEM_TYPE, EXP_DATE, 
+      STATUS, REAL_QTY, ROW_ID, 
+      BOX_NO, VOLUME, WEIGHT, 
+      STORE_NO, LINE_NO, M3_TRANS_STATUS,
+      BRAND_NO
+      )
+    values (#{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, #{deliverNo,jdbcType=VARCHAR}, 
+      #{containerNo,jdbcType=VARCHAR}, #{containerId,jdbcType=DECIMAL}, #{expType,jdbcType=VARCHAR}, 
+      #{expNo,jdbcType=VARCHAR}, #{locateNo,jdbcType=VARCHAR}, #{itemNo,jdbcType=VARCHAR}, 
+      #{supplierNo,jdbcType=VARCHAR}, #{barcode,jdbcType=VARCHAR}, #{packQty,jdbcType=DECIMAL}, 
+      #{lotNo,jdbcType=VARCHAR}, #{produceDate,jdbcType=TIMESTAMP}, #{expireDate,jdbcType=TIMESTAMP}, 
+      #{quality,jdbcType=VARCHAR}, #{importBatchNo,jdbcType=VARCHAR}, #{batchSerialNo,jdbcType=VARCHAR}, 
+      #{extBarcodeNo,jdbcType=VARCHAR}, #{qty,jdbcType=DECIMAL}, #{creatorname,jdbcType=VARCHAR}, 
+      #{createtm,jdbcType=TIMESTAMP}, #{editorname,jdbcType=VARCHAR}, #{edittm,jdbcType=TIMESTAMP}, 
+      #{itemId,jdbcType=DECIMAL}, #{itemType,jdbcType=VARCHAR}, #{expDate,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=CHAR}, #{realQty,jdbcType=DECIMAL}, #{rowId,jdbcType=DECIMAL}, 
+      #{boxNo,jdbcType=VARCHAR}, #{volume,jdbcType=DECIMAL}, #{weight,jdbcType=DECIMAL}, 
+      #{storeNo,jdbcType=VARCHAR}, #{lineNo,jdbcType=VARCHAR}, #{m3TransStatus,jdbcType=CHAR},
+      #{brandNo,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillOmDeliverDtl" >
+    insert into BILL_OM_DELIVER_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="deliverNo != null" >
+        DELIVER_NO,
+      </if>
+      <if test="containerNo != null" >
+        CONTAINER_NO,
+      </if>
+      <if test="containerId != null" >
+        CONTAINER_ID,
+      </if>
+      <if test="expType != null" >
+        EXP_TYPE,
+      </if>
+      <if test="expNo != null" >
+        EXP_NO,
+      </if>
+      <if test="locateNo != null" >
+        LOCATE_NO,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="supplierNo != null" >
+        SUPPLIER_NO,
+      </if>
+      <if test="barcode != null" >
+        BARCODE,
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY,
+      </if>
+      <if test="lotNo != null" >
+        LOT_NO,
+      </if>
+      <if test="produceDate != null" >
+        PRODUCE_DATE,
+      </if>
+      <if test="expireDate != null" >
+        EXPIRE_DATE,
+      </if>
+      <if test="quality != null" >
+        QUALITY,
+      </if>
+      <if test="importBatchNo != null" >
+        IMPORT_BATCH_NO,
+      </if>
+      <if test="batchSerialNo != null" >
+        BATCH_SERIAL_NO,
+      </if>
+      <if test="extBarcodeNo != null" >
+        EXT_BARCODE_NO,
+      </if>
+      <if test="qty != null" >
+        QTY,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="creatorname != null" >
+        CREATORNAME,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="editorname != null" >
+        EDITORNAME,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="itemId != null" >
+        ITEM_ID,
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE,
+      </if>
+      <if test="expDate != null" >
+        EXP_DATE,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="realQty != null" >
+        REAL_QTY,
+      </if>
+      <if test="rowId != null" >
+        ROW_ID,
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO,
+      </if>
+      <if test="volume != null" >
+        VOLUME,
+      </if>
+      <if test="weight != null" >
+        WEIGHT,
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="lineNo != null" >
+        LINE_NO,
+      </if>
+      <if test="m3TransStatus != null" >
+        M3_TRANS_STATUS,
+      </if>
+      <if test="loadproposeNo != null" >
+        LOADPROPOSE_NO,
+      </if>
+      <if test="brandNo != null" >
+        BRAND_NO,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="deliverNo != null" >
+        #{deliverNo,jdbcType=VARCHAR},
+      </if>
+      <if test="containerNo != null" >
+        #{containerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="containerId != null" >
+        #{containerId,jdbcType=DECIMAL},
+      </if>
+      <if test="expType != null" >
+        #{expType,jdbcType=VARCHAR},
+      </if>
+      <if test="expNo != null" >
+        #{expNo,jdbcType=VARCHAR},
+      </if>
+      <if test="locateNo != null" >
+        #{locateNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null" >
+        #{barcode,jdbcType=VARCHAR},
+      </if>
+      <if test="packQty != null" >
+        #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="lotNo != null" >
+        #{lotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="produceDate != null" >
+        #{produceDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expireDate != null" >
+        #{expireDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="quality != null" >
+        #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="importBatchNo != null" >
+        #{importBatchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="batchSerialNo != null" >
+        #{batchSerialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="extBarcodeNo != null" >
+        #{extBarcodeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="qty != null" >
+        #{qty,jdbcType=DECIMAL},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorname != null" >
+        #{creatorname,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorname != null" >
+        #{editorname,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=DECIMAL},
+      </if>
+      <if test="itemType != null" >
+        #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="expDate != null" >
+        #{expDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=CHAR},
+      </if>
+      <if test="realQty != null" >
+        #{realQty,jdbcType=DECIMAL},
+      </if>
+      <if test="rowId != null" >
+        #{rowId,jdbcType=DECIMAL},
+      </if>
+      <if test="boxNo != null" >
+        #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="volume != null" >
+        #{volume,jdbcType=DECIMAL},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=DECIMAL},
+      </if>
+      <if test="storeNo != null" >
+        #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+         #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="lineNo != null" >
+        #{lineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="m3TransStatus != null" >
+        #{m3TransStatus,jdbcType=CHAR},
+      </if>
+      <if test="loadproposeNo != null" >
+      	#{loadproposeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="brandNo != null" >
+        #{brandNo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillOmDeliverDtl" >
+    update BILL_OM_DELIVER_DTL
+    <set >
+      <if test="expType != null" >
+        EXP_TYPE = #{expType,jdbcType=VARCHAR},
+      </if>
+      <if test="expNo != null" >
+        EXP_NO = #{expNo,jdbcType=VARCHAR},
+      </if>
+      <if test="locateNo != null" >
+        LOCATE_NO = #{locateNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        SUPPLIER_NO = #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null" >
+        BARCODE = #{barcode,jdbcType=VARCHAR},
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="lotNo != null" >
+        LOT_NO = #{lotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="produceDate != null" >
+        PRODUCE_DATE = #{produceDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expireDate != null" >
+        EXPIRE_DATE = #{expireDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="quality != null" >
+        QUALITY = #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="importBatchNo != null" >
+        IMPORT_BATCH_NO = #{importBatchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="batchSerialNo != null" >
+        BATCH_SERIAL_NO = #{batchSerialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="extBarcodeNo != null" >
+        EXT_BARCODE_NO = #{extBarcodeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="qty != null" >
+        QTY = #{qty,jdbcType=DECIMAL},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorname != null" >
+        CREATORNAME = #{creatorname,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorname != null" >
+        EDITORNAME = #{editorname,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="itemId != null" >
+        ITEM_ID = #{itemId,jdbcType=DECIMAL},
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="expDate != null" >
+        EXP_DATE = #{expDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=CHAR},
+      </if>
+      <if test="realQty != null" >
+        REAL_QTY = #{realQty,jdbcType=DECIMAL},
+      </if>
+      <if test="rowId != null" >
+        ROW_ID = #{rowId,jdbcType=DECIMAL},
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO = #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="volume != null" >
+        VOLUME = #{volume,jdbcType=DECIMAL},
+      </if>
+      <if test="weight != null" >
+        WEIGHT = #{weight,jdbcType=DECIMAL},
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="lineNo != null" >
+        LINE_NO = #{lineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="m3TransStatus != null" >
+        M3_TRANS_STATUS = #{m3TransStatus,jdbcType=CHAR},
+      </if>
+      <if test="loadproposeNo != null" >
+      	LOADPROPOSE_NO = #{loadproposeNo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and DELIVER_NO = #{deliverNo,jdbcType=VARCHAR}
+      <if test="containerNo != null">
+      and CONTAINER_NO = #{containerNo,jdbcType=VARCHAR}
+      </if>
+      <if test="containerId != null">
+      and CONTAINER_ID = #{containerId,jdbcType=DECIMAL}
+      </if>
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillOmDeliverDtl" >
+    update BILL_OM_DELIVER_DTL
+    set EXP_TYPE = #{expType,jdbcType=VARCHAR},
+      EXP_NO = #{expNo,jdbcType=VARCHAR},
+      LOCATE_NO = #{locateNo,jdbcType=VARCHAR},
+      ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      SUPPLIER_NO = #{supplierNo,jdbcType=VARCHAR},
+      BARCODE = #{barcode,jdbcType=VARCHAR},
+      PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      LOT_NO = #{lotNo,jdbcType=VARCHAR},
+      PRODUCE_DATE = #{produceDate,jdbcType=TIMESTAMP},
+      EXPIRE_DATE = #{expireDate,jdbcType=TIMESTAMP},
+      QUALITY = #{quality,jdbcType=VARCHAR},
+      IMPORT_BATCH_NO = #{importBatchNo,jdbcType=VARCHAR},
+      BATCH_SERIAL_NO = #{batchSerialNo,jdbcType=VARCHAR},
+      EXT_BARCODE_NO = #{extBarcodeNo,jdbcType=VARCHAR},
+      QTY = #{qty,jdbcType=DECIMAL},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATORNAME = #{creatorname,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITORNAME = #{editorname,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      <!-- ITEM_ID = #{itemId,jdbcType=DECIMAL}, -->
+      ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+      EXP_DATE = #{expDate,jdbcType=TIMESTAMP},
+      STATUS = #{status,jdbcType=CHAR},
+      REAL_QTY = #{realQty,jdbcType=DECIMAL},
+      ROW_ID = #{rowId,jdbcType=DECIMAL},
+      BOX_NO = #{boxNo,jdbcType=VARCHAR},
+      VOLUME = #{volume,jdbcType=DECIMAL},
+      WEIGHT = #{weight,jdbcType=DECIMAL},
+      STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      LINE_NO = #{lineNo,jdbcType=VARCHAR},
+      M3_TRANS_STATUS = #{m3TransStatus,jdbcType=CHAR},
+      LOADPROPOSE_NO = #{loadproposeNo,jdbcType=VARCHAR}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and DELIVER_NO = #{deliverNo,jdbcType=VARCHAR}
+      and CONTAINER_NO = #{containerNo,jdbcType=VARCHAR}
+      and CONTAINER_ID = #{containerId,jdbcType=DECIMAL}
+  </update>
+  
+    <!-- 查询当前的箱号在预到货通知单明细中是否已经存在 -->
+  <select id="selectMaxNum" resultType="java.lang.Integer" parameterType="com.yougou.logistics.city.common.model.BillOmDeliverDtlKey" >
+	  select NVL(Max(t.container_id), 0) as container_id
+	   from BILL_OM_DELIVER_DTL t
+	   where t.locno = #{locno,jdbcType=VARCHAR}
+	   and t.deliver_no = #{deliverNo,jdbcType=VARCHAR}
+	   and t.owner_no = #{ownerNo,jdbcType=VARCHAR}
+	   and t.container_no = #{containerNo,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectDeliverDtl" resultType="java.lang.Integer" parameterType="com.yougou.logistics.city.common.model.BillOmDeliverDtlKey" >
+	  select count(1) count
+	   from BILL_OM_DELIVER_DTL t
+	   where 1 = 1
+	   and t.locno = #{locno,jdbcType=VARCHAR}
+	   and t.deliver_no = #{deliverNo,jdbcType=VARCHAR}
+	   and t.owner_no = #{ownerNo,jdbcType=VARCHAR}
+	   and t.container_no = #{containerNo,jdbcType=VARCHAR}
+  </select>
+  
+  
+  <sql id="sqlDeliverDtlBoxDtl" >
+   	select tt1.recheck_no, tt1.container_no, tt1.box_no,
+	       tt1.store_no, sum(tt1.qty) as qty, t2.store_name
+	  from (select tt2.recheck_no,
+	               t1.locno,
+	               t1.container_no,
+	               t1.box_no,
+	               t1.item_no,
+	               t1.store_no,
+	               t1.size_no,
+	               t1.qty
+	          from bill_om_deliver_dtl t1
+	          inner join bill_om_deliver t2
+          		on t2.locno = t1.locno
+          		and t2.deliver_no = t1.deliver_no
+          	   <!-- su.yq 20141104 修改重复数量显示问题修复 -->
+          	  left join (select rd.locno, rd.container_no, rd.recheck_no
+                       from bill_om_recheck_dtl rd
+                      group by rd.locno, rd.container_no, rd.recheck_no) tt2
+	             on t1.locno = tt2.locno
+	            and t1.container_no = tt2.container_no
+          	  <!--  
+	          left join bill_om_recheck_dtl tt2
+	            on t1.locno = tt2.locno
+	           and t1.container_no = tt2.container_no
+	           and t1.item_no = tt2.item_no
+	           and t1.size_no = tt2.size_no
+	           -->
+	         where 1 = 1
+	          <if test="null!=params.locno and ''!=params.locno" >
+		       and t1.locno = #{params.locno,jdbcType=VARCHAR}
+		      </if>
+	          <if test="null!=params.deliverNo and ''!=params.deliverNo" >
+		       and t1.deliver_no = #{params.deliverNo,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+		        and t1.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+			 	and t1.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+			  </if>
+		      ) tt1,
+	       store t2
+	 where tt1.store_no = t2.store_no
+	 group by tt1.recheck_no,tt1.container_no, tt1.box_no, tt1.store_no, t2.store_name
+	 order by tt1.recheck_no, tt1.container_no, tt1.box_no, tt1.store_no
+  </sql>
+  
+  
+  <sql id="sqlLoadproposeDeliverDtlBoxDtl" >
+   	select tt1.loadpropose_no,tt1.tms_deliver_no,
+		       tt1.container_no,
+		       tt1.box_no,
+		       tt1.store_no,
+		       sum(tt1.qty) as qty,
+		       t2.store_name
+		  from (select tt2.loadpropose_no,
+		  		       lp.tms_deliver_no,
+		               t1.locno,
+		               t1.container_no,
+		               t1.box_no,
+		               t1.item_no,
+		               t1.store_no,
+		               t1.size_no,
+		               t1.qty
+		          from bill_om_deliver_dtl t1
+		         inner join bill_om_deliver t2
+		            on t2.locno = t1.locno
+		           and t2.deliver_no = t1.deliver_no
+		          left join bill_om_loadpropose_dtl tt2
+		            on t1.locno = tt2.locno
+		           and t1.container_no = tt2.container_no
+		          left join bill_om_loadpropose lp
+		            on lp.locno=t1.locno
+		            and lp.loadpropose_no=t1.loadpropose_no
+		         where 1 = 1
+		          <if test="null!=params.locno and ''!=params.locno" >
+			       and t1.locno = #{params.locno,jdbcType=VARCHAR}
+			      </if>
+		          <if test="null!=params.deliverNo and ''!=params.deliverNo" >
+			       and t1.deliver_no = #{params.deliverNo,jdbcType=VARCHAR}
+			      </if>
+			      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+			        and t1.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+			      </if>
+			      <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+				 	and t1.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+				  </if>
+		      ) tt1,
+		       store t2
+		 where tt1.store_no = t2.store_no
+		 group by tt1.loadpropose_no,
+		 		  tt1.tms_deliver_no,
+		          tt1.container_no,
+		          tt1.box_no,
+		          tt1.store_no,
+		          t2.store_name
+		 order by tt1.loadpropose_no, tt1.container_no, tt1.box_no, tt1.store_no
+  </sql>
+  
+  <!-- 查询复核单箱信息 BEGIN -->
+  <select id="boxDtlByParams" resultMap="BaseResultMap" parameterType="map" >
+	  <include refid="sqlDeliverDtlBoxDtl" />
+  </select>
+  
+  <sql id="Base_boxSelect" >
+    	select t1.locno, t1.recheck_no,
+    	 	t1.container_no, t1.brand_no,
+    	 	t2.scan_label_no as label_no,
+         	r.store_no, s.store_name,
+         	c1.circle_name as circle,
+         	t1.exp_no, t1.owner_no,
+         	t1.item_no, t1.size_no,
+         	t1.real_qty as qty, ib.barcode,ib.sys_no,
+         	(select im.SUPPLIER_NO from item im where im.item_no=t1.item_no) as SUPPLIER_NO
+                  from bill_om_recheck r
+                  inner join bill_om_recheck_dtl t1
+                    on r.locno = t1.locno
+                   and r.recheck_no = t1.recheck_no
+                   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+				 	and t1.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+				   </if>
+				   <if test="null!=params.expNo and ''!=params.expNo" >
+				   	inner join (select td2.locno, td2.recheck_no
+                   		from bill_om_recheck_dtl td2
+                   		where 1 = 1
+                   		<if test="null!=params.locno and ''!=params.locno" >
+			      			and td2.locno = #{params.locno,jdbcType=VARCHAR}
+			      		</if>
+			      		<if test="null!=params.expNo and ''!=params.expNo" >
+		            		and td2.exp_no = #{params.expNo,jdbcType=VARCHAR}
+		           		</if>
+                    	group by td2.locno, td2.recheck_no) t2
+                    	on r.locno = t2.locno
+                   		and r.recheck_no = t2.recheck_no
+				   </if>
+                  left join con_label t2
+                    on t2.locno = r.locno
+                   and t2.container_no = t1.container_no
+                  left join store s
+                    on s.store_no = r.store_no
+                  left join bm_circle c1
+                    on c1.circle_no = s.circle_no
+                    and c1.locno = r.locno 
+                  left join item_barcode ib  
+                  	on ib.size_no=t1.size_no 
+                       and ib.item_no=t1.item_no 
+                       and ib.pack_qty=1
+                       and ib.package_id = 0
+                 where 1 = 1
+                   and t1.status = '14'
+                   and not exists
+                 (select tt2.container_no,
+                               tt2.box_no,
+                               tt2.item_no,
+                               tt2.store_no,
+                               tt2.qty,
+                               tt2.size_no
+                          from bill_om_deliver_dtl tt2
+                         where 1 = 1
+                           and t1.locno = tt2.locno
+                           and t1.container_no = tt2.container_no
+                           and t2.scan_label_no = tt2.box_no
+                           and r.store_no = tt2.store_no
+                           and t1.item_no = tt2.item_no
+                           and t1.size_no = tt2.size_no)
+  	</sql>
+  	<select id="selectRecheckDetail" resultMap="BaseResultMap" parameterType="map" >
+	  	<include refid="Base_boxSelect" />
+		   and t1.locno = #{params.locno,jdbcType=VARCHAR}
+	   	   and t1.container_no = #{params.containerNo,jdbcType=VARCHAR}
+	       and t2.scan_label_no = #{params.labelNo,jdbcType=VARCHAR}
+	   	   
+  	</select>
+    <select id="boxSelectCount" resultType="java.lang.Integer" parameterType="map">
+    	select count(1) as s from (
+			select tt1.recheck_no, 
+    				tt1.container_no, 
+    				tt1.label_no,
+               		tt1.locno, 
+               		tt1.owner_no, 
+               		tt1.circle,
+               		tt1.store_no, 
+               		MAX(tt1.store_name) store_name,
+               		max(tt1.brand_no) brand_no,
+               		MAX(br.brand_name) brandName,
+               		sum(tt1.qty) as qty
+          		from (
+					<include refid="Base_boxSelect" />
+                   	<if test="null!=params.locno and ''!=params.locno" >
+		           		and t1.locno =#{params.locno,jdbcType=VARCHAR}
+		           	</if>
+		        	<if test="null!=params.brandNo and ''!=params.brandNo" >
+						and t1.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+				  	</if>
+				   	<if test="null!=params.sysNo and ''!=params.sysNo" >
+			            and ib.SYS_NO = #{params.sysNo,jdbcType=VARCHAR}
+			      	</if>
+		           	<if test="null!=params.deliverArea and ''!=params.deliverArea" >
+						and t2.DELIVER_AREA = #{params.deliverArea,jdbcType=VARCHAR}
+		       	   	</if>
+		           	<if test="null!=params.circleNo and ''!=params.circleNo" >
+		           		and c1.circle_no = #{params.circleNo,jdbcType=VARCHAR}
+		           	</if>
+		           	<if test="null!=params.storeNo and ''!=params.storeNo" >
+		           		and r.store_no = #{params.storeNo,jdbcType=VARCHAR}
+		           	</if>
+		           	<if test="null!=params.storeName and ''!=params.storeName" >
+		            	and s.store_name like '%${params.storeName}%'
+		           	</if>
+		           	<if test="null!=params.expNo and ''!=params.expNo" >
+		            	and t1.exp_no = #{params.expNo,jdbcType=VARCHAR}
+		           	</if>
+		           	<if test="null!=params.recheckNo and ''!=params.recheckNo" >
+		            	and r.recheck_no = #{params.recheckNo,jdbcType=VARCHAR}
+		           	</if>
+		           	<if test="null!=params.startExpDateCondition and ''!=params.startExpDateCondition" >
+        				<![CDATA[
+        					and t1.exp_date >= to_date('${params.startExpDateCondition} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+     					]]>	
+      			   	</if>
+        		   	<if test="null!=params.endExpDateCondition and ''!=params.endExpDateCondition" >
+        				<![CDATA[
+        					and t1.exp_date <= to_date('${params.endExpDateCondition} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+     					]]>	
+      			   </if>
+            	) tt1 
+            left join brand br
+            	on tt1.brand_no = br.brand_no
+            WHERE 1 = 1
+         	group by tt1.recheck_no, 
+    				tt1.container_no, 
+    				tt1.label_no,
+               		tt1.locno, 
+               		tt1.owner_no, 
+               		tt1.circle,
+               		tt1.store_no
+               		<!--tt1.brand_no-->
+         	order by tt1.recheck_no, tt1.container_no, tt1.label_no
+    	) A
+  	</select>
+    <select id="boxSelectQuery" resultMap="BaseResultMap" parameterType="map" >
+    	select B.* from (
+    		select A.*, rownum rn from (
+    			select tt1.recheck_no, 
+    				tt1.container_no, 
+    				tt1.label_no,
+               		tt1.locno, 
+               		tt1.owner_no, 
+               		tt1.circle,
+               		tt1.store_no, 
+               		MAX(tt1.store_name) store_name,
+               		max(tt1.brand_no) brand_no,
+               		MAX(br.brand_name) brandName,
+               		sum(tt1.qty) as qty
+          			from (
+		    			<include refid="Base_boxSelect" />
+		    			<if test="null!=params.locno and ''!=params.locno" >
+		    				and t1.locno =#{params.locno,jdbcType=VARCHAR}
+		    			</if>
+		    			<if test="null!=params.brandNo and ''!=params.brandNo" >
+							and t1.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+				  		</if>
+				   		<if test="null!=params.sysNo and ''!=params.sysNo" >
+			            	and ib.SYS_NO = #{params.sysNo,jdbcType=VARCHAR}
+			      		</if>
+		    			<if test="null!=params.deliverArea and ''!=params.deliverArea" >
+		    				and t2.DELIVER_AREA = #{params.deliverArea,jdbcType=VARCHAR}
+		    			</if>
+		    			<if test="null!=params.circleNo and ''!=params.circleNo" >
+		    				and c1.circle_no = #{params.circleNo,jdbcType=VARCHAR}
+		    			</if>
+		    			<if test="null!=params.storeNo and ''!=params.storeNo" >
+		    				and r.store_no = #{params.storeNo,jdbcType=VARCHAR}
+		    			</if>
+		    			<if test="null!=params.storeName and ''!=params.storeName" >
+		    				and s.store_name like '%${params.storeName}%'
+		    			</if>
+		           		<if test="null!=params.recheckNo and ''!=params.recheckNo" >
+		            		and r.recheck_no = #{params.recheckNo,jdbcType=VARCHAR}
+		           		</if>
+		    			<if test="null!=params.startExpDateCondition and ''!=params.startExpDateCondition" >
+		        			<![CDATA[
+		        				and t1.exp_date >= to_date('${params.startExpDateCondition} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+		     				]]>
+		     			</if>
+		     			<if test="null!=params.endExpDateCondition and ''!=params.endExpDateCondition" >
+		        			<![CDATA[
+		        				and t1.exp_date <= to_date('${params.endExpDateCondition} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+		     				]]>
+		     			</if>
+     				) tt1 
+     			left join brand br
+            		on tt1.brand_no = br.brand_no
+     			WHERE 1 = 1
+     			group by tt1.recheck_no, 
+    				tt1.container_no, 
+    				tt1.label_no,
+               		tt1.locno, 
+               		tt1.owner_no, 
+               		tt1.circle,
+               		tt1.store_no
+               		<!--tt1.brand_no  -->
+				order by tt1.recheck_no desc, tt1.container_no, tt1.label_no
+			) A where rownum &lt; #{page.endRowNum}
+		) B where rn &gt; #{page.startRowNum}
+  	</select>
+  	<!-- 查询复核单箱信息 END -->
+  	<!-- 查询派车单箱信息 BEGIN -->
+  	<select id="flagDtlByParams" resultMap="BaseResultMap" parameterType="map" >
+		  <include refid="sqlLoadproposeDeliverDtlBoxDtl" />
+  	</select>
+  	
+  	<sql id="Base_loadboxSelect" >
+    	select t1.locno, t1.loadpropose_no,
+    		t1.container_no, t1.container_type,
+            t1.status, t1.store_no,
+            t1.load_order, t1.exp_no,t2.tms_deliver_no,
+            t1.exp_date, t3.scan_label_no as label_no,
+            t4.item_no, t4.size_no,t1.brand_no,
+            t4.pack_qty, t4.qty, tm.barcode, 
+            s.store_name, s.circle,c1.circle_name
+                  from bill_om_loadpropose_dtl t1
+                 inner join bill_om_loadpropose t2
+                    on t1.locno = t2.locno
+                   and t1.loadpropose_no = t2.loadpropose_no
+                 <if test="null!=params.expNo and ''!=params.expNo" >
+		         	inner join (select td2.locno, td2.loadpropose_no
+                 		from bill_om_loadpropose_dtl td2
+                        where 1 = 1
+                        <if test="null!=params.locno and ''!=params.locno" >
+		    				and td2.locno = #{params.locno,jdbcType=VARCHAR}
+		    			</if>
+		    			<if test="null!=params.expNo and ''!=params.expNo" >
+		    				and td2.exp_no = #{params.expNo,jdbcType=VARCHAR}
+		    			</if>
+                       	group by td2.locno, td2.loadpropose_no) td2
+                    on t1.locno = td2.locno
+                   and t1.loadpropose_no = td2.loadpropose_no
+		         </if>
+                 inner join con_label t3
+                    on t3.locno = t1.locno
+                   and t1.container_no = t3.container_no
+                   and t1.container_type = t3.container_type
+                 inner join con_label_dtl t4
+                    on t1.locno = t4.locno
+                   and t1.container_no = t4.container_no
+                   and t1.container_type = t4.container_type
+                  left join store s
+                    on s.store_no = t1.store_no
+                  left join bm_circle c1
+                    on c1.circle_no = s.circle
+                    and c1.locno = t2.locno
+                 inner join item_barcode tm  
+                    on t4.item_no = tm.item_no and t4.size_no = tm.size_no and tm.package_id = '0'
+                 where 1 = 1
+                   and t1.status = '10'
+                   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+				 	and t1.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+				</if>
+                   and not exists
+                 (select tt2.locno,
+                               tt2.container_no,
+                               tt2.box_no,
+                               tt2.store_no,
+                               tt2.item_no,
+                               tt2.size_no,
+                               tt2.qty
+                          from bill_om_deliver_dtl tt2
+                         where 1 = 1
+                           and tt2.locno = t1.locno
+                           and tt2.container_no = t1.container_no
+                           and tt2.box_no = t3.scan_label_no
+                           and tt2.store_no = t1.store_no
+                           and tt2.item_no = t4.item_no
+                           and tt2.size_no = t4.size_no)
+  	</sql>
+  	<select id="selectLoadproposeDetail" resultMap="BaseResultMap" parameterType="map" >
+	  	<include refid="Base_loadboxSelect" />
+		   and t1.locno = #{params.locno,jdbcType=VARCHAR}
+	   	   and t1.container_no = #{params.containerNo,jdbcType=VARCHAR}
+	       and t3.scan_label_no = #{params.labelNo,jdbcType=VARCHAR}
+	   	   
+  	</select>
+  	<select id="loadBoxSelectCount" resultType="java.lang.Integer" parameterType="map">
+    	select count(1) as s from (
+			select tt1.loadpropose_no,
+               		tt1.tms_deliver_no,
+               		tt1.container_no,
+               		tt1.label_no,
+               		tt1.locno,
+               		tt1.store_no,
+               		MAX(tt1.store_name) as store_name,
+               		sum(tt1.qty) as qty
+          		from (
+					<include refid="Base_loadboxSelect" />
+                   	<if test="null!=params.locno and ''!=params.locno" >
+		    			and t1.locno =#{params.locno,jdbcType=VARCHAR}
+		    		</if>
+		    		<if test="null!=params.circleNo and ''!=params.circleNo" >
+		    			and c1.circle_no = #{params.circleNo,jdbcType=VARCHAR}
+		    		</if>
+		    		<if test="null!=params.storeNo and ''!=params.storeNo" >
+		    			and t1.store_no = #{params.storeNo,jdbcType=VARCHAR}
+		    		</if>
+		    		<if test="null!=params.storeName and ''!=params.storeName" >
+		    			and s.store_name like '%${params.storeName}%'
+		    		</if>
+		    		<if test="null!=params.expNo and ''!=params.expNo" >
+		            	and t1.exp_no = #{params.expNo,jdbcType=VARCHAR}
+		           	</if>
+		           	<if test="null!=params.loadproposeNo and ''!=params.loadproposeNo" >
+		            	and t1.loadpropose_no = #{params.loadproposeNo,jdbcType=VARCHAR}
+		           	</if>
+            	) tt1 WHERE 1 = 1
+         	group by tt1.loadpropose_no,
+               		tt1.tms_deliver_no,
+               		tt1.container_no,
+               		tt1.label_no,
+               		tt1.locno,
+               		tt1.store_no
+    	) A
+  	</select>
+    <select id="loadBoxSelectQuery" resultMap="BaseResultMap" parameterType="map" >
+    	select B.* from (
+    		select A.*, rownum rn from (
+    			select tt1.loadpropose_no,
+               		tt1.tms_deliver_no,
+               		tt1.container_no,
+               		tt1.label_no,
+               		tt1.locno,
+               		tt1.store_no,
+               		MAX(tt1.store_name) as store_name,
+               		sum(tt1.qty) as qty
+          			from (
+		    			<include refid="Base_loadboxSelect" />
+		    			<if test="null!=params.locno and ''!=params.locno" >
+		    				and t1.locno =#{params.locno,jdbcType=VARCHAR}
+		    			</if>
+		    			<if test="null!=params.circleNo and ''!=params.circleNo" >
+		    				and c1.circle_no = #{params.circleNo,jdbcType=VARCHAR}
+		    			</if>
+		    			<if test="null!=params.storeNo and ''!=params.storeNo" >
+		    				and t1.store_no = #{params.storeNo,jdbcType=VARCHAR}
+		    			</if>
+		    			<if test="null!=params.storeName and ''!=params.storeName" >
+		    				and s.store_name like '%${params.storeName}%'
+		    			</if>
+		           		<if test="null!=params.loadproposeNo and ''!=params.loadproposeNo" >
+		            		and t1.loadpropose_no = #{params.loadproposeNo,jdbcType=VARCHAR}
+		           		</if>
+     				) tt1 WHERE 1 = 1
+     			group by tt1.loadpropose_no,
+               		tt1.tms_deliver_no,
+               		tt1.container_no,
+               		tt1.label_no,
+               		tt1.locno,
+               		tt1.store_no
+         		order by tt1.loadpropose_no, tt1.container_no, tt1.label_no
+			) A where rownum &lt; #{page.endRowNum}
+		) B where rn &gt; #{page.startRowNum}
+  	</select>
+	<!-- 查询派车单箱信息 END -->
+	<!-- 查询客户信息 BEGIN -->
+	<select id="selectBoxCount" resultType="java.lang.Integer" >
+    	select count(1) as s from (
+    		select distinct st.STORE_NO, st.store_name
+		  		from STORE st, bill_om_recheck t1
+			where 1 = 1
+		  	and st.store_no = t1.store_no
+		  	and t1.status = '14'
+		  	<if test="null!=params" >
+	      		<if test="null!=params.circle and ''!=params.circle" >
+	            	and st.circle = #{params.circle,jdbcType=VARCHAR}
+	      		</if>
+	      		<if test="null!=params.locno and ''!=params.locno" >
+	            	and t1.locno = #{params.locno,jdbcType=VARCHAR}
+	      		</if>
+	      	</if>
+    	) A
+  	</select>
+  	<select id="selectFlagCount" resultType="java.lang.Integer" >
+    	select count(1) as s from (
+    		select distinct st.STORE_NO, st.store_name
+    			from STORE st, bill_om_loadpropose_dtl t1
+			where 1 = 1
+		  	and st.store_no = t1.store_no
+		  	and t1.status = '10'
+		  	<if test="null!=params" >
+	      		<if test="null!=params.circle and ''!=params.circle" >
+	            	and st.circle = #{params.circle,jdbcType=VARCHAR}
+	      		</if>
+	      		<if test="null!=params.locno and ''!=params.locno" >
+	            	and t1.locno = #{params.locno,jdbcType=VARCHAR}
+	      		</if>
+	      	</if>
+    	) A
+  	</select>
+	<select id="selectBoxStore" resultMap="BaseResultMap" parameterType="map" >
+	    select B.* from (select A.*, rownum rn from(
+	      	select distinct st.STORE_NO, st.store_name
+		  		from STORE st, bill_om_recheck t1
+			where 1 = 1
+		  	and st.store_no = t1.store_no
+		  	and t1.status = '14'
+		  	<if test="null!=params" >
+	      		<if test="null!=params.circle and ''!=params.circle" >
+	            	and st.circle = #{params.circle,jdbcType=VARCHAR}
+	      		</if>
+	      		<if test="null!=params.locno and ''!=params.locno" >
+	            	and t1.locno = #{params.locno,jdbcType=VARCHAR}
+	      		</if>
+	      	</if>
+	      	order by st.store_name
+    	) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+	</select>
+	<select id="selectFlagStore" resultMap="BaseResultMap" parameterType="map" >
+		select B.* from (select A.*, rownum rn from(
+	    	select distinct st.STORE_NO, st.store_name
+		  		from STORE st, bill_om_loadpropose_dtl t1
+			where 1 = 1
+		  	and st.store_no = t1.store_no
+		  	and t1.status = '10'
+		  	<if test="null!=params" >
+	      		<if test="null!=params.circle and ''!=params.circle" >
+	            	and st.circle = #{params.circle,jdbcType=VARCHAR}
+	      		</if>
+	      		<if test="null!=params.locno and ''!=params.locno" >
+	            	and t1.locno = #{params.locno,jdbcType=VARCHAR}
+	      		</if>
+	      	</if>
+	      	order by st.store_name
+	 	) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <!-- 查询客户信息 END -->
+  
+  
+  <!-- 查询退厂配送单的所有箱号 -->
+  <select id="selectBoxNoByDetail" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillOmDeliverDtl" >
+	  select distinct dd.box_no from Bill_Om_Deliver_Dtl dd 
+		where dd.deliver_no= #{deliverNo,jdbcType=VARCHAR}
+		and dd.locno = #{locno,jdbcType=VARCHAR}
+		and dd.owner_no = #{ownerNo,jdbcType=VARCHAR}
+  </select>
+  
+  
+  <!-- 查询退厂配送单的明细总数 -->
+  <select id="selectDeliverDtlBoxCount" resultType="java.lang.Integer" >
+  		select count(1) as s from (
+  			<include refid="sqlDeliverDtlBoxDtl" />
+  		)
+  </select>
+  
+  <!-- 查询退厂配送单的明细分页 -->
+  <select id="selectDeliverDtlBoxByPage" resultMap="BaseResultMap" parameterType="map" >
+  		select B.* from (select A.*, rownum rn from(
+  		  <include refid="sqlDeliverDtlBoxDtl" />
+  		) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  
+  <!-- 查询派车出库单的明细总数 -->
+  <select id="selectLoadproposeDeliverDtlBoxCount" resultType="java.lang.Integer" >
+  		select count(1) as s from (
+  			<include refid="sqlLoadproposeDeliverDtlBoxDtl" />
+  		)
+  </select>
+  
+  <!-- 查询派车出库单的明细分页 -->
+  <select id="selectLoadproposeDeliverDtlBoxByPage" resultMap="BaseResultMap" parameterType="map" >
+  		select B.* from (select A.*, rownum rn from(
+  		 <include refid="sqlLoadproposeDeliverDtlBoxDtl" />
+  		) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <!-- 查询退厂配送单的明细总数 -->
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+	select sum(nvl(d.qty,0)) qty 
+		from BILL_OM_DELIVER_DTL d 
+  	  where 1=1 
+     <if test="null!=params.locno and ''!=params.locno" >
+		 and d.locno = #{params.locno,jdbcType=VARCHAR}
+	 </if>
+	 <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+		 and d.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+	 </if>
+	 <if test="null!=params.deliverNo and ''!=params.deliverNo" >
+		 and d.deliver_no = #{params.deliverNo,jdbcType=VARCHAR}
+	 </if>
+	 <include refid="AuthorityCondition" />
+  </select>	
+  
+</mapper>

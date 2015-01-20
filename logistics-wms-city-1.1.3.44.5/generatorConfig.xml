@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+	<properties url="file:///d:/yougouconf/mybatis-ibator-conf.properties"/>
+	<classPathEntry location="${oracle.jar.path}" />
+	<context id="context1" targetRuntime="MyBatis3">
+		
+		<commentGenerator>
+			<property name="suppressAllComments" value="true" />
+		</commentGenerator>
+		
+		<jdbcConnection driverClass="oracle.jdbc.driver.OracleDriver"
+			connectionURL="jdbc:oracle:thin:@(DESCRIPTION =(ADDRESS_LIST =(ADDRESS = (PROTOCOL = TCP)(HOST = 10.0.30.139)(PORT = 1521)))(CONNECT_DATA =(SERVER = DEDICATED)(SERVICE_NAME = orcl)))"
+			userId="dbusrinteg" password="dbusrinteg" />
+			
+		<javaModelGenerator targetPackage="${common.project.package}"
+			targetProject="${common.project}" /> 
+		<sqlMapGenerator targetPackage="mapper" targetProject="${dal.project}/src/main/resources"/>
+		<javaClientGenerator targetPackage="${dal.project.package}"
+			targetProject="${dal.project}" type="XMLMAPPER">
+			<property name="interfaceExtendSupInterface" value="com.yougou.logistics.base.dal.database.BaseCrudMapper"/>
+			<property name="enableInterfaceSupInterfaceGenericity" value="false"/>
+		  	<property name="exclusionsMethods" value="countByQuery,deleteByQuery,deleteByPrimaryKey,insert,insertSelective,selectByQuery,selectByQueryWithBLOBs,selectByPrimaryKey,selectCount,selectByPage,updateByQuery,updateByQueryWithBLOBs,updateByPrimaryKeySelective,updateByPrimaryKeyWithBLOBs"/> 
+		</javaClientGenerator>
+			
+	    <sqlMapConfigFileAppend targetPackage="META-INF" targetProject="${dal.project}/src/main/resources" confileFileName="${mybatis-config-fileName}" confileFilePackagePath="mapper"/>
+	    
+		<javaServiceGenerator targetPackage="${service.project.package}" targetProject="${service.project}" 
+		interfaceExtendSupInterface="com.yougou.logistics.base.service.BaseCrudService" enableInterfaceSupInterfaceGenericity="false"
+		extendSupClass="com.yougou.logistics.base.service.BaseCrudServiceImpl" enableSupClassGenericity="false" />
+		
+		<javaManagerGenerator targetPackage="${manager.project.package}" targetProject="${manager.project}" 
+		interfaceExtendSupInterface="com.yougou.logistics.base.manager.BaseCrudManager" enableInterfaceSupInterfaceGenericity="false"
+		extendSupClass="com.yougou.logistics.base.manager.BaseCrudManagerImpl" enableSupClassGenericity="false" />
+			
+		<javaControllerGenerator targetPackage="${web.project.package}" targetProject="${web.project}" 
+		extendSupClass="com.yougou.logistics.base.web.controller.BaseCrudController" enableSupClassGenericity="true" />
+		<!--
+		<table schema="dev1" tableName="logistics_base" domainObjectName="LogisticsBase" enableCountByExample="false"
+			enableUpdateByExample="false" enableDeleteByExample="false"
+			enableSelectByExample="false" selectByExampleQueryId="false">
+			<columnOverride column="BASE_ID" javaType="Long"></columnOverride>
+		</table> 
+		-->
+		<javaTypeResolver> 
+        <property name="forceBigDecimals" value="false" /> 
+          <!-- 
+          	number(默认为38位),当长度超过18位时无法强制转换decimal
+                                默认false，把JDBC DECIMAL 和 NUMERIC 类型解析为 Integer 
+            true，把JDBC DECIMAL 和 NUMERIC 类型解析为java.math.BigDecimal 
+        	--> 
+        </javaTypeResolver>
+        
+        <tableSetting isSchema="true" enableCountByExample="false"
+			enableUpdateByExample="false" enableDeleteByExample="false"
+			enableSelectByExample="false" selectByExampleQueryId="false">
+			<prop name="replaceTablePrefix">
+				<list>
+			     <prefix name="" value="" />
+			    </list>
+			</prop>
+			<!-- 忽略schema，避免在xml中出现schema.表名      -->  
+			<prop name="ignoreGeneratorSchema" value="true"/>
+		</tableSetting>
+        
+	</context>
+</generatorConfiguration>

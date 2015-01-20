@@ -1,0 +1,901 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillImCheckRepMapper" >
+   <!-- 生成入库订单报表返回map -->
+	<resultMap type="com.yougou.logistics.city.common.dto.BillCheckImRep"
+		id="BaseResultMap2">
+		<result column="supplierNo" property="supplierNo" jdbcType="VARCHAR" />
+		<result column="brandName" property="brandName" jdbcType="VARCHAR" />
+		<result column="brand_no" property="brandNo" jdbcType="VARCHAR" />
+		<result column="supplierName" property="supplierName" jdbcType="VARCHAR" />
+		<result column="sizeCode" property="sizeCode" jdbcType="VARCHAR" />
+		<result column="sizeKind" property="sizeKind" jdbcType="VARCHAR" />
+		<result column="item_code" property="itemCode" jdbcType="VARCHAR" />
+		<result column="item_name" property="itemName" jdbcType="VARCHAR" />
+		
+		<result column="recivedate" property="reciveDate" jdbcType="TIMESTAMP" />
+		<result column="check_no" property="checkNo" jdbcType="VARCHAR" />
+		<result column="itemNo" property="itemNo" jdbcType="VARCHAR" />
+		<result column="checkQty" property="checkQty" jdbcType="DECIMAL" />
+		<result column="business_type" property="businessType" jdbcType="DECIMAL" />
+		<result column="statusName" property="statusName" jdbcType="VARCHAR" />
+		
+		<result column="cate_no" property="cateNo" jdbcType="VARCHAR" />
+		<result column="cateName" property="cateName" jdbcType="VARCHAR" />
+		<result column="years" property="years" jdbcType="VARCHAR" />
+	    <result column="years_name" property="yearsName" jdbcType="VARCHAR" />
+	    <result column="season" property="season" jdbcType="VARCHAR" />
+	    <result column="season_name" property="seasonName" jdbcType="VARCHAR" />
+	    <result column="gender" property="gender" jdbcType="VARCHAR" />
+	    <result column="gender_name" property="genderName" jdbcType="VARCHAR" />
+	</resultMap>
+	
+  <sql id="Base_BillImCheck" >
+		from bill_im_check ch
+      inner join bill_im_check_dtl chdtl
+            on ch.locno=chdtl.locno
+            and ch.owner_no=chdtl.owner_no
+            and ch.check_no=chdtl.check_no
+      inner join bill_im_receipt re
+            on re.locno=ch.locno
+            and re.owner_no=ch.owner_no
+            and re.receipt_no=ch.s_import_no
+      inner join bill_im_receipt_dtl rd
+            on re.locno=rd.locno
+            and re.owner_no=rd.owner_no
+            and re.receipt_no=rd.receipt_no
+            and rd.box_no = chdtl.box_no
+            and rd.item_no = chdtl.item_no
+            and rd.size_no = chdtl.size_no
+      inner join bill_im_import ii
+            on ii.locno=re.locno
+            and ii.owner_no=re.owner_no
+            and ii.import_no=rd.import_no
+      inner join item it 
+      		on chdtl.item_no=it.item_no
+      		AND ii.Sys_No = it.sys_no
+      inner join size_info sz
+	    on sz.size_no = chdtl.size_no and sz.size_kind =  it.size_kind
+	  left join category c on it.cate_no=c.cate_no
+      where 1 = 1
+      <include refid="Base_BillImCheck_WHERE" />
+	</sql>
+	<sql id="Base_BillImCheck_WHERE" >
+		and ch.status in ('25','30')
+      	and re.business_type = '0'
+      	and ch.locno=#{params.locNo,jdbcType=VARCHAR}
+      	<if test="params.businessType !=null and ''!=params.businessType">
+		 	and ii.BUSINESS_TYPE = #{params.businessType,jdbcType=VARCHAR}
+		</if>
+		<if test="params.brandName !=null and params.brandName!=''">
+			and it.brand_no like '%${params.brandName}%'
+		</if>
+		<if test="params.itemCate !=null and params.itemCate!=''">
+			and it.cate_no in (select cate_no from category where cate_code like '${params.itemCate}%')
+		</if>
+		<if test="params.supplierNo !=null and params.supplierNo!=''">
+			and ch.supplier_no = #{params.supplierNo,jdbcType=VARCHAR}
+		</if>
+		<if test="params.importNo !=null and params.importNo!=''">
+			and ii.import_no = #{params.importNo,jdbcType=VARCHAR}
+		</if>
+		<if test="params.itemNo !=null and params.itemNo!=''">
+			and it.item_no like '%${params.itemNo}%'
+		</if>
+		<if test="params.itemName !=null and params.itemName!=''">
+			and it.item_name like '%${params.itemName}%'
+		</if>
+		<if test="null!=params.yearsName and ''!=params.yearsName" >
+			and it.years in (select itemval from LOOKUPDTL where lookupcode = 'YEARS' and ITEMNAME like '%${params.yearsName}%')
+	   	</if>
+	 	<if test="null!=params.seasonValues and ''!=params.seasonValues" >
+	    	and it.season in
+	    	<foreach collection="params.seasonValues" item="seasonName" open="(" close=")" separator=",">
+				#{seasonName}
+			</foreach>
+			
+	  	</if>
+	   	<if test="null!=params.genderValues and ''!=params.genderValues" >
+	   		and it.gender in
+	    	<foreach collection="params.genderValues" item="genderName" open="(" close=")" separator=",">
+				#{genderName}
+			</foreach>
+			
+	   	</if>
+	    <choose>
+			 		<when test="params.cateThreeValues != null">
+				 		<foreach collection="params.cateThreeValues" item="value" open=" and (" close=")" separator="or">
+							c.search_code like '${value}%'
+						</foreach>
+			 		</when>
+			 		<when test="params.cateTwoValues != null">
+			 			<foreach collection="params.cateTwoValues" item="value" open="and (" close=")" separator="or">
+							c.search_code like '${value}%'
+						</foreach>
+			 		</when>
+			 		<when test="params.cateOneValues != null">
+			 			<foreach collection="params.cateOneValues" item="value" open="and (" close=")" separator="or">
+							c.search_code like '${value}%'
+						</foreach>
+			 		</when>
+			 		<otherwise>
+			 		</otherwise>
+	    </choose> 
+		<if test="null!=params.reciveDateStart and params.reciveDateStart!=''">
+			and ch.audittm &gt;=
+			to_date('${params.reciveDateStart}','yyyy-MM-dd')
+		</if>
+		<if test="null!=params.reciveDateEnd and params.reciveDateEnd!=''">
+			and ch.audittm &lt;
+			(to_date('${params.reciveDateEnd}','yyyy-MM-dd')+1)
+		</if>
+		<if test="null!=params.sysNo and params.sysNo!=''">
+			and  ii.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=authorityParams and null!=authorityParams.hasBrandNoList">
+			and chdtl.brand_no in
+			<include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+		</if>
+	</sql>
+	
+	<sql id="Base_BillUmCheck" >
+		from bill_um_check ch
+         inner join bill_um_check_dtl chdtl
+            on ch.locno = chdtl.locno
+           and ch.owner_no = chdtl.owner_no
+           and ch.check_no = chdtl.check_no
+         inner join BILL_UM_UNTREAD ii
+            on ii.locno = ch.locno
+           and ii.owner_no = ch.owner_no
+           and ii.untread_no = ch.untread_no
+         inner join item it
+            on chdtl.item_no = it.item_no
+         left join category c on it.cate_no=c.cate_no
+         where 1 = 1
+           <include refid="Base_BillUmCheck_WHERE" />
+	</sql>
+	<sql id="Base_BillUmCheck_WHERE" >
+		and ch.status in ('11','13','20', '25','30','35','40')
+        and ch.locno=#{params.locNo,jdbcType=VARCHAR}
+        	<if test="params.businessType !=null and ''!=params.businessType">
+        		<if test="5!=params.businessType">
+        			and 1=2
+        		</if>
+			</if>
+			<if test="params.importNo !=null and params.importNo!=''">
+				and ii.untread_no = #{params.importNo,jdbcType=VARCHAR}
+			</if>
+           	<if test="null!=params.reciveDateStart and params.reciveDateStart!=''">
+				and ch.audittm &gt;=
+			to_date('${params.reciveDateStart}','yyyy-MM-dd')
+			</if>
+			<if test="null!=params.reciveDateEnd and params.reciveDateEnd!=''">
+				and ch.audittm &lt;
+			(to_date('${params.reciveDateEnd}','yyyy-MM-dd')+1)
+			</if>
+			<if test="params.supplierNo !=null and params.supplierNo!=''">
+				and ii.store_no = #{params.supplierNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=params.sysNo and params.sysNo!=''">
+				and it.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+		   	</if>
+			<if test="params.brandName !=null and params.brandName!=''">
+				and it.brand_no like '%${params.brandName}%'
+			</if>
+			<if test="params.itemCate !=null and params.itemCate!=''">
+				and it.cate_no = #{params.itemCate,jdbcType=VARCHAR}
+			</if>
+			<if test="params.itemNo !=null and params.itemNo!=''">
+				and it.item_no like '%${params.itemNo}%'
+			</if>
+			<if test="params.itemName !=null and params.itemName!=''">
+				and it.item_name like '%${params.itemName}%'
+			</if>
+			<if test="null!=params.yearsName and ''!=params.yearsName" >
+	            and it.years in (select itemval from LOOKUPDTL where lookupcode = 'YEARS' and ITEMNAME like '%${params.yearsName}%')
+	        </if>
+	        <if test="null!=params.seasonValues and ''!=params.seasonValues" >
+		    	and it.season in
+		    	<foreach collection="params.seasonValues" item="seasonName" open="(" close=")" separator=",">
+					#{seasonName}
+				</foreach>
+		  	</if>
+		   	<if test="null!=params.genderValues and ''!=params.genderValues" >
+		   		and it.gender in
+		    	<foreach collection="params.genderValues" item="genderName" open="(" close=")" separator=",">
+					#{genderName}
+				</foreach>
+				
+		   	</if>
+           	<choose>
+			 		<when test="params.cateThreeValues != null">
+				 		<foreach collection="params.cateThreeValues" item="value" open=" and (" close=")" separator="or">
+							c.search_code like '${value}%'
+						</foreach>
+			 		</when>
+			 		<when test="params.cateTwoValues != null">
+			 			<foreach collection="params.cateTwoValues" item="value" open="and (" close=")" separator="or">
+							c.search_code like '${value}%'
+						</foreach>
+			 		</when>
+			 		<when test="params.cateOneValues != null">
+			 			<foreach collection="params.cateOneValues" item="value" open="and (" close=")" separator="or">
+							c.search_code like '${value}%'
+						</foreach>
+			 		</when>
+			 		<otherwise>
+			 		</otherwise>
+	 		</choose> 
+           	<if test="null!=authorityParams and null!=authorityParams.hasBrandNoList">
+				and chdtl.brand_no in
+				<include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+			</if>
+	</sql>
+	
+	<sql id="Base_BillOtmCheck" >
+		 from BILL_SM_OTHERIN ch
+         inner join BILL_SM_OTHERIN_dtl chdtl
+            on ch.locno = chdtl.locno
+           and ch.owner_no = chdtl.owner_no
+           and ch.otherin_no = chdtl.otherin_no
+        
+         inner join item it
+            on it.item_no = chdtl.item_no
+           and it.brand_no = chdtl.brand_no
+         left join category c on it.cate_no=c.cate_no
+         where 1 = 1
+           <include refid="Base_BillOtmCheck_WHERE" />
+	</sql>
+	<sql id="Base_BillOtmCheck_WHERE" >
+		and ch.status in ('13')
+           and ch.locno = #{params.locNo,jdbcType=VARCHAR}         
+        	<if test="params.businessType !=null and ''!=params.businessType">
+        		<if test="6!=params.businessType">
+        			and 1=2
+        		</if>
+			</if>
+			<if test="params.importNo !=null and params.importNo!=''">
+				and ch.otherin_no = #{params.importNo,jdbcType=VARCHAR}
+			</if>
+           	<if test="null!=params.reciveDateStart and params.reciveDateStart!=''">
+				and ch.audittm &gt;=
+			to_date('${params.reciveDateStart}','yyyy-MM-dd')
+			</if>
+			<if test="null!=params.reciveDateEnd and params.reciveDateEnd!=''">
+				and ch.audittm &lt;
+			(to_date('${params.reciveDateEnd}','yyyy-MM-dd')+1)
+			</if>
+			<if test="params.supplierNo !=null and params.supplierNo!=''">
+				and 1=2
+			</if>
+			<if test="null!=params.sysNo and params.sysNo!=''">
+				and it.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+		   	</if>
+			<if test="params.brandName !=null and params.brandName!=''">
+				and it.brand_no like '%${params.brandName}%'
+			</if>
+			<if test="params.itemCate !=null and params.itemCate!=''">
+				and it.cate_no = #{params.itemCate,jdbcType=VARCHAR}
+			</if>
+			<if test="params.itemNo !=null and params.itemNo!=''">
+				and it.item_no like '%${params.itemNo}%'
+			</if>
+			<if test="params.itemName !=null and params.itemName!=''">
+				and it.item_name like '%${params.itemName}%'
+			</if>
+			<if test="null!=params.yearsName and ''!=params.yearsName" >
+	            and it.years in (select itemval from LOOKUPDTL where lookupcode = 'YEARS' and ITEMNAME like '%${params.yearsName}%')
+	        </if>
+	        <if test="null!=params.seasonValues and ''!=params.seasonValues" >
+		    	and it.season in
+		    	<foreach collection="params.seasonValues" item="seasonName" open="(" close=")" separator=",">
+					#{seasonName}
+				</foreach>
+				
+		  	</if>
+		   	<if test="null!=params.genderValues and ''!=params.genderValues" >
+		   		and it.gender in
+		    	<foreach collection="params.genderValues" item="genderName" open="(" close=")" separator=",">
+					#{genderName}
+				</foreach>
+				
+		   	</if>
+           	<choose>
+			 		<when test="params.cateThreeValues != null">
+				 		<foreach collection="params.cateThreeValues" item="value" open=" and (" close=")" separator="or">
+							c.search_code like '${value}%'
+						</foreach>
+			 		</when>
+			 		<when test="params.cateTwoValues != null">
+			 			<foreach collection="params.cateTwoValues" item="value" open="and (" close=")" separator="or">
+							c.search_code like '${value}%'
+						</foreach>
+			 		</when>
+			 		<when test="params.cateOneValues != null">
+			 			<foreach collection="params.cateOneValues" item="value" open="and (" close=")" separator="or">
+							c.search_code like '${value}%'
+						</foreach>
+			 		</when>
+			 		<otherwise>
+			 		</otherwise>
+	 		</choose> 
+           	<if test="null!=authorityParams and null!=authorityParams.hasBrandNoList">
+				and chdtl.brand_no in
+				<include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+			</if>
+	</sql>
+	
+	<!--通过group函数获取不重复的sizecode -->
+	<select id="getSizeCodeByGroup" resultType="com.yougou.logistics.city.common.model.SizeInfo">
+		select s.*
+		  from (select info.size_code as sizeCode,itm.size_kind as sizeKind
+		          from bill_im_check ch
+		         inner join bill_im_check_dtl chdtl
+		            on ch.locno = chdtl.locno
+		           and ch.owner_no = chdtl.owner_no
+		           and ch.check_no = chdtl.check_no
+		         inner join item itm
+		            on chdtl.item_no = itm.item_no
+		           and chdtl.brand_no = itm.brand_no
+		         inner join size_info info
+		            on info.size_no = chdtl.size_no
+		           and info.size_kind = itm.size_kind
+		         where 1 = 1
+		           	<if test="null!=params.locNo and params.locNo!=''">
+						and ch.locno = #{params.locNo,jdbcType=VARCHAR}
+				   	</if>
+		           	<if test="null!=params.sysNo and params.sysNo!=''">
+						and itm.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+				   	</if>
+		           	<if test="null!=params.reciveDateStart and params.reciveDateStart!=''">
+						and ch.audittm &gt;=
+					to_date('${params.reciveDateStart}','yyyy-MM-dd')
+					</if>
+					<if test="null!=params.reciveDateEnd and params.reciveDateEnd!=''">
+						and ch.audittm &lt;
+					(to_date('${params.reciveDateEnd}','yyyy-MM-dd')+1)
+					</if>
+		         group by info.size_code,itm.size_kind
+		        Union
+		        select info.size_code as sizeCode,itm.size_kind as sizeKind
+		          from bill_um_check ch
+		         inner join bill_um_check_dtl chdtl
+		            on ch.locno = chdtl.locno
+		           and ch.owner_no = chdtl.owner_no
+		           and ch.check_no = chdtl.check_no
+		         inner join item itm
+		            on chdtl.item_no = itm.item_no
+		           and chdtl.brand_no = itm.brand_no
+		         inner join size_info info
+		            on info.size_no = chdtl.size_no
+		           and info.size_kind = itm.size_kind
+		         where 1 = 1
+		         	<if test="null!=params.locNo and params.locNo!=''">
+						and ch.locno = #{params.locNo,jdbcType=VARCHAR}
+				   	</if>
+		           	<if test="null!=params.sysNo and params.sysNo!=''">
+						and itm.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+				   	</if>
+		           	<if test="null!=params.reciveDateStart and params.reciveDateStart!=''">
+						and ch.audittm &gt;=
+					to_date('${params.reciveDateStart}','yyyy-MM-dd')
+					</if>
+					<if test="null!=params.reciveDateEnd and params.reciveDateEnd!=''">
+						and ch.audittm &lt;
+					(to_date('${params.reciveDateEnd}','yyyy-MM-dd')+1)
+					</if>
+		         group by info.size_code,itm.size_kind
+		        Union
+		        select info.size_code as sizeCode,itm.size_kind as sizeKind
+		          from BILL_SM_OTHERIN ch
+		         inner join BILL_SM_OTHERIN_dtl chdtl
+		            on ch.locno = chdtl.locno
+		           and ch.owner_no = chdtl.owner_no
+		           and ch.otherin_no = chdtl.otherin_no
+		         inner join item itm
+		            on chdtl.item_no = itm.item_no
+		           and chdtl.brand_no = itm.brand_no
+		         inner join size_info info
+		            on info.size_no = chdtl.size_no
+		           and info.size_kind = itm.size_kind
+		         where 1 = 1
+		         	<if test="null!=params.locNo and params.locNo!=''">
+						and ch.locno = #{params.locNo,jdbcType=VARCHAR}
+				   	</if>
+		           	<if test="null!=params.sysNo and params.sysNo!=''">
+						and itm.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+				   	</if>
+		           	<if test="null!=params.reciveDateStart and params.reciveDateStart!=''">
+						and ch.audittm &gt;=
+					to_date('${params.reciveDateStart}','yyyy-MM-dd')
+					</if>
+					<if test="null!=params.reciveDateEnd and params.reciveDateEnd!=''">
+						and ch.audittm &lt;
+					(to_date('${params.reciveDateEnd}','yyyy-MM-dd')+1)
+					</if>
+		         group by info.size_code,itm.size_kind) s
+		 where 1 = 1
+		 order by s.sizeCode asc
+		
+		<!--
+		select info.size_code
+		as sizeCode
+		from bill_im_check_dtl checkdtl
+		left join item itm
+        	on checkdtl.item_no = itm.item_no
+		left join size_info info
+			on info.size_no = checkdtl.size_no  and info.size_kind =  itm.size_kind
+		group by info.size_code
+		order by
+		info.size_code asc
+		-->
+	</select>
+	
+	<!-- 查询所有类别 BEGIN -->
+	<select id="selectAllDtlSizeKind" resultType="java.lang.String">
+		select * from (
+			<include refid="selectAllDtlSizeKindIm" />
+		Union
+			<include refid="selectAllDtlSizeKindUm" />
+		Union
+			<include refid="selectAllDtlSizeKindOtm" />
+		) C
+	</select>
+	<sql id="selectAllDtlSizeKindIm" >
+		select s.size_kind sizeKind
+		from bill_im_check ch
+      inner join bill_im_check_dtl chdtl
+            on ch.locno=chdtl.locno
+            and ch.owner_no=chdtl.owner_no
+            and ch.check_no=chdtl.check_no
+      inner join bill_im_receipt re
+            on re.locno=ch.locno
+            and re.owner_no=ch.owner_no
+            and re.receipt_no=ch.s_import_no
+      inner join bill_im_receipt_dtl rd
+            on re.locno=rd.locno
+            and re.owner_no=rd.owner_no
+            and re.receipt_no=rd.receipt_no
+            and rd.box_no = chdtl.box_no
+            and rd.item_no = chdtl.item_no
+            and rd.size_no = chdtl.size_no
+      inner join bill_im_import ii
+            on ii.locno=re.locno
+            and ii.owner_no=re.owner_no
+            and ii.import_no=rd.import_no
+      inner join item it 
+      		on chdtl.item_no=it.item_no
+      		AND ii.Sys_No = it.sys_no
+      INNER JOIN size_info s ON s.size_no = chdtl.size_no AND s.size_kind = it.size_kind
+      left join category c on it.cate_no=c.cate_no
+      where 1 = 1
+      	<include refid="Base_BillImCheck_WHERE" />
+		GROUP BY s.size_kind
+	</sql>
+	<sql id="selectAllDtlSizeKindUm" >
+		select s.size_kind sizeKind
+		from bill_um_check ch
+         inner join bill_um_check_dtl chdtl
+            on ch.locno = chdtl.locno
+           and ch.owner_no = chdtl.owner_no
+           and ch.check_no = chdtl.check_no
+         inner join BILL_UM_UNTREAD ii
+            on ii.locno = ch.locno
+           and ii.owner_no = ch.owner_no
+           and ii.untread_no = ch.untread_no
+         inner join item it
+            on chdtl.item_no = it.item_no
+         INNER JOIN size_info s ON s.size_no = chdtl.size_no AND s.size_kind = it.size_kind
+          left join category c on it.cate_no=c.cate_no
+         where 1 = 1
+           <include refid="Base_BillUmCheck_WHERE" />
+		GROUP BY s.size_kind
+	</sql>
+	<sql id="selectAllDtlSizeKindOtm" >
+		select s.size_kind sizeKind
+		  from BILL_SM_OTHERIN ch
+		 inner join BILL_SM_OTHERIN_dtl chdtl
+		    on ch.locno = chdtl.locno
+		   and ch.owner_no = chdtl.owner_no
+		   and ch.otherin_no = chdtl.otherin_no
+		 inner join item it
+		    on it.item_no = chdtl.item_no
+		   and it.brand_no = chdtl.brand_no
+		 INNER JOIN size_info s
+		    ON s.size_no = chdtl.size_no
+		   AND s.size_kind = it.size_kind
+		 left join category c on it.cate_no=c.cate_no
+		 where 1 = 1
+		   <include refid="Base_BillOtmCheck_WHERE" />
+		 GROUP BY s.size_kind
+	</sql>
+	<!-- 查询所有类别 END -->
+	
+  	<!-- 统计入库订单记录总数 BEGIN -->
+  	<select id="getCount" resultType="int">
+  		select sum(s) as s from (
+			<include refid="getCountIm" />
+		Union All
+			<include refid="getCountUm" />
+		Union All
+			<include refid="getCountOtm" />
+		) C
+		where 1=1
+  	</select>
+  	<sql id="getCountIm" >
+		select count(1) as s from (
+		 select ii.import_no,chdtl.item_no
+		 <include refid="Base_BillImCheck" />
+		 group by ii.import_no, chdtl.item_no, ii.business_type, 
+		 it.years, it.season,it.gender
+		)
+	</sql>
+  	<sql id="getCountUm">
+		select count(1) as s from (
+		 select ii.untread_no as importNo,
+		 	chdtl.item_no as itemNo
+		 <include refid="Base_BillUmCheck" />
+		 group by ii.untread_no, chdtl.item_no, 
+		 it.years, it.season,it.gender
+		)
+  	</sql>
+  	<sql id="getCountOtm">
+		select count(1) as s from (
+		 select ch.otherin_no as importNo,
+		 	chdtl.item_no as itemNo
+		 <include refid="Base_BillOtmCheck" />
+		 group by ch.otherin_no, chdtl.item_no, 
+		 it.years, it.season,it.gender
+		)
+  	</sql>
+	<!-- 统计入库订单记录总数 END -->
+	
+  	<!-- 按照单据编号和商品编码分组计算 BEGIN -->
+	<select id="getBillImCheckByGroup" resultMap="BaseResultMap2">
+		select B.* from (
+		select A.*,
+       	(select l.itemname from lookupdtl l where l.lookupcode = 'CITY_IM_UM_TYPE' and l.itemval = A.business_type) statusName,
+       	(select brand.brand_name from brand where brand.brand_no = A.brand_no) as brandName,
+       	(select c.cate_name from category c where c.cate_no = A.cate_no) as cateName,
+          (CASE WHEN A.BUSINESS_TYPE = '0' THEN
+           (select sup.supplier_name from supplier sup where sup.supplier_no = A.supplierNo)
+          WHEN A.BUSINESS_TYPE = '4' then
+           (select s.store_name from store s where s.store_no = A.supplierNo)
+          WHEN A.BUSINESS_TYPE = '5' then
+           (select s.store_name from store s where s.store_no = A.supplierNo)
+       	  END) AS supplierName, 
+       (select ITEMNAME
+          from LOOKUPDTL
+         where lookupcode = 'YEARS'
+           and itemval = A.years) years_Name,
+       (select ITEMNAME
+          from LOOKUPDTL
+         where lookupcode = 'SEASON'
+           and itemval = A.season) season_Name,
+       (select ITEMNAME
+          from LOOKUPDTL
+         where lookupcode = 'GENDER'
+           and itemval = A.gender) gender_Name,
+       	rownum rn
+         from(
+         select C.* from (
+			<include refid="getBillImCheckByGroupIm" />
+			Union All
+			<include refid="getBillImCheckByGroupUm" />
+			Union All
+			<include refid="getBillImCheckByGroupOtm" />
+		) C order by C.recivedate desc, C.importNo desc, C.itemNo
+		) A where rownum &lt; #{params.endRowNum}) B
+		where rn &gt; #{params.startRowNum}
+	</select>
+	
+	<sql id="getBillImCheckByGroupIm" >
+		select im.* from (select ii.import_no as importNo,chdtl.item_no as itemNo,max(ch.supplier_no) supplierNo,
+			max(it.item_name) item_name,max(it.brand_no) brand_no, 
+			to_date(to_char(ch.audittm, 'yyyy-MM-dd'), 'yyyy-MM-dd') recivedate,
+			max(it.cate_no) cate_no,max(it.size_kind)sizeKind,max(ii.sys_no) sysNo,
+			ii.business_type, it.years, it.season, it.gender
+			<include refid="Base_BillImCheck" />
+			group by ii.import_no, chdtl.item_no, ii.business_type, it.years, it.season, it.gender,
+			to_char(ch.audittm, 'yyyy-MM-dd')
+		) im
+	</sql>
+	<sql id="getBillImCheckByGroupImExport" >
+		select im.* from (select ii.import_no as importNo,chdtl.item_no as itemNo,max(ch.supplier_no) supplierNo,
+			max(it.item_name) item_name,max(it.brand_no) brand_no, 
+			to_date(to_char(ch.audittm, 'yyyy-MM-dd'), 'yyyy-MM-dd') recivedate,
+			max(it.cate_no) cate_no,max(it.size_kind)sizeKind,max(ii.sys_no) sysNo,
+			ii.business_type, it.years, it.season, it.gender,
+			chdtl.size_no sizeNo,sum(chdtl.check_qty) checkQty
+			<include refid="Base_BillImCheck" />
+			group by ii.import_no, chdtl.item_no, chdtl.size_no, ii.business_type, it.years, it.season, it.gender,
+			to_char(ch.audittm, 'yyyy-MM-dd')
+		) im
+	</sql>
+	<sql id="getBillImCheckByGroupUm" >
+  		select um.* from (
+  			select ii.untread_no as importNo,
+               chdtl.item_no as itemNo,
+               ii.store_no supplierNo,
+               max(it.item_name) item_name,
+               max(it.brand_no) brand_no,
+               to_date(to_char(ch.audittm, 'yyyy-MM-dd'), 'yyyy-MM-dd') recivedate,
+               max(it.cate_no) cate_no,
+               max(it.size_kind) sizeKind,
+               max(it.sys_no) sysNo,
+               '5' business_type, 
+               it.years, it.season, it.gender
+          <include refid="Base_BillUmCheck" />
+         group by ii.untread_no, chdtl.item_no, ii.store_no, it.years, it.season, it.gender,
+         to_char(ch.audittm, 'yyyy-MM-dd')
+         ) um
+	</sql>
+	<sql id="getBillImCheckByGroupUmExport" >
+  		select um.* from (
+  			select ii.untread_no as importNo,
+               chdtl.item_no as itemNo,
+               ii.store_no supplierNo,
+               max(it.item_name) item_name,
+               max(it.brand_no) brand_no,
+               to_date(to_char(ch.audittm, 'yyyy-MM-dd'), 'yyyy-MM-dd') recivedate,
+               max(it.cate_no) cate_no,
+               max(it.size_kind) sizeKind,
+               max(it.sys_no) sysNo,
+               '5' business_type, 
+               it.years, it.season, it.gender,
+               chdtl.size_no sizeNo,
+               sum(chdtl.check_qty) checkQty
+          <include refid="Base_BillUmCheck" />
+         group by ii.untread_no, chdtl.item_no, chdtl.size_no, ii.store_no, it.years, it.season, it.gender,
+         to_char(ch.audittm, 'yyyy-MM-dd')
+         ) um
+	</sql>
+	<sql id="getBillImCheckByGroupOtm" >
+  		select Otm.*
+  			from (select ch.otherin_no as importNo,
+               chdtl.item_no as itemNo,
+               '' supplierNo,
+               max(it.item_name) item_name,
+               max(it.brand_no) brand_no,
+               to_date(to_char(ch.audittm, 'yyyy-MM-dd'), 'yyyy-MM-dd') recivedate,
+               max(it.cate_no) cate_no,
+               max(it.size_kind) sizeKind,
+               max(it.sys_no) sysNo,
+               '6' business_type,
+               it.years, it.season, it.gender
+          <include refid="Base_BillOtmCheck" />
+         group by ch.otherin_no, chdtl.item_no, it.years, it.season, it.gender,
+         to_char(ch.audittm, 'yyyy-MM-dd')
+         ) Otm
+	</sql>
+	<sql id="getBillImCheckByGroupOtmExport" >
+  		select Otm.*
+  			from (select ch.otherin_no as importNo,
+               chdtl.item_no as itemNo,
+               '' supplierNo,
+               max(it.item_name) item_name,
+               max(it.brand_no) brand_no,
+               to_date(to_char(ch.audittm, 'yyyy-MM-dd'), 'yyyy-MM-dd') recivedate,
+               max(it.cate_no) cate_no,
+               max(it.size_kind) sizeKind,
+               max(it.sys_no) sysNo,
+               '6' business_type,
+               it.years, it.season, it.gender,
+               chdtl.size_no sizeNo,
+               sum(chdtl.instorage_qty) checkQty
+          <include refid="Base_BillOtmCheck" />
+         group by ch.otherin_no, chdtl.item_no, chdtl.size_no, it.years, it.season, it.gender,
+         to_char(ch.audittm, 'yyyy-MM-dd')
+         ) Otm
+	</sql>
+	<!-- 按照单据编号和商品编码分组计算 END-->
+	
+	<!-- 查询入库订单报表明细信息 BEGIN -->
+  	<select id="getBillImCheckDtlIm" resultMap="BaseResultMap2">
+	select sum(chdtl.check_qty) checkQty,
+       ii.import_no as importNo,
+       chdtl.item_no as itemNo,
+       chdtl.size_no sizeNo,
+       max(sz.size_code) sizeCode,
+       max(it.size_kind) sizeKind
+      from bill_im_check ch
+      inner join bill_im_check_dtl chdtl
+            on ch.locno=chdtl.locno
+            and ch.owner_no=chdtl.owner_no
+            and ch.check_no=chdtl.check_no
+      inner join bill_im_receipt re
+            on re.locno=ch.locno
+            and re.owner_no=ch.owner_no
+            and re.receipt_no=ch.s_import_no
+      inner join bill_im_receipt_dtl rd
+            on re.locno=rd.locno
+            and re.owner_no=rd.owner_no
+            and re.receipt_no=rd.receipt_no
+            and rd.box_no = chdtl.box_no
+            and rd.item_no = chdtl.item_no
+            and rd.size_no = chdtl.size_no
+      inner join bill_im_import ii
+            on ii.locno=re.locno
+            and ii.owner_no=re.owner_no
+            and ii.import_no=rd.import_no
+      inner join item it 
+      		on chdtl.item_no=it.item_no
+      		AND ii.Sys_No = it.sys_no
+      inner join size_info sz
+	    on sz.size_no = chdtl.size_no and sz.size_kind =  it.size_kind
+	  left join category c on it.cate_no=c.cate_no
+      where 1 = 1
+      and ch.locno=#{params.locNo,jdbcType=VARCHAR}
+      and ii.import_no = #{params.importNo,jdbcType=VARCHAR}
+      and it.item_no = #{params.itemNo,jdbcType=VARCHAR}
+      <if test="null!=params.cateNo and params.cateNo!=''">
+      	and it.cate_no = #{params.cateNo,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.years and params.years!=''">
+		and it.years = #{params.years,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.season and params.season!=''">
+		and it.season = #{params.season,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.gender and params.gender!=''">
+		and it.gender = #{params.gender,jdbcType=VARCHAR}
+	  </if>
+		<if test="null!=params.reciveDateStart and params.reciveDateStart!=''">
+			and ch.audittm &gt;=
+			to_date('${params.reciveDateStart}','yyyy-MM-dd')
+		</if>
+		<if test="null!=params.reciveDateEnd and params.reciveDateEnd!=''">
+			and ch.audittm &lt;
+			(to_date('${params.reciveDateEnd}','yyyy-MM-dd')+1)
+		</if>
+		<if test="null!=authorityParams and null!=authorityParams.hasBrandNoList">
+			and chdtl.brand_no in
+				<include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+		</if>	
+      group by ii.import_no, chdtl.item_no, chdtl.size_no
+	</select>
+	<!-- 查询入库订单报表明细信息 -->
+	<select id="getBillImCheckDtlUm" resultMap="BaseResultMap2">
+	      select sum(icd.check_qty) checkQty,
+	       ic.untread_no as importNo,
+       	   icd.item_no as itemNo,
+	       icd.size_no sizeNo,
+	       max(sz.size_code) sizeCode,
+	       max(itm.size_kind) sizeKind
+		  from bill_um_check_dtl icd
+		 inner join bill_um_check ic
+		    on icd.locno = ic.locno
+		   and icd.check_no = ic.check_no
+		   and ic.status in ('11','13','20', '25','30','35','40')
+		 inner join item itm
+		    on icd.item_no = itm.item_no
+		    and icd.brand_no = itm.brand_no
+		  left join size_info sz
+		    on sz.size_no = icd.size_no
+		   and sz.size_kind = itm.size_kind
+		 where 1 = 1
+		 	and ic.locno=#{params.locNo,jdbcType=VARCHAR}
+		 	and ic.untread_no = #{params.importNo,jdbcType=VARCHAR}
+		 	and icd.item_no = #{params.itemNo,jdbcType=VARCHAR}
+		 	<if test="null!=params.cateNo and params.cateNo!=''">
+				and itm.cate_no = #{params.cateNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=params.years and params.years!=''">
+				and itm.years = #{params.years,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=params.season and params.season!=''">
+				and itm.season = #{params.season,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=params.gender and params.gender!=''">
+				and itm.gender = #{params.gender,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=params.reciveDateStart and params.reciveDateStart!=''">
+				and ic.audittm &gt;=
+				to_date('${params.reciveDateStart}','yyyy-MM-dd')
+			</if>
+			<if test="null!=params.reciveDateEnd and params.reciveDateEnd!=''">
+				and ic.audittm &lt;
+				(to_date('${params.reciveDateEnd}','yyyy-MM-dd')+1)
+			</if>
+		 	<if test="null!=authorityParams and null!=authorityParams.hasBrandNoList">
+				and icd.brand_no in
+				<include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+			</if>
+		 group by ic.untread_no, icd.item_no, icd.size_no
+	</select>
+	<!-- 查询其他入库报表明细信息 -->
+	<select id="getBillImCheckDtlOtm" resultMap="BaseResultMap2">
+      	select sum(chdtl.instorage_qty) checkQty,
+      	   chdtl.otherin_no as importNo,
+       	   chdtl.item_no as itemNo,
+	       chdtl.size_no sizeNo,
+	       max(sz.size_code) sizeCode,
+	       max(it.size_kind) sizeKind
+		  from BILL_SM_OTHERIN ch
+		 inner join BILL_SM_OTHERIN_dtl chdtl
+		    on ch.locno = chdtl.locno
+		   and ch.owner_no = chdtl.owner_no
+		   and ch.otherin_no = chdtl.otherin_no
+		 inner join item it
+		    on it.item_no = chdtl.item_no
+		   and it.brand_no = chdtl.brand_no
+		 inner join size_info sz
+		    on sz.size_no = chdtl.size_no
+		   and sz.size_kind = it.size_kind
+		 where 1 = 1
+		   and ch.locno=#{params.locNo,jdbcType=VARCHAR}
+	 	   and ch.otherin_no = #{params.importNo,jdbcType=VARCHAR}
+		   and chdtl.item_no = #{params.itemNo,jdbcType=VARCHAR}
+		   <if test="null!=params.cateNo and params.cateNo!=''">
+				and it.cate_no = #{params.cateNo,jdbcType=VARCHAR}
+		   </if>
+		   <if test="null!=params.years and params.years!=''">
+				and it.years = #{params.years,jdbcType=VARCHAR}
+		   </if>
+		   <if test="null!=params.season and params.season!=''">
+				and it.season = #{params.season,jdbcType=VARCHAR}
+		   </if>
+		   <if test="null!=params.gender and params.gender!=''">
+				and it.gender = #{params.gender,jdbcType=VARCHAR}
+		   </if>
+		    <if test="null!=params.reciveDateStart and params.reciveDateStart!=''">
+				and ch.audittm &gt;=
+				to_date('${params.reciveDateStart}','yyyy-MM-dd')
+			</if>
+			<if test="null!=params.reciveDateEnd and params.reciveDateEnd!=''">
+				and ch.audittm &lt;
+				(to_date('${params.reciveDateEnd}','yyyy-MM-dd')+1)
+			</if>
+		   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList">
+			and chdtl.brand_no in
+			<include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+		   </if>
+		  group by chdtl.otherin_no, chdtl.item_no, chdtl.size_no
+	</select>
+	<select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+	select sum(t.checkQty) checkQty from (
+		select sum(chdtl.check_qty) checkQty <include refid="Base_BillUmCheck" />
+		Union All
+        select sum(chdtl.instorage_qty) checkQty <include refid="Base_BillOtmCheck" />
+        Union All
+        select sum(chdtl.check_qty) checkQty <include refid="Base_BillImCheck" />
+        ) t
+  </select>
+  
+  <!-- 按照单据编号和商品编码分组计算 BEGIN -->
+	<select id="getBillImCheckExportByGroup" resultMap="BaseResultMap2">
+		select A.*,
+       	(select l.itemname from lookupdtl l where l.lookupcode = 'CITY_IM_UM_TYPE' and l.itemval = A.business_type) statusName,
+       	(select brand.brand_name from brand where brand.brand_no = A.brand_no) as brandName,
+       	(select c.cate_name from category c where c.cate_no = A.cate_no) as cateName,
+          (CASE WHEN A.BUSINESS_TYPE = '0' THEN
+           (select sup.supplier_name from supplier sup where sup.supplier_no = A.supplierNo)
+          WHEN A.BUSINESS_TYPE = '4' then
+           (select s.store_name from store s where s.store_no = A.supplierNo)
+          WHEN A.BUSINESS_TYPE = '5' then
+           (select s.store_name from store s where s.store_no = A.supplierNo)
+       	  END) AS supplierName, 
+       (select ITEMNAME
+          from LOOKUPDTL
+         where lookupcode = 'YEARS'
+           and itemval = A.years) years_Name,
+       (select ITEMNAME
+          from LOOKUPDTL
+         where lookupcode = 'SEASON'
+           and itemval = A.season) season_Name,
+       (select ITEMNAME
+          from LOOKUPDTL
+         where lookupcode = 'GENDER'
+           and itemval = A.gender) gender_Name,
+       	rownum rn
+         from(
+         select C.* from (
+			<include refid="getBillImCheckByGroupImExport" />
+			Union All
+			<include refid="getBillImCheckByGroupUmExport" />
+			Union All
+			<include refid="getBillImCheckByGroupOtmExport" />
+		) C order by C.recivedate desc, C.importNo desc, C.itemNo
+		) A
+	</select>
+</mapper>

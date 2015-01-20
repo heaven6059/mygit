@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.AuthorityMenuModuleMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.AuthorityMenuModule" >
+    <result column="MENU_ID" property="menuId" jdbcType="DECIMAL" />
+    <result column="MODULE_ID" property="moduleId" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+    </if>
+  </sql>
+  <sql id="Base_Column_List">
+  	MENU_ID,MODULE_ID
+  </sql>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from AUTHORITY_MENU_MODULE where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectUserHasModules" resultType="int" parameterType="int">
+  	select rm.MODULE_ID from SYSTEM_USER_ROLE ur
+	inner join AUTHORITY_ROLE_MODULE rm on(ur.ROLEID=rm.ROLE_ID)
+	where ur.USERID=#{userId}
+  </select>
+  <select id="selectUserHasMenusAndModules" resultMap="BaseResultMap" parameterType="int">
+  	select rm.MENU_ID,rm.MODULE_ID from SYSTEM_USER_ROLE ur
+	inner join AUTHORITY_ROLE_MODULE rm on(ur.ROLEID=rm.ROLE_ID)
+	where ur.USERID=#{userId}
+  </select>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.AuthorityMenuModule" >
+    insert into AUTHORITY_MENU_MODULE (MENU_ID, MODULE_ID)
+    values (#{menuId,jdbcType=DECIMAL}, #{moduleId,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.AuthorityMenuModule" >
+    insert into AUTHORITY_MENU_MODULE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="menuId != null" >
+        MENU_ID,
+      </if>
+      <if test="moduleId != null" >
+        MODULE_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="menuId != null" >
+        #{menuId,jdbcType=DECIMAL},
+      </if>
+      <if test="moduleId != null" >
+        #{moduleId,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <delete id="deleteByMenuId" parameterType="int">
+  	delete from AUTHORITY_MENU_MODULE where MENU_ID=#{menuId} 
+  </delete>
+</mapper>

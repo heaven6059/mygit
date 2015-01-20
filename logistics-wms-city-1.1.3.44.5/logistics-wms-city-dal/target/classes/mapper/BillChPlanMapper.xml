@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillChPlanMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillChPlan" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="PLAN_NO" property="planNo" jdbcType="VARCHAR" />
+    <result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <result column="limit_Brand_Flag" property="limitBrandFlag" jdbcType="VARCHAR" />
+    <result column="brand_No" property="brandNo" jdbcType="VARCHAR" />
+    <result column="PLAN_TYPE" property="planType" jdbcType="CHAR" />
+    <result column="PLAN_DATE" property="planDate" jdbcType="TIMESTAMP" />
+    <result column="BEGIN_DATE" property="beginDate" jdbcType="TIMESTAMP" />
+    <result column="END_DATE" property="endDate" jdbcType="TIMESTAMP" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="CREATE_FLAG" property="createFlag" jdbcType="CHAR" />
+    <result column="PLAN_REMARK" property="planRemark" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="SOURCE_PLAN_NO" property="sourcePlanNo" jdbcType="VARCHAR" />
+    <result column="SEND_FLAG" property="sendFlag" jdbcType="DECIMAL" />
+    <result column="SYS_NO" property="sysNo" jdbcType="VARCHAR" />
+    <result column="AUDITOR" property="auditor" jdbcType="VARCHAR" />
+    <result column="AUDITTM" property="audittm" jdbcType="TIMESTAMP" />
+    <result column="quality" property="quality" jdbcType="VARCHAR" />
+    <result column="item_Type" property="itemType" jdbcType="VARCHAR" />
+    <result column="CREATORNAME" property="creatorName" jdbcType="VARCHAR" />
+    <result column="EDITORNAME" property="editorName" jdbcType="VARCHAR" />
+    <result column="AUDITORNAME" property="auditorName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    p.LOCNO, p.PLAN_NO, p.OWNER_NO, p.PLAN_TYPE, p.PLAN_DATE, p.BEGIN_DATE, p.END_DATE, p.STATUS, p.CREATE_FLAG, 
+    p.PLAN_REMARK, p.CREATOR, p.CREATETM, p.EDITOR, p.EDITTM, p.SOURCE_PLAN_NO, p.SEND_FLAG, p.SYS_NO, 
+    p.AUDITOR, p.AUDITTM,p.limit_Brand_Flag,p.brand_No,p.quality,p.item_Type,p.CREATORNAME,p.EDITORNAME,
+    p.AUDITORNAME
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+        and p.LOCNO = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        and p.OWNER_NO = #{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.planNo and ''!=params.planNo" >
+        and p.PLAN_NO = #{params.planNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.status and ''!=params.status" >
+        and p.status = #{params.status,jdbcType=VARCHAR}
+      </if>
+       <if test="null!=params.statusA and ''!=params.statusA" >
+        and p.status in ('11','15')
+      </if>
+       <if test="null!=params.statusB and ''!=params.statusB" >
+        and p.status in ('25','90')
+      </if>
+      <if test="null!=params.creator and ''!=params.creator" >
+        and p.creator = #{params.creator,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.auditor and ''!=params.auditor" >
+        and p.auditor = #{params.auditor,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.planType and ''!=params.planType" >
+        and p.PLAN_TYPE = #{params.planType,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.limitBrandFlag and ''!=params.limitBrandFlag" >
+        and p.limit_Brand_Flag = #{params.limitBrandFlag,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.createtmStart and ''!=params.createtmStart" >
+      <![CDATA[
+        and p.createtm >= to_date('${params.createtmStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+        ]]>
+      </if>
+      <if test="null!=params.createtmEnd and ''!=params.createtmEnd" >
+      <![CDATA[
+        and p.createtm <= to_date('${params.createtmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+        ]]>
+      </if>
+      <if test="null!=params.audittmStart and ''!=params.audittmStart" >
+      <![CDATA[
+        and p.audittm >= to_date('${params.audittmStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+        ]]>
+      </if>
+      <if test="null!=params.audittmEnd and ''!=params.audittmEnd" >
+      <![CDATA[
+        and p.audittm <= to_date('${params.audittmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+        ]]>
+      </if>
+      
+      <if test="null!=params.planDateStart and ''!=params.planDateStart" >
+      <![CDATA[
+        and p.plan_date >= to_date('${params.planDateStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+        ]]>
+      </if>
+      <if test="null!=params.planDateEnd and ''!=params.planDateEnd" >
+      <![CDATA[
+        and p.plan_date <= to_date('${params.planDateEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+        ]]>
+      </if>
+      
+      <!--  
+      <if test="null!=params.brandNo and ''!=params.brandNo" >
+      		and p.plan_no in (
+      			select distinct pd.plan_no from bill_ch_plan_dtl pd,item i
+      				where pd.locno = p.locno 
+      				and pd.plan_no = p.plan_no
+      				and pd.item_no = i.item_no
+      				and i.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+      		)
+	  </if>
+	  -->
+	   <if test=" (null!=params.sysNo and ''!=params.sysNo) or (null!=params.brandNo and ''!=params.brandNo) " >
+            and p.plan_no in (
+                select distinct pd.plan_no from bill_ch_plan_dtl pd,item i
+                    where pd.locno = p.locno 
+                    and pd.plan_no = p.plan_no
+                    and pd.item_no = i.item_no
+                    <if test="null!=params.brandNo and ''!=params.brandNo" >
+                       and i.brand_NO = #{params.brandNo,jdbcType=VARCHAR}
+                    </if>   
+                    <if test="null!=params.sysNo and ''!=params.sysNo" >
+                       and i.sys_NO = #{params.sysNo,jdbcType=VARCHAR}
+                    </if>
+                union 
+                  select distinct pd.plan_no
+                  from bill_ch_plan_dtl_brand pd,brand b
+                  where pd.locno = p.locno
+                        and pd.owner_no = p.owner_no
+                        and pd.plan_no = p.plan_no
+                        and pd.brand_no = b.brand_no
+                        <if test="null!=params.brandNo and ''!=params.brandNo" >
+                           and b.brand_NO = #{params.brandNo,jdbcType=VARCHAR}
+	                    </if>   
+	                    <if test="null!=params.sysNo and ''!=params.sysNo" >
+	                       and b.sys_NO = #{params.sysNo,jdbcType=VARCHAR}
+	                    </if>
+            )
+      </if>
+    </if>
+  </sql>
+  <!-- 权限过滤明细查询条件 -->
+  <sql id="child_condition">
+  	<if test="null!=params" >
+      <if test="null!=params.locno and ''!=params.locno" >
+      	and locno = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.planNo and ''!=params.planNo" >
+      	and plan_no = #{params.planNo,jdbcType=VARCHAR}
+      </if>
+     </if>
+  </sql>
+  <!--权限过滤左连接子查询-->
+  <sql id="selectByPageAuthorityLeftJoin" >
+   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+            left join (select plan_no
+                         from bill_ch_plan_dtl                         
+                        where brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+                        <include refid="child_condition" />
+                         group by plan_no
+                        ) sub1
+             ON sub1.plan_no = p.plan_no
+                          
+             left join (select plan_no
+                         from bill_ch_plan_dtl where 1=1 
+                         <include refid="child_condition" />  
+                          group by  plan_no                    
+                        ) sub2
+             ON sub2.plan_no = p.plan_no
+    </if>
+  </sql>
+  <!--权限过滤查询条件-->
+  <sql id="selectByPageAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and (sub1.plan_no is not null or sub2.plan_no is null or p.PLAN_TYPE = '1')
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillChPlanKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_CH_PLAN p
+    where p.LOCNO = #{locno,jdbcType=VARCHAR}
+      and p.PLAN_NO = #{planNo,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByChceckNo" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillChCheck" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_CH_PLAN p inner join BILL_CH_CHECK C ON c.plan_no = p.plan_no and c.locno = p.locno
+    where p.LOCNO = #{locno,jdbcType=VARCHAR}
+      and c.check_no = #{checkNo,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_CH_PLAN p 
+    <include refid="selectByPageAuthorityLeftJoin" /> 
+    where 1=1 
+    <include refid="condition" />
+    <include refid="selectByPageAuthorityCondition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from BILL_CH_PLAN p 
+     <include refid="selectByPageAuthorityLeftJoin" /> 
+     where 1=1 
+    <include refid="condition" />
+    <include refid="selectByPageAuthorityCondition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    <if test="orderByField == null or ''==orderByField" >
+      order by CREATETM desc
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_CH_PLAN p where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillChPlanKey" >
+    delete from BILL_CH_PLAN
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and PLAN_NO = #{planNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillChPlan" >
+    delete from BILL_CH_PLAN
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and PLAN_NO = #{planNo,jdbcType=VARCHAR}
+      <if test="sourceStatus != null and sourceStatus != ''">
+      	and status = #{sourceStatus,jdbcType=VARCHAR}
+      </if>
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillChPlan" >
+    insert into BILL_CH_PLAN (LOCNO, PLAN_NO, OWNER_NO, 
+      PLAN_TYPE, PLAN_DATE, BEGIN_DATE, 
+      END_DATE, STATUS, CREATE_FLAG, 
+      PLAN_REMARK, CREATOR, CREATETM, 
+      EDITOR, EDITTM, SOURCE_PLAN_NO, 
+      SEND_FLAG, SYS_NO, AUDITOR, 
+      AUDITTM,CREATORNAME,EDITORNAME,
+      AUDITORNAME)
+    values (#{locno,jdbcType=VARCHAR}, #{planNo,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, 
+      #{planType,jdbcType=CHAR}, #{planDate,jdbcType=TIMESTAMP}, #{beginDate,jdbcType=TIMESTAMP}, 
+      #{endDate,jdbcType=TIMESTAMP}, #{status,jdbcType=VARCHAR}, #{createFlag,jdbcType=CHAR}, 
+      #{planRemark,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{createtm,jdbcType=TIMESTAMP}, 
+      #{editor,jdbcType=VARCHAR}, #{edittm,jdbcType=TIMESTAMP}, #{sourcePlanNo,jdbcType=VARCHAR}, 
+      #{sendFlag,jdbcType=DECIMAL}, #{sysNo,jdbcType=VARCHAR}, #{auditor,jdbcType=VARCHAR}, 
+      #{audittm,jdbcType=TIMESTAMP}, #{creatorName,jdbcType=VARCHAR}, #{editorName,jdbcType=VARCHAR}, 
+      #{auditorName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillChPlan" >
+    insert into BILL_CH_PLAN
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="planNo != null" >
+        PLAN_NO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="planType != null" >
+        PLAN_TYPE,
+      </if>
+      <if test="planDate != null" >
+        PLAN_DATE,
+      </if>
+      <if test="beginDate != null" >
+        BEGIN_DATE,
+      </if>
+      <if test="endDate != null" >
+        END_DATE,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="createFlag != null" >
+        CREATE_FLAG,
+      </if>
+      <if test="planRemark != null" >
+        PLAN_REMARK,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="sourcePlanNo != null" >
+        SOURCE_PLAN_NO,
+      </if>
+      <if test="sendFlag != null" >
+        SEND_FLAG,
+      </if>
+      <if test="sysNo != null" >
+        SYS_NO,
+      </if>
+      <if test="auditor != null" >
+        AUDITOR,
+      </if>
+      <if test="audittm != null" >
+        AUDITTM,
+      </if>
+      <if test="limitBrandFlag != null and limitBrandFlag != ''" >
+        LIMIT_BRAND_FLAG,
+      </if>
+      <if test="brandNo != null" >
+        BRAND_NO,
+      </if>
+      <if test="quality != null" >
+        quality,
+      </if>
+      <if test="itemType != null" >
+        item_Type,
+      </if>
+      <if test="creatorName != null" >
+        CREATORNAME,
+      </if>
+      <if test="editorName != null" >
+        EDITORNAME,
+      </if>
+      <if test="auditorName != null" >
+        AUDITORNAME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="planNo != null" >
+        #{planNo,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="planType != null" >
+        #{planType,jdbcType=CHAR},
+      </if>
+      <if test="planDate != null" >
+        #{planDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="beginDate != null" >
+        #{beginDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endDate != null" >
+        #{endDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createFlag != null" >
+        #{createFlag,jdbcType=CHAR},
+      </if>
+      <if test="planRemark != null" >
+        #{planRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sourcePlanNo != null" >
+        #{sourcePlanNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sendFlag != null" >
+        #{sendFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="sysNo != null" >
+        #{sysNo,jdbcType=VARCHAR},
+      </if>
+      <if test="auditor != null" >
+        #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        #{audittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="limitBrandFlag != null and limitBrandFlag != ''" >
+        #{limitBrandFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="brandNo != null" >
+        #{brandNo,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null" >
+        #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorName != null" >
+        #{creatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null" >
+        #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorName != null" >
+        #{auditorName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillChPlan" >
+    update BILL_CH_PLAN
+    <set >
+      <if test="ownerNo != null" >
+        OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="planType != null" >
+        PLAN_TYPE = #{planType,jdbcType=CHAR},
+      </if>
+      <if test="planDate != null" >
+        PLAN_DATE = #{planDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="beginDate != null" >
+        BEGIN_DATE = #{beginDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endDate != null" >
+        END_DATE = #{endDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createFlag != null" >
+        CREATE_FLAG = #{createFlag,jdbcType=CHAR},
+      </if>
+      <if test="planRemark != null" >
+        PLAN_REMARK = #{planRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sourcePlanNo != null" >
+        SOURCE_PLAN_NO = #{sourcePlanNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sendFlag != null" >
+        SEND_FLAG = #{sendFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="sysNo != null" >
+        SYS_NO = #{sysNo,jdbcType=VARCHAR},
+      </if>
+      <if test="auditor != null" >
+        AUDITOR = #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="brandNo != null" >
+        brand_No = #{brandNo,jdbcType=TIMESTAMP},
+      </if>
+      <if test="limitBrandFlag != null" >
+        LIMIT_BRAND_FLAG = #{limitBrandFlag,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creatorName != null" >
+        CREATORNAME = #{creatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null" >
+        EDITORNAME = #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorName != null" >
+        AUDITORNAME = #{auditorName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and PLAN_NO = #{planNo,jdbcType=VARCHAR}
+      <if test="sourceStatus != null and sourceStatus != ''">
+      	and status = #{sourceStatus,jdbcType=VARCHAR}
+      </if>
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillChPlan" >
+    update BILL_CH_PLAN
+    set OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      PLAN_TYPE = #{planType,jdbcType=CHAR},
+      PLAN_DATE = #{planDate,jdbcType=TIMESTAMP},
+      BEGIN_DATE = #{beginDate,jdbcType=TIMESTAMP},
+      END_DATE = #{endDate,jdbcType=TIMESTAMP},
+      STATUS = #{status,jdbcType=VARCHAR},
+      CREATE_FLAG = #{createFlag,jdbcType=CHAR},
+      PLAN_REMARK = #{planRemark,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      SOURCE_PLAN_NO = #{sourcePlanNo,jdbcType=VARCHAR},
+      SEND_FLAG = #{sendFlag,jdbcType=DECIMAL},
+      SYS_NO = #{sysNo,jdbcType=VARCHAR},
+      AUDITOR = #{auditor,jdbcType=VARCHAR},
+      AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      CREATORNAME = #{creatorName,jdbcType=VARCHAR},
+      EDITORNAME = #{editorName,jdbcType=VARCHAR},
+      AUDITORNAME = #{auditorName,jdbcType=VARCHAR}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and PLAN_NO = #{planNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

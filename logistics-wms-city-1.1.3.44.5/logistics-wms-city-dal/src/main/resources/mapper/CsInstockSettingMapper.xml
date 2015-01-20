@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.CsInstockSettingMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.CsInstockSetting" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="SETTING_NO" property="settingNo" jdbcType="VARCHAR" />
+    <result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <result column="SET_TYPE" property="setType" jdbcType="VARCHAR" />
+    <result column="SETTING_NAME" property="settingName" jdbcType="VARCHAR" />
+    <result column="SETTING_DESC" property="settingDesc" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="MEMO" property="memo" jdbcType="VARCHAR" />
+    <result column="INSTOCK_SCOPE" property="instockScope" jdbcType="VARCHAR" />
+    <result column="CELL_SORT" property="cellSort" jdbcType="VARCHAR" />
+    <result column="LIMITED_TYPE" property="limitedType" jdbcType="CHAR" />
+    <result column="SAME_QUALITY_FLAG" property="sameQualityFlag" jdbcType="CHAR" />
+    <result column="SAME_ITEM_FLAG" property="sameItemFlag" jdbcType="CHAR" />
+    <result column="EMPTY_CELL_FLAG" property="emptyCellFlag" jdbcType="CHAR" />
+    <result column="DETAIL_TYPE" property="detailType" jdbcType="CHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATORNAME" property="creatorName" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="EDITORNAME" property="editorName" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="STARTTM" property="starttm" jdbcType="TIMESTAMP" />
+    <result column="STOPTM" property="stoptm" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, SETTING_NO, OWNER_NO, SET_TYPE, SETTING_NAME, SETTING_DESC, STATUS, MEMO, 
+    INSTOCK_SCOPE, CELL_SORT, LIMITED_TYPE, SAME_QUALITY_FLAG, SAME_ITEM_FLAG, EMPTY_CELL_FLAG, 
+    DETAIL_TYPE, CREATOR, CREATETM, EDITOR, EDITTM, STARTTM, STOPTM,CREATORNAME,EDITORNAME
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+     <if test="null!=params.locno and ''!=params.locno" >
+         and locno=#{params.locno,jdbcType=VARCHAR}
+      </if>
+     <if test="null!=params.settingNo and ''!=params.settingNo" >
+         and SETTING_NO=#{params.settingNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.settingName and ''!=params.settingName" >
+         and SETTING_NAME like '%${params.settingName}%'
+      </if>
+      <if test="null!=params.status and ''!=params.status" >
+         and STATUS=#{params.status,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.CsInstockSettingKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from CS_INSTOCK_SETTING
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and SETTING_NO = #{settingNo,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from CS_INSTOCK_SETTING where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from CS_INSTOCK_SETTING where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from CS_INSTOCK_SETTING where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.CsInstockSettingKey" >
+    delete from CS_INSTOCK_SETTING
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and SETTING_NO = #{settingNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.CsInstockSetting" >
+    delete from CS_INSTOCK_SETTING
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and SETTING_NO = #{settingNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.CsInstockSetting" >
+    insert into CS_INSTOCK_SETTING (LOCNO, SETTING_NO, OWNER_NO, 
+      SET_TYPE, SETTING_NAME, SETTING_DESC, 
+      STATUS, MEMO, INSTOCK_SCOPE, 
+      CELL_SORT, LIMITED_TYPE, SAME_QUALITY_FLAG, 
+      SAME_ITEM_FLAG, EMPTY_CELL_FLAG, DETAIL_TYPE, 
+      CREATOR, CREATETM, EDITOR, 
+      EDITTM, STARTTM, STOPTM,CREATORNAME,EDITORNAME
+      )
+    values (#{locno,jdbcType=VARCHAR}, #{settingNo,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, 
+      #{setType,jdbcType=VARCHAR}, #{settingName,jdbcType=VARCHAR}, #{settingDesc,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, #{instockScope,jdbcType=VARCHAR}, 
+      #{cellSort,jdbcType=VARCHAR}, #{limitedType,jdbcType=CHAR}, #{sameQualityFlag,jdbcType=CHAR}, 
+      #{sameItemFlag,jdbcType=CHAR}, #{emptyCellFlag,jdbcType=CHAR}, #{detailType,jdbcType=CHAR}, 
+      #{creator,jdbcType=VARCHAR}, #{createtm,jdbcType=TIMESTAMP}, #{editor,jdbcType=VARCHAR}, 
+      #{edittm,jdbcType=TIMESTAMP}, #{starttm,jdbcType=TIMESTAMP}, #{stoptm,jdbcType=TIMESTAMP},
+      #{creatorName,jdbcType=VARCHAR},#{editorName,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.CsInstockSetting" >
+    insert into CS_INSTOCK_SETTING
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="settingNo != null" >
+        SETTING_NO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="setType != null" >
+        SET_TYPE,
+      </if>
+      <if test="settingName != null" >
+        SETTING_NAME,
+      </if>
+      <if test="settingDesc != null" >
+        SETTING_DESC,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="memo != null" >
+        MEMO,
+      </if>
+      <if test="instockScope != null" >
+        INSTOCK_SCOPE,
+      </if>
+      <if test="cellSort != null" >
+        CELL_SORT,
+      </if>
+      <if test="limitedType != null" >
+        LIMITED_TYPE,
+      </if>
+      <if test="sameQualityFlag != null" >
+        SAME_QUALITY_FLAG,
+      </if>
+      <if test="sameItemFlag != null" >
+        SAME_ITEM_FLAG,
+      </if>
+      <if test="emptyCellFlag != null" >
+        EMPTY_CELL_FLAG,
+      </if>
+      <if test="detailType != null" >
+        DETAIL_TYPE,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="starttm != null" >
+        STARTTM,
+      </if>
+      <if test="stoptm != null" >
+        STOPTM,
+      </if>
+      <if test="creatorName != null" >
+        CREATORNAME,
+      </if>
+      <if test="editorName != null" >
+        EDITORNAME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="settingNo != null" >
+        #{settingNo,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="setType != null" >
+        #{setType,jdbcType=VARCHAR},
+      </if>
+      <if test="settingName != null" >
+        #{settingName,jdbcType=VARCHAR},
+      </if>
+      <if test="settingDesc != null" >
+        #{settingDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="instockScope != null" >
+        #{instockScope,jdbcType=VARCHAR},
+      </if>
+      <if test="cellSort != null" >
+        #{cellSort,jdbcType=VARCHAR},
+      </if>
+      <if test="limitedType != null" >
+        #{limitedType,jdbcType=CHAR},
+      </if>
+      <if test="sameQualityFlag != null" >
+        #{sameQualityFlag,jdbcType=CHAR},
+      </if>
+      <if test="sameItemFlag != null" >
+        #{sameItemFlag,jdbcType=CHAR},
+      </if>
+      <if test="emptyCellFlag != null" >
+        #{emptyCellFlag,jdbcType=CHAR},
+      </if>
+      <if test="detailType != null" >
+        #{detailType,jdbcType=CHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="starttm != null" >
+        #{starttm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="stoptm != null" >
+        #{stoptm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creatorName != null" >
+        #{creatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null" >
+        #{editorName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.CsInstockSetting" >
+    update CS_INSTOCK_SETTING
+    <set >
+      <if test="ownerNo != null" >
+        OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="setType != null" >
+        SET_TYPE = #{setType,jdbcType=VARCHAR},
+      </if>
+      <if test="settingName != null" >
+        SETTING_NAME = #{settingName,jdbcType=VARCHAR},
+      </if>
+      <if test="settingDesc != null" >
+        SETTING_DESC = #{settingDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="memo != null" >
+        MEMO = #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="instockScope != null" >
+        INSTOCK_SCOPE = #{instockScope,jdbcType=VARCHAR},
+      </if>
+      <if test="cellSort != null" >
+        CELL_SORT = #{cellSort,jdbcType=VARCHAR},
+      </if>
+      <if test="limitedType != null" >
+        LIMITED_TYPE = #{limitedType,jdbcType=CHAR},
+      </if>
+      <if test="sameQualityFlag != null" >
+        SAME_QUALITY_FLAG = #{sameQualityFlag,jdbcType=CHAR},
+      </if>
+      <if test="sameItemFlag != null" >
+        SAME_ITEM_FLAG = #{sameItemFlag,jdbcType=CHAR},
+      </if>
+      <if test="emptyCellFlag != null" >
+        EMPTY_CELL_FLAG = #{emptyCellFlag,jdbcType=CHAR},
+      </if>
+      <if test="detailType != null" >
+        DETAIL_TYPE = #{detailType,jdbcType=CHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="starttm != null" >
+        STARTTM = #{starttm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="stoptm != null" >
+        STOPTM = #{stoptm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creatorName != null" >
+        CREATORNAME = #{creatorName,jdbcType=VARCHAR},
+      </if>
+       <if test="editorName != null" >
+        EDITORNAME = #{editorName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and SETTING_NO = #{settingNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.CsInstockSetting" >
+    update CS_INSTOCK_SETTING
+    set OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      SET_TYPE = #{setType,jdbcType=VARCHAR},
+      SETTING_NAME = #{settingName,jdbcType=VARCHAR},
+      SETTING_DESC = #{settingDesc,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      MEMO = #{memo,jdbcType=VARCHAR},
+      INSTOCK_SCOPE = #{instockScope,jdbcType=VARCHAR},
+      CELL_SORT = #{cellSort,jdbcType=VARCHAR},
+      LIMITED_TYPE = #{limitedType,jdbcType=CHAR},
+      SAME_QUALITY_FLAG = #{sameQualityFlag,jdbcType=CHAR},
+      SAME_ITEM_FLAG = #{sameItemFlag,jdbcType=CHAR},
+      EMPTY_CELL_FLAG = #{emptyCellFlag,jdbcType=CHAR},
+      DETAIL_TYPE = #{detailType,jdbcType=CHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      STARTTM = #{starttm,jdbcType=TIMESTAMP},
+      STOPTM = #{stoptm,jdbcType=TIMESTAMP},
+      CREATORNAME = #{creatorName,jdbcType=VARCHAR},
+      EDITORNAME = #{editorName,jdbcType=VARCHAR}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and SETTING_NO = #{settingNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

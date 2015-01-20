@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.AuthorityUserinfoMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.AuthorityUserinfo" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="USERID" property="userid" jdbcType="VARCHAR" />
+    <result column="LOGIN_NAME" property="loginName" jdbcType="VARCHAR" />
+    <result column="USERNAME" property="username" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+  	LOCNO,USERID,LOGIN_NAME,USERNAME
+  </sql>
+  
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno">
+			and locno = #{params.locno,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.loginName and ''!=params.loginName">
+	  		and login_name = #{params.loginName,jdbcType=VARCHAR}
+	  </if>
+    </if>
+  </sql>
+  
+  <select id="selectUserByLoginName" resultMap="BaseResultMap" parameterType="map">
+      select u.userid,u.username,o.organization_no as locno,u.login_name 
+      from authority_user_organization o 
+      left join authority_userinfo u on o.user_id = u.userid
+      where 1=1 
+      <if test="null != locno and '' != locno">
+         and o.organization_no = #{locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null != systemId and '' != systemId">
+         and o.system_id = #{systemId,jdbcType=VARCHAR}
+      </if>
+      <if test="null != areaSystemId and '' != areaSystemId">
+         and o.area_system_id = #{areaSystemId,jdbcType=VARCHAR}
+      </if>
+      <if test="null != loginName and '' != loginName">
+         and u.login_name = #{loginName,jdbcType=VARCHAR}
+         
+      </if>
+  </select>
+  
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from AUTHORITY_USERINFO where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.AuthorityUserinfoKey" >
+    delete from AUTHORITY_USERINFO
+    where USERID = #{userid,jdbcType=VARCHAR}
+      and LOGIN_NAME = #{loginName,jdbcType=VARCHAR}
+      and USERNAME = #{username,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.AuthorityUserinfo" >
+    delete from AUTHORITY_USERINFO
+    where USERID = #{userid,jdbcType=VARCHAR}
+      and LOGIN_NAME = #{loginName,jdbcType=VARCHAR}
+      and USERNAME = #{username,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.AuthorityUserinfo" >
+    insert into AUTHORITY_USERINFO (USERID, LOGIN_NAME, USERNAME
+      )
+    values (#{userid,jdbcType=VARCHAR}, #{loginName,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.AuthorityUserinfo" >
+    insert into AUTHORITY_USERINFO
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="userid != null" >
+        USERID,
+      </if>
+      <if test="loginName != null" >
+        LOGIN_NAME,
+      </if>
+      <if test="username != null" >
+        USERNAME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=VARCHAR},
+      </if>
+      <if test="loginName != null" >
+        #{loginName,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- 批量插入用户信息 -->
+  <select id="insertBatchUserInfo" parameterType="java.util.List">  
+        insert into AUTHORITY_USERINFO (LOCNO,USERID,LOGIN_NAME,USERNAME)  
+        <foreach collection="list" item="item" index="index" separator="union all">  
+            select
+             #{item.locno,jdbcType=VARCHAR},
+             #{item.userid,jdbcType=VARCHAR},
+             #{item.loginName,jdbcType=VARCHAR},
+             #{item.username,jdbcType=VARCHAR}
+             from DUAL
+        </foreach>  
+   </select>
+   
+   <!-- 查询所有用户 -->
+   <select id="selectAuthorityUser4UserCenter" resultMap="BaseResultMap" parameterType="map" >
+    	select organiz_no as locno,max(userid) userid,login_name,username
+     	from v_USER@dl_uc_zb where state = '1'
+     	group by organiz_no,login_name,username
+   </select>
+   
+   <!-- 删除所有用户 -->
+   <delete id="deleteAllAuthorityUserinfo" parameterType="com.yougou.logistics.city.common.model.AuthorityUserinfoKey" >
+    	delete from AUTHORITY_USERINFO
+   </delete>
+</mapper>

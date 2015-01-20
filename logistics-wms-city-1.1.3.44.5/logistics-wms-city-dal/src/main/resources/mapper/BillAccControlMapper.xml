@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BillAccControlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillAccControl" >
+    <id column="PAPER_TYPE" property="paperType" jdbcType="VARCHAR" />
+    <id column="IO_FLAG" property="ioFlag" jdbcType="VARCHAR" />
+    <result column="BILL_NAME" property="billName" jdbcType="VARCHAR" />
+    <result column="IMMEDIATE_ACC" property="immediateAcc" jdbcType="DECIMAL" />
+    <result column="DEAL_FLAG" property="dealFlag" jdbcType="DECIMAL" />
+    <result column="DEAL_QTY" property="dealQty" jdbcType="DECIMAL" />
+    <result column="DIRECTION" property="direction" jdbcType="DECIMAL" />
+    <result column="SYN_ACC_IN" property="synAccIn" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    PAPER_TYPE, IO_FLAG, BILL_NAME, IMMEDIATE_ACC, DEAL_FLAG, DEAL_QTY, DIRECTION, SYN_ACC_IN
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillAccControlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_ACC_CONTROL
+    where PAPER_TYPE = #{paperType,jdbcType=VARCHAR}
+      and IO_FLAG = #{ioFlag,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_ACC_CONTROL where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from BILL_ACC_CONTROL where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_ACC_CONTROL where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillAccControlKey" >
+    delete from BILL_ACC_CONTROL
+    where PAPER_TYPE = #{paperType,jdbcType=VARCHAR}
+      and IO_FLAG = #{ioFlag,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillAccControl" >
+    delete from BILL_ACC_CONTROL
+    where PAPER_TYPE = #{paperType,jdbcType=VARCHAR}
+      and IO_FLAG = #{ioFlag,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillAccControl" >
+    insert into BILL_ACC_CONTROL (PAPER_TYPE, IO_FLAG, BILL_NAME, 
+      IMMEDIATE_ACC, DEAL_FLAG, DEAL_QTY, 
+      DIRECTION, SYN_ACC_IN)
+    values (#{paperType,jdbcType=VARCHAR}, #{ioFlag,jdbcType=VARCHAR}, #{billName,jdbcType=VARCHAR}, 
+      #{immediateAcc,jdbcType=DECIMAL}, #{dealFlag,jdbcType=DECIMAL}, #{dealQty,jdbcType=DECIMAL}, 
+      #{direction,jdbcType=DECIMAL}, #{synAccIn,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillAccControl" >
+    insert into BILL_ACC_CONTROL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="paperType != null" >
+        PAPER_TYPE,
+      </if>
+      <if test="ioFlag != null" >
+        IO_FLAG,
+      </if>
+      <if test="billName != null" >
+        BILL_NAME,
+      </if>
+      <if test="immediateAcc != null" >
+        IMMEDIATE_ACC,
+      </if>
+      <if test="dealFlag != null" >
+        DEAL_FLAG,
+      </if>
+      <if test="dealQty != null" >
+        DEAL_QTY,
+      </if>
+      <if test="direction != null" >
+        DIRECTION,
+      </if>
+      <if test="synAccIn != null" >
+        SYN_ACC_IN,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="paperType != null" >
+        #{paperType,jdbcType=VARCHAR},
+      </if>
+      <if test="ioFlag != null" >
+        #{ioFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="billName != null" >
+        #{billName,jdbcType=VARCHAR},
+      </if>
+      <if test="immediateAcc != null" >
+        #{immediateAcc,jdbcType=DECIMAL},
+      </if>
+      <if test="dealFlag != null" >
+        #{dealFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="dealQty != null" >
+        #{dealQty,jdbcType=DECIMAL},
+      </if>
+      <if test="direction != null" >
+        #{direction,jdbcType=DECIMAL},
+      </if>
+      <if test="synAccIn != null" >
+        #{synAccIn,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillAccControl" >
+    update BILL_ACC_CONTROL
+    <set >
+      <if test="billName != null" >
+        BILL_NAME = #{billName,jdbcType=VARCHAR},
+      </if>
+      <if test="immediateAcc != null" >
+        IMMEDIATE_ACC = #{immediateAcc,jdbcType=DECIMAL},
+      </if>
+      <if test="dealFlag != null" >
+        DEAL_FLAG = #{dealFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="dealQty != null" >
+        DEAL_QTY = #{dealQty,jdbcType=DECIMAL},
+      </if>
+      <if test="direction != null" >
+        DIRECTION = #{direction,jdbcType=DECIMAL},
+      </if>
+      <if test="synAccIn != null" >
+        SYN_ACC_IN = #{synAccIn,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where PAPER_TYPE = #{paperType,jdbcType=VARCHAR}
+      and IO_FLAG = #{ioFlag,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillAccControl" >
+    update BILL_ACC_CONTROL
+    set BILL_NAME = #{billName,jdbcType=VARCHAR},
+      IMMEDIATE_ACC = #{immediateAcc,jdbcType=DECIMAL},
+      DEAL_FLAG = #{dealFlag,jdbcType=DECIMAL},
+      DEAL_QTY = #{dealQty,jdbcType=DECIMAL},
+      DIRECTION = #{direction,jdbcType=DECIMAL},
+      SYN_ACC_IN = #{synAccIn,jdbcType=DECIMAL}
+    where PAPER_TYPE = #{paperType,jdbcType=VARCHAR}
+      and IO_FLAG = #{ioFlag,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 统一记账过程 -->
+  <select id="procAccApply" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call ACC_APPLY(
+		    		#{I_PAPER_NO,mode=IN,jdbcType=VARCHAR},
+		    		#{I_LOC_TYPE,mode=IN,jdbcType=VARCHAR},
+		    		#{I_PAPER_TYPE,mode=IN,jdbcType=VARCHAR},
+		    		#{I_IO_FLAG,mode=IN,jdbcType=VARCHAR},
+		    		#{I_PREPARE_DATA_EXT,mode=IN,jdbcType=DECIMAL},
+		    		#{I_IS_WEB,mode=IN,jdbcType=DECIMAL})}  
+		]]>  
+  </select>
+  
+  <!-- 外部调用数据准备过程 -->
+  <select id="procAccPrepareDataExt" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call ACC_PREPARE_DATA_EXT(
+		    		#{I_PAPER_NO,mode=IN,jdbcType=VARCHAR},
+		    		#{I_PAPER_TYPE,mode=IN,jdbcType=VARCHAR},
+		    		#{I_IO_FLAG,mode=IN,jdbcType=VARCHAR},
+		    		#{I_CREATOR,mode=IN,jdbcType=VARCHAR},
+		    		#{I_ROW_ID,mode=IN,jdbcType=DECIMAL},
+		    		#{I_CELL_ID,mode=IN,jdbcType=DECIMAL},
+		    		#{I_LOCNO,mode=IN,jdbcType=VARCHAR},
+		    		#{I_CELL_NO,mode=IN,jdbcType=VARCHAR},
+		    		#{I_ITEM_NO,mode=IN,jdbcType=VARCHAR},
+		    		#{I_SIZE_NO,mode=IN,jdbcType=VARCHAR},
+		    		#{I_PACK_QTY,mode=IN,jdbcType=DECIMAL},
+		    		#{I_ITEM_TYPE,mode=IN,jdbcType=VARCHAR},
+		    		#{I_QUALITY,mode=IN,jdbcType=VARCHAR},
+		    		#{I_OWNER_NO,mode=IN,jdbcType=VARCHAR},
+		    		#{I_SUPPLIER_NO,mode=IN,jdbcType=VARCHAR},
+		    		#{I_BOX_NO,mode=IN,jdbcType=VARCHAR},
+		    		#{I_QTY,mode=IN,jdbcType=DECIMAL},
+		    		#{I_OUTSTOCK_QTY,mode=IN,jdbcType=DECIMAL},
+		    		#{I_INSTOCK_QTY,mode=IN,jdbcType=DECIMAL},
+		    		#{I_STATUS,mode=IN,jdbcType=VARCHAR},
+		    		#{I_FLAG,mode=IN,jdbcType=VARCHAR},
+		    		#{I_HM_MANUAL_FLAG,mode=IN,jdbcType=VARCHAR},
+		    		#{I_TERMINAL_FLAG,mode=IN,jdbcType=VARCHAR})}  
+		]]>  
+  </select>
+  <!-- update by zuo.sw 20140313 去掉group by中不需要的字段  -->
+  <select id="selectBillAccControlGroupByBillName" resultMap="BaseResultMap" parameterType="map" >
+    select PAPER_TYPE,max(BILL_NAME) BILL_NAME
+     from BILL_ACC_CONTROL 
+     	where 1=1 
+    	<include refid="condition" />
+    group by PAPER_TYPE
+  </select>
+  
+</mapper>

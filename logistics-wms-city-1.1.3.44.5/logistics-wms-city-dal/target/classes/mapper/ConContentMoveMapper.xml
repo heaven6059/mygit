@@ -1,0 +1,562 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.ConContentMoveMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.ConContentMove" >
+    <id column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+    <result column="CELL_ID" property="cellId" jdbcType="DECIMAL" />
+    <result column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <result column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="BARCODE" property="barcode" jdbcType="VARCHAR" />
+    <result column="ITEM_TYPE" property="itemType" jdbcType="VARCHAR" />
+    <result column="QUALITY" property="quality" jdbcType="VARCHAR" />
+    <result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <result column="SUPPLIER_NO" property="supplierNo" jdbcType="VARCHAR" />
+    <result column="BOX_NO" property="boxNo" jdbcType="VARCHAR" />
+    <result column="MOVE_QTY" property="moveQty" jdbcType="DECIMAL" />
+    <result column="BALANCE_QTY" property="balanceQty" jdbcType="DECIMAL" />
+    <result column="DIRECTION" property="direction" jdbcType="DECIMAL" />
+    <result column="PAPER_NO" property="paperNo" jdbcType="VARCHAR" />
+    <result column="PAPER_TYPE" property="paperType" jdbcType="VARCHAR" />
+    <result column="IO_FLAG" property="ioFlag" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="CREATEDT" property="createdt" jdbcType="TIMESTAMP" />
+    <result column="PRE_FLAG" property="preFlag" jdbcType="VARCHAR" />
+    <result column="SEQ_ID" property="seqId" jdbcType="DECIMAL" />
+    <result column="STATUS_TRANS" property="statusTrans" jdbcType="VARCHAR" />
+    <result column="PACK_QTY" property="packQty" jdbcType="DECIMAL" />
+    <result column="TERMINAL_FLAG" property="terminalFlag" jdbcType="VARCHAR" />
+    
+    <result column="AREA_NO" property="areaNo" jdbcType="VARCHAR" />
+    <result column="AREA_NAME" property="areaName" jdbcType="VARCHAR" />
+    <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="BILL_NAME" property="billName" jdbcType="VARCHAR" />
+    
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ROW_ID, CELL_ID, LOCNO, CELL_NO, ITEM_NO, BARCODE, ITEM_TYPE, QUALITY, OWNER_NO, 
+    SUPPLIER_NO, BOX_NO, MOVE_QTY, BALANCE_QTY, DIRECTION, PAPER_NO, PAPER_TYPE, IO_FLAG, 
+    CREATOR, CREATETM, CREATEDT, PRE_FLAG, SEQ_ID, STATUS_TRANS, PACK_QTY, TERMINAL_FLAG
+  </sql>
+  
+  <sql id="Base_Column_List_Join" >
+    ccm.ROW_ID, ccm.CELL_ID, ccm.LOCNO, ccm.CELL_NO, ccm.ITEM_NO, ccm.BARCODE, ccm.ITEM_TYPE, 
+    ccm.QUALITY, ccm.OWNER_NO, ccm.SUPPLIER_NO, ccm.BOX_NO, ccm.MOVE_QTY, ccm.BALANCE_QTY, 
+    ccm.DIRECTION, ccm.PAPER_NO, ccm.PAPER_TYPE, ccm.IO_FLAG, ccm.CREATOR, ccm.CREATETM, 
+    ccm.CREATEDT, ccm.PRE_FLAG, ccm.SEQ_ID, ccm.STATUS_TRANS, ccm.PACK_QTY, ccm.TERMINAL_FLAG,
+    cda.AREA_NO,itm.ITEM_NAME,b.SIZE_NO,bac.BILL_NAME,cda.AREA_NAME
+  </sql>
+  
+  <!--权限过滤查询条件-->
+  <sql id="d_AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and itm.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+    </if>
+  </sql>
+  
+  <sql id="condition_join" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+        and ccm.LOCNO = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.areaNo and ''!=params.areaNo" >
+        and cdc.AREA_NO = #{params.areaNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.cellNo and ''!=params.cellNo" >
+        and cdc.CELL_NO like '%${params.cellNo}%'
+      </if>
+      <if test="null!=params.itemNo and ''!=params.itemNo" >
+        and ccm.ITEM_NO like '%${params.itemNo}%'
+      </if>
+      <if test="null!=params.barcode and ''!=params.barcode" >
+        and ccm.BARCODE like '%${params.barcode}%'
+      </if>
+      <if test="null!=params.quality and ''!=params.quality" >
+        and ccm.QUALITY = #{params.quality,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.itemType and ''!=params.itemType" >
+        and ccm.ITEM_TYPE = #{params.itemType,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.paperType and ''!=params.paperType" >
+        and ccm.PAPER_TYPE = #{params.paperType,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.paperNo and ''!=params.paperNo" >
+        and ccm.PAPER_NO = #{params.paperNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ioFlag and ''!=params.ioFlag" >
+        and ccm.IO_FLAG = #{params.ioFlag,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.preFlag and ''!=params.preFlag" >
+        and ccm.PRE_FLAG = #{params.preFlag,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.startCreatetm and ''!=params.startCreatetm" >
+       	<![CDATA[
+       		and ccm.CREATEDT >= to_date('${params.startCreatetm} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+      	]]>
+      </if>
+      <if test="null!=params.endCreatetm and ''!=params.endCreatetm" >
+       	<![CDATA[
+       		and ccm.CREATEDT <= to_date('${params.endCreatetm} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+      	]]>
+      </if>
+    </if>
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from CON_CONTENT_MOVE
+    where ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </select>
+  
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from (
+    	select 
+	    <include refid="Base_Column_List_Join" />,
+	    (select ld.ITEMNAME from LOOKUPDTL ld where ccm.ITEM_TYPE = ld.itemval and ld.lookupcode = 'ITEM_TYPE' and rownum = 1) as itemTypeStr,
+	    (select ld.ITEMNAME from LOOKUPDTL ld where ccm.QUALITY = ld.itemval and ld.lookupcode = 'AREA_QUALITY' and rownum = 1) as qualityStr,
+	    (select ld.ITEMNAME from LOOKUPDTL ld where ccm.IO_FLAG = ld.itemval and ld.lookupcode = 'CITY_IO_FLAG' and rownum = 1) as ioFlagStr,   
+	    (select ld.ITEMNAME from LOOKUPDTL ld where ccm.PRE_FLAG = ld.itemval and ld.lookupcode = 'CITY_PRE_FLAG' and rownum = 1) as preFlagStr
+	     from CON_CONTENT_MOVE ccm 
+	     	inner join item itm 
+	     		on itm.item_no = ccm.item_no
+	     		<include refid="d_AuthorityCondition" />
+	     	left join BILL_ACC_CONTROL bac
+		 		on ccm.paper_type = bac.paper_type
+		   		and ccm.io_flag = bac.io_flag
+		 	left join CM_DEFCELL cdc
+		    	on cdc.locno = ccm.locno
+		   		and cdc.cell_no = ccm.cell_no
+		 	left join cm_defarea cda
+		    	on cda.locno = cdc.locno
+		   		and cda.ware_no = cdc.ware_no
+		   		and cda.area_no = cdc.area_no
+		    left join item_barcode b
+			    ON ccm.item_no = b.item_no
+	           	and ccm.barcode = b.barcode
+	           	and b.package_id = 0         
+	     where 1=1 
+	    <include refid="condition_join" />
+	    order by ccm.CREATEDT desc
+    )
+    	
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    ccm.ROW_ID , 
+    ccm.CELL_ID as cellNo,
+    ccm.LOCNO, 
+    ccm.CELL_NO, 
+    ccm.ITEM_NO as itemNo, 
+    ccm.BARCODE as barcode, 
+    ccm.ITEM_TYPE as itemType, 
+    ccm.QUALITY as quality, 
+    ccm.OWNER_NO, 
+    ccm.SUPPLIER_NO, 
+    ccm.BOX_NO, 
+    ccm.MOVE_QTY as moveQty, 
+    ccm.BALANCE_QTY, 
+    ccm.DIRECTION, 
+    ccm.PAPER_NO as paperNo, 
+    ccm.PAPER_TYPE, 
+    ccm.IO_FLAG, 
+    ccm.CREATOR, 
+    ccm.CREATETM, 
+    ccm.CREATEDT as createdt, 
+    ccm.PRE_FLAG, 
+    ccm.SEQ_ID, 
+    ccm.STATUS_TRANS, 
+    ccm.PACK_QTY, 
+    ccm.TERMINAL_FLAG,
+    cda.AREA_NO,
+    itm.ITEM_NAME as itemName,
+    b.SIZE_NO as sizeNo,
+    bac.BILL_NAME as billName,
+    cda.AREA_NAME as areaName,
+    (select ld.ITEMNAME from LOOKUPDTL ld where ccm.ITEM_TYPE = ld.itemval and ld.lookupcode = 'ITEM_TYPE' and rownum = 1) as itemTypeStr,
+    (select ld.ITEMNAME from LOOKUPDTL ld where ccm.QUALITY = ld.itemval and ld.lookupcode = 'AREA_QUALITY' and rownum = 1) as qualityStr,
+    (select ld.ITEMNAME from LOOKUPDTL ld where ccm.IO_FLAG = ld.itemval and ld.lookupcode = 'CITY_IO_FLAG' and rownum = 1) as ioFlagStr,
+     (select ld.ITEMNAME from LOOKUPDTL ld where ccm.PRE_FLAG = ld.itemval and ld.lookupcode = 'CITY_PRE_FLAG' and rownum = 1) as preFlagStr
+     from CON_CONTENT_MOVE ccm 
+     	inner join item itm 
+     		on itm.item_no = ccm.item_no
+     		<include refid="d_AuthorityCondition" />
+     	left join BILL_ACC_CONTROL bac
+	 		on ccm.paper_type = bac.paper_type
+	   		and ccm.io_flag = bac.io_flag
+	 	left join CM_DEFCELL cdc
+	    	on cdc.locno = ccm.locno
+	   		and cdc.cell_no = ccm.cell_no
+	 	left join cm_defarea cda
+	    	on cda.locno = cdc.locno
+	   		and cda.ware_no = cdc.ware_no
+	   		and cda.area_no = cdc.area_no
+	    left join item_barcode b
+		    ON ccm.item_no = b.item_no
+           	and ccm.barcode = b.barcode
+           	and b.package_id = 0         
+     where 1=1 
+    <include refid="condition_join" />
+    <choose>
+	    <when test="orderByField != null and ''!=orderByField">
+			order by ${orderByField}
+			<if test="orderByField">
+			${orderBy}
+			</if>
+		</when>
+		<otherwise>
+			order by ccm.CREATEDT desc
+		</otherwise>
+    </choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+  	select sum(nvl(ccm.MOVE_QTY,0))MOVE_QTY 
+  	from CON_CONTENT_MOVE ccm 
+     	inner join item itm 
+     		on itm.item_no = ccm.item_no
+     		<include refid="d_AuthorityCondition" />
+     	left join BILL_ACC_CONTROL bac
+	 		on ccm.paper_type = bac.paper_type
+	   		and ccm.io_flag = bac.io_flag
+	 	left join CM_DEFCELL cdc
+	    	on cdc.locno = ccm.locno
+	   		and cdc.cell_no = ccm.cell_no
+	 	left join cm_defarea cda
+	    	on cda.locno = cdc.locno
+	   		and cda.ware_no = cdc.ware_no
+	   		and cda.area_no = cdc.area_no
+	    left join item_barcode b
+		    ON ccm.item_no = b.item_no
+           	and ccm.barcode = b.barcode
+           	and b.package_id = 0         
+     where 1=1 
+    <include refid="condition_join" />
+  </select>
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from CON_CONTENT_MOVE where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from CON_CONTENT_MOVE
+    where ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.ConContentMove" >
+    delete from CON_CONTENT_MOVE
+    where ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.ConContentMove" >
+    insert into CON_CONTENT_MOVE (ROW_ID, CELL_ID, LOCNO, 
+      CELL_NO, ITEM_NO, BARCODE, 
+      ITEM_TYPE, QUALITY, OWNER_NO, 
+      SUPPLIER_NO, BOX_NO, MOVE_QTY, 
+      BALANCE_QTY, DIRECTION, PAPER_NO, 
+      PAPER_TYPE, IO_FLAG, CREATOR, 
+      CREATETM, CREATEDT, PRE_FLAG, 
+      SEQ_ID, STATUS_TRANS, PACK_QTY, 
+      TERMINAL_FLAG)
+    values (#{rowId,jdbcType=DECIMAL}, #{cellId,jdbcType=DECIMAL}, #{locno,jdbcType=VARCHAR}, 
+      #{cellNo,jdbcType=VARCHAR}, #{itemNo,jdbcType=VARCHAR}, #{barcode,jdbcType=VARCHAR}, 
+      #{itemType,jdbcType=VARCHAR}, #{quality,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, 
+      #{supplierNo,jdbcType=VARCHAR}, #{boxNo,jdbcType=VARCHAR}, #{moveQty,jdbcType=DECIMAL}, 
+      #{balanceQty,jdbcType=DECIMAL}, #{direction,jdbcType=DECIMAL}, #{paperNo,jdbcType=VARCHAR}, 
+      #{paperType,jdbcType=VARCHAR}, #{ioFlag,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
+      #{createtm,jdbcType=TIMESTAMP}, #{createdt,jdbcType=TIMESTAMP}, #{preFlag,jdbcType=VARCHAR}, 
+      #{seqId,jdbcType=DECIMAL}, #{statusTrans,jdbcType=VARCHAR}, #{packQty,jdbcType=DECIMAL}, 
+      #{terminalFlag,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.ConContentMove" >
+    insert into CON_CONTENT_MOVE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="rowId != null" >
+        ROW_ID,
+      </if>
+      <if test="cellId != null" >
+        CELL_ID,
+      </if>
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="barcode != null" >
+        BARCODE,
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE,
+      </if>
+      <if test="quality != null" >
+        QUALITY,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="supplierNo != null" >
+        SUPPLIER_NO,
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO,
+      </if>
+      <if test="moveQty != null" >
+        MOVE_QTY,
+      </if>
+      <if test="balanceQty != null" >
+        BALANCE_QTY,
+      </if>
+      <if test="direction != null" >
+        DIRECTION,
+      </if>
+      <if test="paperNo != null" >
+        PAPER_NO,
+      </if>
+      <if test="paperType != null" >
+        PAPER_TYPE,
+      </if>
+      <if test="ioFlag != null" >
+        IO_FLAG,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="createdt != null" >
+        CREATEDT,
+      </if>
+      <if test="preFlag != null" >
+        PRE_FLAG,
+      </if>
+      <if test="seqId != null" >
+        SEQ_ID,
+      </if>
+      <if test="statusTrans != null" >
+        STATUS_TRANS,
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY,
+      </if>
+      <if test="terminalFlag != null" >
+        TERMINAL_FLAG,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="rowId != null" >
+        #{rowId,jdbcType=DECIMAL},
+      </if>
+      <if test="cellId != null" >
+        #{cellId,jdbcType=DECIMAL},
+      </if>
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null" >
+        #{barcode,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null" >
+        #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="boxNo != null" >
+        #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="moveQty != null" >
+        #{moveQty,jdbcType=DECIMAL},
+      </if>
+      <if test="balanceQty != null" >
+        #{balanceQty,jdbcType=DECIMAL},
+      </if>
+      <if test="direction != null" >
+        #{direction,jdbcType=DECIMAL},
+      </if>
+      <if test="paperNo != null" >
+        #{paperNo,jdbcType=VARCHAR},
+      </if>
+      <if test="paperType != null" >
+        #{paperType,jdbcType=VARCHAR},
+      </if>
+      <if test="ioFlag != null" >
+        #{ioFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdt != null" >
+        #{createdt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="preFlag != null" >
+        #{preFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="seqId != null" >
+        #{seqId,jdbcType=DECIMAL},
+      </if>
+      <if test="statusTrans != null" >
+        #{statusTrans,jdbcType=VARCHAR},
+      </if>
+      <if test="packQty != null" >
+        #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="terminalFlag != null" >
+        #{terminalFlag,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.ConContentMove" >
+    update CON_CONTENT_MOVE
+    <set >
+      <if test="cellId != null" >
+        CELL_ID = #{cellId,jdbcType=DECIMAL},
+      </if>
+      <if test="locno != null" >
+        LOCNO = #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO = #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO like '%${itemNo}%'
+      </if>
+      <if test="barcode != null" >
+        BARCODE like '%${barcode}%'
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        QUALITY = #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        SUPPLIER_NO = #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO = #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="moveQty != null" >
+        MOVE_QTY = #{moveQty,jdbcType=DECIMAL},
+      </if>
+      <if test="balanceQty != null" >
+        BALANCE_QTY = #{balanceQty,jdbcType=DECIMAL},
+      </if>
+      <if test="direction != null" >
+        DIRECTION = #{direction,jdbcType=DECIMAL},
+      </if>
+      <if test="paperNo != null" >
+        PAPER_NO = #{paperNo,jdbcType=VARCHAR},
+      </if>
+      <if test="paperType != null" >
+        PAPER_TYPE = #{paperType,jdbcType=VARCHAR},
+      </if>
+      <if test="ioFlag != null" >
+        IO_FLAG = #{ioFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdt != null" >
+        CREATEDT = #{createdt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="preFlag != null" >
+        PRE_FLAG = #{preFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="seqId != null" >
+        SEQ_ID = #{seqId,jdbcType=DECIMAL},
+      </if>
+      <if test="statusTrans != null" >
+        STATUS_TRANS = #{statusTrans,jdbcType=VARCHAR},
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="terminalFlag != null" >
+        TERMINAL_FLAG = #{terminalFlag,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.ConContentMove" >
+    update CON_CONTENT_MOVE
+    set CELL_ID = #{cellId,jdbcType=DECIMAL},
+      LOCNO = #{locno,jdbcType=VARCHAR},
+      CELL_NO = #{cellNo,jdbcType=VARCHAR},
+      ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      BARCODE = #{barcode,jdbcType=VARCHAR},
+      ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+      QUALITY = #{quality,jdbcType=VARCHAR},
+      OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      SUPPLIER_NO = #{supplierNo,jdbcType=VARCHAR},
+      BOX_NO = #{boxNo,jdbcType=VARCHAR},
+      MOVE_QTY = #{moveQty,jdbcType=DECIMAL},
+      BALANCE_QTY = #{balanceQty,jdbcType=DECIMAL},
+      DIRECTION = #{direction,jdbcType=DECIMAL},
+      PAPER_NO = #{paperNo,jdbcType=VARCHAR},
+      PAPER_TYPE = #{paperType,jdbcType=VARCHAR},
+      IO_FLAG = #{ioFlag,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      CREATEDT = #{createdt,jdbcType=TIMESTAMP},
+      PRE_FLAG = #{preFlag,jdbcType=VARCHAR},
+      SEQ_ID = #{seqId,jdbcType=DECIMAL},
+      STATUS_TRANS = #{statusTrans,jdbcType=VARCHAR},
+      PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      TERMINAL_FLAG = #{terminalFlag,jdbcType=VARCHAR}
+    where ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+  
+  <!-- 根据单号查询三记账 箱号 -->
+  <select id="selectConContentMoveBoxNo"  parameterType="java.util.Map" resultMap="BaseResultMap">
+		SELECT m.box_no boxNo,max(m.cell_no) cellNo 
+		FROM con_content_move m WHERE 
+		 m.paper_no = #{params.paperNo,jdbcType=VARCHAR} 
+		 and m.locno = #{params.locno,jdbcType=VARCHAR} 
+		  and m.paper_type = #{params.paperType,jdbcType=VARCHAR} 
+		   and m.io_flag = #{params.ioFlag,jdbcType=VARCHAR} 
+		 and m.box_no IS NOT NULL AND m.box_no !='N' AND m.cell_no IS NOT NULL AND m.cell_no !='N'
+		group by m.box_no
+  </select>
+  
+</mapper>

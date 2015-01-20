@@ -1,0 +1,1261 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillImReceiptDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillImReceiptDtl" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="RECEIPT_NO" property="receiptNo" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+    <result column="IMPORT_NO" property="importNo" jdbcType="VARCHAR" />
+    <result column="BOX_NO" property="boxNo" jdbcType="VARCHAR" />
+    <result column="QC_WORKER" property="qcWorker" jdbcType="VARCHAR" />
+    <result column="IQC_STATUS" property="iqcStatus" jdbcType="VARCHAR" />
+    <result column="CHECK_WORKER1" property="checkWorker1" jdbcType="VARCHAR" />
+    <result column="CHECK_WORKER2" property="checkWorker2" jdbcType="VARCHAR" />
+    <result column="BATCH_SERIAL_NO" property="batchSerialNo" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+    <result column="STYLE_NO" property="styleNo" jdbcType="VARCHAR" />
+    <result column="UNIT_NAME" property="unitName" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="SIZE_KIND" property="sizeKind" jdbcType="VARCHAR" />
+    <result column="PACK_QTY" property="packQty" jdbcType="DECIMAL" />
+    <result column="RECEIPT_QTY" property="receiptQty" jdbcType="DECIMAL" />
+    <result column="CHECK_QTY" property="checkQty" jdbcType="DECIMAL" />
+    <result column="ITEM_TYPE" property="itemType" jdbcType="VARCHAR" />
+    <result column="QUALITY" property="quality" jdbcType="VARCHAR" />
+    <result column="SYS_NO" property="sysNo" jdbcType="VARCHAR" />
+    <result column="barcode" property="barcode" jdbcType="VARCHAR" />
+    <result column="color_name" property="colorName" jdbcType="VARCHAR" />
+    <result column="brandName" property="brandName" jdbcType="VARCHAR" />    
+    <result column="brand_name" property="brandName" jdbcType="VARCHAR" />    
+    <result column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+    <result column="CELL_ID" property="cellId" jdbcType="DECIMAL" />
+    <result column="BRAND_NO" property="brandNo" jdbcType="VARCHAR" />
+    <result column="PAN_NO" property="panNo" jdbcType="VARCHAR" />
+    <result column="DIF_FLAG" property="difFlag" jdbcType="VARCHAR" />
+    <result column="DIVIDE_QTY" property="divideQty" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, RECEIPT_NO, OWNER_NO, ROW_ID, IMPORT_NO, BOX_NO,
+    QC_WORKER, IQC_STATUS, CHECK_WORKER1, BRAND_NO,
+    CHECK_WORKER2, BATCH_SERIAL_NO, STATUS, ITEM_NO, SIZE_NO, PACK_QTY, RECEIPT_QTY, 
+    CHECK_QTY,ITEM_TYPE,QUALITY,CELL_NO,CELL_ID,PAN_NO,DIVIDE_QTY
+  </sql>
+  <sql id="Extend_Column_List" >
+    LOCNO, RECEIPT_NO, OWNER_NO, ROW_ID, IMPORT_NO, BOX_NO, 
+    QC_WORKER, IQC_STATUS, CHECK_WORKER1, 
+    CHECK_WORKER2, BATCH_SERIAL_NO, STATUS, b.ITEM_NO,i.ITEM_NAME, SIZE_NO, 
+    i.STYLE_NO,i.UNIT_NAME,PACK_QTY, RECEIPT_QTY, CHECK_QTY
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+       <if test="null!=params.receiptNo and ''!=params.receiptNo" >
+         and RECEIPT_NO=#{params.receiptNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+         and LOCNO=#{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.importNo and ''!=params.importNo" >
+         and IMPORT_NO=#{params.importNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+         and OWNER_NO=#{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+       <if test="null!=params.itemNo and ''!=params.itemNo" >
+         and ITEM_NO=#{params.itemNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.sizeNo and ''!=params.sizeNo" >
+         and SIZE_NO=#{params.sizeNo,jdbcType=VARCHAR}
+      </if>
+       <if test="null!=params.boxNo and ''!=params.boxNo" >
+         and BOX_NO=#{params.boxNo,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+  
+<sql id="extend_condition" >
+	
+	<!--   
+    <if test="null!=dtl" >
+       <if test="null!=dtl.receiptNo and ''!=dtl.receiptNo" >
+         and d.RECEIPT_NO=#{dtl.receiptNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=dtl.locno and ''!=dtl.locno" >
+         and d.LOCNO=#{dtl.locno,jdbcType=VARCHAR}
+      </if>
+    </if>
+    -->
+    
+    <if test="null!=item" >
+		<if test="null!=item.brandNo and ''!=item.brandNo" >
+         and i.brand_No=#{item.brandNo,jdbcType=VARCHAR}
+      	</if>
+      	<if test="null!=item.itemStatus and ''!=item.itemStatus" >
+         and i.item_status=#{item.itemStatus,jdbcType=VARCHAR}
+      	</if>
+       	<if test="null!=item.itemNo and ''!=item.itemNo" >
+         and i.ITEM_NO LIKE '%${item.itemNo}%'
+      	</if>
+      	<if test="null!=item.itemName and ''!=item.itemName" >
+         and i.item_name LIKE '%${item.itemName}%'
+      	</if>
+      	<if test="null!=item.sysNo and ''!=item.sysNo" >
+         and i.sys_no=#{item.sysNo,jdbcType=VARCHAR}
+      	</if>
+       	<if test="null!=item.barcode and ''!=item.barcode" >
+         and b.barcode LIKE '%${item.barcode}%'
+      	</if>
+     </if>
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillImReceiptDtlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_IM_RECEIPT_DTL 
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RECEIPT_NO = #{receiptNo,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_IM_RECEIPT_DTL where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Extend_Column_List" />
+     from BILL_IM_RECEIPT_DTL b left outer join ITEM i on i.ITEM_NO = b.ITEM_NO where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+	  select sum(nvl(d.receipt_Qty,0)) receipt_Qty ,sum(nvl(d.check_Qty,0))  check_Qty,sum(nvl(d.divide_Qty,0)) divide_Qty 
+	  from BILL_IM_RECEIPT_DTL d WHERE d.receipt_no = #{params.receiptNo}
+	         AND d.locno = #{params.locno}
+	         <include refid="d_AuthorityCondition" />
+  </select> 
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_IM_RECEIPT_DTL where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="select4Export" resultMap="BaseResultMap" parameterType="map" >
+    	select d.import_no,
+		       d.item_no,
+		       d.box_no,
+		       d.size_no,
+		       max(i.item_name) item_name,
+		       max(b.brand_name) brand_name,
+		       max(i.size_kind) size_kind,
+		       sum(d.receipt_qty) receipt_qty
+		  from bill_im_receipt_dtl d
+		  left join item i
+		    on i.item_no = d.item_no
+		  left join brand b
+		    on b.brand_no = i.brand_no
+		   and b.sys_no = i.sys_no
+		 where d.receipt_no = #{params.receiptNo,jdbcType=VARCHAR}
+		   and locno = #{params.locno,jdbcType=VARCHAR}
+		 group by d.import_no, d.item_no, d.box_no, d.size_no
+		 order by d.import_no, d.item_no, d.size_no
+  </select>
+  <!--查询最大的rowId-->
+   <select id="selectMaxRowId" resultType="java.lang.Integer"  parameterType="com.yougou.logistics.city.common.model.BillImReceipt">
+    select nvl(max(ROW_ID),0) as s from BILL_IM_RECEIPT_DTL where 1=1 
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and RECEIPT_NO = #{receiptNo,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+  </select>
+  
+  <!--权限过滤查询条件-->
+  <sql id="i_AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and i.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <!--根据箱号分组显示详情-->
+  
+  <select id="selectDetailCount" resultType="java.lang.Integer">
+  	 select count(1) from(
+  	   select count(1)
+     	FROM (SELECT d.locno,
+		               d.box_no,
+		               MAX(d.item_no) AS item_no,
+		               d.OWNER_NO,
+		               d.RECEIPT_NO,
+		               SUM(d.receipt_qty) qty,
+		               d.import_no
+		          FROM bill_im_receipt_dtl d
+		         GROUP BY d.locno, d.box_no, d.OWNER_NO, d.RECEIPT_NO,d.import_no) t
+		  LEFT JOIN item i
+		    ON i.item_no = t.item_no
+		  LEFT JOIN brand d
+		    ON i.brand_no = d.brand_no
+		  LEFT JOIN bill_im_import im
+		    ON im.locno = t.locno
+		   AND im.import_no = t.import_no
+		  LEFT JOIN (SELECT d.locno, d.import_no, d.box_no, d.deliver_no
+		               FROM bill_im_import_dtl d
+		              GROUP BY d.locno, d.import_no, d.box_no, d.deliver_no) imd
+		    ON t.locno = imd.locno
+		   AND im.import_no = imd.import_no
+		   AND t.box_no = imd.box_no
+	       where t.RECEIPT_NO = #{params.receiptNo,jdbcType=VARCHAR}
+	       and t.locno=#{params.locno,jdbcType=VARCHAR}
+	       <include refid="i_AuthorityCondition" />
+	       group by t.box_no,
+             t.locno,
+             d.brand_name,
+             im.s_po_no,
+             imd.deliver_no)
+  </select>
+  
+  <select id="selectDetail" resultType="com.yougou.logistics.city.common.dto.BillImImportDtlDto">
+  	  select B.* from (select A.*,rownum rn from(
+		  SELECT  wmsys.wm_concat(im.import_no ) importNo,
+		       t.locno        locno,
+		       t.box_no       boxNo,
+		       d.brand_name   brandName,
+		       im.s_po_no     spoNo,
+		       imd.deliver_no deliverNo,
+		       sum(t.qty)    qty,
+		       t.panNo
+		  FROM (SELECT d.locno,
+		               d.box_no,
+		               MAX(d.item_no) AS item_no,
+		               d.OWNER_NO,
+		               d.RECEIPT_NO,
+		               SUM(d.receipt_qty) qty,
+		               d.import_no,
+		               max(d.PAN_NO) panNo
+		          FROM bill_im_receipt_dtl d
+		         GROUP BY d.locno, d.box_no, d.OWNER_NO, d.RECEIPT_NO,d.import_no) t
+		  LEFT JOIN item i
+		    ON i.item_no = t.item_no
+		  LEFT JOIN brand d
+		    ON i.brand_no = d.brand_no
+		  LEFT JOIN bill_im_import im
+		    ON im.locno = t.locno
+		   AND im.import_no = t.import_no
+		  LEFT JOIN (SELECT d.locno, d.import_no, d.box_no, d.deliver_no
+		               FROM bill_im_import_dtl d
+		              GROUP BY d.locno, d.import_no, d.box_no, d.deliver_no) imd
+		    ON t.locno = imd.locno
+		   AND im.import_no = imd.import_no
+		   AND t.box_no = imd.box_no
+	       where t.RECEIPT_NO = #{params.receiptNo,jdbcType=VARCHAR}
+	        and t.locno=#{params.locno,jdbcType=VARCHAR}
+	         <include refid="i_AuthorityCondition" />
+	         group by t.box_no, t.locno, d.brand_name,
+             im.s_po_no, imd.deliver_no, t.panNo
+	  ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  
+    <select id="selectPrepareDivideDetailCount" resultType="java.lang.Integer">  	
+  	   select count(1)
+     	FROM (
+     	      SELECT d.locno, d.box_no, d.OWNER_NO, d.RECEIPT_NO
+        FROM bill_im_receipt_dtl d
+       where d.RECEIPT_NO = #{params.receiptNo,jdbcType=VARCHAR}
+         and d.locno = #{params.locno,jdbcType=VARCHAR}
+         <include refid="d_AuthorityCondition" />
+       GROUP BY d.locno, d.box_no, d.OWNER_NO, d.RECEIPT_NO
+     	) t
+  </select>
+  
+  <select id="selectPrepareDivideDetail" resultType="com.yougou.logistics.city.common.model.BillImReceiptDtl">
+   select B.* from (select A.*,rownum rn from(
+      SELECT d.box_no as boxNo,
+             max(d.cell_no) as cellNo,
+             SUM(d.receipt_qty) receiptQty
+        FROM bill_im_receipt_dtl d
+       where d.RECEIPT_NO = #{params.receiptNo,jdbcType=VARCHAR}
+         and d.locno = #{params.locno,jdbcType=VARCHAR}
+         <include refid="d_AuthorityCondition" />
+       GROUP BY d.locno, d.box_no, d.OWNER_NO, d.RECEIPT_NO
+	  ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  
+  <select id="selectDetailAll" resultType="com.yougou.logistics.city.common.dto.BillImImportDtlDto">
+  	   select im.import_no importNo,
+          t.locno locno,
+          t.box_no boxNo,
+          d.brand_name brandName,
+          im.po_no poNo,
+          c.qty qty,
+          t.pan_no panNo
+     from (select d.locno, d.box_no, max(d.item_no) as item_no,d.OWNER_NO,d.RECEIPT_NO,max(d.pan_no) pan_no
+             from bill_im_receipt_dtl d
+            group by d.locno, d.box_no,d.OWNER_NO,d.RECEIPT_NO
+            ) t
+     left join item i
+       on i.item_no = t.item_no
+     left join brand d
+       on i.brand_no = d.brand_no
+     left join con_box c
+       on c.locno = t.locno
+      and c.box_no = t.box_no
+     left join bill_im_import im
+       on im.locno = t.locno
+      and im.import_no = c.s_import_no
+       where t.RECEIPT_NO = #{params.receiptNo,jdbcType=VARCHAR}
+        and t.locno=#{params.locno,jdbcType=VARCHAR}
+  </select>
+  
+
+  <!-- 根据预到货通知单号查询 -->
+  <select id="selectBoxNoByImportNo" resultType="java.lang.String" parameterType="java.lang.String">
+  	   select distinct rd.box_no  
+  	   from  Bill_Im_Receipt_Dtl rd  
+  	   where rd.import_no = #{params.importNo,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectImportNoByReceiptNo" parameterType="com.yougou.logistics.city.common.model.BillImReceiptDtl" resultType="com.yougou.logistics.city.common.model.BillImReceiptDtl">
+  	   SELECT IMPORT_NO importNo, LOCNO, OWNER_NO ownerNo
+       FROM BILL_IM_RECEIPT_DTL
+       where RECEIPT_NO=#{dtl.receiptNo,jdbcType=VARCHAR} and  LOCNO = #{dtl.locno,jdbcType=VARCHAR}
+       and OWNER_NO = #{dtl.ownerNo,jdbcType=VARCHAR}
+       GROUP BY IMPORT_NO, LOCNO, OWNER_NO
+       
+  </select>
+  
+  
+  <!--权限过滤查询条件-->
+  <sql id="AuthorityConditionReceiptDtl" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and b.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <select id="selectAllDetailByReciptNo" parameterType="com.yougou.logistics.city.common.model.BillImReceipt" resultMap="BaseResultMap">
+  	   select 
+	    b.LOCNO, b.RECEIPT_NO, b.OWNER_NO, <!-- IMPORT_NO, --> b.BOX_NO, 
+	    b.QC_WORKER, b.IQC_STATUS, b.CHECK_WORKER1, 
+	    b.CHECK_WORKER2, b.BATCH_SERIAL_NO, b.STATUS, b.ITEM_NO,
+	    i.ITEM_NAME, b.SIZE_NO, i.STYLE_NO,
+	    i.UNIT_NAME,b.PACK_QTY, sum(b.RECEIPT_QTY) as poQty, 
+	    i.sys_no as sysNo,b.ITEM_TYPE,b.QUALITY,max(i.brand_no) brand_no,
+	    (select ld.ITEMNAME from LOOKUPDTL ld where b.ITEM_TYPE = ld.itemval and ld.lookupcode = 'ITEM_TYPE' and rownum = 1) as itemTypeStr,
+	    (select ld.ITEMNAME from LOOKUPDTL ld where b.QUALITY = ld.itemval and ld.lookupcode = 'AREA_QUALITY' and rownum = 1) as qualityStr,
+	    (select ib.barcode from item_barcode ib 
+	           where ib.item_no= b.item_no
+	           and ib.size_no = b.size_no
+	           and ib.package_id = 0
+	           <!-- and ib.pack_qty = urd.pack_qty  -->
+	           and rownum=1) as barcode,
+	    nvl(sum(b.CHECK_QTY),0) CHECK_QTY
+	     from BILL_IM_RECEIPT_DTL b 
+	     	left join bill_im_import ii 
+	     		on (b.import_no=ii.import_no and b.locno=ii.locno and b.owner_no=ii.owner_no)
+	     	left outer join ITEM i 
+	     		on i.ITEM_NO = b.ITEM_NO 
+	     	where 1=1 
+	      	 AND nvl(b.check_qty,0) &lt; nvl(b.RECEIPT_QTY,0)
+	         and b.RECEIPT_NO=#{dtl.receiptNo,jdbcType=VARCHAR}
+	         and b.LOCNO=#{dtl.locno,jdbcType=VARCHAR} 
+	         and ii.STATUS !='91'
+	         and exists(
+	         	select 'X' from con_box cb
+	         		where cb.locno = b.locno
+	         		and cb.box_no = b.box_no
+	         		and cb.status = '1'
+	         )
+	         <include refid="AuthorityConditionReceiptDtl" />
+		  group by b.LOCNO,
+	          b.RECEIPT_NO,
+	          b.OWNER_NO,
+	           <!-- IMPORT_NO, -->
+	          b.BOX_NO,
+	          b.QC_WORKER,
+	          b.IQC_STATUS,
+	          b.CHECK_WORKER1,
+	          b.CHECK_WORKER2,
+	          b.BATCH_SERIAL_NO,
+	          b.STATUS,
+	          b.ITEM_NO,
+	          i.ITEM_NAME,
+	          b.SIZE_NO,
+	          i.STYLE_NO,
+	          i.UNIT_NAME,
+	          b.PACK_QTY,
+	          i.sys_no,
+	          b.ITEM_TYPE,
+	          b.QUALITY
+  </select>
+  
+  <!--权限过滤查询条件-->
+  <sql id="AuthorityConditionReceiptItemDtl" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and i.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+<select id="selectItemNotInReceiptCount" parameterType="com.yougou.logistics.city.common.model.BillImReceipt" resultType="java.lang.Integer">
+	  SELECT count(1)
+	    FROM item i
+	   INNER JOIN Size_Info s
+	      ON i.size_kind = s.size_kind
+	   INNER JOIN item_barcode b
+	      ON b.size_no = s.size_no
+	     AND i.item_no = b.item_no
+	     AND b.package_id = 0 
+	   <!--INNER JOIN (SELECT DISTINCT locno, receipt_no, item_no
+	                 FROM bill_im_receipt_dtl) d
+	      ON d.item_no = i.item_no-->
+	    LEFT JOIN color_info c
+	      ON c.color_no = i.color_no
+	    left join brand bd
+        	on bd.brand_no = i.brand_no
+	   WHERE 1=1
+	   <!--s.size_no NOT IN
+	         (SELECT b.size_no
+	            FROM bill_im_receipt_dtl b
+	           WHERE b.locno = d.locno
+	             AND b.receipt_no = d.receipt_no)-->
+	   <include refid="extend_condition" />
+	   <include refid="AuthorityConditionReceiptItemDtl" />
+    </select>
+  
+    <select id="selectItemNotInReceipt" parameterType="com.yougou.logistics.city.common.model.BillImReceipt" resultMap="BaseResultMap">
+	  select B.* from (select A.*,rownum rn from(
+	  SELECT i.item_no, i.item_name, s.size_no, i.style_no, c.color_name,
+	  b.barcode,i.sys_no as sysNo,bd.brand_name as brandName,i.brand_no
+	    FROM item i
+	   INNER JOIN Size_Info s
+	      ON i.size_kind = s.size_kind
+	   INNER JOIN item_barcode b
+	      ON b.size_no = s.size_no
+	     AND i.item_no = b.item_no
+	     AND b.package_id = 0
+	     <!--  
+	   	INNER JOIN (SELECT DISTINCT locno, receipt_no, item_no,pack_qty
+	                 FROM bill_im_receipt_dtl) d
+	      ON d.item_no = i.item_no-->
+	    LEFT JOIN color_info c
+	      ON c.color_no = i.color_no
+	    left join brand bd
+        	on bd.brand_no = i.brand_no
+	   WHERE 1=1
+	   	<!-- s.size_no NOT IN
+	         (SELECT b.size_no
+	            FROM bill_im_receipt_dtl b
+	           WHERE b.locno = d.locno
+	             AND b.receipt_no = d.receipt_no) -->
+	    <include refid="extend_condition" />
+	    <include refid="AuthorityConditionReceiptItemDtl" />
+      ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+    </select>
+  
+  <select id="selectDtlByItemNoAndSizeNo" parameterType="com.yougou.logistics.city.common.model.BillImReceiptDtl"  resultType="java.lang.Integer">
+	SELECT count(1)
+	  FROM bill_im_receipt_dtl d
+	 WHERE d.locno = #{dtl.locno,jdbcType=VARCHAR}
+	   AND d.receipt_no = #{dtl.receiptNo,jdbcType=VARCHAR}
+	   AND d.item_no = #{dtl.itemNo,jdbcType=VARCHAR}
+	   AND d.size_no = #{dtl.sizeNo,jdbcType=VARCHAR}
+  </select>
+  
+    <select id="selectDtlByItemNo" resultMap="BaseResultMap" resultType="com.yougou.logistics.city.common.model.BillImReceiptDtl">
+	SELECT *
+	  FROM bill_im_receipt_dtl d
+	 WHERE d.locno = #{dtl.locno,jdbcType=VARCHAR}
+	   AND d.receipt_no = #{dtl.receiptNo,jdbcType=VARCHAR}
+	   AND d.item_no = #{dtl.itemNo,jdbcType=VARCHAR}
+	   and rownum =1
+  </select>
+  
+  <!--权限过滤查询条件-->
+  <sql id="d_AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and d.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <!-- 按商品展示信息 -->
+  	<select id="selectItemDetail4PrepareCount" resultType="java.lang.Integer">
+		select count(*) from (
+		SELECT 1
+		  FROM bill_im_receipt_dtl d
+		  LEFT JOIN item i
+		    ON i.item_no = d.item_no
+		  LEFT JOIN color_info c
+		    ON c.color_no = i.color_no
+		  LEFT JOIN brand b
+		    ON b.brand_no = i.brand_no
+		  LEFT JOIN bill_im_import im
+		    ON im.locno = d.locno
+		   AND im.import_no = d.import_no
+		  LEFT JOIN (SELECT d.locno, d.import_no,max(d.deliver_no) deliver_no
+		               FROM bill_im_import_dtl d
+		              GROUP BY d.locno, d.import_no) imd
+		    ON d.locno = imd.locno
+		   AND im.import_no = imd.import_no
+	   WHERE d.receipt_no = #{params.receiptNo}
+	         AND d.locno = #{params.locno}
+	         <include refid="d_AuthorityCondition" />
+	     group by d.box_no,d.item_no,d.size_no
+	     ) sub
+	</select> 
+	<select id="selectItemDetail4Prepare" resultType="com.yougou.logistics.city.common.model.BillImReceiptDtl">
+		select B.* from (select A.*,rownum rn from(
+			SELECT 
+			   max(d.import_no) importNo,
+		       d.item_no itemNo,
+		       max(i.item_name) itemName,
+		       max(c.color_name) colorName,
+		       d.size_no sizeNo,
+		       d.box_no boxNo,
+		       max(b.brand_name) brandName,
+		       sum(d.receipt_qty) receiptQty,
+		       sum(d.check_qty) checkQty,
+		       sum(d.divide_qty) divideQty,
+		       max(im.s_po_no) poNo,
+		       max(imd.deliver_no) deliverNo,
+		       max(d.cell_no) as cellNo,
+		       max(d.check_worker1) as checkWorker1,
+       			max(rs.check_no) checkNo
+		  FROM bill_im_receipt_dtl d
+		  LEFT JOIN item i
+		    ON i.item_no = d.item_no
+		  LEFT JOIN color_info c
+		    ON c.color_no = i.color_no
+		  LEFT JOIN brand b
+		    ON b.brand_no = i.brand_no
+		  LEFT JOIN bill_im_import im
+		    ON im.locno = d.locno
+		   AND im.import_no = d.import_no
+		  LEFT JOIN (SELECT d.locno, d.import_no, max(d.deliver_no) deliver_no
+		               FROM bill_im_import_dtl d
+		              GROUP BY d.locno, d.import_no) imd
+		    ON d.locno = imd.locno
+		   AND im.import_no = imd.import_no
+		   left join (select cd.check_no, cd.box_no, cd.locno
+               from bill_im_check_dtl cd
+              group by cd.check_no, cd.box_no, cd.locno) rs
+    on rs.box_no = d.box_no
+   and rs.locno = d.locno
+	   WHERE d.receipt_no = #{params.receiptNo}
+	         AND d.locno = #{params.locno}
+	         <include refid="d_AuthorityCondition" />
+	         group by d.box_no,d.item_no,d.size_no
+	         <if test="params.orderByField != null and ''!=params.orderByField" >
+	         	order by ${params.orderByField}
+	         </if>
+		 ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+	</select>
+  
+  
+  
+  <!-- 按商品展示信息 -->
+  	<select id="selectItemDetailCount" resultType="java.lang.Integer">
+		SELECT count(1)
+		  FROM bill_im_receipt_dtl d
+		  LEFT JOIN item i
+		    ON i.item_no = d.item_no
+		  LEFT JOIN color_info c
+		    ON c.color_no = i.color_no
+		  LEFT JOIN brand b
+		    ON b.brand_no = i.brand_no
+		  LEFT JOIN bill_im_import im
+		    ON im.locno = d.locno
+		   AND im.import_no = d.import_no
+		  LEFT JOIN (SELECT d.locno, d.import_no,max(d.deliver_no) deliver_no
+		               FROM bill_im_import_dtl d
+		              GROUP BY d.locno, d.import_no) imd
+		    ON d.locno = imd.locno
+		   AND im.import_no = imd.import_no
+	   WHERE d.receipt_no = #{params.receiptNo}
+	         AND d.locno = #{params.locno}
+	         <include refid="d_AuthorityCondition" />
+	</select> 
+	<select id="selectItemDetail" resultType="com.yougou.logistics.city.common.model.BillImReceiptDtl">
+		select B.* from (select A.*,rownum rn from(
+			SELECT 
+			   d.import_no importNo,
+		       d.item_no itemNo,
+		       i.item_name itemName,
+		       c.color_name colorName,
+		       d.size_no sizeNo,
+		       d.box_no boxNo,
+		       d.pan_no panNo,
+		       b.brand_name brandName,
+		       d.receipt_qty receiptQty,
+		       d.check_qty checkQty,
+		       d.divide_qty divideQty,
+		       im.s_po_no poNo,
+		       imd.deliver_no deliverNo,
+		       d.cell_no as cellNo,
+		       d.check_worker1 as checkWorker1,
+		       d.checkName1 as checkName1
+		  FROM bill_im_receipt_dtl d
+		  LEFT JOIN item i
+		    ON i.item_no = d.item_no
+		  LEFT JOIN color_info c
+		    ON c.color_no = i.color_no
+		  LEFT JOIN brand b
+		    ON b.brand_no = i.brand_no
+		  LEFT JOIN bill_im_import im
+		    ON im.locno = d.locno
+		   AND im.import_no = d.import_no
+		  LEFT JOIN (SELECT d.locno, d.import_no, max(d.deliver_no) deliver_no
+		               FROM bill_im_import_dtl d
+		              GROUP BY d.locno, d.import_no) imd
+		    ON d.locno = imd.locno
+		   AND im.import_no = imd.import_no
+	   WHERE d.receipt_no = #{params.receiptNo}
+	         AND d.locno = #{params.locno}
+	         <include refid="d_AuthorityCondition" />
+	         <if test="params.orderByField != null and ''!=params.orderByField" >
+	         	order by ${params.orderByField}
+	         </if>
+		 ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+	</select> 
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillImReceiptDtlKey" >
+    delete from BILL_IM_RECEIPT_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RECEIPT_NO = #{receiptNo,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillImReceiptDtl" >
+    delete from BILL_IM_RECEIPT_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RECEIPT_NO = #{receiptNo,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </delete>
+  
+  <delete id="deleteByPrimarayKeyForReceiptNo" parameterType="com.yougou.logistics.city.common.model.BillImReceipt" >
+    delete from BILL_IM_RECEIPT_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RECEIPT_NO = #{receiptNo,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+  </delete>
+  
+  
+  
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillImReceiptDtl" >
+    insert into BILL_IM_RECEIPT_DTL (LOCNO, RECEIPT_NO, OWNER_NO, 
+      ROW_ID, IMPORT_NO, BOX_NO, 
+      QC_WORKER, IQC_STATUS, CHECK_WORKER1, 
+      CHECK_WORKER2, BATCH_SERIAL_NO, STATUS, 
+      ITEM_NO, SIZE_NO, PACK_QTY, 
+      RECEIPT_QTY, CHECK_QTY)
+    values (#{locno,jdbcType=VARCHAR}, #{receiptNo,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, 
+      #{rowId,jdbcType=DECIMAL}, #{importNo,jdbcType=VARCHAR}, #{boxNo,jdbcType=VARCHAR}, 
+      #{qcWorker,jdbcType=VARCHAR}, #{iqcStatus,jdbcType=VARCHAR}, #{checkWorker1,jdbcType=VARCHAR}, 
+      #{checkWorker2,jdbcType=VARCHAR}, #{batchSerialNo,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{itemNo,jdbcType=VARCHAR}, #{sizeNo,jdbcType=VARCHAR}, #{packQty,jdbcType=DECIMAL}, 
+      #{receiptQty,jdbcType=DECIMAL}, #{checkQty,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillImReceiptDtl" >
+    insert into BILL_IM_RECEIPT_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="receiptNo != null" >
+        RECEIPT_NO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="rowId != null" >
+        ROW_ID,
+      </if>
+      <if test="importNo != null" >
+        IMPORT_NO,
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO,
+      </if>
+      <if test="qcWorker != null" >
+        QC_WORKER,
+      </if>
+      <if test="iqcStatus != null" >
+        IQC_STATUS,
+      </if>
+      <if test="checkWorker1 != null" >
+        CHECK_WORKER1,
+      </if>
+      <if test="checkName1 != null">
+        CHECKNAME1,
+      </if>
+      <if test="checkWorker2 != null" >
+        CHECK_WORKER2,
+      </if>
+      <if test="batchSerialNo != null" >
+        BATCH_SERIAL_NO,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY,
+      </if>
+      <if test="receiptQty != null" >
+        RECEIPT_QTY,
+      </if>
+      <if test="checkQty != null" >
+        CHECK_QTY,
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE,
+      </if>
+      <if test="quality != null" >
+        QUALITY,
+      </if>
+      <if test="cellId != null" >
+        CELL_ID,
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO,
+      </if>
+      <if test="brandNo != null" >
+        BRAND_NO,
+      </if>
+      <if test="panNo != null" >
+        PAN_NO,
+      </if>
+      <if test="difFlag != null" >
+        DIF_FLAG,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="editorName != null" >
+        EDITORNAME,
+      </if>
+      <if test="divideQty != null" >
+        DIVIDE_QTY,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="receiptNo != null" >
+        #{receiptNo,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rowId != null" >
+        #{rowId,jdbcType=DECIMAL},
+      </if>
+      <if test="importNo != null" >
+        #{importNo,jdbcType=VARCHAR},
+      </if>
+      <if test="boxNo != null" >
+        #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="qcWorker != null" >
+        #{qcWorker,jdbcType=VARCHAR},
+      </if>
+      <if test="iqcStatus != null" >
+        #{iqcStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="checkWorker1 != null" >
+        #{checkWorker1,jdbcType=VARCHAR},
+      </if>
+      <if test="checkName1 != null">
+        #{checkName1,jdbcType=VARCHAR},
+      </if>
+      <if test="checkWorker2 != null" >
+        #{checkWorker2,jdbcType=VARCHAR},
+      </if>
+      <if test="batchSerialNo != null" >
+        #{batchSerialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="packQty != null" >
+        #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="receiptQty != null" >
+        #{receiptQty,jdbcType=DECIMAL},
+      </if>
+      <if test="checkQty != null" >
+        #{checkQty,jdbcType=DECIMAL},
+      </if>
+      <if test="itemType != null" >
+        #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="cellId != null" >
+        #{cellId,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="brandNo != null" >
+        #{brandNo,jdbcType=VARCHAR},
+      </if>
+      <if test="panNo != null" >
+        #{panNo,jdbcType=VARCHAR},
+      </if>
+      <if test="difFlag != null" >
+        #{difFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editorName != null" >
+        #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="divideQty != null" >
+        #{divideQty,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillImReceiptDtl" >
+    update BILL_IM_RECEIPT_DTL
+    <set >
+      <if test="importNo != null" >
+        IMPORT_NO = #{importNo,jdbcType=VARCHAR},
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO = #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="qcWorker != null" >
+        QC_WORKER = #{qcWorker,jdbcType=VARCHAR},
+      </if>
+      <if test="iqcStatus != null" >
+        IQC_STATUS = #{iqcStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="checkWorker1 != null" >
+        CHECK_WORKER1 = #{checkWorker1,jdbcType=VARCHAR},
+      </if>
+      <if test="checkName1 != null" >
+        CHECKNAME1 = #{checkName1,jdbcType=VARCHAR},
+      </if>
+      <if test="checkWorker2 != null" >
+        CHECK_WORKER2 = #{checkWorker2,jdbcType=VARCHAR},
+      </if>
+      <if test="batchSerialNo != null" >
+        BATCH_SERIAL_NO = #{batchSerialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="receiptQty != null" >
+        RECEIPT_QTY = #{receiptQty,jdbcType=DECIMAL},
+      </if>
+      <if test="checkQty != null" >
+        CHECK_QTY = #{checkQty,jdbcType=DECIMAL},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=VARCHAR},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null" >
+        EDITORNAME = #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="divideQty != null" >
+        DIVIDE_QTY = #{divideQty,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RECEIPT_NO = #{receiptNo,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      <if test="null!=rowId and ''!=rowId" >
+      	and ROW_ID = #{rowId,jdbcType=DECIMAL}
+      </if>
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillImReceiptDtl" >
+    update BILL_IM_RECEIPT_DTL
+    set IMPORT_NO = #{importNo,jdbcType=VARCHAR},
+      BOX_NO = #{boxNo,jdbcType=VARCHAR},
+      QC_WORKER = #{qcWorker,jdbcType=VARCHAR},
+      IQC_STATUS = #{iqcStatus,jdbcType=VARCHAR},
+      CHECK_WORKER1 = #{checkWorker1,jdbcType=VARCHAR},
+      CHECK_WORKER2 = #{checkWorker2,jdbcType=VARCHAR},
+      BATCH_SERIAL_NO = #{batchSerialNo,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      RECEIPT_QTY = #{receiptQty,jdbcType=DECIMAL},
+      CHECK_QTY = #{checkQty,jdbcType=DECIMAL}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RECEIPT_NO = #{receiptNo,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+  <!-- 根据预到货通知单更新收货单的状态 -->
+  <update id="updateStatusByImportNo" parameterType="com.yougou.logistics.city.common.model.BillImReceiptDtl" >
+    update BILL_IM_RECEIPT a,BILL_IM_RECEIPT_dtl b
+    set a.STATUS = #{status,jdbcType=VARCHAR}
+    where  a.LOCNO = b.LOCNO
+      and a.OWNER_NO =  b.OWNER_NO
+      and a.RECEIPT_NO = b.RECEIPT_NO
+      and a.LOCNO = #{locno,jdbcType=VARCHAR}
+      and a.OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and b.IMPORT_NO = #{importNo,jdbcType=VARCHAR}
+  </update>
+  
+  <!--权限过滤查询条件-->
+  <sql id="AuthorityConditionBoxDtl" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and ird.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <select id="selectBillImReceiptDtlBox" resultMap="BaseResultMap" parameterType="map" >
+    <!-- su.yq验收单串款串码控制只能选择验收单的箱子串款串码 -->
+    select ird.BOX_NO from BILL_IM_RECEIPT_DTL ird
+	    where LOCNO = #{params.locno,jdbcType=VARCHAR}
+	      and RECEIPT_NO = #{params.receiptNo,jdbcType=VARCHAR}
+	      and exists(
+	      		select 'X' from bill_im_check ic
+	      			inner join  bill_im_check_dtl icd
+	      				on ic.locno = icd.locno
+	      			  and ic.owner_no = icd.owner_no
+	      			  and ic.check_no = icd.check_no
+	      		where ic.locno = ird.locno
+	      			and ic.owner_no = ird.owner_no
+	      			and	ic.s_import_no = ird.receipt_no
+	      			and icd.box_no = ird.box_no
+	      			and ic.check_no = #{params.checkNo,jdbcType=VARCHAR}
+	      )
+	      <include refid="AuthorityConditionBoxDtl" />
+	    GROUP BY ird.BOX_NO
+  </select>
+  
+   <select id="selectContentBox4Divide" resultType="com.yougou.logistics.city.common.model.BillImReceiptDtl" parameterType="map" >
+      select  
+       b.box_no    as boxNo,
+       vccb.item_no   as itemNo,
+       vccb.size_no   as sizeNo,
+       v.cell_id   as cellId,
+       v.cell_no   as cellNo,
+       v.quality,
+       v.item_type as itemType,
+       vccb.qty    as receiptQty,
+       v.pack_qty  as packQty,
+       i.brand_no  as brandNo
+        from con_box b
+        inner join v_city_content_box vccb
+          on b.locno = vccb.locno
+         and b.owner_no = vccb.owner_no
+         and b.box_no = vccb.box_no
+        left join v_content v
+          on b.locno = v.locno
+         and b.owner_no = v.owner_no
+         and b.cell_no = v.cell_no    
+         and vccb.item_no = v.item_no
+         and vccb.size_no = v.size_no       
+         and v.quality = #{params.quality,jdbcType=VARCHAR}
+         and v.item_type = #{params.itemType,jdbcType=VARCHAR}
+         and nvl(v.qty, 0)- nvl(v.outstock_qty, 0)-vccb.qty >= 0
+        inner join item i 
+          on vccb.item_no = i.item_no
+       where vccb.qty>0
+         and b.locno = #{params.locno,jdbcType=VARCHAR}
+         and b.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+         and b.box_no = #{params.boxNo,jdbcType=VARCHAR}       
+  </select>
+  
+  <!-- 查询收货单对应的品牌库 -->
+  <select id="selectSysNo" resultType="java.lang.String" parameterType="map" >
+	SELECT i.sys_no FROM bill_im_receipt_dtl d INNER JOIN bill_im_import i ON d.locno = i.locno
+	AND d.owner_no = i.owner_no AND d.import_no = i.import_no 
+	where   ROWNUM = 1 and d.locno = #{params.locno,jdbcType=VARCHAR}
+    and d.receipt_no = #{params.receiptNo,jdbcType=VARCHAR}
+  </select>
+  <!-- 查询收货单对应的品牌库 -->
+  <select id="selectSysNoList" resultType="java.lang.String" parameterType="map" >
+		select distinct substr(d.item_no, 0, 2)
+  			from bill_im_receipt_dtl d
+ 			where 1=1
+ 			and d.receipt_no = #{params.receiptNo,jdbcType=VARCHAR}
+ 			and d.locno = #{params.locno,jdbcType=VARCHAR}
+  </select>
+  <!-- 查询明细中商品的尺码类别 -->
+  <select id="selectItemSizeKind" resultType="java.lang.String">
+			SELECT s.size_kind sizeKind
+		  FROM bill_im_receipt_dtl d
+		   inner join item it 
+      		on d.item_no=it.item_no
+       INNER JOIN size_info s ON s.size_no = d.size_no AND s.size_kind = it.size_kind
+	   WHERE d.receipt_no = #{params.receiptNo}
+	         AND d.locno = #{params.locno}
+	         <include refid="d_AuthorityCondition" />
+	         group by s.size_kind
+   </select>
+   
+   	<!--通过group函数获取不重复的sizecode -->
+	<select id="getSizeCodeByGroup" resultType="com.yougou.logistics.city.common.model.SizeInfo">
+		select info.size_code
+		as sizeCode
+		from bill_im_receipt_dtl dtl
+		left join item itm
+        	on dtl.item_no = itm.item_no
+		left join size_info info
+			on info.size_no = dtl.size_no  and info.size_kind =  itm.size_kind
+		where 1=1 
+			<include refid="d_AuthorityCondition" />
+		group by info.size_code
+		order by
+		info.size_code asc
+	</select>
+	
+	<select id="selectItemDetailByGroup" resultMap="BaseResultMap">
+	select B.* from (select A.*,rownum rn from(
+	SELECT  
+			   max(d.locno) locno,
+			   max(d.receipt_no) receiptNo,
+			   d.import_no importNo,
+		       d.item_no itemNo,
+		       max(i.item_name) itemName,
+		       max(c.color_name) colorName,
+		       d.box_no boxNo,
+		       max(d.pan_no) panNo,
+		       max(b.brand_name) brandName,
+		       max(im.s_po_no) poNo,
+		       max(imd.deliver_no) deliverNo,
+		       max(d.check_worker1) as checkWorker1,
+		       max(d.checkname1) as checkName1,
+		       max(i.size_kind) sizeKind
+		  FROM bill_im_receipt_dtl d
+		  LEFT JOIN item i
+		    ON i.item_no = d.item_no
+		  INNER JOIN size_info s ON s.size_no = d.size_no AND s.size_kind = i.size_kind
+		  LEFT JOIN color_info c
+		    ON c.color_no = i.color_no
+		  LEFT JOIN brand b
+		    ON b.brand_no = i.brand_no
+		  LEFT JOIN bill_im_import im
+		    ON im.locno = d.locno
+		   AND im.import_no = d.import_no
+		  LEFT JOIN (SELECT d.locno, d.import_no, max(d.deliver_no) deliver_no
+		               FROM bill_im_import_dtl d
+		              GROUP BY d.locno, d.import_no) imd
+		    ON d.locno = imd.locno
+		   AND im.import_no = imd.import_no
+        WHERE d.receipt_no = #{params.receiptNo}
+	         AND d.locno = #{params.locno}
+	         <include refid="d_AuthorityCondition" />
+       GROUP BY d.import_no,d.item_no,d.box_no,d.brand_no
+       order by d.import_no,d.box_no,d.item_no
+        ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+	</select>
+	
+	<select id="selectItemDetailByGroupCount" 
+		resultType="int">
+		select count(1) as s from (
+		 SELECT  count(1)
+		  FROM bill_im_receipt_dtl d
+		  LEFT JOIN item i
+		    ON i.item_no = d.item_no
+		  LEFT JOIN color_info c
+		    ON c.color_no = i.color_no
+		  LEFT JOIN brand b
+		    ON b.brand_no = i.brand_no
+		  LEFT JOIN bill_im_import im
+		    ON im.locno = d.locno
+		   AND im.import_no = d.import_no
+		  LEFT JOIN (SELECT d.locno, d.import_no, max(d.deliver_no) deliver_no
+		               FROM bill_im_import_dtl d
+		              GROUP BY d.locno, d.import_no) imd
+		    ON d.locno = imd.locno
+		   AND im.import_no = imd.import_no
+        WHERE d.receipt_no = #{params.receiptNo}
+	         AND d.locno = #{params.locno}
+	         <include refid="d_AuthorityCondition" />
+       GROUP BY d.import_no,d.item_no,d.box_no,d.brand_no
+		)
+	</select>
+	
+	<select id="selectDetailBySizeNo" resultMap="BaseResultMap">
+	   select sum(d.receipt_qty) receiptQty,
+       d.size_no sizeNo,
+       max(sz.size_code) sizeCode,
+       max(itm.size_kind) sizeKind
+	  from bill_im_receipt_dtl d
+	  left join item itm
+        on d.item_no = itm.item_no
+	  left join size_info sz
+	    on sz.size_no = d.size_no and sz.size_kind =  itm.size_kind
+	 WHERE d.receipt_no = #{params.receiptNo}
+	         AND d.locno = #{params.locno}
+	         and d.item_no =  #{params.itemNo}
+	         and d.box_no = #{params.boxNo}
+	 group by d.size_no
+	</select>
+	
+	
+	<select id="selectBoxQty" resultType="java.lang.Integer">
+		SELECT  count(1) from(
+			select  box_no 
+		  FROM bill_im_receipt_dtl d
+        WHERE d.receipt_no = #{params.receiptNo}
+	         AND d.locno = #{params.locno}
+	         <include refid="d_AuthorityCondition" />
+       GROUP by d.box_no
+       )
+	</select>
+	
+	<!-- 查询预到货单明细卡板对应的箱数量 -->
+	<select id="selectBoxPan4ReceiptDtl" resultMap="BaseResultMap" parameterType="map" >
+	    	select rd.locno,
+	    		   rd.owner_no,
+	    		   rd.receipt_no,
+	    		   rd.brand_no,
+	    		   rd.item_no,
+	    		   rd.size_no,
+	    		   rd.receipt_qty,
+	    		   rd.check_qty,
+	    		   rd.item_type,
+	    		   rd.quality,
+	    		   rd.cell_no,
+	    		   cb.box_no,
+	    		   cb.pan_no as panNo
+		  from BILL_IM_RECEIPT_DTL rd
+		 inner join con_box cb
+		    on cb.locno = rd.locno
+		   and cb.box_no = rd.box_no
+		 where rd.LOCNO=#{params.locno,jdbcType=VARCHAR}
+		 	and rd.RECEIPT_NO=#{params.receiptNo,jdbcType=VARCHAR}
+  	</select>
+  	
+  	<select id="selectPanIsExist" resultType="java.lang.Integer"  parameterType="com.yougou.logistics.city.common.model.BillImReceiptDtl">
+  		select count(*) from BILL_IM_RECEIPT_DTL rd
+  			inner join con_box cb
+		    on cb.locno = rd.locno
+		   and cb.box_no = rd.box_no
+		  where rd.LOCNO=#{locno,jdbcType=VARCHAR}
+		    and rd.OWNER_NO=#{ownerNo,jdbcType=VARCHAR}
+		 	and rd.RECEIPT_NO=#{receiptNo,jdbcType=VARCHAR}
+		 	and cb.PAN_NO=#{panNo,jdbcType=VARCHAR}
+  	</select>
+  	
+  	<select id="selectPanIsExistLock" resultType="java.lang.Integer"  parameterType="com.yougou.logistics.city.common.model.BillImReceiptDtl">
+  		select count(*) from BILL_IM_RECEIPT_DTL rd
+  			inner join con_box cb
+		    on cb.locno = rd.locno
+		   and cb.box_no = rd.box_no
+		  where rd.LOCNO=#{locno,jdbcType=VARCHAR}
+		    and rd.OWNER_NO=#{ownerNo,jdbcType=VARCHAR}
+		 	and rd.RECEIPT_NO != #{receiptNo,jdbcType=VARCHAR}
+		 	and cb.PAN_NO=#{panNo,jdbcType=VARCHAR}
+		 	and exists(
+		 		select 'X' from BILL_IM_RECEIPT r
+		 			where r.locno = rd.locno
+		 				and r.owner_no = rd.owner_no
+		 				and r.receipt_no = rd.receipt_no
+		 				and r.status = '10'
+		 	)
+		 	and rownum = 1
+  	</select>
+  
+	
+	 <update id="updatePanNoBy"  parameterType="map" >
+		 UPDATE BILL_IM_RECEIPT_DTL T
+		    SET T.PAN_NO = #{params.panNo,jdbcType=VARCHAR},
+		    T.EDITOR = #{params.editor,jdbcType=VARCHAR},
+		    T.EDITORNAME = #{params.editorName,jdbcType=VARCHAR},
+		    T.EDITTM = #{params.edittm,jdbcType=TIMESTAMP}
+		  WHERE T.LOCNO = #{params.locno,jdbcType=VARCHAR}
+		    AND T.OWNER_NO = 'BL'
+		    AND T.RECEIPT_NO = #{params.receiptNo,jdbcType=VARCHAR}
+		    AND T.BOX_NO = #{params.boxNo,jdbcType=VARCHAR}
+  	 </update>
+  	 
+  	 <select id="selectReceiptDtlPanByBox" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillImReceiptDtl" >
+	    select 
+	    <include refid="Base_Column_List" />
+	    from BILL_IM_RECEIPT_DTL
+	    where LOCNO = #{locno,jdbcType=VARCHAR}
+	      and RECEIPT_NO = #{receiptNo,jdbcType=VARCHAR}
+	      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+	      and BOX_NO = #{boxNo,jdbcType=VARCHAR}
+	      and rownum = 1
+  	 </select>
+  	 
+  	 <!-- 更新库存转货单容器箱状态 -->
+	 <update id="batchUpdateBoxStatus4Prepare" parameterType="map" >
+	 		update con_box c set status = '22'
+	 			where c.locno = #{params.locno,jdbcType=VARCHAR}
+	 			  and c.status = '2'
+	 			  and exists(
+	 				  	select 'x'
+			              from bill_im_receipt ir
+			             inner join bill_im_receipt_dtl ird
+			                on ir.locno = ird.locno
+			               and ir.owner_no = ird.owner_no
+			               and ir.receipt_no = ird.receipt_no
+			             where ir.business_type = '1'
+			               and ir.locno = c.locno
+			               and ird.box_no = c.box_no
+		   				   and ir.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+	 				  	   and ir.receipt_no = #{params.receiptNo,jdbcType=VARCHAR}
+	 			  )
+	 </update>  
+ 
+</mapper>

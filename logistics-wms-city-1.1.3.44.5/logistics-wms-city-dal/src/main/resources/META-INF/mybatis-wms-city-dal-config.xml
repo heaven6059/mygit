@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<!-- changes from the defaults -->
+		<setting name="lazyLoadingEnabled" value="false"/>
+		<!-- JdbcType enumeration. Most common are: NULL, VARCHAR and OTHER -->
+		<setting name="jdbcTypeForNull" value="NULL"/>
+		<setting name="defaultStatementTimeout" value="600"/>
+	</settings>
+	<mappers>
+		
+		<mapper resource="mapper/AuthorityResourcesMapper.xml"/>
+		<mapper resource="mapper/AuthorityRoleMapper.xml"/>
+		<mapper resource="mapper/SystemUserMapper.xml"/>
+		<!-- 委托业主资料维护 -->
+		<mapper resource="mapper/BmDefownerMapper.xml"/>
+		<!-- 容器资料维护 -->
+		<mapper resource="mapper/SysDefcontainerMapper.xml"/>
+		<!-- 容器基础资料维护，BM_CONTAINER表 add20140730 -->
+		<mapper resource="mapper/BmContainerMapper.xml"/>
+		<!-- 容器操作日志 -->
+		<mapper resource="mapper/BmContainerLogMapper.xml"/>
+		<!-- 车辆维护 -->
+		<mapper resource="mapper/BmDefcarMapper.xml"/>
+		<!-- 标签 -->
+		<mapper resource="mapper/ConLabelMapper.xml"/>
+		<!-- 标签详情 -->
+		<mapper resource="mapper/ConLabelDtlMapper.xml"/>
+		
+		  
+		<!-- 仓区维护 -->
+		<mapper resource="mapper/CmDefwareMapper.xml"/>
+		<!-- 库区维护 -->
+		<mapper resource="mapper/CmDefareaMapper.xml"/>
+		<!-- 通道维护 -->
+		<mapper resource="mapper/CmDefstockMapper.xml"/>
+		<!-- 储位维护 -->
+		<mapper resource="mapper/CmDefcellMapper.xml"/>
+		<!-- 打印机组维护 -->
+		<mapper resource="mapper/BmDefprinterGroupMapper.xml"/>
+		<!-- 打印机组与打印机对照 -->
+		<mapper resource="mapper/BsPrinterDockMapper.xml"/>
+		<!-- 码头资料维护 -->
+		<mapper resource="mapper/BmDefdockMapper.xml"/>
+		<!-- 仓别维护 -->
+		<mapper resource="mapper/BmDeflocMapper.xml"/>
+		<!-- 商圈维护 -->
+		<mapper resource="mapper/BmCircleMapper.xml"/>
+		<!-- 仓别与用户资料维护 -->
+		<mapper resource="mapper/BsWorkerLocMapper.xml"/>
+		<!-- 用户信息 -->
+		<mapper resource="mapper/LoginuserMapper.xml"/>
+		<!-- 预到货通知单主表 -->
+		<mapper resource="mapper/BillImImportMapper.xml"/>
+		<!-- 预到货通知单从表 -->
+		<mapper resource="mapper/BillImImportDtlMapper.xml"/>
+		<!-- 机构管理 -->
+		<mapper resource="mapper/StoreMapper.xml"/>
+		<!-- 供应商、承运商、委托业主管理 -->
+		<mapper resource="mapper/SupplierMapper.xml"/>
+		<!-- 码表 -->
+		<mapper resource="mapper/LookupMapper.xml"/>
+		<!-- 码表明细 -->
+		<mapper resource="mapper/LookupdtlMapper.xml"/>
+		<!-- 商品管理管理 -->
+		<mapper resource="mapper/ItemMapper.xml"/>
+		<!-- 商品储位库存 -->
+		<mapper resource="mapper/ItemCellContentMapper.xml"/>
+		<!-- 商品汇总库存 -->
+		<mapper resource="mapper/ItemCollectContentMapper.xml"/>
+		<!-- 商品盘点差异报表 -->
+		<mapper resource="mapper/ItemChDifferentReportMapper.xml"/>
+		<!-- 车辆类型维护 -->
+		<mapper resource="mapper/BmDefcartypeMapper.xml"/>
+		<!-- 出货设定　基本线路维护 -->
+		<mapper resource="mapper/OsDeflineMapper.xml"/>
+		<!-- 出货设定　人员区域关系维护 -->
+		<mapper resource="mapper/BsWorkerAreaMapper.xml"/>
+		<!-- 出货设定  客户线路关系维护 -->
+		<mapper resource="mapper/OsLineCustMapper.xml"/>
+		<!-- 出货设定  线路承运商关系维护 -->
+		<mapper resource="mapper/OsShipperLineMapper.xml"/>
+		<!-- 出货设定  线路暂存区维护 -->
+		<mapper resource="mapper/OsLineBufferMapper.xml"/>
+		<!-- 门店与暂存区维护 -->
+		<mapper resource="mapper/OsCustBufferMapper.xml"/>
+		<!-- 箱码表 -->
+		<mapper resource="mapper/ConBoxMapper.xml"/>
+		<!-- 箱码明细表 -->
+		<mapper resource="mapper/ConBoxDtlMapper.xml"/>
+		<!-- 发货通知单（出库订单） -->
+		<mapper resource="mapper/BillOmExpMapper.xml"/>
+		<!-- 发货通知单明细（出库订单明细） -->
+		<mapper resource="mapper/BillOmExpDtlMapper.xml"/>
+		<!-- 拣货任务分派 -->
+		<mapper resource="mapper/BillOmOutstockDirectMapper.xml"/>
+		<!-- 角色 -->
+		<mapper resource="mapper/RolelistMapper.xml"/>
+		<!-- 退厂通知单 -->
+		<mapper resource="mapper/BillWmRecedeMapper.xml"/>
+		<!-- 退厂通知单明细 -->
+		<mapper resource="mapper/BillWmRecedeDtlMapper.xml"/>
+		<!-- 配送单主表  （退厂确认） -->
+		<mapper resource="mapper/BillWmDeliverMapper.xml"/>
+		<!-- 配送单从表    （退厂确认） -->
+		<mapper resource="mapper/BillWmDeliverDtlMapper.xml"/>
+		<!-- 反配复核单主表  （退厂确认） -->
+		<mapper resource="mapper/BillWmRecheckMapper.xml"/>
+		<!-- 反配复核单从表    （退厂确认） -->
+		<mapper resource="mapper/BillWmRecheckDtlMapper.xml"/>
+		
+		
+		<mapper resource="mapper/AuthorityMenuMapper.xml"/>
+		<mapper resource="mapper/AuthorityModuleMapper.xml"/>
+		<mapper resource="mapper/AuthorityModuleOperationsMapper.xml"/>
+		<mapper resource="mapper/AuthorityOperationsMapper.xml"/>
+		<mapper resource="mapper/AuthorityRoleModuleMapper.xml"/>
+		<mapper resource="mapper/AuthorityMenuModuleMapper.xml"/>
+		<mapper resource="mapper/CommonUtilMapper.xml"/>
+		<!-- 收货单 -->
+		<mapper resource="mapper/BillImReceiptMapper.xml"/>
+		<mapper resource="mapper/BillImReceiptDtlMapper.xml"/>
+		
+		<!-- 上架任务 -->
+		<mapper resource="mapper/BillImInstockMapper.xml"/>
+		<mapper resource="mapper/BillImInstockDtlMapper.xml"/>
+		<!-- 上架策略-->
+		<mapper resource="mapper/CsInstockSettingMapper.xml"/>
+		<mapper resource="mapper/CsInstockSettingdtlMapper.xml"/>
+		<mapper resource="mapper/CsInstockSettingdtl2Mapper.xml"/>
+		<!-- 储位包装设置-->
+		<mapper resource="mapper/CsCellPackSettingMapper.xml"/>
+		<!--上架定位-->
+		<mapper resource="mapper/BillImInstockDirectMapper.xml"/>
+		
+		<!-- 尺寸管理 -->
+		<mapper resource="mapper/SizeInfoMapper.xml"/>
+		<!-- 颜色管理 -->
+		<mapper resource="mapper/ColorInfoMapper.xml"/>
+		<!-- 品牌管理 -->
+		<mapper resource="mapper/BrandMapper.xml"/>
+		<!-- 商品类别管理 -->
+		<mapper resource="mapper/CategoryMapper.xml"/>
+		
+		<!-- 分货单主表-->
+		<mapper resource="mapper/BillOmDivideMapper.xml"/>
+		<!-- 分货单从表 -->
+		<mapper resource="mapper/BillOmDivideDtlMapper.xml"/>
+		
+		<!-- 按箱分货保存 -->
+		<mapper resource="mapper/BillOmDivideBoxMapper.xml"/>
+		
+		<mapper resource="mapper/ItemPackMapper.xml"/>
+		<mapper resource="mapper/ItemTypeinfoMapper.xml"/>
+		
+		<!-- 退仓通知单 -->
+		<mapper resource="mapper/BillUmUntreadMmMapper.xml"/>
+		<!-- 退仓通知单明细 -->
+		<mapper resource="mapper/BillUmUntreadMmDtlMapper.xml"/>
+		<!-- 店退仓单 -->
+		<mapper resource="mapper/BillUmUntreadMapper.xml"/>
+		<!-- 店退仓单明细 -->
+		<mapper resource="mapper/BillUmUntreadDtlMapper.xml"/>
+		<!-- 退仓收货单 -->
+		<mapper resource="mapper/BillUmReceiptMapper.xml"/>
+		<!-- 退仓收货单明细 -->
+		<mapper resource="mapper/BillUmReceiptDtlMapper.xml"/>
+		<!--退仓装箱-->
+		<mapper resource="mapper/BillUmLoadboxMapper.xml"/>
+		<mapper resource="mapper/BillUmLoadboxDtlMapper.xml"/>
+		<mapper resource="mapper/BillUmBoxDtlMapper.xml"/>
+		<!--标签打印-->
+		<mapper resource="mapper/BmPrintLogMapper.xml"/>
+		
+		<!-- 按箱分货规则管理 -->
+		<mapper resource="mapper/BillStoreRuleMapper.xml"/>
+		
+		<!-- 收货验收单 -->
+		<mapper resource="mapper/BillImCheckMapper.xml"/>
+		<!-- 收货验收单详情 -->
+		<mapper resource="mapper/BillImCheckDtlMapper.xml"/>
+		<mapper resource="mapper/BillImCheckPalMapper.xml"/>
+		
+		<!-- 分货复核单 -->
+		<mapper resource="mapper/BillOmRecheckMapper.xml"/>
+		<!-- 分货复核单详情 -->
+		<mapper resource="mapper/BillOmRecheckDtlMapper.xml"/>
+		<!-- 分货交接 -->
+		<mapper resource="mapper/BillOmRecheckJoinMapper.xml"/>
+		<mapper resource="mapper/BillOmRecheckJoinDtlMapper.xml"/>
+		
+		<!-- 分货装车单 -->
+		<mapper resource="mapper/BillOmDeliverMapper.xml"/>
+		<!-- 分货装车单详情 -->
+		<mapper resource="mapper/BillOmDeliverDtlMapper.xml"/>
+		<mapper resource="mapper/BillOmDeliverExportMapper.xml"/>
+
+		<!--拣货单-->
+		<mapper resource="mapper/BillOmOutstockMapper.xml"/>
+		<mapper resource="mapper/BillOmOutstockDtlMapper.xml"/>
+		<!--退厂拣货-->
+		<mapper resource="mapper/BillWmOutstockMapper.xml"/>
+		<mapper resource="mapper/BillWmOutstockDtlMapper.xml"/>
+		<!--退厂计划-->
+		<mapper resource="mapper/BillWmPlanMapper.xml"/>
+		<mapper resource="mapper/BillWmPlanDtlMapper.xml"/>
+		<!--退厂申请-->
+		<mapper resource="mapper/BillWmRequestMapper.xml"/>
+		<mapper resource="mapper/BillWmRequestDtlMapper.xml"/>
+		
+		<!-- 退仓管理  上架单 -->
+		<mapper resource="mapper/BillUmInstockMapper.xml"/>
+		<mapper resource="mapper/BillUmInstockDtlMapper.xml"/>
+		<!-- 称重 -->
+		<mapper resource="mapper/BillOmCheckWeightMapper.xml"/>
+		<!-- 公共调用存储过程-->
+		<mapper resource="mapper/ProcCommonMapper.xml"/>
+		
+		<!-- 移仓单 -->
+		<mapper resource="mapper/BillHmPlanMapper.xml"/>
+  		<mapper resource="mapper/BillHmPlanDtlMapper.xml"/>
+  		<mapper resource="mapper/ConContentMapper.xml"/>
+  		
+  		<!-- 品质转换-->
+  		<mapper resource="mapper/BillConQualityChangeDtlMapper.xml"/>
+  		<mapper resource="mapper/BillConQualityChangeMapper.xml"/>
+  		<mapper resource="mapper/ZoneInfoMapper.xml"/>
+  
+  		<!-- 打印机-->
+  		<mapper resource="mapper/BmDefprinterGroupMapper.xml"/>
+  		<mapper resource="mapper/BmDefprinterMapper.xml"/>
+  		<mapper resource="mapper/BsPrinterGroupMapper.xml"/>
+  		<mapper resource="mapper/BillChPlanDtlMapper.xml"/>
+  		<mapper resource="mapper/BillChPlanMapper.xml"/>
+  		<mapper resource="mapper/BillChRequestMapper.xml"/>
+  		<mapper resource="mapper/BillChRequestDtlMapper.xml"/>
+  		<mapper resource="mapper/BillChDifferentMapper.xml"/>
+  		<mapper resource="mapper/BillChDifferentDtlMapper.xml"/>
+  		<mapper resource="mapper/BmDefreportMapper.xml"/>
+  
+
+  		<mapper resource="mapper/SystemUserRoleMapper.xml"/>
+  		
+  		<!-- 调度波次表-->
+  		<mapper resource="mapper/BillOmLocateMapper.xml"/>
+  		<!-- 调度波次明细表-->
+  		<mapper resource="mapper/BillOmLocateDtlMapper.xml"/>
+  		<!-- 调度异常日志表-->
+  		<mapper resource="mapper/BillOmDirectLogMapper.xml"/>
+		<!-- 策略储位锁定表-->		
+  		<mapper resource="mapper/BillLocateRuleMapper.xml"/>
+  		<!-- 策略储位锁定明细表-->
+  		<mapper resource="mapper/BillLocateRuleDtlMapper.xml"/>
+  		<mapper resource="mapper/ItemBarcodeMapper.xml"/>
+  		
+  		<!-- 退仓上架任务 -->
+  		<mapper resource="mapper/BillUmInstockTaskMapper.xml"/>
+  		<mapper resource="mapper/BillUmDirectMapper.xml"/>
+  		<!-- 退仓上架定位表 -->
+  		<mapper resource="mapper/BillUmInstockDirectMapper.xml"/>
+  		<mapper resource="mapper/BillUmLocateDirectMapper.xml"/>
+  		<!-- 退仓验收单 -->
+  		<mapper resource="mapper/BillUmCheckMapper.xml"/>
+  		<mapper resource="mapper/BillUmCheckDtlMapper.xml"/>
+  		
+  		<!-- 盘点 -->
+  		<mapper resource="mapper/BillChCheckDirectMapper.xml"/>
+  		<mapper resource="mapper/BillChCheckDtlMapper.xml"/>
+  		<mapper resource="mapper/BillChCheckMapper.xml"/>
+  		<mapper resource="mapper/BillChRecheckDtlMapper.xml"/>
+  		
+  		<mapper resource="mapper/OmTmpBoxGroupMapper.xml"/>
+  		<mapper resource="mapper/BillStatusLogMapper.xml"/>
+  		<mapper resource="mapper/BillLmp2WmsMapper.xml"/>
+  		<!-- 调整库存 -->
+  		<mapper resource="mapper/BillConAdjMapper.xml"/>
+  		<mapper resource="mapper/BillConAdjDtlMapper.xml"/>
+  		
+  		<mapper resource="mapper/BillSmWasteMapper.xml"/>
+  		<mapper resource="mapper/BillSmWasteDtlMapper.xml"/>
+  		<mapper resource="mapper/BillWmOutstockDirectMapper.xml"/>
+  		<!-- 收货差异登记 -->
+  		<mapper resource="mapper/BillImDifRecordMapper.xml"/>
+  		<mapper resource="mapper/BillImDifRecordDtlMapper.xml"/>
+        <mapper resource="mapper/BillAccControlMapper.xml"/>
+  		<mapper resource="mapper/TmpAccDataAllotMapper.xml"/>
+  		<mapper resource="mapper/TmpAccResultMapper.xml"/>
+  		
+  		<!-- 业务单据汇总查询 -->
+  		<mapper resource="mapper/BillAggregateMapper.xml"/>
+  		<mapper resource="mapper/DateConContentReportMapper.xml"/>  		
+  		<!-- 其它入库 -->
+		<mapper resource="mapper/BillSmOtherinMapper.xml"/>
+		<mapper resource="mapper/BillSmOtherinDtlMapper.xml"/>
+  		<mapper resource="mapper/ConContentMoveMapper.xml"/>
+		<mapper resource="mapper/BillConStorelockMapper.xml"/>
+  		<mapper resource="mapper/BillConStorelockDtlMapper.xml"/>
+		<mapper resource="mapper/UserOrganizationMapper.xml"/>
+		<mapper resource="mapper/AuthorityMapper.xml"/>
+		<mapper resource="mapper/BillAuthorityMapper.xml"/>
+		
+		<!-- 库存镜像 -->
+		<mapper resource="mapper/ConContentHistoryMapper.xml"/>
+		
+		<mapper resource="mapper/BaseLmp2WmsMapper.xml"/>
+		
+		<mapper resource="mapper/BillWms2LmpMapper.xml"/>
+		
+        <mapper resource="mapper/BillConConvertMapper.xml"/>
+        <mapper resource="mapper/BillConConvertDtlMapper.xml"/>
+  
+        <mapper resource="mapper/SplitDepotInOutDtlReportMapper.xml"/>
+        <mapper resource="mapper/SplitDepotDateSumReportMapper.xml"/>
+        <mapper resource="mapper/SplitDepotLedgerReportMapper.xml"/>
+        
+        <mapper resource="mapper/BillImCheckRepMapper.xml"/>
+        <mapper resource="mapper/AuthorityUserinfoMapper.xml"/>
+        <mapper resource="mapper/StaffPerformanceReportMapper.xml"/>
+        
+        <!-- 容器及sku库存记账 -->
+		<mapper resource="mapper/AccInventorySkuMapper.xml"/>
+		<mapper resource="mapper/AccInventorySkuBookMapper.xml"/>
+		<mapper resource="mapper/AccInventoryConMapper.xml"/>
+		<mapper resource="mapper/AccInventoryConBookMapper.xml"/>
+		<mapper resource="mapper/BillAccListMapper.xml"/>
+		
+  		<mapper resource="mapper/BillUmCheckTaskMapper.xml"/>
+  		<mapper resource="mapper/BillUmCheckTaskDtlMapper.xml"/>
+  		<mapper resource="mapper/InoutDiffReportMapper.xml"/>
+  		
+		<mapper resource="mapper/BillConConvertGoodsMapper.xml"/>
+		<mapper resource="mapper/BillConConvertGoodsDtlMapper.xml"/>
+  		<mapper resource="mapper/AccTaskMapper.xml"/>
+  		<mapper resource="mapper/AccTaskDtlMapper.xml"/>
+		
+		<!-- 按验收单号查询商品明细 --> 
+		<mapper resource="mapper/AccCheckDtlMapper.xml"/>
+		<mapper resource="mapper/AccContainerSkuMapper.xml"/>
+		
+		<!-- 业务单据明细报表 --> 
+		<mapper resource="mapper/BizBillDetailsReportMapper.xml"/>
+		<mapper resource="mapper/BillUmCheckLatePrintMapper.xml"/>
+		<!-- 导入箱明细初始化 --> 
+		<mapper resource="mapper/TmpConBoxExcelMapper.xml"/>
+	
+		<!-- 导入储位 --> 
+		<mapper resource="mapper/TmpCmDefCellExcelMapper.xml"/>
+		
+		<!-- 差异调整单 -->
+		<mapper resource="mapper/BillOmDivideDifferentMapper.xml"/>
+  		<mapper resource="mapper/BillOmDivideDifferentDtlMapper.xml"/>
+  		<mapper resource="mapper/BillChPlanDtlBrandMapper.xml"/>
+  		<mapper resource="mapper/BillChReportMapper.xml"/>
+  		
+  		<!-- 容器任务记录表 -->
+  		<mapper resource="mapper/BillContainerTaskMapper.xml"/>
+  		<mapper resource="mapper/BillContainerTaskDtlMapper.xml"/>
+  		<!-- 盘点定位容器 -->
+        <mapper resource="mapper/BillChCheckDirectBoxMapper.xml"/>
+        <mapper resource="mapper/BmLocnoGroupMapper.xml"/>
+  </mappers>
+</configuration>

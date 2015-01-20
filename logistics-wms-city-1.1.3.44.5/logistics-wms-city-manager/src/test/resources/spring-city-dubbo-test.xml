@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+			http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+	
+	<dubbo:consumer check="false" />
+	<dubbo:application name="wms-city" />
+	<dubbo:registry protocol="zookeeper" address="172.17.210.50:2181" />
+	<dubbo:annotation />
+	
+	<dubbo:reference id="billStatusLogServiceApi"  url="dubbo://10.0.10.29:3101" interface="com.yougou.logistics.city.common.api.BillStatusLogServiceApi" version="1.0.0"/>
+	<dubbo:reference id="billWms2LmpServiceApi" interface="com.yougou.logistics.city.common.api.BillWms2LmpServiceApi" version="1.0.0" timeout="100024"/>
+	<dubbo:reference id="billLmp2WmsServiceApi" interface="com.yougou.logistics.city.common.api.BillLmp2WmsServiceApi" version="1.0.0" timeout="60000"/>
+	<dubbo:reference id="baseLmp2WmsServiceApi"  url="dubbo://10.0.10.29:3101" interface="com.yougou.logistics.city.common.api.BaseLmp2WmsServiceApi" version="1.0.0"/>
+	
+</beans>

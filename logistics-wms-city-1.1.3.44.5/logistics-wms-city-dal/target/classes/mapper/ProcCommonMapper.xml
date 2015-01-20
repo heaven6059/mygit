@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.ProcCommonMapper" >
+	<!--调用存储过程，获取单号-->
+	<select id="procGetSheetNo" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call pkg_wms_base.proc_getsheetno (#{strlocno,mode=IN,jdbcType=VARCHAR},#{strpapertype,mode=IN,jdbcType=VARCHAR},#{csheetno,mode=OUT,jdbcType=VARCHAR},#{stroutmsg,mode=OUT,jdbcType=VARCHAR})}  
+		]]>  
+	</select> 
+	<!--获取箱号-->
+	<select id="procGetContainerNoBase" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call Pkg_Label.proc_get_ContainerNoBase (#{strlocno,mode=IN,jdbcType=VARCHAR},#{strpapertype,mode=IN,jdbcType=VARCHAR},#{strUserId,mode=IN,jdbcType=VARCHAR},#{strGetType,mode=IN,jdbcType=VARCHAR},
+		    #{nGetNum,mode=IN,jdbcType=VARCHAR},#{strUseType,mode=IN,jdbcType=VARCHAR},#{strContainerMaterial,mode=IN,jdbcType=VARCHAR},
+		    #{strOutLabelNo,mode=OUT,jdbcType=VARCHAR},#{strOutContainerNo,mode=OUT,jdbcType=VARCHAR},#{strSessionId,mode=OUT,jdbcType=VARCHAR},#{strOutMsg,mode=OUT,jdbcType=VARCHAR})}  
+		]]>  
+	</select> 
+	
+	<!--调用存储过程 上架定位  (李峰写的)
+	<select id="procImInstockDirectByReceipt" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call Pkg_Instock_Direct.Proc_IM_InstockDirectByReceipt (#{strlocno,mode=IN,jdbcType=VARCHAR},#{strReceiptNo,mode=IN,jdbcType=VARCHAR},#{strWorkerNo,mode=IN,jdbcType=VARCHAR},#{strResult,mode=OUT,jdbcType=VARCHAR})}  
+		]]>  
+	</select> 
+	-->
+	
+	<!--调用存储过程 上架定位   收货 -->
+	<select id="procImInstockDirectByReceipt" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call PKG_IM_CITY_INSTOCK_RECEIPT.Proc_IM_InstockDirect_Receipt (#{strlocno,mode=IN,jdbcType=VARCHAR},#{strOwnerNo,mode=IN,jdbcType=VARCHAR},#{strReceiptNo,mode=IN,jdbcType=VARCHAR},#{strWorkerNo,mode=IN,jdbcType=VARCHAR},#{strResult,mode=OUT,jdbcType=VARCHAR})}  
+		]]>  
+	</select> 
+	
+	<!--调用存储过程 上架定位  验收 -->
+	<select id="procImInstockDirectByCheck" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call PKG_IM_CITY_INSTOCK_CHECK.Proc_IM_CITY_INSTOCK_CHECK (#{strlocno,mode=IN,jdbcType=VARCHAR},#{strOwnerNo,mode=IN,jdbcType=VARCHAR},#{strCheckNo,mode=IN,jdbcType=VARCHAR},#{strWorkerNo,mode=IN,jdbcType=VARCHAR},#{strResult,mode=OUT,jdbcType=VARCHAR})}  
+		]]>  
+	</select> 
+	
+	<!--调用存储过程   取消定位   支持收货和验收 -->
+	<select id="cancelDirectForAll" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call PKG_IM_CITY_CANCL_DIRECT.PROC_CANCL_DIRECT (#{strlocno,mode=IN,jdbcType=VARCHAR},#{strowner,mode=IN,jdbcType=VARCHAR},#{strsourceno,mode=IN,jdbcType=VARCHAR},#{strflag,mode=IN,jdbcType=VARCHAR},#{stroutmsg,mode=OUT,jdbcType=VARCHAR})}  
+		]]>  
+	</select> 
+	
+	<!-- 统一记账过程  -->
+	<select id="procAccApply" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">
+		<![CDATA[  
+		    {call ACC_APPLY (#{I_PAPER_NO,mode=IN,jdbcType=VARCHAR},#{I_LOC_TYPE,mode=IN,jdbcType=VARCHAR},#{I_PAPER_TYPE,mode=IN,jdbcType=VARCHAR},#{I_IO_FLAG,mode=IN,jdbcType=VARCHAR},#{I_PREPARE_DATA_EXT,mode=IN,jdbcType=VARCHAR})}  
+		]]>  
+	</select> 
+	
+	<!--调用存储过程，获取储位ID-->
+	<select id="procGetCellId" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call PKG_WMS_BASE.proc_GetContent_Cellid (#{nCellId,mode=OUT,jdbcType=DECIMAL})}
+		]]>  
+	</select> 
+	
+		<!--调用存储过程，获取储位ID-->
+	<select id="procImCheckAudit" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call PKG_IM_CHECK_AUDIT_CITY.PROC_IM_CHECK_AUDIT (#{I_locno,mode=IN,jdbcType=VARCHAR},#{I_owner,mode=IN,jdbcType=VARCHAR},#{I_check_no,mode=IN,jdbcType=VARCHAR},#{I_oper_user,mode=IN,jdbcType=VARCHAR},#{strOutMsg,mode=OUT,jdbcType=VARCHAR})}
+		]]>  
+	</select> 
+	
+	<!--调用存储过程    退仓-上架定位 -->
+	<select id="procUmDirect" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call PKG_UM_CITY_DIRECT_UNTREAD.Proc_UM_CITY_DIRECT_UNTREAD (#{strlocno,mode=IN,jdbcType=VARCHAR},#{strOwnerNo,mode=IN,jdbcType=VARCHAR},#{strUntreadMMNo,mode=IN,jdbcType=VARCHAR},#{strWorkerNo,mode=IN,jdbcType=VARCHAR},#{strResult,mode=OUT,jdbcType=VARCHAR})}  
+		]]>  
+	</select> 
+	
+    <!--调用存储过程  退仓-取消定位 按明细    -->
+	<select id="cancelDirectForUm" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call PKG_UM_CITY_DIRECT_UNTREAD.Proc_UM_CITY_DIRECT_CANCEL (#{strLocno,mode=IN,jdbcType=VARCHAR},#{strOwnerNo,mode=IN,jdbcType=VARCHAR},#{strUntreadMMNo,mode=IN,jdbcType=VARCHAR},#{strRowId,mode=IN,jdbcType=VARCHAR},#{strWorkerNo,mode=IN,jdbcType=VARCHAR},#{stroutmsg,mode=OUT,jdbcType=VARCHAR})}  
+		]]>  
+	</select> 
+	
+	<!--调用存储过程  退仓-生成退仓上架任务    -->
+	<select id="createTask" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call PKG_UM_CITY_INSTOCK_UNTREAD.Proc_create_instock_task (#{strLocno,mode=IN,jdbcType=VARCHAR},#{strOwnerNo,mode=IN,jdbcType=VARCHAR},#{strUntreadMMNo,mode=IN,jdbcType=VARCHAR},#{strCheckNoList,mode=IN,jdbcType=VARCHAR},#{strWorkerNo,mode=IN,jdbcType=VARCHAR},#{stroutmsg,mode=OUT,jdbcType=VARCHAR})}  
+		]]>  
+	</select> 
+	
+	<!--调用存储过程  退仓上架任务-发单    -->
+	<select id="sendOrder" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call PKG_UM_CITY_INSTOCK_UNTREAD.Proc_instock_task_send (#{strLocno,mode=IN,jdbcType=VARCHAR},#{strOwnerNo,mode=IN,jdbcType=VARCHAR},#{strRowIdList,mode=IN,jdbcType=VARCHAR},#{strSender,mode=IN,jdbcType=VARCHAR},#{strWorkerNo,mode=IN,jdbcType=VARCHAR},#{stroutmsg,mode=OUT,jdbcType=VARCHAR})}  
+		]]>  
+	</select> 
+	
+    <!--调用存储过程  入库上架任务-发单    -->
+	<select id="sendOrderForIm" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call PKG_IM_CITY_CANCL_DIRECT.Proc_im_send_order (#{strLocno,mode=IN,jdbcType=VARCHAR},#{strOwnerNo,mode=IN,jdbcType=VARCHAR},#{strRowIdList,mode=IN,jdbcType=VARCHAR},#{strSender,mode=IN,jdbcType=VARCHAR},#{strWorkerNo,mode=IN,jdbcType=VARCHAR},#{stroutmsg,mode=OUT,jdbcType=VARCHAR})}  
+		]]>  
+	</select> 
+	
+	<!--调用存储过程  退仓-上架任务-匹配差异的继续定位    -->
+	<select id="continueDirect" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call PKG_UM_CITY_DIRECT_UNTREAD.Proc_diff_direct_by_check (#{strLocno,mode=IN,jdbcType=VARCHAR},#{strOwnerNo,mode=IN,jdbcType=VARCHAR},#{strUntreadMMNo,mode=IN,jdbcType=VARCHAR},#{strCheckNoList,mode=IN,jdbcType=VARCHAR},#{strWorkerNo,mode=IN,jdbcType=VARCHAR},#{stroutmsg,mode=OUT,jdbcType=VARCHAR})}  
+		]]>  
+	</select> 
+	
+	<select id="procImInstockAudit" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call pkg_im_instock_audit_city.proc_instock_audit(#{i_locno,mode=IN,jdbcType=VARCHAR},#{i_owner,mode=IN,jdbcType=VARCHAR},#{i_instock_no,mode=IN,jdbcType=VARCHAR},#{i_oper,mode=IN,jdbcType=VARCHAR},#{stroutmsg,mode=OUT,jdbcType=VARCHAR})}
+		]]>  
+	</select> 
+	
+	<!--调用存储过程  退仓-验收  -->
+	<select id="auditUmCheck" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call PKG_UM_CITY_CHECK.PROC_UM_CHECK_AUDIT (#{i_locno,mode=IN,jdbcType=VARCHAR},#{i_owner,mode=IN,jdbcType=VARCHAR},#{i_check_no,mode=IN,jdbcType=VARCHAR},#{i_oper_user,mode=IN,jdbcType=VARCHAR},#{stroutmsg,mode=OUT,jdbcType=VARCHAR})}  
+		]]>  
+	</select> 
+	
+	<!-- 预到货通知单-分批上传   -->
+	<select id="bathUpload" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[
+		    {call proc_city_returnIMportForBatch(#{strLocno,mode=IN,jdbcType=VARCHAR},#{strImportNo,mode=IN,jdbcType=VARCHAR},#{error_msg,mode=OUT,jdbcType=VARCHAR})}  
+		]]>
+	</select> 
+	
+	<!-- 更新库存盘点锁定状态、库存冻结标识、手工移库标识   -->
+	<select id="updateContentStatus" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[
+		    {call pkg_wms_base.proc_UpdateContentStatus(#{locno,mode=IN,jdbcType=VARCHAR},#{cellId,mode=IN,jdbcType=VARCHAR},#{cellNo,mode=IN,jdbcType=VARCHAR},#{status,mode=IN,jdbcType=VARCHAR},#{flag,mode=IN,jdbcType=VARCHAR},#{hmManualFlag,mode=IN,jdbcType=VARCHAR},#{editor,mode=IN,jdbcType=VARCHAR},#{error_msg,mode=OUT,jdbcType=VARCHAR})}  
+		]]>
+	</select> 
+	
+	
+    <!--调用存储过程  退仓验收任务审核  -->
+	<select id="auditUmCheckTask" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call PKG_UM_CITY_CHECKTASK.proc_um_checktask_audit (#{i_locno,mode=IN,jdbcType=VARCHAR},#{I_checkTaskNo,mode=IN,jdbcType=VARCHAR},#{i_oper_user,mode=IN,jdbcType=VARCHAR},#{i_oper_user_name,mode=IN,jdbcType=VARCHAR},#{strOutMsg,mode=OUT,jdbcType=VARCHAR})}  
+		]]>  
+	</select> 
+	
+	<!--调用存储过程  获取储位信息  -->
+	<select id="getSpecailCellNo" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call pkg_wms_base.proc_GetSpecailCellNo (#{strLocno,mode=IN,jdbcType=VARCHAR},
+		    										  #{strArea_usetype,mode=IN,jdbcType=VARCHAR},
+		    										  #{strArea_quality,mode=IN,jdbcType=VARCHAR},
+		    										  #{strArea_attribute,mode=IN,jdbcType=VARCHAR},
+		    										  #{strAttribute_type,mode=IN,jdbcType=VARCHAR},
+		    										  #{strItem_type,mode=IN,jdbcType=VARCHAR},
+		    										  #{strCellNo,mode=OUT,jdbcType=VARCHAR},
+		    										  #{strOutMsg,mode=OUT,jdbcType=VARCHAR})}  
+		]]>  
+	</select> 
+	
+	<!--调用存储过程  退仓验收任务审核  -->
+	<select id="procContaskAudit" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">  
+		<![CDATA[  
+		    {call pkg_container_task.proc_contask_audit (
+		    		#{I_locno,mode=IN,jdbcType=VARCHAR},
+		    		#{I_useType,mode=IN,jdbcType=VARCHAR},
+		    		#{I_conTaskNo,mode=IN,jdbcType=VARCHAR},
+		    		#{I_creator,mode=IN,jdbcType=VARCHAR},
+		    		#{O_msg,mode=OUT,jdbcType=VARCHAR})}  
+		]]>  
+	</select> 
+	
+</mapper>

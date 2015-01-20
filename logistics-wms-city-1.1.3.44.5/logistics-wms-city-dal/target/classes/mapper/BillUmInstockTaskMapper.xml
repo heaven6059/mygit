@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillUmInstockTaskMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.dto.BillUmInstockTaskDto" >
+  	<id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+	<id column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+	<id column="CELL_ID" property="cellId" jdbcType="VARCHAR" />
+	<result column="owner_no" property="ownerNo" jdbcType="VARCHAR" />
+	<result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+	<result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+	<result column="size_No" property="sizeNo" jdbcType="VARCHAR" />
+	<result column="QTY" property="qty" jdbcType="DECIMAL" />
+	<result column="INSTOCK_QTY" property="instockQty" jdbcType="DECIMAL" />
+	<result column="OUTSTOCK_QTY" property="outstockQty" jdbcType="DECIMAL" />
+	<result column="STYLE_NO" property="styleNo" jdbcType="VARCHAR" />
+	<result column="COLOR_NAME" property="colorName" jdbcType="VARCHAR" />
+	<result column="BRAND_NAME" property="brandName" jdbcType="VARCHAR" />
+	<result column="UNIT_NAME" property="unitName" jdbcType="VARCHAR" />
+	<result column="QUALITY" property="quality" jdbcType="VARCHAR" />
+	<result column="IMPORT_BATCH_NO" property="importBatchNo" jdbcType="VARCHAR" />
+	
+	<result column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+    <result column="CELL_ID" property="cellId" jdbcType="DECIMAL" />
+  </resultMap>
+  
+  <sql id="condition" >
+     <if test="null!=params" >
+     <if test="null!=params.locno and ''!=params.locno" >
+       AND c.locno=#{params.locno}
+      </if>
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+       AND c.owner_no=#{params.ownerNo}
+      </if>
+       <if test="null!=params.areaNo and ''!=params.areaNo" >
+       AND cma.area_no=#{params.areaNo}
+      </if>
+       <if test="null!=params.brandNo and ''!=params.brandNo" >
+       AND b.brand_no=#{params.brandNo}
+      </if>
+       <if test="null!=params.styleNo and ''!=params.styleNo" >
+       AND i.style_no=#{params.styleNo}
+      </if>
+      <!-- 
+      <if test="null!=params.importBatchNo and ''!=params.importBatchNo" >
+       A ND ii.import_batch_no=#{params.importBatchNo}
+      </if>
+       -->
+       
+       <if test="null!=params.quality and ''!=params.quality" >
+       AND c.quality=#{params.quality}
+      </if>
+     </if> 
+  </sql>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(A.cell_no) as s
+  from (select c.cell_no
+          from v_content c
+         inner join item i
+            on i.item_no = c.item_no
+          left join color_info co
+            on co.color_no = i.color_no
+          left join brand b
+            on b.brand_no = i.brand_no         
+          left join cm_defcell cmc
+            on cmc.locno = c.locno
+           and cmc.owner_no = c.owner_no
+           and cmc.cell_no = c.cell_no
+          left join cm_defarea cma
+            on cma.locno = c.locno
+           and cmc.ware_no = cma.ware_no
+           and cmc.area_no = cma.area_no
+         where 1 = 1
+      	 <include refid="condition" />
+         group by c.locno,
+                  c.owner_no,
+                  c.cell_no,
+                  c.ITEM_NO,
+                  i.ITEM_NAME,
+                  bar.size_no,
+                  i.STYLE_NO,
+                  co.COLOR_NAME,
+                  b.BRAND_NAME,
+                  i.UNIT_NAME,
+                  c.QUALITY) A
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( 
+	    select c.locno,
+	       c.owner_no,
+	       c.cell_no,
+	       c.ITEM_NO,
+	       i.ITEM_NAME,
+	       c.size_no,
+	       sum(c.QTY) qty,
+	       i.STYLE_NO,
+	       co.COLOR_NAME,
+	       b.BRAND_NAME,
+	       i.UNIT_NAME,
+	       c.QUALITY
+	  from v_content c
+	 inner join item i
+	    on i.item_no = c.item_no
+	  left join color_info co
+	    on co.color_no = i.color_no
+	  left join brand b
+	    on b.brand_no = i.brand_no
+	  left join cm_defcell cmc
+	    on cmc.locno = c.locno
+	   and cmc.owner_no = c.owner_no
+	   and cmc.cell_no = c.cell_no
+	  left join cm_defarea cma
+	    on cma.locno = c.locno
+	   and cmc.ware_no = cma.ware_no
+	   and cmc.area_no = cma.area_no
+	 where 1 = 1
+      <include refid="condition" />
+	   group by c.locno,
+          c.owner_no,
+          c.cell_no,
+          c.ITEM_NO,
+          i.ITEM_NAME,
+          c.size_no,
+          i.STYLE_NO,
+          co.COLOR_NAME,
+          b.BRAND_NAME,
+          i.UNIT_NAME,
+          c.QUALITY
+ 	order by c.item_no, c.size_no
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+</mapper>

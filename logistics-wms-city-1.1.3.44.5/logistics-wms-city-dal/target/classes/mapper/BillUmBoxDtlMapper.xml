@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillUmBoxDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillUmBoxDtl" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="LOADBOX_NO" property="loadboxNo" jdbcType="VARCHAR" />
+    <id column="owner_no" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+    <result column="BOX_NO" property="boxNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="ITEM_QTY" property="itemQty" jdbcType="DECIMAL" />
+    <result column="BOXING_DATE" property="boxingDate" jdbcType="TIMESTAMP" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+    <result column="COLOR_NAME" property="colorName" jdbcType="VARCHAR" />
+    <result column="CREATORNAME" property="creatorName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, LOADBOX_NO, BOX_NO,owner_no,ITEM_NO, SIZE_NO, ROW_ID, ITEM_QTY, BOXING_DATE, CREATOR, 
+    CREATETM, CREATORNAME, STATUS
+  </sql>
+  <sql id="extend_Base_Column_List" >
+    d.LOCNO, d.LOADBOX_NO, d.BOX_NO,owner_no,d.ITEM_NO, d.SIZE_NO,i.item_name,c.color_name, d.ROW_ID, d.ITEM_QTY, d.BOXING_DATE, d.CREATOR, 
+    d.CREATETM, d.CREATORNAME, d.STATUS
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+     <if test="null!=params.locno and ''!=params.locno" >
+        and locno = #{params.locno}
+      </if>
+      <if test="null!=params.loadboxNo and ''!=params.loadboxNo" >
+        and LOADBOX_NO = #{params.loadboxNo}
+      </if>
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        and owner_no = #{params.ownerNo}
+      </if>
+      <if test="null!=params.boxNo and ''!=params.boxNo" >
+        and BOX_NO = #{params.boxNo}
+      </if>
+      <if test="null!=params.noSealed and ''!=params.noSealed" >
+        and box_no='N' AND status='10'
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillUmBoxDtlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_UM_BOX_DTL d
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and LOADBOX_NO = #{loadboxNo,jdbcType=VARCHAR}
+      and BOX_NO = #{boxNo,jdbcType=VARCHAR}
+      and ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+      and SIZE_NO = #{sizeNo,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="extend_Base_Column_List" />
+     from BILL_UM_BOX_DTL d
+     left join item i on i.item_no = d.item_no
+     left join color_info c on c.color_no  = i.color_no
+     where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and d.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+	  select sum(nvl(d.item_qty,0)) item_qty
+	  from BILL_UM_BOX_DTL d where 1=1
+  <include refid="condition" />
+  <include refid="AuthorityCondition" />
+  </select> 
+  
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_UM_BOX_DTL d
+     left join item i on i.item_no = d.item_no
+     left join color_info c on c.color_no  = i.color_no
+     where 1=1 
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="extend_Base_Column_List" />
+     from BILL_UM_BOX_DTL d
+     left join item i on i.item_no = d.item_no
+     left join color_info c on c.color_no  = i.color_no
+     where 1=1 
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+       <choose>
+	    <when test="orderByField != null and ''!=orderByField">
+			order by ${orderByField}
+			<if test="orderByField">
+			${orderBy}
+			</if>
+		</when>
+		<otherwise>
+			order by d.BOX_NO,d.ITEM_NO,d.SIZE_NO
+		</otherwise>
+	  </choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+   <select id="selectMaxRowId" resultType="java.lang.Integer">
+  	select nvl(max(row_id),0) from BILL_UM_BOX_DTL where loadbox_no = #{params.loadboxNo} and locno = #{params.locno}
+  </select>
+  
+
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillUmBoxDtlKey" >
+    delete from BILL_UM_BOX_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and LOADBOX_NO = #{loadboxNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillUmBoxDtl" >
+    delete from BILL_UM_BOX_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and LOADBOX_NO = #{loadboxNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillUmBoxDtl" >
+    insert into BILL_UM_BOX_DTL (LOCNO, LOADBOX_NO, BOX_NO, 
+      ITEM_NO, SIZE_NO, ROW_ID, 
+      ITEM_QTY, BOXING_DATE, CREATOR, 
+      CREATETM, STATUS, CREATORNAME)
+    values (#{locno,jdbcType=VARCHAR}, #{loadboxNo,jdbcType=VARCHAR}, #{boxNo,jdbcType=VARCHAR}, 
+      #{itemNo,jdbcType=VARCHAR}, #{sizeNo,jdbcType=VARCHAR}, #{rowId,jdbcType=DECIMAL}, 
+      #{itemQty,jdbcType=DECIMAL}, #{boxingDate,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
+      #{createtm,jdbcType=TIMESTAMP}, #{status,jdbcType=VARCHAR}, #{creatorName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillUmBoxDtl" >
+    insert into BILL_UM_BOX_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="loadboxNo != null" >
+        LOADBOX_NO,
+      </if>
+       <if test="ownerNo != null" >
+        owner_no,
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="rowId != null" >
+        ROW_ID,
+      </if>
+      <if test="itemQty != null" >
+        ITEM_QTY,
+      </if>
+      <if test="boxingDate != null" >
+        BOXING_DATE,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="brandNo != null" >
+        brand_no,
+      </if>
+      <if test="creatorName != null" >
+        CREATORNAME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="loadboxNo != null" >
+        #{loadboxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="boxNo != null" >
+        #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rowId != null" >
+        #{rowId,jdbcType=DECIMAL},
+      </if>
+      <if test="itemQty != null" >
+        #{itemQty,jdbcType=DECIMAL},
+      </if>
+      <if test="boxingDate != null" >
+        #{boxingDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+       <if test="brandNo != null" >
+        #{brandNo,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorName != null" >
+        #{creatorName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillUmBoxDtl" >
+    update BILL_UM_BOX_DTL
+    <set >
+      <if test="rowId != null" >
+        ROW_ID = #{rowId,jdbcType=DECIMAL},
+      </if>
+      <if test="itemQty != null" >
+        ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+      </if>
+      <if test="boxingDate != null" >
+        BOXING_DATE = #{boxingDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorName != null" >
+        CREATORNAME = #{creatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="boxNo != null" >
+        box_no = #{boxNo,jdbcType=VARCHAR},
+      </if>
+    </set>
+   where LOCNO = #{locno,jdbcType=VARCHAR}
+      and LOADBOX_NO = #{loadboxNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillUmBoxDtl" >
+    update BILL_UM_BOX_DTL
+    set ROW_ID = #{rowId,jdbcType=DECIMAL},
+      ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+      BOXING_DATE = #{boxingDate,jdbcType=TIMESTAMP},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      STATUS = #{status,jdbcType=VARCHAR},
+      CREATORNAME = #{creatorName,jdbcType=VARCHAR}
+   where LOCNO = #{locno,jdbcType=VARCHAR}
+      and LOADBOX_NO = #{loadboxNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId}
+  </update>
+</mapper>

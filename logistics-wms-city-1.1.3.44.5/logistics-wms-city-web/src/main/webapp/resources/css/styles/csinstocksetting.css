@@ -1,0 +1,10 @@
+/***********上架策略*************/
+.mytr{height:40px;}
+.detail_left{float:left;width:420px;}
+.detail_right{float:left;width:320px;margin-left:10px;}
+.store_order{float:left;width:200px;}
+.store_num{float:left;width:190px;margin-left:5px;}
+.detail_part{border:1px solid #b6b6b6;padding:5px;margin-top:8px;padding-bottom:8px}
+.detail_part_tit{padding:0px 0px 10px 0px}
+#cell_no_area{margin-top:5px;}
+

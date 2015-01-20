@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BillChDifferentMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillChDifferent" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="DIFFERENT_NO" property="differentNo" jdbcType="VARCHAR" />
+    <result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <result column="PLAN_NO" property="planNo" jdbcType="VARCHAR" />
+    <result column="REQUEST_NO" property="requestNo" jdbcType="VARCHAR" />
+    <result column="CHECK_NO" property="checkNo" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="DIFFERENT_REMARK" property="differentRemark" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="STATUS_TRANS" property="statusTrans" jdbcType="DECIMAL" />
+    <result column="STORE_NO" property="storeNo" jdbcType="VARCHAR" />
+    <result column="OPERATOR_WORKER" property="operatorWorker" jdbcType="VARCHAR" />
+    <result column="SYS_NO" property="sysNo" jdbcType="VARCHAR" />
+    <result column="AUDITOR" property="auditor" jdbcType="VARCHAR" />
+    <result column="AUDITTM" property="audittm" jdbcType="TIMESTAMP" />
+    <result column="CREATORNAME" property="creatorName" jdbcType="VARCHAR" />
+    <result column="EDITORNAME" property="editorName" jdbcType="VARCHAR" />
+    <result column="AUDITORNAME" property="auditorName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, DIFFERENT_NO, OWNER_NO, PLAN_NO, REQUEST_NO, CHECK_NO, STATUS, DIFFERENT_REMARK, 
+    CREATOR, CREATETM, EDITOR, EDITTM, STATUS_TRANS, STORE_NO, OPERATOR_WORKER, SYS_NO, 
+    AUDITOR, AUDITTM,CREATORNAME,EDITORNAME,AUDITORNAME
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+      ${params.queryCondition}
+    </if>
+    <if test="null!=params">
+    	<if test="null!=params.locno and ''!=params.locno">
+    		and LOCNO = #{params.locno,jdbcType=VARCHAR}
+    	</if>
+    	<if test="null!=params.planNo and ''!=params.planNo">
+    		and PLAN_NO = #{params.planNo,jdbcType=VARCHAR}
+    	</if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillChDifferentKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_CH_DIFFERENT
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and DIFFERENT_NO = #{differentNo,jdbcType=VARCHAR}
+    <include refid="condition" />
+  </select>
+  <select id="selectCount" >
+    select count(1) as s from BILL_CH_DIFFERENT where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from BILL_CH_DIFFERENT where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_CH_DIFFERENT where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillChDifferentKey" >
+    delete from BILL_CH_DIFFERENT
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and DIFFERENT_NO = #{differentNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillChDifferent" >
+    delete from BILL_CH_DIFFERENT
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and DIFFERENT_NO = #{differentNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillChDifferent" >
+    insert into BILL_CH_DIFFERENT (LOCNO, DIFFERENT_NO, OWNER_NO, 
+      PLAN_NO, REQUEST_NO, CHECK_NO, 
+      STATUS, DIFFERENT_REMARK, CREATOR, 
+      CREATETM, EDITOR, EDITTM, 
+      STATUS_TRANS, STORE_NO, OPERATOR_WORKER, 
+      SYS_NO, AUDITOR, AUDITTM,CREATORNAME,EDITORNAME,AUDITORNAME
+      )
+    values (#{locno,jdbcType=VARCHAR}, #{differentNo,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, 
+      #{planNo,jdbcType=VARCHAR}, #{requestNo,jdbcType=VARCHAR}, #{checkNo,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{differentRemark,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
+      #{createtm,jdbcType=TIMESTAMP}, #{editor,jdbcType=VARCHAR}, #{edittm,jdbcType=TIMESTAMP}, 
+      #{statusTrans,jdbcType=DECIMAL}, #{storeNo,jdbcType=VARCHAR}, #{operatorWorker,jdbcType=VARCHAR}, 
+      #{sysNo,jdbcType=VARCHAR}, #{auditor,jdbcType=VARCHAR}, #{audittm,jdbcType=TIMESTAMP},
+      #{creatorName,jdbcType=VARCHAR},#{editorName,jdbcType=VARCHAR},#{auditorName,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillChDifferent" >
+    insert into BILL_CH_DIFFERENT
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="differentNo != null" >
+        DIFFERENT_NO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="planNo != null" >
+        PLAN_NO,
+      </if>
+      <if test="requestNo != null" >
+        REQUEST_NO,
+      </if>
+      <if test="checkNo != null" >
+        CHECK_NO,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="differentRemark != null" >
+        DIFFERENT_REMARK,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="statusTrans != null" >
+        STATUS_TRANS,
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO,
+      </if>
+      <if test="operatorWorker != null" >
+        OPERATOR_WORKER,
+      </if>
+      <if test="sysNo != null" >
+        SYS_NO,
+      </if>
+      <if test="auditor != null" >
+        AUDITOR,
+      </if>
+      <if test="audittm != null" >
+        AUDITTM,
+      </if>
+      <if test="creatorName != null">
+        CREATORNAME,
+      </if>
+      <if test="editorName != null">
+        EDITORNAME,
+      </if>
+      <if test="auditorName != null">
+        AUDITORNAME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="differentNo != null" >
+        #{differentNo,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="planNo != null" >
+        #{planNo,jdbcType=VARCHAR},
+      </if>
+      <if test="requestNo != null" >
+        #{requestNo,jdbcType=VARCHAR},
+      </if>
+      <if test="checkNo != null" >
+        #{checkNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="differentRemark != null" >
+        #{differentRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="statusTrans != null" >
+        #{statusTrans,jdbcType=DECIMAL},
+      </if>
+      <if test="storeNo != null" >
+        #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorWorker != null" >
+        #{operatorWorker,jdbcType=VARCHAR},
+      </if>
+      <if test="sysNo != null" >
+        #{sysNo,jdbcType=VARCHAR},
+      </if>
+      <if test="auditor != null" >
+        #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        #{audittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creatorName != null" >
+        #{creatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null" >
+        #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorName != null" >
+        #{auditorName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillChDifferent" >
+    update BILL_CH_DIFFERENT
+    <set >
+      <if test="ownerNo != null" >
+        OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="planNo != null" >
+        PLAN_NO = #{planNo,jdbcType=VARCHAR},
+      </if>
+      <if test="requestNo != null" >
+        REQUEST_NO = #{requestNo,jdbcType=VARCHAR},
+      </if>
+      <if test="checkNo != null" >
+        CHECK_NO = #{checkNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="differentRemark != null" >
+        DIFFERENT_REMARK = #{differentRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="statusTrans != null" >
+        STATUS_TRANS = #{statusTrans,jdbcType=DECIMAL},
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorWorker != null" >
+        OPERATOR_WORKER = #{operatorWorker,jdbcType=VARCHAR},
+      </if>
+      <if test="sysNo != null" >
+        SYS_NO = #{sysNo,jdbcType=VARCHAR},
+      </if>
+      <if test="auditor != null" >
+        AUDITOR = #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and DIFFERENT_NO = #{differentNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillChDifferent" >
+    update BILL_CH_DIFFERENT
+    set OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      PLAN_NO = #{planNo,jdbcType=VARCHAR},
+      REQUEST_NO = #{requestNo,jdbcType=VARCHAR},
+      CHECK_NO = #{checkNo,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      DIFFERENT_REMARK = #{differentRemark,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      STATUS_TRANS = #{statusTrans,jdbcType=DECIMAL},
+      STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      OPERATOR_WORKER = #{operatorWorker,jdbcType=VARCHAR},
+      SYS_NO = #{sysNo,jdbcType=VARCHAR},
+      AUDITOR = #{auditor,jdbcType=VARCHAR},
+      AUDITTM = #{audittm,jdbcType=TIMESTAMP}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and DIFFERENT_NO = #{differentNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

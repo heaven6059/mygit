@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.CmDefstockMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.CmDefstock" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="WARE_NO" property="wareNo" jdbcType="VARCHAR" />
+    <id column="AREA_NO" property="areaNo" jdbcType="VARCHAR" />
+    <id column="STOCK_NO" property="stockNo" jdbcType="VARCHAR" />
+    <result column="A_STOCK_NO" property="aStockNo" jdbcType="VARCHAR" />
+    <result column="Q_STOCK_X" property="qStockX" jdbcType="DECIMAL" />
+    <result column="Q_BAY_X" property="qBayX" jdbcType="DECIMAL" />
+    <result column="Q_STOCK_Y" property="qStockY" jdbcType="DECIMAL" />
+    <result column="AREA_TYPE" property="areaType" jdbcType="CHAR" />
+    <result column="MIX_FLAG" property="mixFlag" jdbcType="DECIMAL" />
+    <result column="MIX_SUPPLIER" property="mixSupplier" jdbcType="VARCHAR" />
+    <result column="AREA_PICK" property="areaPick" jdbcType="CHAR" />
+    <result column="ORDER_TYPE" property="orderType" jdbcType="CHAR" />
+    <result column="STOCK_STATUS" property="stockStatus" jdbcType="VARCHAR" />
+    <result column="MAX_QTY" property="maxQty" jdbcType="DECIMAL" />
+    <result column="MAX_WEIGHT" property="maxWeight" jdbcType="DECIMAL" />
+    <result column="MAX_VOLUME" property="maxVolume" jdbcType="DECIMAL" />
+    <result column="LIMIT_TYPE" property="limitType" jdbcType="CHAR" />
+    <result column="LIMIT_RATE" property="limitRate" jdbcType="DECIMAL" />
+    <result column="B_PICK" property="bPick" jdbcType="VARCHAR" />
+    <result column="A_FLAG" property="aFlag" jdbcType="VARCHAR" />
+    <result column="SUM_CANUSE_CELLNO" property="sumCanuseCellno" jdbcType="DECIMAL" />
+    <result column="USED_CELL" property="usedCell" jdbcType="DECIMAL" />
+    <result column="PICK_FLAG" property="pickFlag" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATORNAME" property="creatorName" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="EDITORNAME" property="editorName" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="MAX_CASE" property="maxCase" jdbcType="DECIMAL" />
+    <result column="areaName" property="areaName" jdbcType="VARCHAR" />
+    <result column="wareName" property="wareName" jdbcType="VARCHAR" />
+    <result column="ITEM_TYPE" property="itemType" jdbcType="VARCHAR" />
+    <result column="AREA_QUALITY" property="areaQuality" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, WARE_NO, AREA_NO, STOCK_NO, A_STOCK_NO, Q_STOCK_X, Q_BAY_X, Q_STOCK_Y, AREA_TYPE, 
+    MIX_FLAG, MIX_SUPPLIER, AREA_PICK, ORDER_TYPE, STOCK_STATUS, MAX_QTY, MAX_WEIGHT, 
+    MAX_VOLUME, LIMIT_TYPE, LIMIT_RATE, B_PICK, A_FLAG, SUM_CANUSE_CELLNO, USED_CELL, 
+    PICK_FLAG, CREATOR,CREATORNAME, CREATETM, EDITOR,EDITORNAME, EDITTM, MAX_CASE,ITEM_TYPE,AREA_QUALITY
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.locno and ''!=params.locno">
+		 and LOCNO=#{params.locno,jdbcType=VARCHAR}
+	  </if>
+      <if test="null!=params.wareNo and ''!=params.wareNo">
+		 and WARE_NO=#{params.wareNo,jdbcType=VARCHAR}
+	  </if>
+       <if test="null!=params.areaNo and ''!=params.areaNo">
+		 and AREA_NO=#{params.areaNo,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.stockNo and ''!=params.stockNo">
+		 and STOCK_NO=#{params.stockNo,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.areaType and ''!=params.areaType">
+		 and AREA_TYPE=#{params.areaType,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.bPick and ''!=params.bPick">
+		 and B_PICK=#{params.bPick,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.mixFlag and ''!=params.mixFlag">
+		 and MIX_FLAG=#{params.mixFlag,jdbcType=VARCHAR}
+	  </if>
+	  <if test="params.joinArea == 'true'">
+	  	and AREA_NO in (select a.area_no
+                     from CM_DEFAREA a
+                    where 1 = 1
+					<if test="null!=params.locno and ''!=params.locno">
+						and a.LOCNO=#{params.locno,jdbcType=VARCHAR}
+					</if>
+					<if test="null!=params.wareNo and ''!=params.wareNo">
+						and a.WARE_NO=#{params.wareNo,jdbcType=VARCHAR}
+					</if>
+                    <if test="null!=params.attributeType and ''!=params.attributeType">
+						and a.ATTRIBUTE_TYPE=#{params.attributeType,jdbcType=VARCHAR}
+					</if>
+					<if test="null!=params.areaAttribute and ''!=params.areaAttribute">
+						and a.AREA_ATTRIBUTE=#{params.areaAttribute,jdbcType=VARCHAR}
+					</if>
+					<if test="null!=params.areaUsetypeArray and ''!=params.areaUsetypeArray">
+						and a.AREA_USETYPE in (${params.areaUsetypeArray})
+					</if>
+					)
+	  </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.CmDefstockKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from CM_DEFSTOCK
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and WARE_NO = #{wareNo,jdbcType=VARCHAR}
+      and AREA_NO = #{areaNo,jdbcType=VARCHAR}
+      and STOCK_NO = #{stockNo,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from CM_DEFSTOCK where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn,
+    (select cdw.ware_name from cm_defware cdw where cdw.ware_no = A.ware_no and cdw.locno = A.locno) wareName,
+  (select cda.area_name from cm_defarea cda where cda.area_no = A.area_no and cda.locno = A.locno and cda.ware_no = A.Ware_No) areaName
+  from( select 
+    <include refid="Base_Column_List" />
+     from CM_DEFSTOCK where 1=1 
+    <include refid="condition" />
+    <choose>
+	    <when test="orderByField != null and ''!=orderByField">
+			order by ${orderByField}
+			<if test="orderByField">
+			${orderBy}
+			</if>
+		</when>
+		<otherwise>
+			order by CREATETM desc
+		</otherwise>
+    </choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />,
+    (select cd.area_name from CM_DEFAREA cd where cd.locno=c.locno and cd.ware_no=c.ware_no and cd.area_no=c.area_no) as areaName
+     from CM_DEFSTOCK c where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.CmDefstockKey" >
+    delete from CM_DEFSTOCK
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and WARE_NO = #{wareNo,jdbcType=VARCHAR}
+      and AREA_NO = #{areaNo,jdbcType=VARCHAR}
+      and STOCK_NO = #{stockNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.CmDefstock" >
+    delete from CM_DEFSTOCK
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and WARE_NO = #{wareNo,jdbcType=VARCHAR}
+      and AREA_NO = #{areaNo,jdbcType=VARCHAR}
+      and STOCK_NO = #{stockNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.CmDefstock" >
+    insert into CM_DEFSTOCK (LOCNO, WARE_NO, AREA_NO, 
+      STOCK_NO, A_STOCK_NO, Q_STOCK_X, 
+      Q_BAY_X, Q_STOCK_Y, AREA_TYPE, 
+      MIX_FLAG, MIX_SUPPLIER, AREA_PICK, 
+      ORDER_TYPE, STOCK_STATUS, MAX_QTY, 
+      MAX_WEIGHT, MAX_VOLUME, LIMIT_TYPE, 
+      LIMIT_RATE, B_PICK, A_FLAG, 
+      SUM_CANUSE_CELLNO, USED_CELL, PICK_FLAG, 
+      CREATOR, CREATORNAME,CREATETM, EDITOR, EDITORNAME,
+      EDITTM, MAX_CASE)
+    values (#{locno,jdbcType=VARCHAR}, #{wareNo,jdbcType=VARCHAR}, #{areaNo,jdbcType=VARCHAR}, 
+      #{stockNo,jdbcType=VARCHAR}, #{aStockNo,jdbcType=VARCHAR}, #{qStockX,jdbcType=DECIMAL}, 
+      #{qBayX,jdbcType=DECIMAL}, #{qStockY,jdbcType=DECIMAL}, #{areaType,jdbcType=CHAR}, 
+      #{mixFlag,jdbcType=DECIMAL}, #{mixSupplier,jdbcType=VARCHAR}, #{areaPick,jdbcType=CHAR}, 
+      #{orderType,jdbcType=CHAR}, #{stockStatus,jdbcType=VARCHAR}, #{maxQty,jdbcType=DECIMAL}, 
+      #{maxWeight,jdbcType=DECIMAL}, #{maxVolume,jdbcType=DECIMAL}, #{limitType,jdbcType=CHAR}, 
+      #{limitRate,jdbcType=DECIMAL}, #{bPick,jdbcType=VARCHAR}, #{aFlag,jdbcType=VARCHAR}, 
+      #{sumCanuseCellno,jdbcType=DECIMAL}, #{usedCell,jdbcType=DECIMAL}, #{pickFlag,jdbcType=VARCHAR}, 
+      #{creator,jdbcType=VARCHAR}, #{creatorName,jdbcType=VARCHAR}, #{createtm,jdbcType=TIMESTAMP}, 
+      #{editor,jdbcType=VARCHAR}, #{editorName,jdbcType=VARCHAR}, #{edittm,jdbcType=TIMESTAMP}, 
+      #{maxCase,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.CmDefstock" >
+    insert into CM_DEFSTOCK
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="wareNo != null" >
+        WARE_NO,
+      </if>
+      <if test="areaNo != null" >
+        AREA_NO,
+      </if>
+      <if test="stockNo != null" >
+        STOCK_NO,
+      </if>
+      <if test="aStockNo != null" >
+        A_STOCK_NO,
+      </if>
+      <if test="qStockX != null" >
+        Q_STOCK_X,
+      </if>
+      <if test="qBayX != null" >
+        Q_BAY_X,
+      </if>
+      <if test="qStockY != null" >
+        Q_STOCK_Y,
+      </if>
+      <if test="areaType != null" >
+        AREA_TYPE,
+      </if>
+      <if test="mixFlag != null" >
+        MIX_FLAG,
+      </if>
+      <if test="mixSupplier != null" >
+        MIX_SUPPLIER,
+      </if>
+      <if test="areaPick != null" >
+        AREA_PICK,
+      </if>
+      <if test="orderType != null" >
+        ORDER_TYPE,
+      </if>
+      <if test="stockStatus != null" >
+        STOCK_STATUS,
+      </if>
+      <if test="maxQty != null" >
+        MAX_QTY,
+      </if>
+      <if test="maxWeight != null" >
+        MAX_WEIGHT,
+      </if>
+      <if test="maxVolume != null" >
+        MAX_VOLUME,
+      </if>
+      <if test="limitType != null" >
+        LIMIT_TYPE,
+      </if>
+      <if test="limitRate != null" >
+        LIMIT_RATE,
+      </if>
+      <if test="bPick != null" >
+        B_PICK,
+      </if>
+      <if test="aFlag != null" >
+        A_FLAG,
+      </if>
+      <if test="sumCanuseCellno != null" >
+        SUM_CANUSE_CELLNO,
+      </if>
+      <if test="usedCell != null" >
+        USED_CELL,
+      </if>
+      <if test="pickFlag != null" >
+        PICK_FLAG,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+       <if test="creatorName != null" >
+        CREATORNAME,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="editorName != null" >
+        EDITORNAME,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="maxCase != null" >
+        MAX_CASE,
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE,
+      </if>
+      <if test="areaQuality != null" >
+        AREA_QUALITY,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="wareNo != null" >
+        #{wareNo,jdbcType=VARCHAR},
+      </if>
+      <if test="areaNo != null" >
+        #{areaNo,jdbcType=VARCHAR},
+      </if>
+      <if test="stockNo != null" >
+        #{stockNo,jdbcType=VARCHAR},
+      </if>
+      <if test="aStockNo != null" >
+        #{aStockNo,jdbcType=VARCHAR},
+      </if>
+      <if test="qStockX != null" >
+        #{qStockX,jdbcType=DECIMAL},
+      </if>
+      <if test="qBayX != null" >
+        #{qBayX,jdbcType=DECIMAL},
+      </if>
+      <if test="qStockY != null" >
+        #{qStockY,jdbcType=DECIMAL},
+      </if>
+      <if test="areaType != null" >
+        #{areaType,jdbcType=CHAR},
+      </if>
+      <if test="mixFlag != null" >
+        #{mixFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="mixSupplier != null" >
+        #{mixSupplier,jdbcType=VARCHAR},
+      </if>
+      <if test="areaPick != null" >
+        #{areaPick,jdbcType=CHAR},
+      </if>
+      <if test="orderType != null" >
+        #{orderType,jdbcType=CHAR},
+      </if>
+      <if test="stockStatus != null" >
+        #{stockStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="maxQty != null" >
+        #{maxQty,jdbcType=DECIMAL},
+      </if>
+      <if test="maxWeight != null" >
+        #{maxWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="maxVolume != null" >
+        #{maxVolume,jdbcType=DECIMAL},
+      </if>
+      <if test="limitType != null" >
+        #{limitType,jdbcType=CHAR},
+      </if>
+      <if test="limitRate != null" >
+        #{limitRate,jdbcType=DECIMAL},
+      </if>
+      <if test="bPick != null" >
+        #{bPick,jdbcType=VARCHAR},
+      </if>
+      <if test="aFlag != null" >
+        #{aFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="sumCanuseCellno != null" >
+        #{sumCanuseCellno,jdbcType=DECIMAL},
+      </if>
+      <if test="usedCell != null" >
+        #{usedCell,jdbcType=DECIMAL},
+      </if>
+      <if test="pickFlag != null" >
+        #{pickFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+       <if test="creatorName != null" >
+        #{creatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+       <if test="editorName != null" >
+        #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="maxCase != null" >
+        #{maxCase,jdbcType=DECIMAL},
+      </if>
+      <if test="itemType != null" >
+        #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="areaQuality != null" >
+        #{areaQuality,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.CmDefstock" >
+    update CM_DEFSTOCK
+    <set >
+      <if test="aStockNo != null" >
+        A_STOCK_NO = #{aStockNo,jdbcType=VARCHAR},
+      </if>
+      <if test="qStockX != null" >
+        Q_STOCK_X = #{qStockX,jdbcType=DECIMAL},
+      </if>
+      <if test="qBayX != null" >
+        Q_BAY_X = #{qBayX,jdbcType=DECIMAL},
+      </if>
+      <if test="qStockY != null" >
+        Q_STOCK_Y = #{qStockY,jdbcType=DECIMAL},
+      </if>
+      <if test="areaType != null" >
+        AREA_TYPE = #{areaType,jdbcType=CHAR},
+      </if>
+      <if test="mixFlag != null" >
+        MIX_FLAG = #{mixFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="mixSupplier != null" >
+        MIX_SUPPLIER = #{mixSupplier,jdbcType=VARCHAR},
+      </if>
+      <if test="areaPick != null" >
+        AREA_PICK = #{areaPick,jdbcType=CHAR},
+      </if>
+      <if test="orderType != null" >
+        ORDER_TYPE = #{orderType,jdbcType=CHAR},
+      </if>
+      <if test="stockStatus != null" >
+        STOCK_STATUS = #{stockStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="maxQty != null" >
+        MAX_QTY = #{maxQty,jdbcType=DECIMAL},
+      </if>
+      <if test="maxWeight != null" >
+        MAX_WEIGHT = #{maxWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="maxVolume != null" >
+        MAX_VOLUME = #{maxVolume,jdbcType=DECIMAL},
+      </if>
+      <if test="limitType != null" >
+        LIMIT_TYPE = #{limitType,jdbcType=CHAR},
+      </if>
+      <if test="limitRate != null" >
+        LIMIT_RATE = #{limitRate,jdbcType=DECIMAL},
+      </if>
+      <if test="bPick != null" >
+        B_PICK = #{bPick,jdbcType=VARCHAR},
+      </if>
+      <if test="aFlag != null" >
+        A_FLAG = #{aFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="sumCanuseCellno != null" >
+        SUM_CANUSE_CELLNO = #{sumCanuseCellno,jdbcType=DECIMAL},
+      </if>
+      <if test="usedCell != null" >
+        USED_CELL = #{usedCell,jdbcType=DECIMAL},
+      </if>
+      <if test="pickFlag != null" >
+        PICK_FLAG = #{pickFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorName != null" >
+        CREATORNAME = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null">
+        EDITORNAME = #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="areaQuality != null" >
+        AREA_QUALITY = #{areaQuality,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and WARE_NO = #{wareNo,jdbcType=VARCHAR}
+      and AREA_NO = #{areaNo,jdbcType=VARCHAR}
+      and STOCK_NO = #{stockNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.CmDefstock" >
+    update CM_DEFSTOCK
+    set A_STOCK_NO = #{aStockNo,jdbcType=VARCHAR},
+      Q_STOCK_X = #{qStockX,jdbcType=DECIMAL},
+      Q_BAY_X = #{qBayX,jdbcType=DECIMAL},
+      Q_STOCK_Y = #{qStockY,jdbcType=DECIMAL},
+      AREA_TYPE = #{areaType,jdbcType=CHAR},
+      MIX_FLAG = #{mixFlag,jdbcType=DECIMAL},
+      MIX_SUPPLIER = #{mixSupplier,jdbcType=VARCHAR},
+      AREA_PICK = #{areaPick,jdbcType=CHAR},
+      ORDER_TYPE = #{orderType,jdbcType=CHAR},
+      STOCK_STATUS = #{stockStatus,jdbcType=VARCHAR},
+      MAX_QTY = #{maxQty,jdbcType=DECIMAL},
+      MAX_WEIGHT = #{maxWeight,jdbcType=DECIMAL},
+      MAX_VOLUME = #{maxVolume,jdbcType=DECIMAL},
+      LIMIT_TYPE = #{limitType,jdbcType=CHAR},
+      LIMIT_RATE = #{limitRate,jdbcType=DECIMAL},
+      B_PICK = #{bPick,jdbcType=VARCHAR},
+      A_FLAG = #{aFlag,jdbcType=VARCHAR},
+      SUM_CANUSE_CELLNO = #{sumCanuseCellno,jdbcType=DECIMAL},
+      USED_CELL = #{usedCell,jdbcType=DECIMAL},
+      PICK_FLAG = #{pickFlag,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATORNAME = #{creatorName,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITORNAME = #{editorName,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      MAX_CASE = #{maxCase,jdbcType=DECIMAL},
+       ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+       AREA_QUALITY = #{areaQuality,jdbcType=VARCHAR}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and WARE_NO = #{wareNo,jdbcType=VARCHAR}
+      and AREA_NO = #{areaNo,jdbcType=VARCHAR}
+      and STOCK_NO = #{stockNo,jdbcType=VARCHAR}
+  </update>
+   	<select id="queryStoreNo0" resultType="int" parameterType="com.yougou.logistics.city.common.model.CmDefstock" >
+		select count(*) from CM_DEFCELL t
+ 			where LOCNO = #{locno,jdbcType=VARCHAR}
+   			and t.ware_no = #{wareNo,jdbcType=VARCHAR}
+   			and t.area_no = #{areaNo,jdbcType=VARCHAR}
+   			and t.stock_no = #{stockNo,jdbcType=VARCHAR}
+   			and t.cell_status = '0'
+	</select>
+	<select id="queryStoreNo1" resultType="int" parameterType="com.yougou.logistics.city.common.model.CmDefstock" >
+		select count(*) from CM_DEFCELL t
+ 			where LOCNO = #{locno,jdbcType=VARCHAR}
+   			and t.ware_no = #{wareNo,jdbcType=VARCHAR}
+   			and t.area_no = #{areaNo,jdbcType=VARCHAR}
+   			and t.stock_no = #{stockNo,jdbcType=VARCHAR}
+   			and t.cell_status = '1'
+	</select>
+	<select id="queryStoreNo2" resultType="int" parameterType="com.yougou.logistics.city.common.model.CmDefstock" >
+		select count(*) from CM_DEFCELL t
+ 			where LOCNO = #{locno,jdbcType=VARCHAR}
+   			and t.ware_no = #{wareNo,jdbcType=VARCHAR}
+   			and t.area_no = #{areaNo,jdbcType=VARCHAR}
+   			and t.stock_no = #{stockNo,jdbcType=VARCHAR}
+   			and t.cell_status = '2'
+	</select>
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.yougou.logistics.city.dal.database.AuthorityModuleOperationsMapper">
+	<resultMap id="BaseResultMap"
+		type="com.yougou.logistics.city.common.model.AuthorityModuleOperations">
+		<id column="MODULE_ID" property="moduleId" jdbcType="DECIMAL" />
+		<id column="OPRATION_ID" property="oprationId" jdbcType="DECIMAL" />
+		<result column="OPERATION_NAME" property="operationName"
+			jdbcType="VARCHAR" />
+		<result column="oper_permissions" property="operPermissions"
+			jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="condition">
+		<if test="null!=params">
+			<if test="null!=params.queryCondition and ''!=params.queryCondition">
+				${params.queryCondition}
+			</if>
+		</if>
+	</sql>
+	<sql id="Base_Column_List">
+		MODULE_ID,OPRATION_ID
+	</sql>
+	<select id="selectHasOperatorModules"
+		resultType="com.yougou.logistics.city.common.model.AuthorityModuleOperations">
+		select mo.MODULE_ID as moduleId,
+		mo.OPRATION_ID as oprationId,
+		p.OPERATION_NAME as operationName
+		from AUTHORITY_MODULE_OPERATIONS mo
+		inner join AUTHORITY_OPERATIONS p
+		on (p.OPERATION_ID = mo.OPRATION_ID)
+	</select>
+	<select id="selectByParams" resultMap="BaseResultMap"
+		parameterType="map">
+		select op.*,m.oper_permissions,os.operation_name
+		from
+		AUTHORITY_MODULE_OPERATIONS op
+		left join authority_operations os on
+		op.opration_id=os.operation_id
+		left join authority_role_module m on
+		m.module_id=op.module_id and
+		m.role_id=#{params.roleId,jdbcType=DECIMAL}
+		where
+		op.module_id=#{params.moduleId,jdbcType=DECIMAL}
+	</select>
+	<delete id="deleteByPrimaryKey"
+		parameterType="com.yougou.logistics.city.common.model.AuthorityModuleOperations">
+		delete from AUTHORITY_MODULE_OPERATIONS
+		where MODULE_ID =
+		#{moduleId,jdbcType=DECIMAL}
+		and OPRATION_ID =
+		#{oprationId,jdbcType=DECIMAL}
+	</delete>
+	<delete id="deleteByPrimarayKeyForModel"
+		parameterType="com.yougou.logistics.city.common.model.AuthorityModuleOperations">
+		delete from AUTHORITY_MODULE_OPERATIONS
+		where MODULE_ID =
+		#{moduleId,jdbcType=DECIMAL}
+	</delete>
+	<insert id="insert"
+		parameterType="com.yougou.logistics.city.common.model.AuthorityModuleOperations">
+		insert into AUTHORITY_MODULE_OPERATIONS (MODULE_ID,
+		OPRATION_ID)
+		values (#{moduleId,jdbcType=DECIMAL},
+		#{oprationId,jdbcType=DECIMAL})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.yougou.logistics.city.common.model.AuthorityModuleOperations">
+		insert into AUTHORITY_MODULE_OPERATIONS
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="moduleId != null">
+				MODULE_ID,
+			</if>
+			<if test="oprationId != null">
+				OPRATION_ID,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="moduleId != null">
+				#{moduleId,jdbcType=DECIMAL},
+			</if>
+			<if test="oprationId != null">
+				#{oprationId,jdbcType=DECIMAL},
+			</if>
+		</trim>
+	</insert>
+</mapper>

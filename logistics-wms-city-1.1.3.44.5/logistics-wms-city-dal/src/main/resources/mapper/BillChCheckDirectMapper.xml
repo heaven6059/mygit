@@ -1,0 +1,1752 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillChCheckDirectMapper">
+	<resultMap id="BaseResultMap"
+		type="com.yougou.logistics.city.common.model.BillChCheckDirect">
+		<id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+		<id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+		<id column="DIRECT_SERIAL" property="directSerial" jdbcType="DECIMAL" />
+		<result column="PLAN_NO" property="planNo" jdbcType="VARCHAR" />
+		<result column="REQUEST_NO" property="requestNo" jdbcType="VARCHAR" />
+		<result column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+		<result column="CONTAINER_NO" property="containerNo" jdbcType="VARCHAR" />
+		<result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+		<result column="BARCODE" property="barcode" jdbcType="VARCHAR" />
+		<result column="PACK_QTY" property="packQty" jdbcType="DECIMAL" />
+		<result column="LOT_NO" property="lotNo" jdbcType="VARCHAR" />
+		<result column="PRODUCE_DATE" property="produceDate" jdbcType="TIMESTAMP" />
+		<result column="EXPIRE_DATE" property="expireDate" jdbcType="TIMESTAMP" />
+		<result column="QUALITY" property="quality" jdbcType="VARCHAR" />
+		<result column="RESERVED1" property="reserved1" jdbcType="VARCHAR" />
+		<result column="RESERVED2" property="reserved2" jdbcType="VARCHAR" />
+		<result column="RESERVED3" property="reserved3" jdbcType="VARCHAR" />
+		<result column="RESERVED4" property="reserved4" jdbcType="VARCHAR" />
+		<result column="ITEM_QTY" property="itemQty" jdbcType="DECIMAL" />
+		<result column="STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="OPERATE_TYPE" property="operateType" jdbcType="CHAR" />
+		<result column="REQUEST_DATE" property="requestDate" jdbcType="TIMESTAMP" />
+		<result column="PLAN_TYPE" property="planType" jdbcType="VARCHAR" />
+		<result column="ITEM_TYPE" property="itemType" jdbcType="VARCHAR" />
+		<result column="LABEL_NO" property="labelNo" jdbcType="VARCHAR" />
+		<result column="STOCK_TYPE" property="stockType" jdbcType="VARCHAR" />
+		<result column="STOCK_VALUE" property="stockValue" jdbcType="VARCHAR" />
+		<result column="BATCH_SERIAL_NO" property="batchSerialNo"
+			jdbcType="VARCHAR" />
+		<result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+		<result column="item_name" property="itemName" jdbcType="VARCHAR" />
+		<result column="color_name" property="colorName" jdbcType="VARCHAR" />
+		<result column="style_no" property="styleNo" jdbcType="VARCHAR" />
+		<result column="ware_no" property="wareNo" jdbcType="VARCHAR" />
+		<result column="area_no" property="areaNo" jdbcType="VARCHAR" />
+		<result column="stock_no" property="stockNo" jdbcType="VARCHAR" />
+		<result column="brand_no" property="brandNo" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="BaseColumn">
+		locno,owner_no,direct_serial,plan_no,request_no,cell_no,container_no,item_no,barcode,pack_qty,lot_no,produce_date,
+		expire_date,quality,reserved1,reserved2,reserved3,reserved4,item_qty,status,operate_type,request_date,plan_type,
+		item_type,label_no,stock_type,stock_value,batch_serial_no,size_no
+	</sql>
+	<sql id="Base_Column_List">
+		LOCNO, OWNER_NO, DIRECT_SERIAL, PLAN_NO, REQUEST_NO,
+		CELL_NO, CONTAINER_NO,
+		b.ITEM_NO,
+		b.BARCODE, PACK_QTY, LOT_NO,
+		PRODUCE_DATE, EXPIRE_DATE, QUALITY, RESERVED1,
+		RESERVED2,
+		RESERVED3,
+		RESERVED4, ITEM_QTY, STATUS, OPERATE_TYPE, REQUEST_DATE, b.PLAN_TYPE,
+		ITEM_TYPE,
+		LABEL_NO, b.STOCK_TYPE, STOCK_VALUE, BATCH_SERIAL_NO,
+		SIZE_NO,
+		item_name,color_name,style_no
+	</sql>
+	<sql id="condition">
+		<if test="null!=params">
+			<if test="null!=params.locno and ''!=params.locno">
+				and locno = #{params.locno,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=params.planNo and ''!=params.planNo">
+				and plan_no =#{params.planNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=params.status and ''!=params.status">
+				and status =#{params.status,jdbcType=VARCHAR}
+			</if>
+			<if
+				test="null!=params.produce_date_start and ''!=params.produce_date_start">
+        <![CDATA[
+        and produce_date >= to_date('${params.produce_date_start} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+     	]]>
+			</if>
+			<if test="null!=params.produce_date_end and ''!=params.produce_date_end">
+        <![CDATA[
+        and produce_date <= to_date('${params.produce_date_end} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+     	]]>
+			</if>
+			<if test="params.statusNotEquals16!= null and 1==params.statusNotEquals16">
+				and STATUS!='16'
+			</if>
+		</if>
+	</sql>
+
+	<sql id="condition_direct4check">
+		<if test="null!=dto">
+			<if test="null!=dto.locno and ''!=dto.locno">
+				and d.locno = #{dto.locno,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=dto.planNo and ''!=dto.planNo">
+				and d.plan_no =#{dto.planNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=dto.cellNo and ''!=dto.cellNo">
+				and d.cell_no =#{dto.cellNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=dto.cellNoLike and ''!=dto.cellNoLike">
+				and d.cell_no  like '${dto.cellNoLike}%'
+			</if>
+			<if test="null!=dto.requestDateStart and ''!=dto.requestDateStart">
+        <![CDATA[
+        and d.request_date >= to_date('${dto.requestDateStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+     	]]>
+			</if>
+			<if test="null!=dto.requestDateEnd and ''!=dto.requestDateEnd">
+        <![CDATA[
+        and d.request_date <= to_date('${dto.requestDateEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+     	]]>
+			</if>
+			<if test="null!=dto.wareNo and ''!=dto.wareNo">
+				and cm.ware_no = #{dto.wareNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=dto.areaNo and ''!=dto.areaNo">
+				and cm.area_no = #{dto.areaNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=dto.stockNo and ''!=dto.stockNo">
+				and cm.stock_no = #{dto.stockNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=dto.brandNo and ''!=dto.brandNo">
+				and i.brand_no = #{dto.brandNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=dto.sysNo and ''!=dto.sysNo">
+				and i.sys_no = #{dto.sysNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=dto.status and ''!=dto.status">
+				and d.status = #{dto.status,jdbcType=VARCHAR}
+			</if>
+		</if>
+	</sql>
+	<sql id="condition_direct4check2">
+		<if test="null!=dto">
+			<if test="null!=dto.locno and ''!=dto.locno">
+				and d.locno = #{dto.locno,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=dto.planNo and ''!=dto.planNo">
+				and d.plan_no =#{dto.planNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=dto.cellNo and ''!=dto.cellNo">
+				and d.cell_no =#{dto.cellNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=dto.cellNoLike and ''!=dto.cellNoLike">
+				and d.cell_no  like '${dto.cellNoLike}%'
+			</if>
+			<if test="null!=dto.requestDateStart and ''!=dto.requestDateStart">
+        <![CDATA[
+        and d.request_date >= to_date('${dto.requestDateStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+     	]]>
+			</if>
+			<if test="null!=dto.requestDateEnd and ''!=dto.requestDateEnd">
+        <![CDATA[
+        and d.request_date <= to_date('${dto.requestDateEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+     	]]>
+			</if>
+			<if test="null!=dto.wareNo and ''!=dto.wareNo">
+				and cm.ware_no = #{dto.wareNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=dto.areaNo and ''!=dto.areaNo">
+				and cm.area_no = #{dto.areaNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=dto.stockNo and ''!=dto.stockNo">
+				and cm.stock_no = #{dto.stockNo,jdbcType=VARCHAR}
+			</if>
+			<!-- <if test="null!=dto.brandNo and ''!=dto.brandNo" > and p.brand_no 
+				= #{dto.brandNo,jdbcType=VARCHAR} </if> <if test="null!=dto.sysNo and ''!=dto.sysNo" 
+				> and i.sys_no = #{dto.sysNo,jdbcType=VARCHAR} </if> -->
+			<if test="null!=dto.status and ''!=dto.status">
+				and d.status = #{dto.status,jdbcType=VARCHAR}
+			</if>
+		</if>
+	</sql>
+	<!--权限过滤左连接子查询 -->
+	<sql id="selectByPageAuthorityLeftJoin">
+		<if test="null!=authorityParams and null!=authorityParams.hasBrandNoList">
+			inner join (select item_no,brand_no
+			from item
+			where brand_no in
+			<include
+				refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+			) sub1
+			ON sub1.item_no = cc.item_no
+		</if>
+	</sql>
+	<!--权限过滤查询条件 -->
+	<sql id="AuthorityCondition">
+		<if test="null!=authorityParams and null!=authorityParams.hasBrandNoList">
+			and b.brand_no in
+			<include
+				refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+		</if>
+	</sql>
+	<sql id="new_column">
+		bccd.BARCODE, bccd.BATCH_SERIAL_NO, bccd.BRAND_NO,
+		bccd.CELL_NO, bccd.CONTAINER_NO,
+		bccd.DIRECT_SERIAL, bccd.EXPIRE_DATE,
+		bccd.ITEM_NO, bccd.ITEM_QTY, bccd.ITEM_TYPE, bccd.LABEL_NO,
+		bccd.LOCNO, bccd.LOT_NO, bccd.OPERATE_TYPE, bccd.OWNER_NO,
+		bccd.PACK_QTY, bccd.PLAN_NO, bccd.PLAN_TYPE,
+		bccd.PRODUCE_DATE,
+		bccd.QUALITY, bccd.REQUEST_DATE, bccd.REQUEST_NO, bccd.RESERVED1,
+		bccd.RESERVED2,
+		bccd.RESERVED3, bccd.RESERVED4, bccd.SIZE_NO,
+		bccd.STATUS, bccd.STOCK_TYPE, bccd.STOCK_VALUE
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="com.yougou.logistics.city.common.model.BillChCheckDirectKey">
+		select
+		<include refid="new_column" />
+
+		from BILL_CH_CHECK_DIRECT bccd
+		where bccd.LOCNO =
+		#{locno,jdbcType=VARCHAR}
+		and bccd.OWNER_NO =
+		#{ownerNo,jdbcType=VARCHAR}
+		and bccd.DIRECT_SERIAL =
+		#{directSerial,jdbcType=DECIMAL}
+	</select>
+	<select id="selectDirectByItem" resultMap="BaseResultMap"
+		parameterType="map">
+		select A.*
+		from (select cc.cell_no,
+		cc.item_no,
+		max(sub1.brand_no)
+		brand_no,
+		cc.size_no,
+		sum(cc.qty) item_qty,
+		cc.locno,
+		cc.barcode,
+		cc.pack_qty,
+		cc.quality,
+		cc.item_type
+		from v_content cc
+		<include refid="selectByPageAuthorityLeftJoin" />
+		where cc.qty != 0
+		and cc.cell_no != 'N'
+		and cc.item_no != 'N'
+		<if test="params.quality != null and params.quality != ''">
+			and cc.quality = #{params.quality,jdbcType=VARCHAR}
+		</if>
+		<if test="params.itemType != null and params.itemType != ''">
+			and cc.item_type = #{params.itemType,jdbcType=VARCHAR}
+		</if>
+		and (cc.instock_qty = 0 and cc.outstock_qty = 0 and
+		cc.hm_manual_flag =
+		'1' and cc.FLAG = '0' and
+		cc.status = '0')
+		group by cc.cell_no,
+		cc.item_no,
+		cc.size_no,
+		cc.locno,
+		cc.barcode,
+		cc.pack_qty,
+		cc.quality,
+		cc.item_type) A
+		inner join bill_ch_plan_dtl pd
+		on pd.locno = A.locno
+		and
+		pd.item_no = A.item_no
+		and pd.size_no = A.size_no
+
+		inner join cm_defcell
+		c2
+		on A.cell_no = c2.cell_no
+		and A.locno = c2.locno
+
+		inner join cm_defarea
+		da2
+		on c2.locno = da2.locno
+		and c2.ware_no = da2.ware_no
+		and c2.area_no =
+		da2.area_no
+
+		<!--过滤不可盘点的商品 -->
+		where pd.locno = #{params.locno,jdbcType=VARCHAR}
+		and pd.plan_no =
+		#{params.planNo,jdbcType=VARCHAR}
+		and (
+		c2.cell_status = '0' and
+		c2.check_status = '0'
+		<!--按商品抽盘定位定位时，过滤掉库区属性类型为进货、出库复核、发货；库存属性为暂存区的库存 -->
+		<if test="params.limitBrandFlag != null and params.limitBrandFlag == 0">
+			and da2.attribute_Type not in ('1','3','5') and
+			da2.area_Attribute !='1'
+		</if>
+		<!-- 按商品盘定位定位时库存调整区,过滤掉库存调整区S jys -->
+		and da2.area_usetype != '7'
+		<!-- 按商品盘定位定位时库存调整区,过滤掉库存调整区E jys -->
+		)
+	</select>
+	
+	<!-- 容器记账调整： 按商品盘   查询零散定位明细    add by zuo.sw -->
+	<select id="selectDirectByItem4RQLS" resultMap="BaseResultMap" parameterType="map">
+		select cc.cell_no,
+		cc.item_no,
+		sub1.brand_no brand_no,
+		cc.size_no,
+		cc.qty item_qty,
+		cc.locno,
+		cc.barcode,
+		cc.pack_qty,
+		cc.quality,
+		cc.item_type
+		from v_con_contentforsearchitem cc
+		inner join  item sub1  
+		   ON sub1.item_no = cc.item_no		
+		inner join bill_ch_plan_dtl pd
+		   on pd.locno = cc.locno and  pd.item_no = cc.item_no and pd.size_no = cc.size_no
+		inner join cm_defcell c2
+		   on cc.cell_no = c2.cell_no and cc.locno = c2.locno
+		inner join cm_defarea da2
+		   on c2.locno = da2.locno and c2.ware_no = da2.ware_no and c2.area_no = da2.area_no
+		<!--过滤不可盘点的商品 -->
+		where pd.locno = #{params.locno,jdbcType=VARCHAR}
+		and pd.plan_no = #{params.planNo,jdbcType=VARCHAR}
+		and cc.qty != 0
+		and cc.cell_no != 'N'
+		and cc.item_no != 'N'
+		<if test="params.quality != null and params.quality != ''">
+			and cc.quality = #{params.quality,jdbcType=VARCHAR}
+		</if>
+		<if test="params.itemType != null and params.itemType != ''">
+			and cc.item_type = #{params.itemType,jdbcType=VARCHAR}
+		</if>
+		and (cc.instock_qty = 0 and cc.outstock_qty = 0)
+		and (c2.cell_status = '0' and
+		c2.check_status = '0'
+		<!--按商品抽盘定位定位时，过滤掉库区属性类型为进货、出库复核、发货；库存属性为暂存区的库存 -->
+		<if test="params.limitBrandFlag != null and params.limitBrandFlag == 0">
+			and da2.attribute_Type not in ('1','3','5') and
+			da2.area_Attribute !='1'
+		</if>
+		<!-- 按商品盘定位定位时库存调整区,过滤掉库存调整区S jys -->
+		and da2.area_usetype != '7'
+		<!-- 按商品盘定位定位时库存调整区,过滤掉库存调整区E jys -->
+		)
+	</select>
+
+	<!-- 容器记账调整：  按商品盘     查询整箱定位明细      add by zuo.sw -->
+	<select id="selectDirectByItem4RQZX" resultMap="BaseResultMap" parameterType="map">
+		select cc.cell_no,
+		cc.item_no,
+		sub1.brand_no
+		brand_no,
+		cc.size_no,
+		cc.cbqty item_qty,
+		cc.box_no labelNo,
+		cc.locno,
+		cc.barcode,
+		cc.pack_qty,
+		cc.quality,
+		cc.item_type
+		from v_con_contentbybox_no cc
+	    inner join item sub1
+             ON sub1.item_no = cc.item_no
+		inner join bill_ch_plan_dtl pd
+		on pd.locno = cc.locno
+		and
+		pd.item_no = cc.item_no
+		and pd.size_no = cc.size_no
+		inner join cm_defcell
+		c2
+		on cc.cell_no = c2.cell_no
+		and cc.locno = c2.locno
+		inner join cm_defarea
+		da2
+		on c2.locno = da2.locno
+		and c2.ware_no = da2.ware_no
+		and c2.area_no =
+		da2.area_no
+		<!--过滤不可盘点的商品 -->
+		where pd.locno = #{params.locno,jdbcType=VARCHAR}
+		and pd.plan_no =
+		#{params.planNo,jdbcType=VARCHAR}
+		and cc.cbqty != 0
+		and cc.cell_no != 'N'
+		and cc.item_no != 'N'
+		<if test="params.quality != null and params.quality != ''">
+			and cc.quality = #{params.quality,jdbcType=VARCHAR}
+		</if>
+		<if test="params.itemType != null and params.itemType != ''">
+			and cc.item_type = #{params.itemType,jdbcType=VARCHAR}
+		</if>
+		and (cc.instock_qty = 0 and cc.outstock_qty = 0)
+		and (
+		c2.cell_status = '0' and
+		c2.check_status = '0'
+		<!--按商品抽盘定位定位时，过滤掉库区属性类型为进货、出库复核、发货；库存属性为暂存区的库存 -->
+		<if test="params.limitBrandFlag != null and params.limitBrandFlag == 0">
+			and da2.attribute_Type not in ('1','3','5') and
+			da2.area_Attribute !='1'
+		</if>
+		<!-- 按商品盘定位定位时库存调整区,过滤掉库存调整区S jys -->
+		and da2.area_usetype != '7'
+		<!-- 按商品盘定位定位时库存调整区,过滤掉库存调整区E jys -->
+		)
+	</select>
+
+	<select id="directCheck" resultType="java.lang.Integer"
+		parameterType="map">
+		select count(*) from bill_ch_plan_dtl pd
+		where pd.locno =
+		#{params.locno,jdbcType=VARCHAR}
+		and pd.plan_no =
+		#{params.planNo,jdbcType=VARCHAR}
+		and exists (select 1 from v_content
+		v2,cm_defcell c2 where
+		v2.item_no=pd.item_no and v2.size_no=pd.size_no
+		and
+		v2.cell_no=c2.cell_no
+		and v2.locno=c2.locno and
+		v2.locno=#{params.locno,jdbcType=VARCHAR}
+		<if test="params.quality != null and params.quality != ''">
+			and v2.quality = #{params.quality,jdbcType=VARCHAR}
+		</if>
+		<if test="params.itemType != null and params.itemType != ''">
+			and v2.item_type = #{params.itemType,jdbcType=VARCHAR}
+		</if>
+		and (v2.instock_qty>0 or v2.outstock_qty>0 or v2.hm_manual_flag!='1'
+		or v2.FLAG!='0' or v2.status!='0' or c2.cell_status!='0' or
+		c2.check_status!='0'))
+	</select>
+	
+    <!-- 查询定位明细的箱号   add by zuo.sw -->
+    <!-- 下面的两个都得进行调整-->
+    <select id="selectDirectLableNo" resultMap="BaseResultMap" parameterType="map">
+		select cd.plan_no, cd.label_no  
+		from   BILL_CH_CHECK_DIRECT  cd 
+		where cd.locno = #{params.locno,jdbcType=VARCHAR}
+		   and cd.plan_no =#{params.planNo,jdbcType=VARCHAR}
+		   and cd.label_no is not null 
+		   and cd.label_no !='N'
+	</select>
+
+	<select id="selectDirectByCell" resultMap="BaseResultMap"
+		parameterType="map">
+		select A.*,i.brand_no
+		from (select cc.cell_no,
+		cc.item_no,
+		cc.size_no,
+		sum(cc.qty) item_qty,
+		cc.locno,
+		cc.barcode,
+		cc.pack_qty,
+		cc.quality,
+		cc.item_type
+		from v_content cc
+		where cc.qty != 0
+		and cc.cell_no != 'N'
+		and cc.item_no != 'N'
+		group by cc.cell_no,
+		cc.item_no,
+		cc.size_no,
+		cc.locno,
+		cc.barcode,
+		cc.pack_qty,
+		cc.quality,
+		cc.item_type) A
+		inner join bill_ch_plan_dtl pd
+		on pd.locno = A.locno
+		and
+		pd.cell_no = A.cell_no
+		and pd.locno = #{params.locno,jdbcType=VARCHAR}
+		and pd.plan_no = #{params.planNo,jdbcType=VARCHAR}
+		and not exists (
+		select 1 from v_content v2,cm_defcell c2 where v2.cell_no=c2.cell_no
+		and
+		v2.cell_no=pd.cell_no and v2.locno=c2.locno
+		and
+		v2.locno=#{params.locno,jdbcType=VARCHAR}
+		and (v2.instock_qty>0 or
+		v2.outstock_qty>0 or v2.hm_manual_flag!='1' or
+		v2.FLAG!='0' or
+		v2.status!='0' or c2.cell_status!='0' or
+		c2.check_status!='0')
+		)
+		inner join item i on i.item_no = A.item_no
+		where 1 = 1
+		<if test="params.brandNoArrStr != null and params.brandNoArrStr != ''">
+		and i.brand_no in (${params.brandNoArrStr})
+		</if>
+	</select>
+	
+	<!-- 按储位盘，定位明细， 零散  add by zuo.sw  -->
+    <select id="selectDirectByCell4RQLS" resultMap="BaseResultMap" parameterType="map">
+		 select cc.cell_no,
+		               cc.item_no,
+		               i.brand_no,
+		               cc.size_no,
+		               cc.qty item_qty,
+		               cc.locno,
+		               cc.barcode,
+		               cc.pack_qty,
+		               cc.quality,
+		               cc.item_type
+		 from v_con_contentforsearchitem cc
+		 inner join bill_ch_plan_dtl pd
+		    on pd.locno = cc.locno
+		   and pd.cell_no = cc.cell_no
+		 inner join cm_defcell c2  
+		    on cc.locno = c2.locno
+		    and cc.CELL_NO = c2.cell_no
+		inner join item i on i.item_no =cc.item_no
+		 where cc.qty != 0
+		   and cc.cell_no != 'N'
+		   and cc.item_no != 'N'
+		   and pd.locno = #{params.locno,jdbcType=VARCHAR}
+		   and pd.plan_no = #{params.planNo,jdbcType=VARCHAR}
+		   and cc.INSTOCK_QTY =0 
+		   and cc.outstock_qty =0 
+		   and c2.cell_status =0 
+		   and c2.check_status = 0
+		 <if test="params.brandNoArrStr != null and params.brandNoArrStr != ''">
+		   and i.brand_no in (${params.brandNoArrStr})
+		 </if>
+	</select>
+	
+	<!-- 按储位盘，定位明细， 整箱  add by zuo.sw  -->
+    <select id="selectDirectByCell4RQZX" resultMap="BaseResultMap" parameterType="map">
+		  select cc.cell_no,
+               cc.item_no,
+               i.brand_no,
+               cc.size_no,
+               cc.cbqty item_qty,
+		               cc.locno,
+		               cc.box_no labelNo,
+		               cc.barcode,
+		               cc.pack_qty,
+		               cc.quality,
+		               cc.item_type
+		 from v_con_contentbybox_no cc
+		 inner join bill_ch_plan_dtl pd
+		    on pd.locno = cc.locno
+		    and pd.cell_no = cc.cell_no
+		 inner join cm_defcell c2  
+		    on cc.locno = c2.locno
+		    and cc.CELL_NO = c2.cell_no
+		 inner join item i on i.item_no =cc.item_no
+		 where cc.cbqty != 0
+		   and cc.cell_no != 'N'
+		   and cc.item_no != 'N'
+		   and pd.locno = #{params.locno,jdbcType=VARCHAR}
+		   and pd.plan_no = #{params.planNo,jdbcType=VARCHAR}
+		   and cc.INSTOCK_QTY =0 
+		   and cc.outstock_qty =0 
+		   and c2.cell_status =0 
+		   and c2.check_status = 0
+		 <if test="params.brandNoArrStr != null and params.brandNoArrStr != ''">
+		   and i.brand_no in (${params.brandNoArrStr})
+		 </if>
+	</select>
+
+	<!--查询盘点定位和库存信息 -->
+	<select id="selectDirectAndContent"
+		resultType="com.yougou.logistics.city.common.dto.BillChCheckDirectDto"
+		parameterType="map">
+		select
+		c.cell_id as contentId,
+		c.item_no as itemNo,
+		c.size_no as sizeNo,
+		c.cell_no as
+		cellNo,
+		d.status,
+		d.direct_serial as directSerial
+		from
+		bill_ch_check_direct d,v_content c
+		where d.CELL_NO=c.CELL_NO and
+		d.ITEM_NO=c.ITEM_NO and d.SIZE_NO=c.SIZE_NO
+		and d.LOCNO=c.LOCNO
+		and
+		d.QUALITY=c.QUALITY and d.ITEM_TYPE=c.ITEM_TYPE
+		and
+		d.LOCNO=#{params.locno,jdbcType=VARCHAR}
+		and
+		d.PLAN_NO=#{params.planNo,jdbcType=VARCHAR}
+		and d.item_no!='N'
+		<if test="params.status!= null and ''!=params.status">
+			and d.STATUS=#{params.status,jdbcType=VARCHAR}
+		</if>
+		<if test="params.statusNotEquals16!= null and 1==params.statusNotEquals16">
+			and d.STATUS!='16'
+		</if>
+
+	</select>
+
+	<!--查询定位的储位编码 -->
+	<select id="selectDirectCellNo" resultType="String"
+		parameterType="map">
+		select distinct d.cell_no from BILL_CH_CHECK_DIRECT d
+		where
+		d.locno=#{params.locno,jdbcType=VARCHAR}
+		and
+		d.plan_no=#{params.planNo,jdbcType=VARCHAR}
+		<if test="params.status!= null and ''!=params.status">
+			and d.status=#{params.status,jdbcType=VARCHAR}
+		</if>
+	</select>
+
+	<select id="selectCount" resultType="java.lang.Integer">
+		select count(1) as s from BILL_CH_CHECK_DIRECT b where 1=1
+		<include refid="condition" />
+		<include refid="AuthorityCondition" />
+	</select>
+	<select id="selectByPage" resultMap="BaseResultMap">
+		select B.* from (select A.*,rownum
+		rn,cdc.ware_no,cdc.area_no,cdc.stock_no from( select
+		<include refid="Base_Column_List" />
+		from BILL_CH_CHECK_DIRECT b
+		left join item i on b.item_no = i.item_no
+		left join color_info c on i.color_no = c.color_no
+		where 1=1
+		<include refid="condition" />
+		<include refid="AuthorityCondition" />
+		<if test="params.sort!= null and ''!=params.sort">
+			order by ${params.sort} ${params.order}
+		</if>
+		<if test="params.sort== null or ''==params.sort">
+			order by REQUEST_DATE desc, PLAN_NO desc, CELL_NO,
+			b.ITEM_NO, SIZE_NO
+		</if>
+		) A left join cm_defcell cdc on cdc.cell_no = A.cell_no and cdc.locno
+		= A.locno
+		where rownum &lt; #{page.endRowNum}) B where rn &gt;
+		#{page.startRowNum}
+	</select>
+
+	<select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap">
+		select nvl(sum(item_qty),0) item_Qty from BILL_CH_CHECK_DIRECT b
+		where
+		1=1
+		<include refid="condition" />
+		<include refid="AuthorityCondition" />
+	</select>
+	<!--出盘发单，查询定位信息 -->
+	<select id="selectDirectCount" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM BILL_CH_CHECK_DIRECT d
+		INNER JOIN bill_ch_plan p
+		ON
+		p.locno = d.locno
+		AND p.plan_no = d.plan_no
+		INNER JOIN Cm_defCell cm
+		ON
+		cm.locno = d.locno
+		AND cm.cell_no = d.cell_no
+		INNER JOIN cm_defarea cmd
+		ON cmd.locno = d.locno
+		AND cmd.ware_no = cm.ware_no
+		AND cmd.area_no =
+		cm.area_no
+		LEFT JOIN item i
+		ON i.item_no = d.item_no
+		LEFT JOIN color_info
+		c
+		ON c.color_no = i.color_no
+		where d.status = '10'
+		<include refid="condition_direct4check" />
+	</select>
+
+	<select id="selectDirectList"
+		resultType="com.yougou.logistics.city.common.dto.BillChCheckDirectDto"
+		parameterType="com.yougou.logistics.city.common.dto.BillChCheckDirectDto">
+		select B.* from (select A.*,rownum rn from(
+		SELECT d.plan_no planNo,
+		p.audittm audittm,
+		cmd.area_name areaName,
+		cm.stock_no stockNo,
+		d.cell_no cellNo,
+		d.item_no itemNo,
+		i.item_name itemName,
+		i.style_no
+		styleNo,
+		c.color_name colorName,
+		d.size_no sizeNo
+		FROM
+		BILL_CH_CHECK_DIRECT d
+		INNER JOIN bill_ch_plan p
+		ON p.locno = d.locno
+		AND p.plan_no = d.plan_no
+		INNER JOIN Cm_defCell cm
+		ON cm.locno = d.locno
+		AND cm.cell_no = d.cell_no
+		INNER JOIN cm_defarea cmd
+		ON cmd.locno =
+		d.locno
+		AND cmd.ware_no = cm.ware_no
+		AND cmd.area_no = cm.area_no
+		left
+		JOIN item i
+		ON i.item_no = d.item_no
+		LEFT JOIN color_info c
+		ON c.color_no
+		= i.color_no
+		where d.status = '10'
+		<include refid="condition_direct4check" />
+		<if test="orderBy == null or orderBy == ''">
+			order by cellNo,itemNo
+		</if>
+		<if test="orderBy != null and orderBy != ''">
+			order by ${orderBy}
+		</if>
+		) A where rownum &lt; #{page.endRowNum}) B where rn &gt;
+		#{page.startRowNum}
+	</select>
+
+	<select id="selectAllStockCount" resultType="java.lang.Integer"
+		parameterType="map">
+		SELECT count(distinct cm.stock_no)
+		FROM BILL_CH_CHECK_DIRECT d
+		INNER
+		JOIN bill_ch_plan p
+		ON p.locno = d.locno
+		AND p.plan_no = d.plan_no
+		INNER
+		JOIN Cm_defCell cm
+		ON cm.locno = d.locno
+		AND cm.cell_no = d.cell_no
+		INNER JOIN cm_defarea cmd
+		ON cmd.locno = d.locno
+		AND cmd.ware_no =
+		cm.ware_no
+		AND cmd.area_no = cm.area_no
+		left JOIN item i
+		ON i.item_no =
+		d.item_no
+		LEFT JOIN color_info c
+		ON c.color_no = i.color_no
+		where
+		d.status = '10'
+		<include refid="condition_direct4check" />
+	</select>
+
+	<select id="selectAllCellCount" resultType="java.lang.Integer"
+		parameterType="map">
+		SELECT count(distinct d.cell_no)
+		FROM BILL_CH_CHECK_DIRECT d
+		INNER JOIN
+		bill_ch_plan p
+		ON p.locno = d.locno
+		AND p.plan_no = d.plan_no
+		INNER JOIN
+		Cm_defCell cm
+		ON cm.locno = d.locno
+		AND cm.cell_no = d.cell_no
+		INNER JOIN
+		cm_defarea cmd
+		ON cmd.locno = d.locno
+		AND cmd.ware_no = cm.ware_no
+		AND
+		cmd.area_no = cm.area_no
+		left JOIN item i
+		ON i.item_no = d.item_no
+		LEFT
+		JOIN color_info c
+		ON c.color_no = i.color_no
+		where d.status = '10'
+		<include refid="condition_direct4check" />
+	</select>
+	<!--出盘发单，查询定位信息 end -->
+
+	<!--查询定位表中存在的商品的品牌 -->
+
+	<select id="selectBrandInDirect" resultType="com.yougou.logistics.city.common.model.Brand"
+		parameterType="com.yougou.logistics.city.common.dto.BillChCheckDirectDto">
+		SELECT DISTINCT b.brand_no brandNo, b.brand_name
+		brandName
+		FROM BILL_CH_CHECK_DIRECT d
+		INNER JOIN item i
+		ON i.item_no =
+		d.item_no
+		INNER JOIN brand b
+		ON i.brand_no = b.brand_no
+		where d.locno =
+		#{dto.locno,jdbcType=VARCHAR}
+	</select>
+
+	<!--根据储位分组查询 -->
+	<select id="selectDirectListGroupByCellNo"
+		resultType="com.yougou.logistics.city.common.dto.BillChCheckDirectDto"
+		parameterType="com.yougou.logistics.city.common.dto.BillChCheckDirectDto">
+		SELECT d.plan_no planNo,
+		d.cell_no cellNo,
+		d.locno,
+		d.owner_no ownerNo,
+		p.plan_type planType
+		FROM BILL_CH_CHECK_DIRECT d
+		INNER JOIN bill_ch_plan
+		p
+		ON p.locno = d.locno
+		AND p.plan_no = d.plan_no
+		INNER JOIN Cm_defCell cm
+		ON cm.locno = d.locno
+		AND cm.cell_no = d.cell_no
+		INNER JOIN item i
+		ON
+		i.item_no = d.item_no
+		where 1=1
+		and i.item_no!='N'
+		<include refid="condition_direct4check" />
+		group by d.cell_no,d.plan_no,d.locno,d.owner_no,p.plan_type
+		
+		<!-- 只有当品牌库编码不为空的时候，才会进行union连接  add  zuo.sw -->
+		<if test="null==dto.sysNo or ''==dto.sysNo">
+			union
+			SELECT d.plan_no planNo,
+			d.cell_no cellNo,
+			d.locno,
+			d.owner_no ownerNo,
+			p.plan_type planType
+			FROM BILL_CH_CHECK_DIRECT d
+			INNER JOIN bill_ch_plan
+			p
+			ON p.locno = d.locno
+			AND p.plan_no = d.plan_no
+			INNER JOIN Cm_defCell cm
+			ON cm.locno = d.locno
+			AND cm.cell_no = d.cell_no
+			where 1=1
+			and d.item_no
+			= 'N'
+			<include refid="condition_direct4check2" />
+			group by d.cell_no,d.plan_no,d.locno,d.owner_no,p.plan_type
+		</if>
+	</select>
+
+	<!--根据通道分组查询 -->
+	<select id="selectDirectListGroupByStockNo"
+		resultType="com.yougou.logistics.city.common.dto.BillChCheckDirectDto"
+		parameterType="com.yougou.logistics.city.common.dto.BillChCheckDirectDto">
+		SELECT d.plan_no planNo,
+		cm.stock_no stockNo,
+		d.locno,
+		d.owner_no
+		ownerNo,
+		p.plan_type planType
+		FROM BILL_CH_CHECK_DIRECT d
+		INNER JOIN
+		bill_ch_plan p
+		ON p.locno = d.locno
+		AND p.plan_no = d.plan_no
+		INNER JOIN
+		Cm_defCell cm
+		ON cm.locno = d.locno
+		AND cm.cell_no = d.cell_no
+		INNER JOIN
+		item i
+		ON i.item_no = d.item_no
+		where 1=1
+		<include refid="condition_direct4check" />
+		and d.item_no != 'N'
+		group by
+		cm.stock_no,d.plan_no,d.locno,d.owner_no,p.plan_type
+		<!-- 只有当品牌库编码不为空的时候，才会进行union连接  add  zuo.sw -->
+		<if test="null==dto.sysNo or ''==dto.sysNo">
+				union
+				SELECT
+				d.plan_no planNo,
+				cm.stock_no stockNo,
+				d.locno,
+				d.owner_no ownerNo,
+				p.plan_type planType
+				FROM BILL_CH_CHECK_DIRECT d
+				INNER JOIN bill_ch_plan
+				p
+				ON p.locno = d.locno
+				AND p.plan_no = d.plan_no
+				INNER JOIN Cm_defCell cm
+				ON cm.locno = d.locno
+				AND cm.cell_no = d.cell_no
+				where 1 = 1
+				<include refid="condition_direct4check" />
+				and d.item_no = 'N'
+				group by cm.stock_no, d.plan_no, d.locno,
+				d.owner_no, p.plan_type
+		 </if>
+		
+		
+	</select>
+
+	<select id="selectDirectListGroupByCellNoInStockNo"
+		resultType="com.yougou.logistics.city.common.dto.BillChCheckDirectDto">
+		SELECT d.plan_no planNo,
+		d.cell_no cellNo,
+		d.locno,
+		d.owner_no ownerNo,
+		p.plan_type planType
+		FROM BILL_CH_CHECK_DIRECT d
+		INNER JOIN bill_ch_plan
+		p
+		ON p.locno = d.locno
+		AND p.plan_no = d.plan_no
+		INNER JOIN Cm_defCell cm
+		ON cm.locno = d.locno
+		AND cm.cell_no = d.cell_no
+		INNER JOIN item i
+		ON
+		i.item_no = d.item_no
+		where 1=1
+		<include refid="condition_direct4check" />
+		and cm.stock_no in
+		<foreach collection="list" item="item" open="(" separator=","
+			close=")">
+			#{item.stockNo}
+		</foreach>
+		group by d.cell_no,d.plan_no,d.locno,d.owner_no,p.plan_type
+		<!-- 只有当品牌库编码不为空的时候，才会进行union连接  add  zuo.sw -->
+		<if test="null==dto.sysNo or ''==dto.sysNo">
+				union
+				SELECT d.plan_no planNo,
+				d.cell_no cellNo,
+				d.locno,
+				d.owner_no ownerNo,
+				p.plan_type planType
+				FROM BILL_CH_CHECK_DIRECT d
+				INNER JOIN bill_ch_plan
+				p
+				ON p.locno = d.locno
+				AND p.plan_no = d.plan_no
+				INNER JOIN Cm_defCell cm
+				ON cm.locno = d.locno
+				AND cm.cell_no = d.cell_no
+				where 1 = 1
+				<include refid="condition_direct4check" />
+				and cm.stock_no in
+				<foreach collection="list" item="item" open="(" separator=","
+					close=")">
+					#{item.stockNo}
+				</foreach>
+				and d.item_no = 'N'
+				group by d.cell_no, d.plan_no, d.locno, d.owner_no,
+				p.plan_type
+		 </if>
+	</select>
+
+	<select id="selectDirectListAll"
+		resultType="com.yougou.logistics.city.common.dto.BillChCheckDirectDto"
+		parameterType="com.yougou.logistics.city.common.dto.BillChCheckDirectDto">
+		SELECT
+		d.locno,
+		d.OWNER_NO ownerNo,
+		d.direct_serial directSerial,
+		d.plan_no planNo,
+		p.audittm audittm,
+		p.plan_type planType,
+		cmd.area_name
+		areaName,
+		cm.stock_no stockNo,
+		d.cell_no cellNo,
+		d.item_no itemNo,
+		d.item_qty itemQty,
+		d.item_type itemType,
+		d.barcode barcode,
+		d.label_no
+		labelNo,
+		d.quality quality,
+		i.item_name itemName,
+		i.style_no styleNo,
+		c.color_name colorName,
+		d.size_no sizeNo,
+		d.pack_qty packQty,
+		d.brand_no
+		brandNo
+		FROM BILL_CH_CHECK_DIRECT d
+		INNER JOIN bill_ch_plan p
+		ON p.locno
+		= d.locno
+		AND p.plan_no = d.plan_no
+		INNER JOIN Cm_defCell cm
+		ON cm.locno
+		= d.locno
+		AND cm.cell_no = d.cell_no
+		INNER JOIN cm_defarea cmd
+		ON
+		cmd.locno = d.locno
+		AND cmd.ware_no = cm.ware_no
+		AND cmd.area_no =
+		cm.area_no
+		left JOIN item i
+		ON i.item_no = d.item_no
+		LEFT JOIN color_info
+		c
+		ON c.color_no = i.color_no
+		where 1=1
+		<include refid="condition_direct4check" />
+	</select>
+	
+	<!-- 容器记账，查询零散的商品信息 add by zuo.sw -->
+    <select id="selectDirectList4Single" resultType="com.yougou.logistics.city.common.dto.BillChCheckDirectDto" parameterType="com.yougou.logistics.city.common.dto.BillChCheckDirectDto">
+		SELECT d.locno,
+		       d.OWNER_NO      ownerNo,
+		       d.direct_serial directSerial,
+		       d.plan_no       planNo,
+		       p.audittm       audittm,
+		       p.plan_type     planType,
+		       cm.stock_no stockNo,
+		       d.cell_no cellNo,
+		       d.item_no itemNo,
+		       <!-- d.item_qty itemQty, -->
+		       (nvl(d.item_qty, 0) - nvl(sub1.qty, 0)) itemQty,
+		       d.item_type itemType,
+		       d.barcode barcode,
+		       d.label_no labelNo,
+		       d.quality quality,
+		       d.size_no  sizeNo,
+		       d.pack_qty packQty,
+		       d.brand_no brandNo
+		  FROM BILL_CH_CHECK_DIRECT d
+		 INNER JOIN bill_ch_plan p
+		    ON p.locno = d.locno
+		   AND p.plan_no = d.plan_no
+		 INNER JOIN Cm_defCell cm
+		    ON cm.locno = d.locno
+		   AND cm.cell_no = d.cell_no
+		  left join (select bo.locno,
+		                    bo.plan_no,
+		                    bo.cell_no,
+		                    bo.item_type,
+		                    bo.quality,
+		                    bxd.item_no,
+		                    bxd.size_no,
+		                    nvl(sum(bxd.qty), 0) qty
+		               from bill_ch_check_direct_box bo
+		               left join con_box bx
+		                 on bo.locno = bx.locno
+		                and bo.box_no = bx.box_no
+		                and bo.cell_no = bx.cell_no
+		               left join con_box_dtl bxd
+		                 on bx.locno = bxd.locno
+		                and bx.box_no = bxd.box_no
+		              where bo.locno = #{dto.locno,jdbcType=VARCHAR}
+		                and bo.plan_no = #{dto.planNo,jdbcType=VARCHAR}
+		              group by bo.locno,
+		                       bo.plan_no,
+		                       bo.cell_no,
+		                       bo.item_type,
+		                       bo.quality,
+		                       bxd.item_no,
+		                       bxd.size_no) sub1
+		    on d.locno = sub1.locno
+		   and d.plan_no = sub1.plan_no
+		   and d.cell_no = sub1.cell_no
+		   and d.item_type = sub1.item_type
+		   and d.quality = sub1.quality
+		   and d.item_no = sub1.item_no
+		   and d.size_no = sub1.size_no
+		where 1=1
+		 and nvl(d.item_qty, 0) - nvl(sub1.qty, 0) > 0
+		<include refid="condition_direct4check" />
+	</select>
+	
+	<!-- 容器记账，查询定位容器中的箱的明细信息  add by zuo.sw -->
+    <select id="selectDirectBoxInfo" resultType="com.yougou.logistics.city.common.dto.BillChCheckDirectDto" parameterType="map">
+		 select bo.locno,
+		       bo.owner_no ownerNo,
+		       bo.plan_no planNo,
+		       bo.cell_no cellNo,
+		       bx.box_no labelNo,
+		       bo.item_type itemType,
+		       bo.quality quality,
+		       bxd.item_no itemNo,
+		       bxd.size_no sizeNo,
+		       m.brand_no brandNo,
+		       b.barcode barcode,
+		       1  packQty,
+		       bxd.qty itemQty
+		  from bill_ch_check_direct_box bo
+		  left join con_box bx
+		    on bo.locno = bx.locno
+		   and bo.box_no = bx.box_no
+		   and bo.cell_no = bx.cell_no
+		  left join con_box_dtl bxd
+		    on bx.locno = bxd.locno
+		   and bx.box_no = bxd.box_no
+		  left join item m on bxd.item_no = m.item_no
+		  left join item_barcode  b on bxd.item_no = b.item_no and bxd.size_no = b.size_no and b.package_id ='0'
+		  <if test="null!=param.stockNo and ''!=param.stockNo">
+		      left join cm_defcell dc on  bo.locno = dc.locno and bo.cell_no = dc.cell_no
+		      <!-- left join cm_defstock ds on dc.locno = ds.locno and dc.ware_no = ds.ware_no and dc.area_no=ds.area_no and dc.stock_no = ds.stock_no -->
+		  </if>
+		 where bo.locno = #{param.locno,jdbcType=VARCHAR}
+		   and bo.plan_no = #{param.planNo,jdbcType=VARCHAR}
+		   <if test="null!=param.cellNo and ''!=param.cellNo">
+		   		and bo.cell_no = #{param.cellNo,jdbcType=VARCHAR}
+		   </if>
+		   <if test="null!=param.stockNo and ''!=param.stockNo">
+		   		and dc.stock_no = #{param.stockNo,jdbcType=VARCHAR}
+		   </if>
+	</select>
+
+	<update id="updateStatusBatch"
+		parameterType="com.yougou.logistics.city.common.dto.BillChCheckDirectDto">
+		update BILL_CH_CHECK_DIRECT dir set status = '13' where
+		dir.DIRECT_SERIAL in(
+		SELECT d.DIRECT_SERIAL
+		FROM BILL_CH_CHECK_DIRECT d
+		INNER JOIN bill_ch_plan p
+		ON p.locno = d.locno
+		AND p.plan_no = d.plan_no
+		INNER JOIN Cm_defCell cm
+		ON cm.locno = d.locno
+		AND cm.cell_no =
+		d.cell_no
+		INNER JOIN cm_defarea cmd
+		ON cmd.locno = d.locno
+		AND
+		cmd.ware_no = cm.ware_no
+		AND cmd.area_no = cm.area_no
+		left JOIN item i
+		ON i.item_no = d.item_no
+		LEFT JOIN color_info c
+		ON c.color_no =
+		i.color_no
+		where d.status = '10'
+		<include refid="condition_direct4check" />
+		) and dir.plan_no = #{dto.planNo,jdbcType=VARCHAR}
+	</update>
+
+	<select id="selectByParams" resultMap="BaseResultMap"
+		parameterType="map">
+		select
+		<include refid="BaseColumn" />
+		from BILL_CH_CHECK_DIRECT where 1=1
+		<include refid="condition" />
+	</select>
+
+
+
+	<!-- 查询定位信息中的所有盘点单 -->
+	<sql id="condition_planNo_select">
+		<if test="null!=param">
+			<if test="null!=param.locno and ''!=param.locno">
+				and d.locno = #{param.locno,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=param.planNo and ''!=param.planNo">
+				and d.plan_no =#{param.planNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=param.status and ''!=param.status">
+				and d.status =#{param.status,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=param.planStatus and ''!=param.planStatus">
+				and p.status =#{param.planStatus,jdbcType=VARCHAR}
+			</if>
+		</if>
+	</sql>
+
+	<select id="selectPlanNo" resultMap="BaseResultMap"
+		parameterType="map">
+		select B.* from (select A.*,rownum rn from(
+		SELECT
+		d.plan_no,max(p.auditor) planAuditor,max(p.auditorName) planAuditorName FROM bill_ch_check_direct
+		d,bill_ch_plan p
+		where d.locno=p.locno and d.plan_no=p.plan_no
+		<include refid="condition_planNo_select" />
+		group BY d.locno,d.plan_no
+		order by d.plan_no desc
+		) A where rownum &lt;
+		#{page.endRowNum}) B where rn &gt;
+		#{page.startRowNum}
+	</select>
+	<select id="selectPlanNoCount" resultType="java.lang.Integer"
+		parameterType="map">
+		select count(1) from(
+		SELECT d.plan_no FROM bill_ch_check_direct
+		d,bill_ch_plan p
+		where d.locno=p.locno and d.plan_no=p.plan_no
+		<include refid="condition_planNo_select" />
+		group BY d.locno,d.plan_no
+		)
+	</select>
+	<!-- 查询定位信息中的所有盘点单end -->
+	<delete id="deleteByPrimaryKey"
+		parameterType="com.yougou.logistics.city.common.model.BillChCheckDirectKey">
+		delete from BILL_CH_CHECK_DIRECT
+		where LOCNO =
+		#{locno,jdbcType=VARCHAR}
+		and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+		and DIRECT_SERIAL = #{directSerial,jdbcType=DECIMAL}
+	</delete>
+	<delete id="deleteByPrimarayKeyForModel"
+		parameterType="com.yougou.logistics.city.common.model.BillChCheckDirect">
+		delete from BILL_CH_CHECK_DIRECT
+		where LOCNO =
+		#{locno,jdbcType=VARCHAR}
+		and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+		and DIRECT_SERIAL = #{directSerial,jdbcType=DECIMAL}
+	</delete>
+	<update id="batchUpdate4Status" parameterType="java.util.List">
+		begin
+		<foreach collection="list" index="index" item="item"
+			separator=";">
+			update BILL_CH_CHECK_DIRECT set
+			STATUS=#{item.status}
+			where
+			LOCNO = #{item.locno,jdbcType=VARCHAR}
+			and OWNER_NO =
+			#{item.ownerNo,jdbcType=VARCHAR}
+			and DIRECT_SERIAL =
+			#{item.directSerial,jdbcType=DECIMAL}
+			and status =
+			#{item.sourceStatus,jdbcType=VARCHAR}
+		</foreach>
+		;end;
+	</update>
+	<!-- 批量插入定位信息 -->
+	<select id="batchInsertDtl" parameterType="java.util.List">
+		insert into bill_ch_check_direct
+		(locno,owner_no,direct_serial,plan_no,request_no,cell_no,container_no,item_no,barcode,pack_qty,lot_no,
+		produce_date,expire_date,quality,reserved1,reserved2,reserved3,reserved4,item_qty,status,operate_type,
+		request_date,plan_type,item_type,label_no,stock_type,stock_value,batch_serial_no,size_no,brand_no)
+		<foreach collection="list" item="item" index="index"
+			separator="union all">
+			select
+			#{item.locno,jdbcType=VARCHAR},
+			#{item.ownerNo,jdbcType=VARCHAR},
+			#{item.directSerial,jdbcType=DECIMAL},
+			#{item.planNo,jdbcType=VARCHAR},
+			#{item.requestNo,jdbcType=VARCHAR},
+			#{item.cellNo,jdbcType=VARCHAR},
+			<if test="item.containerNo == null or item.containerNo == ''">
+				'N',
+			</if>
+			<if test="item.containerNo != null and item.containerNo != ''">
+				#{item.containerNo,jdbcType=VARCHAR},
+			</if>
+			#{item.itemNo,jdbcType=VARCHAR},
+			#{item.barcode,jdbcType=VARCHAR},
+			#{item.packQty,jdbcType=DECIMAL},
+			#{item.lotNo,jdbcType=VARCHAR},
+			#{item.produceDate,jdbcType=TIMESTAMP},
+			#{item.expireDate,jdbcType=TIMESTAMP},
+			#{item.quality,jdbcType=VARCHAR},
+			<if test="item.reserved1 == null or item.reserved1 == ''">
+				'N',
+			</if>
+			<if test="item.reserved1 != null and item.reserved1 != ''">
+				#{item.reserved1,jdbcType=VARCHAR},
+			</if>
+			<if test="item.reserved2 == null or item.reserved2 == ''">
+				'N',
+			</if>
+			<if test="item.reserved2 != null and item.reserved2 != ''">
+				#{item.reserved2,jdbcType=VARCHAR},
+			</if>
+			<if test="item.reserved3 == null or item.reserved3 == ''">
+				'N',
+			</if>
+			<if test="item.reserved3 != null and item.reserved3 != ''">
+				#{item.reserved3,jdbcType=VARCHAR},
+			</if>
+			<if test="item.reserved4 == null or item.reserved4 == ''">
+				'N',
+			</if>
+			<if test="item.reserved4 != null and item.reserved4 != ''">
+				#{item.reserved4,jdbcType=VARCHAR},
+			</if>
+			<if test="item.itemQty == null">
+				0,
+			</if>
+			<if test="item.itemQty != null">
+				#{item.itemQty,jdbcType=DECIMAL},
+			</if>
+			#{item.status,jdbcType=VARCHAR},
+			#{item.operateType,jdbcType=VARCHAR},
+			#{item.requestDate,jdbcType=TIMESTAMP},
+			#{item.planType,jdbcType=VARCHAR},
+			<if test="item.itemType == null or item.itemType == ''">
+				'0',
+			</if>
+			<if test="item.itemType != null and item.itemType != ''">
+				#{item.itemType,jdbcType=VARCHAR},
+			</if>
+			<if test="item.labelNo == null or item.labelNo == ''">
+				'N',
+			</if>
+			<if test="item.labelNo != null and item.labelNo != ''">
+				#{item.labelNo,jdbcType=VARCHAR},
+			</if>
+			<if test="item.stockType == null or item.stockType == ''">
+				'1',
+			</if>
+			<if test="item.stockType != null and item.stockType != ''">
+				#{item.stockType,jdbcType=VARCHAR},
+			</if>
+			<if test="item.stockValue == null or item.stockValue == ''">
+				'N',
+			</if>
+			<if test="item.stockValue != null and item.stockValue != ''">
+				#{item.stockValue,jdbcType=VARCHAR},
+			</if>
+			<if test="item.batchSerialNo == null or item.batchSerialNo == ''">
+				'N',
+			</if>
+			<if test="item.batchSerialNo != null and item.batchSerialNo != ''">
+				#{item.batchSerialNo,jdbcType=VARCHAR},
+			</if>
+			#{item.sizeNo,jdbcType=VARCHAR},
+			#{item.brandNo,jdbcType=VARCHAR}
+			from
+			DUAL
+		</foreach>
+	</select>
+	
+	<!-- 查询储位信息，根据计划单号，储位，属性，品质进行分组 add by zuo.sw  -->
+	<select id="selectDirectCellNoByGroup" resultMap="BaseResultMap" parameterType="map">
+	        select cd.locno,
+			       cd.owner_no,
+			       cd.plan_no,
+			       cd.cell_no,
+			       cd.item_type,
+			       cd.quality
+			 from bill_ch_check_direct cd
+			 where cd.plan_no = #{params.planNo,jdbcType=VARCHAR}
+				 and cd.locno = #{params.locno,jdbcType=VARCHAR}
+				 and cd.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+				 group by cd.locno,
+				          cd.owner_no,
+				          cd.plan_no,
+				          cd.cell_no,
+				          cd.item_type,
+				          cd.quality
+	
+	</select>
+	
+	<!-- 查询储位号查询箱子及其数量  add by zuo.sw  -->
+	<select id="selectDirectBoxNoList" resultType="com.yougou.logistics.city.common.dto.BillChCheckDirectBoxDto" parameterType="map">
+	        select t.box_no as boxNo,
+                       max(t.cell_no) as cellNo,
+                       sum(t.qty) as receiptQty
+                  from (select b.box_no,
+                               vc.quality,
+                               vc.item_type,
+                               b.cell_no,
+                               bd.qty,
+                               case
+                                 when nvl(vc.qty, 0) - nvl(vc.outstock_qty, 0) -
+                                      bd.qty >= 0 then
+                                  1
+                                 else
+                                  0
+                               end as enoughqty
+                          from con_box b
+                         inner join CM_DEFCELL z
+                            on b.cell_no = z.cell_no
+                           and b.locno = z.locno
+                         <include refid="selectBoxNo4DirectJoin" />  
+                          left join v_city_content_box bd
+                            on b.locno = bd.locno
+                           and b.owner_no = bd.owner_no
+                           and b.box_no = bd.box_no
+                          left join v_content vc
+                            on b.cell_no = vc.cell_no
+                           and b.locno = vc.locno
+                           and b.owner_no = vc.owner_no
+                           <!-- 
+                           and vc.STATUS = '0'
+                           and vc.FLAG = '0'
+                           and vc.HM_MANUAL_FLAG = '1'
+                            -->
+                           and bd.item_no = vc.item_no
+                           and bd.size_no = vc.size_no
+                         where b.status = '2'
+                           and b.cell_no is not null
+                           and b.locno = #{params.locno,jdbcType=VARCHAR}
+                           and b.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+                           and b.cell_no = #{params.cellNo,jdbcType=VARCHAR}
+                           and vc.item_type = #{params.itemType,jdbcType=VARCHAR}
+                           and vc.quality = #{params.quality,jdbcType=VARCHAR}
+                           and b.FLAG = '0') t
+                 group by t.box_no
+                having min(t.enoughqty) = 1 and sum(t.qty) > 0
+	</select>
+	
+	
+	<!--权限过滤-->
+    <sql id="selectBoxNo4DirectJoin" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+      inner join (select sub3_d.locno,sub3_d.box_no
+         from con_box_dtl sub3_d
+        inner join item sub3_i
+           on sub3_d.item_no = sub3_i.item_no 
+        where sub3_i.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+            and sub3_d.locno=#{params.locno,jdbcType=VARCHAR}
+            and sub3_d.owner_no=#{params.ownerNo,jdbcType=VARCHAR}
+        group by sub3_d.locno,sub3_d.box_no) sub3 on b.locno=sub3.locno and b.box_no=sub3.box_no
+    </if>
+    </sql>
+	
+	<insert id="insert"
+		parameterType="com.yougou.logistics.city.common.model.BillChCheckDirect">
+		insert into BILL_CH_CHECK_DIRECT (LOCNO, OWNER_NO,
+		DIRECT_SERIAL,
+		PLAN_NO, REQUEST_NO, CELL_NO,
+		CONTAINER_NO, ITEM_NO,
+		BARCODE,
+		PACK_QTY, LOT_NO, PRODUCE_DATE,
+		EXPIRE_DATE, QUALITY,
+		RESERVED1,
+		RESERVED2, RESERVED3, RESERVED4,
+		ITEM_QTY, STATUS,
+		OPERATE_TYPE,
+		REQUEST_DATE, PLAN_TYPE, ITEM_TYPE,
+		LABEL_NO, STOCK_TYPE,
+		STOCK_VALUE,
+		BATCH_SERIAL_NO, SIZE_NO)
+		values
+		(#{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR},
+		#{directSerial,jdbcType=DECIMAL},
+		#{planNo,jdbcType=VARCHAR},
+		#{requestNo,jdbcType=VARCHAR}, #{cellNo,jdbcType=VARCHAR},
+		#{containerNo,jdbcType=VARCHAR}, #{itemNo,jdbcType=VARCHAR},
+		#{barcode,jdbcType=VARCHAR},
+		#{packQty,jdbcType=DECIMAL},
+		#{lotNo,jdbcType=VARCHAR}, #{produceDate,jdbcType=TIMESTAMP},
+		#{expireDate,jdbcType=TIMESTAMP}, #{quality,jdbcType=VARCHAR},
+		#{reserved1,jdbcType=VARCHAR},
+		#{reserved2,jdbcType=VARCHAR},
+		#{reserved3,jdbcType=VARCHAR}, #{reserved4,jdbcType=VARCHAR},
+		#{itemQty,jdbcType=DECIMAL}, #{status,jdbcType=VARCHAR},
+		#{operateType,jdbcType=CHAR},
+		#{requestDate,jdbcType=TIMESTAMP},
+		#{planType,jdbcType=VARCHAR}, #{itemType,jdbcType=VARCHAR},
+		#{labelNo,jdbcType=VARCHAR}, #{stockType,jdbcType=VARCHAR},
+		#{stockValue,jdbcType=VARCHAR},
+		#{batchSerialNo,jdbcType=VARCHAR},
+		#{sizeNo,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.yougou.logistics.city.common.model.BillChCheckDirect">
+		insert into BILL_CH_CHECK_DIRECT
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="locno != null">
+				LOCNO,
+			</if>
+			<if test="ownerNo != null">
+				OWNER_NO,
+			</if>
+			<if test="directSerial != null">
+				DIRECT_SERIAL,
+			</if>
+			<if test="planNo != null">
+				PLAN_NO,
+			</if>
+			<if test="requestNo != null">
+				REQUEST_NO,
+			</if>
+			<if test="cellNo != null">
+				CELL_NO,
+			</if>
+			<if test="containerNo != null">
+				CONTAINER_NO,
+			</if>
+			<if test="itemNo != null">
+				ITEM_NO,
+			</if>
+			<if test="barcode != null">
+				BARCODE,
+			</if>
+			<if test="packQty != null">
+				PACK_QTY,
+			</if>
+			<if test="lotNo != null">
+				LOT_NO,
+			</if>
+			<if test="produceDate != null">
+				PRODUCE_DATE,
+			</if>
+			<if test="expireDate != null">
+				EXPIRE_DATE,
+			</if>
+			<if test="quality != null">
+				QUALITY,
+			</if>
+			<if test="reserved1 != null">
+				RESERVED1,
+			</if>
+			<if test="reserved2 != null">
+				RESERVED2,
+			</if>
+			<if test="reserved3 != null">
+				RESERVED3,
+			</if>
+			<if test="reserved4 != null">
+				RESERVED4,
+			</if>
+			<if test="itemQty != null">
+				ITEM_QTY,
+			</if>
+			<if test="status != null">
+				STATUS,
+			</if>
+			<if test="operateType != null">
+				OPERATE_TYPE,
+			</if>
+			<if test="requestDate != null">
+				REQUEST_DATE,
+			</if>
+			<if test="planType != null">
+				PLAN_TYPE,
+			</if>
+			<if test="itemType != null">
+				ITEM_TYPE,
+			</if>
+			<if test="labelNo != null">
+				LABEL_NO,
+			</if>
+			<if test="stockType != null">
+				STOCK_TYPE,
+			</if>
+			<if test="stockValue != null">
+				STOCK_VALUE,
+			</if>
+			<if test="batchSerialNo != null">
+				BATCH_SERIAL_NO,
+			</if>
+			<if test="sizeNo != null">
+				SIZE_NO,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="locno != null">
+				#{locno,jdbcType=VARCHAR},
+			</if>
+			<if test="ownerNo != null">
+				#{ownerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="directSerial != null">
+				#{directSerial,jdbcType=DECIMAL},
+			</if>
+			<if test="planNo != null">
+				#{planNo,jdbcType=VARCHAR},
+			</if>
+			<if test="requestNo != null">
+				#{requestNo,jdbcType=VARCHAR},
+			</if>
+			<if test="cellNo != null">
+				#{cellNo,jdbcType=VARCHAR},
+			</if>
+			<if test="containerNo != null">
+				#{containerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="itemNo != null">
+				#{itemNo,jdbcType=VARCHAR},
+			</if>
+			<if test="barcode != null">
+				#{barcode,jdbcType=VARCHAR},
+			</if>
+			<if test="packQty != null">
+				#{packQty,jdbcType=DECIMAL},
+			</if>
+			<if test="lotNo != null">
+				#{lotNo,jdbcType=VARCHAR},
+			</if>
+			<if test="produceDate != null">
+				#{produceDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="expireDate != null">
+				#{expireDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="quality != null">
+				#{quality,jdbcType=VARCHAR},
+			</if>
+			<if test="reserved1 != null">
+				#{reserved1,jdbcType=VARCHAR},
+			</if>
+			<if test="reserved2 != null">
+				#{reserved2,jdbcType=VARCHAR},
+			</if>
+			<if test="reserved3 != null">
+				#{reserved3,jdbcType=VARCHAR},
+			</if>
+			<if test="reserved4 != null">
+				#{reserved4,jdbcType=VARCHAR},
+			</if>
+			<if test="itemQty != null">
+				#{itemQty,jdbcType=DECIMAL},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=VARCHAR},
+			</if>
+			<if test="operateType != null">
+				#{operateType,jdbcType=CHAR},
+			</if>
+			<if test="requestDate != null">
+				#{requestDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="planType != null">
+				#{planType,jdbcType=VARCHAR},
+			</if>
+			<if test="itemType != null">
+				#{itemType,jdbcType=VARCHAR},
+			</if>
+			<if test="labelNo != null">
+				#{labelNo,jdbcType=VARCHAR},
+			</if>
+			<if test="stockType != null">
+				#{stockType,jdbcType=VARCHAR},
+			</if>
+			<if test="stockValue != null">
+				#{stockValue,jdbcType=VARCHAR},
+			</if>
+			<if test="batchSerialNo != null">
+				#{batchSerialNo,jdbcType=VARCHAR},
+			</if>
+			<if test="sizeNo != null">
+				#{sizeNo,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.yougou.logistics.city.common.model.BillChCheckDirect">
+		update BILL_CH_CHECK_DIRECT
+		<set>
+			<if test="planNo != null">
+				PLAN_NO = #{planNo,jdbcType=VARCHAR},
+			</if>
+			<if test="requestNo != null">
+				REQUEST_NO = #{requestNo,jdbcType=VARCHAR},
+			</if>
+			<if test="cellNo != null">
+				CELL_NO = #{cellNo,jdbcType=VARCHAR},
+			</if>
+			<if test="containerNo != null">
+				CONTAINER_NO = #{containerNo,jdbcType=VARCHAR},
+			</if>
+			<if test="itemNo != null">
+				ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+			</if>
+			<if test="barcode != null">
+				BARCODE = #{barcode,jdbcType=VARCHAR},
+			</if>
+			<if test="packQty != null">
+				PACK_QTY = #{packQty,jdbcType=DECIMAL},
+			</if>
+			<if test="lotNo != null">
+				LOT_NO = #{lotNo,jdbcType=VARCHAR},
+			</if>
+			<if test="produceDate != null">
+				PRODUCE_DATE = #{produceDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="expireDate != null">
+				EXPIRE_DATE = #{expireDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="quality != null">
+				QUALITY = #{quality,jdbcType=VARCHAR},
+			</if>
+			<if test="reserved1 != null">
+				RESERVED1 = #{reserved1,jdbcType=VARCHAR},
+			</if>
+			<if test="reserved2 != null">
+				RESERVED2 = #{reserved2,jdbcType=VARCHAR},
+			</if>
+			<if test="reserved3 != null">
+				RESERVED3 = #{reserved3,jdbcType=VARCHAR},
+			</if>
+			<if test="reserved4 != null">
+				RESERVED4 = #{reserved4,jdbcType=VARCHAR},
+			</if>
+			<if test="itemQty != null">
+				ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+			</if>
+			<if test="status != null">
+				STATUS = #{status,jdbcType=VARCHAR},
+			</if>
+			<if test="operateType != null">
+				OPERATE_TYPE = #{operateType,jdbcType=CHAR},
+			</if>
+			<if test="requestDate != null">
+				REQUEST_DATE = #{requestDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="planType != null">
+				PLAN_TYPE = #{planType,jdbcType=VARCHAR},
+			</if>
+			<if test="itemType != null">
+				ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+			</if>
+			<if test="labelNo != null">
+				LABEL_NO = #{labelNo,jdbcType=VARCHAR},
+			</if>
+			<if test="stockType != null">
+				STOCK_TYPE = #{stockType,jdbcType=VARCHAR},
+			</if>
+			<if test="stockValue != null">
+				STOCK_VALUE = #{stockValue,jdbcType=VARCHAR},
+			</if>
+			<if test="batchSerialNo != null">
+				BATCH_SERIAL_NO = #{batchSerialNo,jdbcType=VARCHAR},
+			</if>
+			<if test="sizeNo != null">
+				SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where LOCNO = #{locno,jdbcType=VARCHAR}
+		and OWNER_NO =
+		#{ownerNo,jdbcType=VARCHAR}
+		and DIRECT_SERIAL =
+		#{directSerial,jdbcType=DECIMAL}
+		<if test="sourceStatus != null and sourceStatus != ''">
+			and status = #{sourceStatus,jdbcType=VARCHAR}
+		</if>
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.yougou.logistics.city.common.model.BillChCheckDirect">
+		update BILL_CH_CHECK_DIRECT
+		set PLAN_NO =
+		#{planNo,jdbcType=VARCHAR},
+		REQUEST_NO = #{requestNo,jdbcType=VARCHAR},
+		CELL_NO = #{cellNo,jdbcType=VARCHAR},
+		CONTAINER_NO =
+		#{containerNo,jdbcType=VARCHAR},
+		ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+		BARCODE = #{barcode,jdbcType=VARCHAR},
+		PACK_QTY =
+		#{packQty,jdbcType=DECIMAL},
+		LOT_NO = #{lotNo,jdbcType=VARCHAR},
+		PRODUCE_DATE = #{produceDate,jdbcType=TIMESTAMP},
+		EXPIRE_DATE =
+		#{expireDate,jdbcType=TIMESTAMP},
+		QUALITY =
+		#{quality,jdbcType=VARCHAR},
+		RESERVED1 = #{reserved1,jdbcType=VARCHAR},
+		RESERVED2 = #{reserved2,jdbcType=VARCHAR},
+		RESERVED3 =
+		#{reserved3,jdbcType=VARCHAR},
+		RESERVED4 =
+		#{reserved4,jdbcType=VARCHAR},
+		ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+		STATUS = #{status,jdbcType=VARCHAR},
+		OPERATE_TYPE =
+		#{operateType,jdbcType=CHAR},
+		REQUEST_DATE =
+		#{requestDate,jdbcType=TIMESTAMP},
+		PLAN_TYPE =
+		#{planType,jdbcType=VARCHAR},
+		ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+		LABEL_NO = #{labelNo,jdbcType=VARCHAR},
+		STOCK_TYPE =
+		#{stockType,jdbcType=VARCHAR},
+		STOCK_VALUE =
+		#{stockValue,jdbcType=VARCHAR},
+		BATCH_SERIAL_NO =
+		#{batchSerialNo,jdbcType=VARCHAR},
+		SIZE_NO = #{sizeNo,jdbcType=VARCHAR}
+		where LOCNO = #{locno,jdbcType=VARCHAR}
+		and OWNER_NO =
+		#{ownerNo,jdbcType=VARCHAR}
+		and DIRECT_SERIAL =
+		#{directSerial,jdbcType=DECIMAL}
+	</update>
+</mapper>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.AuthorityOperationsMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.AuthorityOperations" >
+    <result column="OPERATION_ID" property="operationId" jdbcType="DECIMAL" />
+    <result column="OPERATION_NAME" property="operationName" jdbcType="VARCHAR" />
+    <result column="OPERATION_COMMENT" property="operationComment" jdbcType="VARCHAR" />
+    <result column="OPERATION_TYPE" property="operationType" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+    </if>
+  </sql>
+  <sql id="Base_Column_List">
+  OPERATION_ID,OPERATION_NAME,OPERATION_COMMENT,OPERATION_TYPE
+  </sql>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from AUTHORITY_OPERATIONS where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from AUTHORITY_OPERATIONS where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from AUTHORITY_OPERATIONS where 1=1 
+    <include refid="condition" />
+  </select>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.AuthorityOperations" >
+    insert into AUTHORITY_OPERATIONS (OPERATION_ID, OPERATION_NAME, OPERATION_COMMENT, 
+      OPERATION_TYPE)
+    values (#{operationId,jdbcType=DECIMAL}, #{operationName,jdbcType=VARCHAR}, #{operationComment,jdbcType=VARCHAR}, 
+      #{operationType,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.AuthorityOperations" >
+    insert into AUTHORITY_OPERATIONS
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="operationId != null" >
+        OPERATION_ID,
+      </if>
+      <if test="operationName != null" >
+        OPERATION_NAME,
+      </if>
+      <if test="operationComment != null" >
+        OPERATION_COMMENT,
+      </if>
+      <if test="operationType != null" >
+        OPERATION_TYPE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="operationId != null" >
+        #{operationId,jdbcType=DECIMAL},
+      </if>
+      <if test="operationName != null" >
+        #{operationName,jdbcType=VARCHAR},
+      </if>
+      <if test="operationComment != null" >
+        #{operationComment,jdbcType=VARCHAR},
+      </if>
+      <if test="operationType != null" >
+        #{operationType,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+</mapper>

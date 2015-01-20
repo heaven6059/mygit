@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillSmWasteMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillSmWaste" >
+    <id column="WASTE_NO" property="wasteNo" jdbcType="VARCHAR" />
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <result column="WASTE_TYPE" property="wasteType" jdbcType="VARCHAR" />
+    <result column="PO_TYPE" property="poType" jdbcType="VARCHAR" />
+    <result column="PO_NO" property="poNo" jdbcType="VARCHAR" />
+    <result column="WASTE_DATE" property="wasteDate" jdbcType="TIMESTAMP" />
+    <result column="REQUEST_DATE" property="requestDate" jdbcType="TIMESTAMP" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="CREATE_FLAG" property="createFlag" jdbcType="CHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATORname" property="creatorname" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="EDITORname" property="editorname" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="SEND_FLAG" property="sendFlag" jdbcType="DECIMAL" />
+    <result column="AUDITOR" property="auditor" jdbcType="VARCHAR" />
+    <result column="AUDITORname" property="auditorname" jdbcType="VARCHAR" />
+    <result column="AUDITTM" property="audittm" jdbcType="TIMESTAMP" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="store_no" property="storeNo" jdbcType="VARCHAR" />
+    <result column="operator" property="operator" jdbcType="VARCHAR" />
+    <result column="operatorname" property="operatorname" jdbcType="VARCHAR" />
+    <result column="waste_qty" property="wasteQty" jdbcType="DECIMAL" />
+    <result column="SOURCE_NO" jdbcType="VARCHAR" property="sourceNo" />
+    <result column="SOURCE_TYPE" jdbcType="VARCHAR" property="sourceType" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    dtl.WASTE_NO, dtl.LOCNO, dtl.OWNER_NO, dtl.WASTE_TYPE, dtl.PO_TYPE, dtl.PO_NO, dtl.WASTE_DATE, dtl.REQUEST_DATE, 
+    dtl.STATUS, dtl.CREATE_FLAG, dtl.CREATOR,dtl.CREATORname, dtl.CREATETM, dtl.EDITOR,dtl.EDITORname, dtl.EDITTM, dtl.SEND_FLAG, dtl.AUDITOR,dtl.AUDITORname, dtl.AUDITTM, 
+    dtl.REMARK,dtl.STORE_NO,dtl.operator,dtl.operatorname,dtl.SOURCE_NO,dtl.SOURCE_TYPE
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+			and dtl.locno = #{params.locno,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+			and dtl.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.status and ''!=params.status" >
+			and dtl.status = #{params.status,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.wasteType and ''!=params.wasteType" >
+			and dtl.waste_type = #{params.wasteType,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.wasteNo and ''!=params.wasteNo" >
+			and dtl.waste_no = #{params.wasteNo,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.creator and ''!=params.creator" >
+			and dtl.creator = #{params.creator,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.auditor and ''!=params.auditor" >
+			and dtl.auditor = #{params.auditor,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.storeNo and ''!=params.storeNo" >
+			and dtl.store_no = #{params.storeNo,jdbcType=VARCHAR}
+	  </if>
+	  
+	  <if test="null!=params.sourceType and ''!=params.sourceType" >
+			and dtl.source_type = #{params.sourceType,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.sourceNo and ''!=params.sourceNo" >
+			and dtl.source_no LIKE '%${params.sourceNo}%'
+	  </if>
+	  
+	  <if test="null!=params.isDirect and 'N'.toString()==params.isDirect" >
+			and waste_type != '04'
+	  </if>
+	  <if test="null!=params.startCreatetm and ''!=params.startCreatetm" >
+			<![CDATA[
+				  and dtl.CREATETM >= to_date('${params.startCreatetm} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+			]]>	 
+	  </if>
+	  <if test="null!=params.endCreatetm and ''!=params.endCreatetm" >
+			<![CDATA[
+				  and dtl.CREATETM <= to_date('${params.endCreatetm} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			]]>	 
+	  </if>
+	   <if test="null!=params.startAudittm and ''!=params.startAudittm" >
+			<![CDATA[
+				  and dtl.AUDITTM >= to_date('${params.startAudittm} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+			]]>	 
+	  </if>
+	  <if test="null!=params.endAudittm and ''!=params.endAudittm" >
+			<![CDATA[
+				  and dtl.AUDITTM <= to_date('${params.endAudittm} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+			]]>	 
+	  </if>
+    </if>
+  </sql>
+   <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and it.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  <sql id="Base_SQL" >
+    select distinct <include refid="Base_Column_List" />, nvl(ed.waste_qty,0) waste_qty
+          from BILL_SM_WASTE dtl
+          <choose>
+	    	<when test="null!=params.joinIn and 'true'==params.joinIn">
+     			inner join (select dd.locno, dd.owner_no, dd.WASTE_NO, 
+     					sum(dd.waste_qty) waste_qty
+                      from BILL_SM_WASTE_dtl dd, item it
+                     where 1 = 1 
+                       and dd.item_no = it.item_no
+                       and dd.brand_no = it.brand_no
+                      <if test="null!=params.locno and ''!=params.locno" >
+				      	and dd.LOCNO=#{params.locno,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+				        and dd.OWNER_NO=#{params.ownerNo,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.brandNo and ''!=params.brandNo" >
+				      	and it.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+					  </if>
+					  <if test="null!=params.sysNo and ''!=params.sysNo" >
+				      	and it.sys_NO = #{params.sysNo,jdbcType=VARCHAR}
+					  </if>
+					  <include refid="AuthorityCondition" />
+                     group by dd.locno, dd.owner_no, dd.WASTE_NO) ed
+            	  on ed.locno = dtl.locno
+	           	and ed.owner_no = dtl.owner_no
+	           	and ed.WASTE_NO = dtl.WASTE_NO
+     			where 1=1
+	    	</when>
+			<otherwise>
+			 	left join (select dd.locno, dd.owner_no, dd.WASTE_NO,
+			 			sum(dd.waste_qty) waste_qty
+                      from BILL_SM_WASTE_dtl dd, item it
+                     where 1 = 1
+                       and dd.item_no = it.item_no
+                       and dd.brand_no = it.brand_no
+                       <if test="null!=params.locno and ''!=params.locno" >
+				        and dd.LOCNO=#{params.locno,jdbcType=VARCHAR}
+				       </if>
+				       <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+				        and dd.OWNER_NO=#{params.ownerNo,jdbcType=VARCHAR}
+				       </if>
+                       <include refid="AuthorityCondition" />
+                     group by dd.locno, dd.owner_no, dd.WASTE_NO) ed
+	            on ed.locno = dtl.locno
+	           and ed.owner_no = dtl.owner_no
+	           and ed.WASTE_NO = dtl.WASTE_NO
+	          left join (select dd.locno, dd.owner_no, dd.WASTE_NO
+	                      from BILL_SM_WASTE_dtl dd
+	                     where 1 = 1
+	                       <if test="null!=params.locno and ''!=params.locno" >
+					        and dd.LOCNO=#{params.locno,jdbcType=VARCHAR}
+					       </if>
+					       <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+					        and dd.OWNER_NO=#{params.ownerNo,jdbcType=VARCHAR}
+					       </if>
+	                     group by dd.locno, dd.owner_no, dd.WASTE_NO) ed1
+	            on ed1.locno = dtl.locno
+	           and ed1.owner_no = dtl.owner_no
+	           and ed1.WASTE_NO = dtl.WASTE_NO
+	         where 1 = 1
+	           and (ed1.WASTE_NO is null or ed.WASTE_NO is not null)
+			</otherwise>
+     	</choose>
+        <include refid="condition" />
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillSmWasteKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_SM_WASTE dtl
+    where WASTE_NO = #{wasteNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from 
+    (<include refid="Base_SQL" />) A
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from(
+      <include refid="Base_SQL" />
+      <choose>
+	    <when test="orderByField != null and ''!=orderByField">
+			order by ${orderByField}
+			<if test="orderByField">
+			${orderBy}
+			</if>
+		</when>
+		<otherwise>
+			order by CREATETM desc
+		</otherwise>
+	  </choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectSumQty" resultType="java.util.Map" parameterType="map">
+      select sum(waste_qty) waste_qty from (
+      <include refid="Base_SQL" />)
+  </select>
+   <select id="selectByWaste" resultMap="BaseResultMap" parameterType="map" >
+	<include refid="Base_SQL" />
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select <include refid="Base_Column_List" />
+          from BILL_SM_WASTE dtl
+        <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillSmWasteKey" >
+    delete from BILL_SM_WASTE
+    where WASTE_NO = #{wasteNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillSmWaste" >
+    delete from BILL_SM_WASTE
+    where WASTE_NO = #{wasteNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      <if test="updStatus != null and '' != updStatus">
+          and STATUS = #{updStatus,jdbcType=VARCHAR}
+      </if>
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillSmWaste" >
+    insert into BILL_SM_WASTE (WASTE_NO, LOCNO, OWNER_NO, 
+      WASTE_TYPE, PO_TYPE, PO_NO, 
+      WASTE_DATE, REQUEST_DATE, STATUS, 
+      CREATE_FLAG, CREATOR,CREATORname, CREATETM, 
+      EDITOR,EDITORname, EDITTM, SEND_FLAG, 
+      AUDITOR,AUDITORname, AUDITTM, REMARK
+      )
+    values (#{wasteNo,jdbcType=VARCHAR}, #{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, 
+      #{wasteType,jdbcType=VARCHAR}, #{poType,jdbcType=VARCHAR}, #{poNo,jdbcType=VARCHAR}, 
+      #{wasteDate,jdbcType=TIMESTAMP}, #{requestDate,jdbcType=TIMESTAMP}, #{status,jdbcType=VARCHAR}, 
+      #{createFlag,jdbcType=CHAR}, #{creator,jdbcType=VARCHAR},#{creatorname,jdbcType=VARCHAR}, #{createtm,jdbcType=TIMESTAMP}, 
+      #{editor,jdbcType=VARCHAR},#{editorname,jdbcType=VARCHAR}, #{edittm,jdbcType=TIMESTAMP}, #{sendFlag,jdbcType=DECIMAL}, 
+      #{auditor,jdbcType=VARCHAR},#{auditorname,jdbcType=VARCHAR}, #{audittm,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillSmWaste" >
+    insert into BILL_SM_WASTE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="wasteNo != null" >
+        WASTE_NO,
+      </if>
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="wasteType != null" >
+        WASTE_TYPE,
+      </if>
+      <if test="poType != null" >
+        PO_TYPE,
+      </if>
+      <if test="poNo != null" >
+        PO_NO,
+      </if>
+      <if test="wasteDate != null" >
+        WASTE_DATE,
+      </if>
+      <if test="requestDate != null" >
+        REQUEST_DATE,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="createFlag != null" >
+        CREATE_FLAG,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="creatorname != null" >
+        CREATORNAME,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="editorname != null" >
+        EDITORNAME,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="sendFlag != null" >
+        SEND_FLAG,
+      </if>
+      <if test="auditor != null" >
+        AUDITOR,
+      </if>
+      <if test="auditorname != null" >
+        AUDITORNAME,
+      </if>
+      <if test="audittm != null" >
+        AUDITTM,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO,
+      </if>
+      <if test="operator != null" >
+        operator,
+      </if>
+      <if test="operatorname != null" >
+        operatorname,
+      </if>
+      <if test="sourceNo != null" >
+        SOURCE_NO,
+      </if>
+      <if test="sourceType != null" >
+        SOURCE_TYPE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="wasteNo != null" >
+        #{wasteNo,jdbcType=VARCHAR},
+      </if>
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="wasteType != null" >
+        #{wasteType,jdbcType=VARCHAR},
+      </if>
+      <if test="poType != null" >
+        #{poType,jdbcType=VARCHAR},
+      </if>
+      <if test="poNo != null" >
+        #{poNo,jdbcType=VARCHAR},
+      </if>
+      <if test="wasteDate != null" >
+        #{wasteDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="requestDate != null" >
+        #{requestDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createFlag != null" >
+        #{createFlag,jdbcType=CHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorname != null" >
+        #{creatorname,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorname != null" >
+        #{editorname,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sendFlag != null" >
+        #{sendFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="auditor != null" >
+        #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorname != null" >
+        #{auditorname,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        #{audittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo != null" >
+        #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="operator != null" >
+        #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorname != null" >
+        #{operatorname,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceNo != null" >
+        #{sourceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null" >
+        #{sourceType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillSmWaste" >
+    update BILL_SM_WASTE
+    <set >
+      <if test="wasteType != null" >
+        WASTE_TYPE = #{wasteType,jdbcType=VARCHAR},
+      </if>
+      <if test="poType != null" >
+        PO_TYPE = #{poType,jdbcType=VARCHAR},
+      </if>
+      <if test="poNo != null" >
+        PO_NO = #{poNo,jdbcType=VARCHAR},
+      </if>
+      <if test="wasteDate != null" >
+        WASTE_DATE = #{wasteDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="requestDate != null" >
+        REQUEST_DATE = #{requestDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createFlag != null" >
+        CREATE_FLAG = #{createFlag,jdbcType=CHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorname != null" >
+        CREATORNAME = #{creatorname,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorname != null" >
+        EDITORname = #{editorname,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sendFlag != null" >
+        SEND_FLAG = #{sendFlag,jdbcType=DECIMAL},
+      </if>
+      <if test="auditor != null" >
+        AUDITOR = #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorname != null" >
+        AUDITORNAME = #{auditorname,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo != null" >
+        store_No = #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="operator != null" >
+        operator = #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorname != null" >
+        operatorname = #{operatorname,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where WASTE_NO = #{wasteNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      <if test="updStatus != null and '' != updStatus">
+          and STATUS = #{updStatus,jdbcType=VARCHAR}
+      </if>
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillSmWaste" >
+    update BILL_SM_WASTE
+    set WASTE_TYPE = #{wasteType,jdbcType=VARCHAR},
+      PO_TYPE = #{poType,jdbcType=VARCHAR},
+      PO_NO = #{poNo,jdbcType=VARCHAR},
+      WASTE_DATE = #{wasteDate,jdbcType=TIMESTAMP},
+      REQUEST_DATE = #{requestDate,jdbcType=TIMESTAMP},
+      STATUS = #{status,jdbcType=VARCHAR},
+      CREATE_FLAG = #{createFlag,jdbcType=CHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATORNAME = #{creatorname,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITORNAME = #{editorname,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      SEND_FLAG = #{sendFlag,jdbcType=DECIMAL},
+      AUDITOR = #{auditor,jdbcType=VARCHAR},
+      AUDITORNAME = #{auditorname,jdbcType=VARCHAR},
+      AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      REMARK = #{remark,jdbcType=VARCHAR}
+    where WASTE_NO = #{wasteNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+  </update>
+  
+   <delete id="deleteDtlById" parameterType="com.yougou.logistics.city.common.model.BillSmWasteDtl" >
+	    delete from BILL_SM_WASTE_DTL
+	    where WASTE_NO = #{wasteNo,jdbcType=VARCHAR}
+	      and LOCNO = #{locno,jdbcType=VARCHAR}
+	      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+  </delete>
+  
+</mapper>

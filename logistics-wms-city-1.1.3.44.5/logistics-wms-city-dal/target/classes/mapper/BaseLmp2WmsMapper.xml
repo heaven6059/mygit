@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BaseLmp2WmsMapper" >
+	
+	<resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.api.dto.BaseLmp2WmsDto" >
+	    <result column="BILL_TYPE" property="billType" jdbcType="VARCHAR" />
+	    <result column="BILL_NAME" property="billName" jdbcType="VARCHAR" />
+	    <result column="SYS_NO" property="sysNo" jdbcType="VARCHAR" />
+	    <result column="QTY" property="qty" jdbcType="DECIMAL" />
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+	    rwi.BILL_TYPE, rwi.BILL_NAME, rwi.SYS_NO, rwi.QTY
+	</sql>
+	
+	<sql id="condition" >
+		<if test="null!=sysNoList and sysNoList.size > 0">
+			and rwi.sys_no in
+			<foreach collection="sysNoList" item="item"  open="(" separator="," close=")">  
+        		 #{item}  
+    		</foreach> 
+    	</if>		
+    	<if test="null!=interFaceNameList and interFaceNameList.size > 0">
+    		and rwi.bill_type in
+			<foreach collection="interFaceNameList" item="item"  open="(" separator="," close=")">  
+        		#{item}  
+    		</foreach> 
+        </if>	
+	</sql>
+	
+	<select id="selectBaseCheck4Wms" resultMap="BaseResultMap" parameterType="map">
+		select 
+		<include refid="Base_Column_List" />
+		from report_wms_itembasedata rwi
+		where 1=1
+		<include refid="condition" />
+	</select>
+</mapper>

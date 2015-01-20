@@ -1,0 +1,890 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillUmCheckDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillUmCheckDtl" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="CHECK_NO" property="checkNo" jdbcType="VARCHAR" />
+    <id column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="ITEM_QTY" property="itemQty" jdbcType="DECIMAL" />
+    <result column="CHECK_QTY" property="checkQty" jdbcType="DECIMAL" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="BOX_NO" property="boxNo" jdbcType="VARCHAR" />
+    <result column="item_name" property="itemName" jdbcType="VARCHAR" />
+    <result column="color_name" property="colorName" jdbcType="VARCHAR" />
+    <result column="brand_name" property="brandName" jdbcType="VARCHAR" />
+    <result column="difQty" property="difQty" jdbcType="DECIMAL" />
+    <result column="UNTREAD_NO" property="untreadNo" jdbcType="VARCHAR" />
+    <result column="QUALITY" property="quality" jdbcType="VARCHAR" />
+    <result column="ITEM_TYPE" property="itemType" jdbcType="VARCHAR" />
+    <result column="BRAND_NO" property="brandNo" jdbcType="VARCHAR" />
+    <result column="RECHECK_QTY" property="recheckQty" jdbcType="DECIMAL" />
+    <result column="NO_RECHECK_QTY" property="noRecheckQty" jdbcType="DECIMAL" />
+  </resultMap>
+  
+  <!-- 生成入库订单报表返回map -->
+	<resultMap type="com.yougou.logistics.city.common.dto.BillCheckImRep" id="BaseResultMap2">
+		<result column="supplierNo" property="supplierNo" jdbcType="VARCHAR" />
+		<result column="brandName" property="brandName" jdbcType="VARCHAR" />
+		<result column="brand_no" property="brandNo" jdbcType="VARCHAR" />
+		<result column="supplierName" property="supplierName" jdbcType="VARCHAR" />
+		<result column="sizeCode" property="sizeCode" jdbcType="VARCHAR" />
+		<result column="item_code" property="itemCode" jdbcType="VARCHAR" />
+		<result column="item_name" property="itemName" jdbcType="VARCHAR" />
+		<result column="cateName" property="cateName" jdbcType="VARCHAR" />
+		<result column="recivedate" property="reciveDate" jdbcType="TIMESTAMP" />
+		<result column="check_no" property="checkNo" jdbcType="VARCHAR" />
+		<result column="itemNo" property="itemNo" jdbcType="VARCHAR" />
+		<result column="checkQty" property="checkQty" jdbcType="DECIMAL" />
+	</resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, OWNER_NO, CHECK_NO, ROW_ID, d.ITEM_NO, SIZE_NO,ITEM_QTY,CHECK_QTY,RECHECK_QTY, 
+    d.STATUS, BOX_NO,i.item_name,c.color_name,b.brand_name,
+    nvl(check_qty - recheck_qty,0) as noRecheckQty
+  </sql>
+   <sql id="Column_List" >
+    LOCNO, OWNER_NO, CHECK_NO, ROW_ID, ITEM_NO, SIZE_NO,ITEM_QTY,CHECK_QTY,RECHECK_QTY, STATUS, BOX_NO
+  </sql>
+  
+  <sql id="Union_Column_List_1" >
+    LOCNO, OWNER_NO, CHECK_NO, ROW_ID, ITEM_NO, SIZE_NO,ITEM_QTY,CHECK_QTY,RECHECK_QTY, STATUS, BOX_NO,BRAND_NO
+  </sql>
+  
+  <sql id="Union_Column_List_2" >
+    LOCNO, OWNER_NO, UNTREAD_NO, ROW_ID, ITEM_NO, SIZE_NO,ITEM_QTY,CHECK_QTY,0 as RECHECK_QTY, STATUS, BOX_NO,BRAND_NO
+  </sql>
+  
+  <sql id="Union_Column_List_3" >
+    uc.LOCNO, uc.OWNER_NO, uc.CHECK_NO, uc.UNTREAD_NO, uc.QUALITY,uc.ITEM_TYPE,cd.ROW_ID, cd.ITEM_NO, 
+    cd.SIZE_NO,cd.ITEM_QTY,cd.CHECK_QTY, cd.BOX_NO,it.BRAND_NO
+  </sql>
+ 
+ 
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.checkNo and ''!=params.checkNo" >
+         and  CHECK_NO = #{params.checkNo}
+      </if>
+       <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+         and  OWNER_NO = #{params.ownerNo}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+         and  locno = #{params.locno}
+      </if>
+      <if test="null!=params.itemNo and ''!=params.itemNo" >
+            and ITEM_NO = #{params.itemNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.sizeNo and ''!=params.sizeNo" >
+            and SIZE_NO = #{params.sizeNo,jdbcType=VARCHAR}
+      </if>
+      
+      <if test="null!=params.barcode and ''!=params.barcode" >
+            and exists(
+            	select 'X' from item_barcode ib
+            		where ib.item_no = d.item_no
+            		and ib.size_no = d.size_no
+            		and ib.package_id = '0'
+            		and ib.barcode = #{params.barcode,jdbcType=VARCHAR}
+            )
+      </if>
+      <if test="null!=params.isRecheckSelect and ''!=params.isRecheckSelect" >
+            and nvl(d.CHECK_QTY - d.RECHECK_QTY,0) > 0
+      </if>
+    </if>
+  </sql>
+  
+  <sql id="conditionByPage" >
+    <if test="null!=params" >
+      <if test="null!=params.checkNo and ''!=params.checkNo" >
+         	and  d.CHECK_NO = #{params.checkNo}
+      </if>
+       <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+         	and  d.OWNER_NO = #{params.ownerNo}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+         	and  d.locno = #{params.locno}
+      </if>
+      <if test="null!=params.itemNo and ''!=params.itemNo" >
+            and  d.ITEM_NO = #{params.itemNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.sizeNo and ''!=params.sizeNo" >
+            and  d.SIZE_NO = #{params.sizeNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.barcode and ''!=params.barcode" >
+            and exists(
+            	select 'X' from item_barcode ib
+            		where ib.item_no = d.item_no
+            		and ib.size_no = d.size_no
+            		and ib.package_id = '0'
+            		and ib.barcode = #{params.barcode,jdbcType=VARCHAR}
+            )
+      </if>
+      <if test="null!=params.isRecheckSelect and ''!=params.isRecheckSelect" >
+            and nvl(d.CHECK_QTY - d.RECHECK_QTY,0) > 0
+      </if>
+    </if>
+  </sql>
+  
+  
+  
+  <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and d.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillUmCheckDtlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_UM_CHECK_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and CHECK_NO = #{checkNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_UM_CHECK_DTL d where 1=1 
+    <include refid="conditionByPage" />
+    <include refid="AuthorityCondition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />,
+    i.brand_no,
+    (d.CHECK_QTY - d.ITEM_QTY) as difQty
+     from BILL_UM_CHECK_DTL d
+	  left join item i on i.item_no = d.item_no
+      LEFT JOIN color_info c
+		    ON c.color_no = i.color_no
+	  left join brand b on b.brand_no = i.brand_no where 1=1
+    <include refid="conditionByPage" />
+    <include refid="AuthorityCondition" />
+      <choose>
+	    <when test="orderByField != null and ''!=orderByField">
+			order by ${orderByField}
+			<if test="orderByField">
+			${orderBy}
+			</if>
+		</when>
+		<otherwise>
+			order by d.BOX_NO,d.ITEM_NO,d.SIZE_NO
+		</otherwise>
+	  </choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  
+  <select id="selectBillUmCheckDtlCount" resultType="java.lang.Integer" >
+    select count(1) as s from 
+    (
+     	select 
+     	<include refid="Union_Column_List_1"/> 
+     		from BILL_UM_CHECK_DTL cd where 1=1 
+     	<include refid="condition" />
+     		union all
+     	select <include refid="Union_Column_List_2"/>
+		   from bill_um_untread_dtl uud
+		  where uud.locno = #{params.locno}
+		    and uud.owner_no = #{params.ownerNo}
+		    and uud.untread_no = #{params.untreadNo}
+		    and not exists (select 'X'
+		           from bill_um_check uc
+		          inner join bill_um_check_dtl ucd
+		             on ucd.locno = uc.locno
+		            and ucd.owner_no = uc.owner_no
+		            and ucd.check_no = uc.check_no
+		          where uc.locno = uud.locno
+		            and uc.owner_no = uud.owner_no
+		            and uc.untread_no = uud.untread_no
+		            and uc.check_no = #{params.checkNo,jdbcType=VARCHAR}
+		            and ucd.item_no = uud.item_no
+		            and ucd.size_no = uud.size_no
+		            and ucd.box_no = uud.box_no)
+     )d
+    
+    where 1=1 
+    <!-- <include refid="condition" /> -->
+    <include refid="AuthorityCondition" />
+  </select>
+  
+  <select id="selectBillUmCheckDtlByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( 
+    select 
+    <include refid="Base_Column_List" />,
+     nvl((d.CHECK_QTY - d.ITEM_QTY),0) as difQty
+     from 
+     (
+     	select 
+     	<include refid="Union_Column_List_1"/> 
+     		from BILL_UM_CHECK_DTL cd where 1=1 
+     	<include refid="condition" />
+     		union all
+     	select <include refid="Union_Column_List_2"/>
+		   from bill_um_untread_dtl uud
+		  where uud.locno = #{params.locno}
+		    and uud.owner_no = #{params.ownerNo}
+		    and uud.untread_no = #{params.untreadNo}
+		    and not exists (select 'X'
+		           from bill_um_check uc
+		          inner join bill_um_check_dtl ucd
+		             on ucd.locno = uc.locno
+		            and ucd.owner_no = uc.owner_no
+		            and ucd.check_no = uc.check_no
+		          where uc.locno = uud.locno
+		            and uc.owner_no = uud.owner_no
+		            and uc.untread_no = uud.untread_no
+		            and uc.check_no = #{params.checkNo,jdbcType=VARCHAR}
+		            and ucd.item_no = uud.item_no
+		            and ucd.size_no = uud.size_no
+		            and ucd.box_no = uud.box_no)
+     )d
+	  left join item i on i.item_no = d.item_no
+      LEFT JOIN color_info c
+		    ON c.color_no = i.color_no
+	  left join brand b on b.brand_no = i.brand_no 
+	  where 1=1
+    <!-- <include refid="condition" /> -->
+    <include refid="AuthorityCondition" />
+      <choose>
+	    <when test="orderByField != null and ''!=orderByField">
+			order by ${orderByField}
+			<if test="orderByField">
+			${orderBy}
+			</if>
+		</when>
+		<otherwise>
+			order by d.BOX_NO,d.ITEM_NO,d.SIZE_NO
+		</otherwise>
+	  </choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  
+  <select id="selectPageSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+		select
+			NVL(sum(cd.NO_RECHECK_QTY), 0) NO_RECHECK_QTY
+		from
+		(
+			select nvl(d.check_qty - d.recheck_qty,0) as NO_RECHECK_QTY
+			from BILL_UM_CHECK_DTL d 
+			where nvl(d.check_qty - d.recheck_qty,0) > 0
+			<include refid="conditionByPage" />
+			<include refid="AuthorityCondition" />
+		)cd
+  </select>
+  
+  
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+	select '合计' ITEM_NO,
+       NVL(sum(d.ITEM_QTY), 0) ITEM_QTY,
+       NVL(sum(d.CHECK_QTY), 0) CHECK_QTY,
+       NVL(sum(d.RECHECK_QTY), 0) RECHECK_QTY,
+       NVL(sum(d.CHECK_QTY - d.ITEM_QTY), 0) as difQty
+	  from 
+		(
+     	select 
+     	<include refid="Union_Column_List_1"/> 
+     		from BILL_UM_CHECK_DTL cd where 1=1 
+     	<include refid="condition" />
+     		union all
+     	select <include refid="Union_Column_List_2"/>
+		   from bill_um_untread_dtl uud
+		  where uud.locno = #{params.locno}
+		    and uud.owner_no = #{params.ownerNo}
+		    and uud.untread_no = #{params.untreadNo}
+		    and not exists (select 'X'
+		           from bill_um_check uc
+		          inner join bill_um_check_dtl ucd
+		             on ucd.locno = uc.locno
+		            and ucd.owner_no = uc.owner_no
+		            and ucd.check_no = uc.check_no
+		          where uc.locno = uud.locno
+		            and uc.owner_no = uud.owner_no
+		            and uc.untread_no = uud.untread_no
+		            and uc.check_no = #{params.checkNo,jdbcType=VARCHAR}
+		            and ucd.item_no = uud.item_no
+		            and ucd.size_no = uud.size_no
+		            and ucd.box_no = uud.box_no)
+       )d	  	
+	  left join item i
+	    on i.item_no = d.item_no
+	  LEFT JOIN color_info c
+	    ON c.color_no = i.color_no
+	  left join brand b
+	    on b.brand_no = i.brand_no
+	where 1 = 1
+    <!-- <include refid="condition" /> -->
+    <include refid="AuthorityCondition" />
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Column_List" />
+     from BILL_UM_CHECK_DTL where 1=1 
+    <include refid="condition" />
+  </select>
+  
+   <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition4Item" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and i.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <!--查询商品-->
+  <select id="selectItem4Check" resultType="com.yougou.logistics.city.common.model.Item" parameterType="com.yougou.logistics.city.common.model.Item">
+		  select B.* from (select A.*,rownum rn from( SELECT 
+		  i.item_no itemNo,
+		  i.item_name itemName,
+		  c.color_name colorName,
+		  d.size_no sizeNo,
+		  i.brand_no brandNo
+		  FROM item i
+		  LEFT JOIN color_info c ON c.color_no = i.color_no
+		   INNER JOIN item_barcode d 
+		   		ON i.item_no=d.item_no
+		   		AND d.package_id = 0
+		  where 1 =1
+		   <if test="null!=params" >
+		      <if test="null!=params.itemNo and ''!=params.itemNo" >
+		         and  i.item_no like '%${params.itemNo}%'
+		      </if>
+		       <if test="null!=params.itemName and ''!=params.itemName" >
+		         and  i.item_Name like '%${params.itemName}%'
+		      </if>
+		      <if test="null!=params.sysNo and ''!=params.sysNo" >
+		         and  i.sys_no = #{params.sysNo}
+		      </if>
+		      <if test="null!=params.barcode and ''!=params.barcode" >
+		         and  b.barcode like '%${params.barcode}%'
+		      </if>
+    		</if>
+    		<include refid="AuthorityCondition4Item" />
+    		) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+   <select id="selectItemCount4Check" resultType="java.lang.Integer" parameterType="com.yougou.logistics.city.common.model.Item">
+		  SELECT count(1)
+		  FROM item i
+		  LEFT JOIN color_info c ON c.color_no = i.color_no
+		  INNER JOIN item_barcode d 
+		  		ON i.item_no=d.item_no
+		  		AND d.package_id = 0
+		  where 1 =1
+		   <if test="null!=params" >
+		      <if test="null!=params.itemNo and ''!=params.itemNo" >
+		         and  i.item_no like '%${params.itemNo}%'
+		      </if>
+		       <if test="null!=params.itemName and ''!=params.itemName" >
+		         and  i.item_name like '%${params.itemName}%'
+		      </if>
+		      <if test="null!=params.sysNo and ''!=params.sysNo" >
+		         and  i.sys_no = #{params.sysNo}
+		      </if>
+		      <if test="null!=params.barcode and ''!=params.barcode" >
+		         and  b.barcode like '%${params.barcode}%'
+		      </if>
+    		</if>
+    		<include refid="AuthorityCondition4Item" />
+  </select>
+  
+  <select id="selectMaxRowId" resultType="java.lang.Integer" parameterType="com.yougou.logistics.city.common.model.BillUmCheck">
+  	select nvl(max(row_id),0) from BILL_UM_CHECK_DTL where LOCNO = #{params.locno,jdbcType=VARCHAR}
+  		 and CHECK_NO = #{params.checkNo,jdbcType=VARCHAR}
+  		 and OWNER_NO = #{params.ownerNo,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 查询 匹配差异的数据   begin --> 
+  <select id="selectCountForDiff" resultType="java.lang.Integer" >
+	   select count(root.item_no) as  s   from (
+			select cd.item_no,cd.size_no,nvl(sum(cd.check_qty),0)root_qty from  BILL_UM_CHECK_DTL  cd  where cd.locno = #{params.locno,jdbcType=VARCHAR}
+			and nvl(cd.check_qty,0) > 0 
+			AND instr(',' || #{params.checkNoStr,jdbcType=VARCHAR} || ',',
+			          ',' || cd.check_no || ',') > 0
+			group by cd.item_no,cd.size_no) root left join 
+			(select ud.untread_mm_no,ud.item_no,ud.size_no,sum(ud.EST_QTY - nvl(ud.DIS_QTY,0)) as bak_qty
+			                        from   BILL_UM_DIRECT  ud 
+			                        where ud.locno= #{params.locno,jdbcType=VARCHAR}   
+			                             and ud.cell_no != 'N'
+			                             and ud.untread_mm_no = #{params.untreadMmNo,jdbcType=VARCHAR}
+			                             and ud.untread_mm_no != '-'
+			                        group by ud.untread_mm_no,ud.item_no,ud.size_no) bak
+			     on root.item_no=bak.item_no  and root.size_no=bak.size_no
+			     	and (root.root_qty-nvl(bak.bak_qty,0)) > 0
+  </select>
+  
+  <select id="selectByPageForDiff" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from(select root.item_no,root.size_no,bak.untread_mm_no,(root.root_qty-nvl(bak.bak_qty,0)) as difQty   from (
+			select cd.item_no,cd.size_no,(nvl(sum(cd.check_qty),0) - nvl(sum(cd.recheck_qty),0)) root_qty from  BILL_UM_CHECK_DTL  cd  where cd.locno = #{params.locno,jdbcType=VARCHAR}
+			and nvl(cd.check_qty,0) > 0 
+			and (nvl(cd.check_qty,0) - nvl(cd.recheck_qty,0)) > 0
+			AND instr(',' || #{params.checkNoStr,jdbcType=VARCHAR} || ',',
+			          ',' || cd.check_no || ',') > 0
+			group by cd.item_no,cd.size_no) root left join 
+			(select ud.untread_mm_no,ud.item_no,ud.size_no,sum(ud.EST_QTY - nvl(ud.DIS_QTY,0)) as bak_qty
+			                        from   BILL_UM_DIRECT  ud 
+			                        where ud.locno= #{params.locno,jdbcType=VARCHAR}   
+			                             and ud.cell_no != 'N'
+			                             and ud.untread_mm_no = #{params.untreadMmNo,jdbcType=VARCHAR}
+			                             and ud.untread_mm_no != '-'
+			                        group by ud.untread_mm_no,ud.item_no,ud.size_no) bak
+			     on root.item_no=bak.item_no  and root.size_no=bak.size_no
+			        and (root.root_qty-nvl(bak.bak_qty,0)) > 0
+    <if test="params.orderByField == null or ''==params.orderByField" >
+      	   order by root.item_no,root.size_no 
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <!-- 查询 匹配差异的数据     end --> 
+  
+  <delete id="deleteAllDetail" parameterType="com.yougou.logistics.city.common.model.BillUmCheck" >
+  		delete from BILL_UM_CHECK_DTL where LOCNO = #{params.locno,jdbcType=VARCHAR}
+  		 and CHECK_NO = #{params.checkNo,jdbcType=VARCHAR}
+  		 and OWNER_NO = #{params.ownerNo,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillUmCheckDtlKey" >
+    delete from BILL_UM_CHECK_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and CHECK_NO = #{checkNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillUmCheckDtl" >
+    delete from BILL_UM_CHECK_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and CHECK_NO = #{checkNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillUmCheckDtl" >
+    insert into BILL_UM_CHECK_DTL (LOCNO, OWNER_NO, CHECK_NO, 
+      ROW_ID, ITEM_NO, SIZE_NO, 
+      CHECK_QTY, STATUS, BOX_NO, ITEM_QTY,
+      EDITOR,EDITORNAME, EDITTM
+      )
+    values (#{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, #{checkNo,jdbcType=VARCHAR}, 
+      #{rowId,jdbcType=DECIMAL}, #{itemNo,jdbcType=VARCHAR}, #{sizeNo,jdbcType=VARCHAR}, 
+      #{checkQty,jdbcType=DECIMAL}, #{status,jdbcType=VARCHAR}, #{boxNo,jdbcType=VARCHAR}, #{itemQty,jdbcType=DECIMAL},
+      #{editor,jdbcType=VARCHAR},#{editorName,jdbcType=VARCHAR}, #{edittm,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillUmCheckDtl" >
+    insert into BILL_UM_CHECK_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="checkNo != null" >
+        CHECK_NO,
+      </if>
+      <if test="rowId != null" >
+        ROW_ID,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="checkQty != null" >
+        CHECK_QTY,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO,
+      </if>
+      <if test="itemQty != null" >
+        ITEM_QTY,
+      </if>
+      <if test="brandNo != null" >
+        BRAND_NO,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="editorName != null" >
+        EDITORNAME,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="checkNo != null" >
+        #{checkNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rowId != null" >
+        #{rowId,jdbcType=DECIMAL},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="checkQty != null" >
+        #{checkQty,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="boxNo != null" >
+        #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemQty != null" >
+        #{itemQty,jdbcType=VARCHAR},
+      </if>
+      <if test="brandNo != null" >
+        #{brandNo,jdbcType=VARCHAR},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null" >
+        #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillUmCheckDtl" >
+    update BILL_UM_CHECK_DTL
+    <set >
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="checkQty != null" >
+        CHECK_QTY = #{checkQty,jdbcType=DECIMAL},
+      </if>
+      <if test="itemQty != null" >
+        ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+      </if>
+      <if test="recheckQty != null" >
+        RECHECK_QTY = #{recheckQty,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO = #{boxNo,jdbcType=VARCHAR},
+      </if>
+       <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null" >
+        EDITORNAME = #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and CHECK_NO = #{checkNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillUmCheckDtl" >
+    update BILL_UM_CHECK_DTL
+    set ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      CHECK_QTY = #{checkQty,jdbcType=DECIMAL},
+      ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+      STATUS = #{status,jdbcType=VARCHAR},
+      BOX_NO = #{boxNo,jdbcType=VARCHAR},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITORNAME = #{editorName,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and CHECK_NO = #{checkNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+  
+  <!-- 统计入库订单记录总数 -->
+  <select id="getCount" resultType="int">
+		select count(1) as s from (
+		 select ii.untread_no as importNo,
+		 	chdtl.item_no as itemNo,
+		 	ii.store_no supplierNo,
+		 	ch.audittm recivedate
+		 <include refid="Base_BillImCheck" />
+		 group by ii.untread_no,chdtl.item_no,ii.store_no,ch.audittm
+		)
+  </select>
+	
+  <!-- 按照单据编号和商品编码分组计算 -->
+  <select id="getBillImCheckByGroup" resultMap="BaseResultMap2">
+		select B.* from (select A.*, rownum rn,
+       (select brand.brand_name from brand where brand.brand_no = A.brand_no) as brandName,
+       (select sup.store_name from store sup where sup.store_no = A.supplierNo) as supplierName,
+       (select c.cate_name from category c where c.cate_no = A.cate_no) as cateName
+  from (select ii.untread_no as importNo,
+               chdtl.item_no as itemNo,
+               ii.store_no supplierNo,
+               max(it.item_name) item_name,
+               max(it.brand_no) brand_no,
+               ch.audittm recivedate,
+               max(it.cate_no) cate_no,
+               max(it.size_kind) sizeKind,
+               max(it.sys_no) sysNo
+          <include refid="Base_BillImCheck" />
+         group by ii.untread_no, chdtl.item_no, ii.store_no, ch.audittm
+         order by ch.audittm desc, ii.untread_no desc) A
+          where rownum &lt; #{params.endRowNum}) B
+		where rn &gt; #{params.startRowNum}
+	</select>
+	<sql id="Base_BillImCheck_WHERE" >
+		and ch.status in ('11', '20', '25')
+        and ch.locno=#{params.locNo,jdbcType=VARCHAR}
+		<if test="params.importNo !=null and params.importNo!=''">
+				and ii.untread_no = #{params.importNo,jdbcType=VARCHAR}
+			</if>
+           	<if test="null!=params.reciveDateStart and params.reciveDateStart!=''">
+				and ch.audittm &gt;=
+			to_date('${params.reciveDateStart}','yyyy-MM-dd')
+			</if>
+			<if test="null!=params.reciveDateEnd and params.reciveDateEnd!=''">
+				and ch.audittm &lt;
+			(to_date('${params.reciveDateEnd}','yyyy-MM-dd')+1)
+			</if>
+			<if test="params.supplierNo !=null and params.supplierNo!=''">
+				and ii.store_no = #{params.supplierNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=params.sysNo and params.sysNo!=''">
+				and it.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+		   	</if>
+			<if test="params.brandName !=null and params.brandName!=''">
+				and it.brand_no = #{params.brandName,jdbcType=VARCHAR}
+			</if>
+			<if test="params.itemCate !=null and params.itemCate!=''">
+				and it.cate_no = #{params.itemCate,jdbcType=VARCHAR}
+			</if>
+			<if test="params.itemNo !=null and params.itemNo!=''">
+				and it.item_no = #{params.itemNo,jdbcType=VARCHAR}
+			</if>
+			<if test="params.itemName !=null and params.itemName!=''">
+				and it.item_name like '%${params.itemName}%'
+			</if>
+           	
+           	<if test="null!=authorityParams and null!=authorityParams.hasBrandNoList">
+				and chdtl.brand_no in
+				<include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+			</if>
+	</sql>
+	<sql id="Base_BillImCheck" >
+		from bill_um_check ch
+         inner join bill_um_check_dtl chdtl
+            on ch.locno = chdtl.locno
+           and ch.owner_no = chdtl.owner_no
+           and ch.check_no = chdtl.check_no
+         inner join BILL_UM_UNTREAD ii
+            on ii.locno = ch.locno
+           and ii.owner_no = ch.owner_no
+           and ii.untread_no = ch.untread_no
+         inner join item it
+            on chdtl.item_no = it.item_no
+         where 1 = 1
+           <include refid="Base_BillImCheck_WHERE" />
+	</sql>
+	<!-- 查询所有类别 -->
+	<select id="selectAllDtlSizeKind" resultType="java.lang.String">
+		select s.size_kind sizeKind
+		from bill_um_check ch
+         inner join bill_um_check_dtl chdtl
+            on ch.locno = chdtl.locno
+           and ch.owner_no = chdtl.owner_no
+           and ch.check_no = chdtl.check_no
+         inner join BILL_UM_UNTREAD ii
+            on ii.locno = ch.locno
+           and ii.owner_no = ch.owner_no
+           and ii.untread_no = ch.untread_no
+         inner join item it
+            on chdtl.item_no = it.item_no
+         INNER JOIN size_info s ON s.size_no = chdtl.size_no AND s.size_kind = it.size_kind
+         where 1 = 1
+           <include refid="Base_BillImCheck_WHERE" />
+		GROUP BY s.size_kind
+	</select>
+	<!-- 查询入库订单报表明细信息 -->
+	<select id="getBillImCheckDtl" resultMap="BaseResultMap2">
+      select sum(icd.check_qty) checkQty,
+       icd.size_no sizeNo,
+       max(sz.size_code) sizeCode,
+       max(itm.size_kind) sizeKind
+	  from bill_um_check_dtl icd
+	 inner join bill_um_check ic
+	    on icd.locno = ic.locno
+	   and icd.check_no = ic.check_no
+	   and ic.status in ('11', '20', '25')
+	  left join item itm
+	    on icd.item_no = itm.item_no
+	  left join size_info sz
+	    on sz.size_no = icd.size_no
+	   and sz.size_kind = itm.size_kind
+	 where icd.item_no = #{params.itemNo,jdbcType=VARCHAR}
+	 	and ic.locno=#{params.locNo,jdbcType=VARCHAR}
+	 	and ic.untread_no = #{params.importNo,jdbcType=VARCHAR}
+	 	<if test="null!=authorityParams and null!=authorityParams.hasBrandNoList">
+			and icd.brand_no in
+			<include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+		</if>
+	 group by icd.size_no
+	</select>
+	<!-- 入库报表结束 -->
+	
+	<select id="selectCheckDtlByCheckNo" resultMap="BaseResultMap" parameterType="map" >
+	    select 
+	    <include refid="Union_Column_List_3" />
+	     from BILL_UM_CHECK_DTL cd 
+	      inner join bill_um_check uc 
+	      	on uc.locno = cd.locno
+	      	and uc.owner_no = cd.owner_no
+	      	and uc.check_no = cd.check_no
+	      inner join item it on it.item_no = cd.item_no
+	      where nvl(cd.check_qty,0) > 0
+	      <if test="null!=params.checkNo and ''!=params.checkNo" >
+	         and  uc.CHECK_NO = #{params.checkNo}
+	      </if>
+	       <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+	         and  uc.OWNER_NO = #{params.ownerNo}
+	      </if>
+	      <if test="null!=params.locno and ''!=params.locno" >
+	         and  uc.locno = #{params.locno}
+	      </if>
+	</select>
+	
+	
+	<!-- 保存退仓验收任务，更新来源店退仓单状态为15-已分配任务 -->
+  <update id="updateConvertQty4Convert" parameterType="map">
+		update bill_um_check_dtl d
+			 <choose>
+			    <when test="params.updateType > 0">
+					set d.convert_qty = 0
+				</when>
+				<otherwise>
+					set d.convert_qty = d.check_qty
+				</otherwise>
+			  </choose>
+		where d.LOCNO = #{params.locno,jdbcType=VARCHAR}
+		and d.OWNER_NO = #{params.ownerNo,jdbcType=VARCHAR}
+		<if test="null!=list and list.size > 0">
+			and d.check_no in
+			<foreach collection="list" item="item" open="(" separator="," close=")">
+				#{item.checkNo}
+			</foreach>
+		</if>
+  </update>
+  
+  <!-- 退仓验收转门店，如果只转一个客户把退仓验收明细插入复核明细,更新退仓验收单的复核数量-->
+  <update id="updateRecheckQty4Convert" parameterType="map">
+		update bill_um_check_dtl d 
+			set d.recheck_qty = d.recheck_qty + (d.check_qty-d.recheck_qty),
+			EDITOR = #{params.editor,jdbcType=VARCHAR},
+			EDITORNAME = #{params.editorName,jdbcType=VARCHAR},
+			EDITTM = #{params.edittm,jdbcType=TIMESTAMP}
+		where d.LOCNO = #{params.locno,jdbcType=VARCHAR}
+			and d.OWNER_NO = #{params.ownerNo,jdbcType=VARCHAR}
+			and d.CHECK_NO = #{params.checkNo,jdbcType=VARCHAR}
+			and d.check_qty > d.recheck_qty
+  </update>
+  
+  <!-- 查询明细是否有差异 -->
+  <select id="selectCheckIsDiff" resultType="java.lang.Integer" >
+  		select count(*) from bill_um_check_dtl 
+  			where nvl(item_qty,0) != nvl(check_qty,0)
+  			<include refid="condition"/>
+  </select>
+  
+  <!-- 验证是否复核完成 -->
+  <select id="selectValidateUmCheckIsRecheck" resultType="java.lang.Integer" >
+  		select count(*) from bill_um_check_dtl 
+  			where nvl(check_qty,0) > nvl(recheck_qty,0)
+  			<include refid="condition"/>
+  </select>
+  
+  <!-- 查询验收单的复核数量 -->
+  <select id="selectCheckDtlRecheckQtySum" resultType="java.lang.Integer" >
+  		select nvl(sum(d.recheck_qty),0) recheck_qty
+  			from BILL_UM_CHECK_DTL d
+  		where d.LOCNO = #{params.locno,jdbcType=VARCHAR}
+		      and d.CHECK_NO = #{params.divideNo,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectCheckQtyJoinContent" resultMap="BaseResultMap" parameterType="map" >
+  		select  cd.item_no,
+       			cd.size_no,
+       			abs((nvl(v.qty,0)-nvl(v.outstock_qty,0))-(nvl(cd.check_qty,0)-nvl(cd.recheck_qty,0))) as check_qty
+		  from (select uc.locno,
+		               uc.owner_no,
+		               uc.quality,
+		               uc.item_type,
+		               ucd.item_no,
+		               ucd.size_no,
+		               sum(ucd.check_qty) check_qty,
+		               sum(ucd.recheck_qty) recheck_qty
+		          from bill_um_check uc
+		         inner join bill_um_check_dtl ucd
+		            on uc.locno = ucd.locno
+		           and uc.owner_no = ucd.owner_no
+		           and uc.check_no = ucd.check_no
+		         where 1=1
+		         	and uc.LOCNO = #{params.locno,jdbcType=VARCHAR}
+					and uc.OWNER_NO = #{params.ownerNo,jdbcType=VARCHAR}
+		         <if test="null!=list and list.size > 0">
+					and uc.check_no in
+					<foreach collection="list" item="item" open="(" separator="," close=")">
+						#{item.checkNo}
+					</foreach>
+				</if>
+		         group by uc.locno,
+		                  uc.owner_no,
+		                  uc.quality,
+		                  uc.item_type,
+		                  ucd.item_no,
+		                  ucd.size_no) cd
+		                  
+				 left join (select v.*
+		               from v_content v
+		              where v.locno = #{params.locno,jdbcType=VARCHAR}
+		                and exists (select 'X'
+		                       from cm_defcell cm
+		                      inner join cm_defarea cmd
+		                         on cmd.locno = cm.locno
+		                        and cmd.ware_no = cm.ware_no
+		                        and cmd.area_no = cm.area_no
+		                      where cm.cell_no = v.cell_no
+		                        and cm.owner_no = v.owner_no
+		                        and cm.cell_status = '0'
+		                        and cmd.locno = v.locno
+		                        and cmd.area_usetype = '1'
+		                        and cmd.area_attribute = '1'
+		                        and cmd.attribute_type = '6')
+		             
+		             ) v on v.locno = cd.locno
+					   and v.owner_no = cd.owner_no
+					   and v.item_no = cd.item_no
+					   and v.size_no = cd.size_no
+					   and v.quality = cd.quality
+					   and v.item_type = cd.item_type
+				 where (nvl(v.qty,0) - nvl(v.outstock_qty,0))-(nvl(cd.check_qty,0)-nvl(cd.recheck_qty,0)) &lt; 0
+  </select>
+  
+</mapper>

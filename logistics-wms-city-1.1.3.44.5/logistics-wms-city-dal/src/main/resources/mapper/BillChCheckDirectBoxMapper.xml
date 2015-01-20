@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BillChCheckDirectBoxMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillChCheckDirectBox" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="PLAN_NO" property="planNo" jdbcType="VARCHAR" />
+    <id column="BOX_NO" property="boxNo" jdbcType="VARCHAR" />
+    <id column="FLAG" property="flag" jdbcType="VARCHAR" />
+    <result column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+    <result column="ITEM_QTY" property="itemQty" jdbcType="DECIMAL" />
+    <result column="REAL_QTY" property="realQty" jdbcType="DECIMAL" />
+    <result column="ITEM_TYPE" property="itemType" jdbcType="VARCHAR" />
+    <result column="QUALITY" property="quality" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, OWNER_NO, PLAN_NO, BOX_NO, FLAG, CELL_NO, ITEM_QTY, REAL_QTY, ITEM_TYPE, QUALITY
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillChCheckDirectBoxKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_CH_CHECK_DIRECT_BOX
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and PLAN_NO = #{planNo,jdbcType=VARCHAR}
+      and BOX_NO = #{boxNo,jdbcType=VARCHAR}
+      and FLAG = #{flag,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_CH_CHECK_DIRECT_BOX where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from BILL_CH_CHECK_DIRECT_BOX where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_CH_CHECK_DIRECT_BOX where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillChCheckDirectBoxKey" >
+    delete from BILL_CH_CHECK_DIRECT_BOX
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and PLAN_NO = #{planNo,jdbcType=VARCHAR}
+      and BOX_NO = #{boxNo,jdbcType=VARCHAR}
+      and FLAG = #{flag,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillChCheckDirectBox" >
+    delete from BILL_CH_CHECK_DIRECT_BOX
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and PLAN_NO = #{planNo,jdbcType=VARCHAR}
+      and BOX_NO = #{boxNo,jdbcType=VARCHAR}
+      and FLAG = #{flag,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillChCheckDirectBox" >
+    insert into BILL_CH_CHECK_DIRECT_BOX (LOCNO, OWNER_NO, PLAN_NO, 
+      BOX_NO, FLAG, CELL_NO, 
+      ITEM_QTY, REAL_QTY, ITEM_TYPE, 
+      QUALITY)
+    values (#{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, #{planNo,jdbcType=VARCHAR}, 
+      #{boxNo,jdbcType=VARCHAR}, #{flag,jdbcType=VARCHAR}, #{cellNo,jdbcType=VARCHAR}, 
+      #{itemQty,jdbcType=DECIMAL}, #{realQty,jdbcType=DECIMAL}, #{itemType,jdbcType=VARCHAR}, 
+      #{quality,jdbcType=VARCHAR})
+  </insert>
+  
+  <!-- 批量插入盘点定位容器信息  add by zuo.sw -->
+  <insert id="insert4Bath" parameterType="java.util.List" >
+    insert into BILL_CH_CHECK_DIRECT_BOX (LOCNO, OWNER_NO, PLAN_NO, 
+      FLAG, CELL_NO,ITEM_QTY, REAL_QTY, ITEM_TYPE,QUALITY,BOX_NO)
+    <foreach collection="list" item="item" index="index"
+			separator="union all">
+			select
+			#{item.locno,jdbcType=VARCHAR},
+			#{item.ownerNo,jdbcType=VARCHAR},
+			#{item.planNo,jdbcType=VARCHAR},
+			#{item.flag,jdbcType=VARCHAR},
+			#{item.cellNo,jdbcType=VARCHAR},
+			<if test="item.itemQty == null">
+				0,
+			</if>
+			<if test="item.itemQty != null">
+				#{item.itemQty,jdbcType=DECIMAL},
+			</if>
+			<if test="item.realQty == null">
+				0,
+			</if>
+			<if test="item.realQty != null">
+				#{item.realQty,jdbcType=DECIMAL},
+			</if>
+			<if test="item.itemType != null and item.itemType != ''">
+				#{item.itemType,jdbcType=VARCHAR},
+			</if>
+			<if test="item.quality != null and item.quality != ''">
+				#{item.quality,jdbcType=VARCHAR},
+			</if>
+			#{item.boxNo,jdbcType=VARCHAR}
+			from
+			DUAL
+	</foreach>
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillChCheckDirectBox" >
+    insert into BILL_CH_CHECK_DIRECT_BOX
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="planNo != null" >
+        PLAN_NO,
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO,
+      </if>
+      <if test="flag != null" >
+        FLAG,
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO,
+      </if>
+      <if test="itemQty != null" >
+        ITEM_QTY,
+      </if>
+      <if test="realQty != null" >
+        REAL_QTY,
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE,
+      </if>
+      <if test="quality != null" >
+        QUALITY,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="planNo != null" >
+        #{planNo,jdbcType=VARCHAR},
+      </if>
+      <if test="boxNo != null" >
+        #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="flag != null" >
+        #{flag,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemQty != null" >
+        #{itemQty,jdbcType=DECIMAL},
+      </if>
+      <if test="realQty != null" >
+        #{realQty,jdbcType=DECIMAL},
+      </if>
+      <if test="itemType != null" >
+        #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        #{quality,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillChCheckDirectBox" >
+    update BILL_CH_CHECK_DIRECT_BOX
+    <set >
+      <if test="cellNo != null" >
+        CELL_NO = #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemQty != null" >
+        ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+      </if>
+      <if test="realQty != null" >
+        REAL_QTY = #{realQty,jdbcType=DECIMAL},
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        QUALITY = #{quality,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and PLAN_NO = #{planNo,jdbcType=VARCHAR}
+      and BOX_NO = #{boxNo,jdbcType=VARCHAR}
+      and FLAG = #{flag,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillChCheckDirectBox" >
+    update BILL_CH_CHECK_DIRECT_BOX
+    set CELL_NO = #{cellNo,jdbcType=VARCHAR},
+      ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+      REAL_QTY = #{realQty,jdbcType=DECIMAL},
+      ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+      QUALITY = #{quality,jdbcType=VARCHAR}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and PLAN_NO = #{planNo,jdbcType=VARCHAR}
+      and BOX_NO = #{boxNo,jdbcType=VARCHAR}
+      and FLAG = #{flag,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,640 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.AccCheckDtlMapper" >
+  <resultMap id="AccCheckDtlVoMap" type="com.yougou.logistics.city.common.vo.AccCheckDtlVo" >
+    <id column="rownum" property="rowId" jdbcType="DECIMAL" />
+    <result column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <result column="CELL_ID" property="cellId" jdbcType="VARCHAR" />
+    <result column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="BARCODE" property="barcode" jdbcType="VARCHAR" />
+    <result column="ITEM_TYPE" property="itemType" jdbcType="VARCHAR" />
+    <result column="QUALITY" property="quality" jdbcType="VARCHAR" />
+    <result column="SUPPLIER_NO" property="supplierNo" jdbcType="VARCHAR" />
+    <result column="CON_NO" property="conNo" jdbcType="VARCHAR" />
+    <result column="QTY" property="qty" jdbcType="DECIMAL" />
+    <result column="OUTSTOCK_QTY" property="outstockQty" jdbcType="DECIMAL" />
+    <result column="INSTOCK_QTY" property="instockQty" jdbcType="DECIMAL" />
+    <result column="BILL_NO" property="billNo" jdbcType="VARCHAR" />
+    <result column="BILL_TYPE" property="billType" jdbcType="VARCHAR" />
+    <result column="HM_MANUAL_FLAG" property="hmManualFlag" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <select id="selectAccCheckDtlByParams" resultMap="AccCheckDtlVoMap" parameterType="map" >
+ 	 <!--城市仓验收 -->
+ 	 <if test="params.billType=='SC' and params.ioFlag=='I'.toString() and params.locType=='2'" >
+           select rownum,ck.locno,-1 as cell_id,box.cell_no,dtl.item_no,dtl.barcode,box.item_type,nvl(dtl.quality,0) as quality,ck.owner_no,
+             	ite.supplier_no, ck.check_no as billNO,
+             	dtl.box_no as con_no,dtl.check_qty as qty,0 as OUTSTOCK_QTY,0 as INSTOCK_QTY,'1' as HM_MANUAL_FLAG, ck.check_worker as creator
+             from bill_im_check ck  inner join bill_im_check_dtl dtl
+             on ck.locno=dtl.locno and ck.owner_no=dtl.owner_no and ck.check_no=dtl.check_no
+             and ck.check_no=#{params.billNo,jdbcType=DECIMAL}
+             inner join item ite on ite.item_no=dtl.item_no
+             inner join bill_im_receipt_dtl rdtl on rdtl.locno=dtl.locno
+             and rdtl.owner_no=dtl.owner_no and rdtl.receipt_no=ck.s_import_no
+             and rdtl.box_no=dtl.box_no and rdtl.item_no = dtl.item_no and rdtl.size_no = dtl.size_no and rdtl.pack_qty = dtl.pack_qty
+             inner join con_box box on box.locno=ck.locno and box.owner_no=ck.owner_no
+             and box.box_no=dtl.box_no inner join con_box_dtl cbd on cbd.locno=box.locno and cbd.owner_no=box.owner_no
+             and cbd.box_no=box.box_no and cbd.item_no = rdtl.item_no and cbd.size_no=rdtl.size_no and cbd.import_no=rdtl.import_no
+     </if>
+     <!--城市仓退仓验收 -->
+     <if test="params.billType=='UC' and params.ioFlag=='I'.toString() and params.locType=='2' " >
+     	select rownum,ck.locno,-1 as cell_id,box.cell_no,dtl.item_no,bar.barcode,box.item_type,nvl(ck.quality,0) as quality ,ck.owner_no,
+             	m.supplier_no,ck.check_no as billNO,  dtl.box_no as con_no ,dtl.check_qty as qty,0 as OUTSTOCK_QTY , 0 as INSTOCK_QTY ,'1' as HM_MANUAL_FLAG, ck.auditor as creator 
+             from bill_um_check ck  inner join bill_um_check_dtl dtl
+             on ck.locno=dtl.locno and ck.owner_no=dtl.owner_no
+             and ck.check_no=dtl.check_no
+             and ck.check_no=#{params.billNo,jdbcType=DECIMAL}
+             inner join Bill_Um_Untread_Dtl rdtl on rdtl.locno=dtl.locno
+             and rdtl.owner_no=dtl.owner_no and rdtl.untread_no=ck.untread_no
+             and rdtl.box_no=dtl.box_no and dtl.item_no=rdtl.item_no
+             and dtl.size_no=rdtl.size_no
+             inner join con_box box on box.locno=ck.locno and box.owner_no=ck.owner_no
+             and box.box_no=dtl.box_no
+             inner join item m on m.item_no=dtl.item_no
+             inner join item_barcode bar on bar.item_no=dtl.item_no and bar.size_no=dtl.size_no
+             and bar.package_id=0 and bar.pack_qty=1
+     </if>
+     
+     <!-- 城市仓配送单 -->
+     <if test="params.billType=='OD' and params.ioFlag=='O'.toString() and params.locType=='2' " >
+     select rownum, -1 as cell_id,  odd.locno, clm.owner_cell_no as cell_no, odd.item_no, odd.barcode, odd.item_type, odd.quality as quality,
+                   odd.owner_no, ite.supplier_no,od.deliver_no as billNO, odd.box_no as con_no,
+                   odd.qty as qty,0 as OUTSTOCK_QTY ,  0 as INSTOCK_QTY ,'1' as HM_MANUAL_FLAG, odd.creator  as creator
+              from bill_om_deliver od
+             inner join bill_om_deliver_dtl odd
+                on od.locno = odd.locno
+               and od.owner_no = odd.owner_no
+               and od.deliver_no = odd.deliver_no
+               and od.deliver_no=#{params.billNo,jdbcType=DECIMAL}
+             inner join item ite on ite.item_no=odd.item_no
+             inner join con_label clm
+                on clm.locno = odd.locno
+               and clm.container_no = odd.container_no
+             where od.deliver_no=#{params.billNo,jdbcType=DECIMAL}
+     </if>
+     
+     <!-- 城市仓退厂确认-->
+     <if test="params.billType=='DV' and params.ioFlag=='O'.toString() and params.locType=='2' " >
+     select rownum,dtl.cell_id,dtl.locno,dtl.cell_no,dtl.item_no,dtl.barcode,dtl.item_type,dtl.quality as quality,
+     		 	dtl.owner_no,ite.supplier_no, dtl.deliver_no as billNO, dtl.box_no as con_no,dtl.item_qty as qty,
+             	0 as OUTSTOCK_QTY , 0 as INSTOCK_QTY ,'1' as HM_MANUAL_FLAG,der.creator as creator
+             from bill_wm_deliver_dtl dtl 
+             inner join bill_wm_deliver der on dtl.locno=der.locno
+             and dtl.owner_no=der.owner_no and dtl.deliver_no=der.deliver_no 
+             inner join item ite on ite.item_no=dtl.item_no
+             inner join con_box x on x.locno=der.locno and x.owner_no=der.owner_no and x.box_no=dtl.box_no
+             where dtl.deliver_no=#{params.billNo,jdbcType=DECIMAL}
+     	
+     </if>
+     
+     <!--  城市仓退仓确认(扣除源储位预下及库存数据)-->
+      <if test="params.billType=='UP' and params.ioFlag=='O'.toString() and params.locType=='2' " >
+     select rownum,dtl.cell_id,dtl.locno,dtl.cell_no,dtl.item_no,bar.barcode,ck.item_type,ck.quality as quality ,ck.owner_no,ite.supplier_no, ck.instock_no as billNO,
+     				dtl.box_no as con_no, abs(dtl.real_qty-dtl.instocked_qty) as qty ,-(dtl.item_qty-dtl.instocked_qty) as OUTSTOCK_QTY ,0 as INSTOCK_QTY,'1' as HM_MANUAL_FLAG,ck.creator as creator
+                from bill_um_instock_dtl dtl inner join bill_um_instock ck
+                on dtl.locno=ck.locno and dtl.owner_no=ck.owner_no
+                and dtl.instock_no=ck.instock_no  and ck.instock_no=#{params.billNo,jdbcType=DECIMAL}
+                inner join item_barcode bar
+                on  bar.item_no=dtl.item_no
+                and bar.size_no=dtl.size_no
+                and bar.pack_qty=1
+                and bar.package_id='0'
+                inner join item ite
+                on dtl.item_no=ite.item_no
+                and bar.sys_no=ite.sys_no
+     </if>
+     
+     <!--  城市仓退仓确认(增加目的储位库存扣除预上数量)-->
+     <if test="params.billType=='UP' and params.ioFlag=='I'.toString() and params.locType=='2' " >
+      select rownum,dtl.dest_cell_id as cell_id ,dtl.locno,dtl.dest_cell_no as cell_no,dtl.item_no,bar.barcode,ck.item_type,ck.quality as quality,ck.owner_no,ite.supplier_no,
+      			ck.instock_no as billNO, dtl.box_no as con_no, abs(dtl.real_qty-dtl.instocked_qty)as qty,
+            	0  as OUTSTOCK_QTY ,-(dtl.item_qty-dtl.instocked_qty) as INSTOCK_QTY,'1' as HM_MANUAL_FLAG,ck.creator  as creator
+          from bill_um_instock_dtl dtl inner join bill_um_instock ck
+          on dtl.locno=ck.locno and dtl.owner_no=ck.owner_no
+          and dtl.instock_no=ck.instock_no  and ck.instock_no=#{params.billNo,jdbcType=DECIMAL}
+          inner join item_barcode bar
+          on  bar.item_no=dtl.item_no
+          and bar.size_no=dtl.size_no
+          and bar.pack_qty=1
+          and bar.package_id='0'
+          inner join item ite
+          on dtl.item_no=ite.item_no
+          and bar.sys_no=ite.sys_no
+     </if>
+     
+     
+     <!-- 城市仓分货复核 -->
+      <if test="params.billType=='OC' and params.ioFlag=='O'.toString() and params.locType=='2' " >
+       select rownum, d.locno, -1 as cell_id,  cb.owner_cell_no as cell_no, d.item_no, bar.barcode, '0' as ITEM_TYPE, '0' as quality, d.owner_no, t.supplier_no,
+                 d.recheck_no as billNO, d.box_no as CON_NO, d.real_qty as qty, 0 as OUTSTOCK_QTY, 0 as INSTOCK_QTY,'1' as HM_MANUAL_FLAG, cb.creator as creator
+            from bill_om_recheck_dtl d
+           inner join con_label cb
+              on d.locno = cb.locno
+             and d.container_no = cb.container_no
+           inner join item t
+              on t.item_no = d.item_no
+           inner join item_barcode bar
+              on d.item_no = bar.item_no
+             and d.size_no = bar.size_no
+             and d.pack_qty = bar.pack_qty
+             and bar.package_id='0'
+             and bar.sys_no=t.sys_no
+             where d.recheck_no = #{params.billNo,jdbcType=DECIMAL}
+     </if>
+     
+     <!-- 城市仓分货复核  -->
+     <if test="params.billType=='OC' and params.ioFlag=='I'.toString() and params.locType=='2' " >
+       select rownum, d.locno,-1 as cell_id, cb.owner_cell_no as cell_no, d.item_no, bar.barcode, '0' as ITEM_TYPE, '0' as quality,
+                 d.owner_no, t.supplier_no, d.recheck_no as billNO, cb.scan_label_no as CON_NO, d.real_qty as qty,
+                 0 as OUTSTOCK_QTY, 0 as INSTOCK_QTY,'1' as HM_MANUAL_FLAG, cb.creator as creator
+            from bill_om_recheck_dtl d
+           inner join con_label cb
+              on d.locno = cb.locno
+             and d.container_no = cb.container_no
+           inner join item t
+              on t.item_no = d.item_no
+           inner join item_barcode bar
+              on d.item_no = bar.item_no
+             and d.size_no = bar.size_no
+             and d.pack_qty = bar.pack_qty
+             and bar.package_id='0'
+             and bar.sys_no=t.sys_no
+           where d.recheck_no = #{params.billNo,jdbcType=DECIMAL}
+     </if>
+     <!-- 城市仓退厂复核  -->
+     <if test="params.billType=='RC' and params.ioFlag=='I'.toString() and params.locType=='2' " >
+       select rownum, d.locno,-1 as cell_id, cb.owner_cell_no as cell_no, d.item_no, bar.barcode, '0' as ITEM_TYPE, '0' as quality,
+                 d.owner_no, t.supplier_no, d.recheck_no as billNO, cb.SCAN_LABEL_NO as CON_NO, d.real_qty as qty,
+                 0 as OUTSTOCK_QTY, 0 as INSTOCK_QTY,'1' as HM_MANUAL_FLAG, cb.creator as creator
+            from BILL_WM_RECHECK_DTL d
+           inner join con_label cb
+              on d.locno = cb.locno
+             and d.container_no = cb.container_no
+           inner join item t
+              on t.item_no = d.item_no
+           inner join item_barcode bar
+              on d.item_no = bar.item_no
+             and d.size_no = bar.size_no
+             and d.pack_qty = bar.pack_qty
+             and bar.package_id='0'
+             and bar.sys_no=t.sys_no
+           where d.recheck_no = #{params.billNo,jdbcType=DECIMAL}
+     </if>
+     
+     <!-- 城市仓移库回单，扣除原储位库存和预下库存--> 
+     <if test="params.billType=='HS' and params.ioFlag=='O'.toString() and params.locType=='2' " >
+       SELECT ROWNUM,DTL.LOCNO,DTL.S_CELL_ID as cell_id ,DTL.S_CELL_NO as cell_no,DTL.ITEM_NO,BAR.BARCODE,DTL.ITEM_TYPE,DTL.QUALITY as quality , 
+       	DTL.OWNER_NO,K.OUTSTOCK_NO as billNO,ITE.SUPPLIER_NO,'N' as CON_NO,'1' as HM_MANUAL_FLAG,PLAN.CREATOR as creator,-DTL.ITEM_QTY as OUTSTOCK_QTY,0 as INSTOCK_QTY, DTL.Real_Qty as qty 
+      FROM BILL_OM_OUTSTOCK_DTL DTL INNER JOIN BILL_OM_OUTSTOCK K
+      ON DTL.LOCNO=K.LOCNO 
+      AND DTL.OUTSTOCK_NO=K.OUTSTOCK_NO
+      AND K.OUTSTOCK_NO=#{params.billNo,jdbcType=DECIMAL}
+      INNER JOIN BILL_HM_PLAN PLAN
+      ON PLAN.LOCNO=DTL.LOCNO
+      AND PLAN.OWNER_NO=DTL.OWNER_NO
+      AND PLAN.PLAN_NO=DTL.EXP_NO
+      INNER JOIN ITEM ITE
+      ON ITE.ITEM_NO=DTL.ITEM_NO
+      INNER JOIN ITEM_BARCODE BAR
+      ON BAR.ITEM_NO=DTL.ITEM_NO
+      AND BAR.SIZE_NO=DTL.SIZE_NO
+      AND BAR.PACK_QTY=DTL.PACK_QTY
+      and bar.package_id='0'
+      and bar.sys_no=ite.sys_no
+     </if>
+     
+     <!-- 城市仓移库回单，添加目的储位库存和扣除预上库存 -->
+     <if test="params.billType=='HS' and params.ioFlag=='I'.toString() and params.locType=='2' " >
+       SELECT ROWNUM,DTL.LOCNO,DTL.S_CELL_ID as cell_id ,DTL.S_CELL_NO as cell_no,DTL.ITEM_NO,BAR.BARCODE,DTL.ITEM_TYPE,DTL.QUALITY as quality , 
+       	DTL.OWNER_NO,K.OUTSTOCK_NO as billNO,ITE.SUPPLIER_NO,'N' as CON_NO,'1' as HM_MANUAL_FLAG,PLAN.CREATOR as creator,-DTL.ITEM_QTY as INSTOCK_QTY,0 as OUTSTOCK_QTY, DTL.Real_Qty as qty 
+      FROM BILL_OM_OUTSTOCK_DTL DTL INNER JOIN BILL_OM_OUTSTOCK K
+      ON DTL.LOCNO=K.LOCNO 
+      AND DTL.OUTSTOCK_NO=K.OUTSTOCK_NO
+      AND K.OUTSTOCK_NO=#{params.billNo,jdbcType=DECIMAL}
+      INNER JOIN BILL_HM_PLAN PLAN
+      ON PLAN.LOCNO=DTL.LOCNO
+      AND PLAN.OWNER_NO=DTL.OWNER_NO
+      AND PLAN.PLAN_NO=DTL.EXP_NO
+      INNER JOIN ITEM ITE
+      ON ITE.ITEM_NO=DTL.ITEM_NO
+      INNER JOIN ITEM_BARCODE BAR
+      ON BAR.ITEM_NO=DTL.ITEM_NO
+      AND BAR.SIZE_NO=DTL.SIZE_NO
+      AND BAR.PACK_QTY=DTL.PACK_QTY
+      and bar.package_id='0'
+      and bar.sys_no=ite.sys_no
+     </if>
+     
+     <!-- 城市仓出库拣货下架回单，扣除原储位库存和预下库存-->
+     <if test="params.billType=='HO' and params.ioFlag=='O'.toString() and params.locType=='2' " >
+        SELECT  ROWNUM,DTL.LOCNO,DTL.S_CELL_ID as CELL_ID,DTL.S_CELL_NO as CELL_NO,DTL.ITEM_NO,BAR.BARCODE,'0' as ITEM_TYPE,'0' as quality,
+      DTL.OWNER_NO,ITE.SUPPLIER_NO,K.OUTSTOCK_NO AS billNO,'N' as CON_NO,'1' as HM_MANUAL_FLAG,k.creator as creator,-(DTL.ITEM_QTY-dtl.OUTSTOCKED_QTY) AS OUTSTOCK_QTY,0 as INSTOCK_QTY
+       ,abs(DTL.Real_Qty-DTL.OUTSTOCKED_QTY) AS QTY
+      FROM BILL_OM_OUTSTOCK_DTL DTL INNER JOIN BILL_OM_OUTSTOCK K
+      ON DTL.LOCNO=K.LOCNO 
+      AND DTL.OUTSTOCK_NO=K.OUTSTOCK_NO
+      AND K.OUTSTOCK_NO=#{params.billNo,jdbcType=DECIMAL}
+      INNER JOIN ITEM ITE
+      ON ITE.ITEM_NO=DTL.ITEM_NO
+      INNER JOIN ITEM_BARCODE BAR
+      ON BAR.ITEM_NO=DTL.ITEM_NO
+      AND BAR.SIZE_NO=DTL.SIZE_NO
+      AND BAR.PACK_QTY=DTL.PACK_QTY
+      and bar.package_id='0'
+      and bar.sys_no=ite.sys_no
+     </if>
+     
+     <!--城市仓出库拣货下架回单，添加目的储位库存和扣除预上库存-->
+     <if test="params.billType=='HO' and params.ioFlag=='I'.toString() and params.locType=='2' " >
+		 SELECT  ROWNUM,DTL.LOCNO,DTL.D_CELL_ID as CELL_ID,DTL.D_CELL_NO as CELL_NO,DTL.ITEM_NO,BAR.BARCODE,'0' as ITEM_TYPE,'0' as quality,
+		      DTL.OWNER_NO,ITE.SUPPLIER_NO,K.OUTSTOCK_NO AS billNO,'N' as CON_NO,'1' as HM_MANUAL_FLAG,k.CREATOR  as creator,-(DTL.ITEM_QTY-dtl.OUTSTOCKED_QTY) as INSTOCK_QTY,abs(DTL.Real_Qty-DTL.OUTSTOCKED_QTY) as QTY, 0 as OUTSTOCK_QTY
+		      FROM BILL_OM_OUTSTOCK_DTL DTL INNER JOIN BILL_OM_OUTSTOCK K
+		      ON DTL.LOCNO=K.LOCNO
+		      AND DTL.OUTSTOCK_NO=K.OUTSTOCK_NO
+		      AND K.OUTSTOCK_NO=#{params.billNo,jdbcType=DECIMAL}
+		      INNER JOIN ITEM ITE
+		      ON ITE.ITEM_NO=DTL.ITEM_NO
+		      INNER JOIN ITEM_BARCODE BAR
+		      ON BAR.ITEM_NO=DTL.ITEM_NO
+		      AND BAR.SIZE_NO=DTL.SIZE_NO
+		      AND BAR.PACK_QTY=DTL.PACK_QTY
+		      and bar.package_id='0'
+		      and bar.sys_no=ite.sys_no
+     </if>
+     
+     <!--城市仓库存锁定整单删除-->
+     <if test="params.billType=='SL' and params.ioFlag=='O'.toString() and params.locType=='2' " >
+		SELECT b.ROW_ID , b.LOCNO,-1 as cell_id, b.CELL_NO, b.ITEM_NO, c.BARCODE,'0' as ITEM_TYPE,'0' as quality,
+		      b.cell_id,b.OWNER_NO, d.SUPPLIER_NO, a.storelock_no as billNO,'N' as CON_NO ,'1' as HM_MANUAL_FLAG, a.creator as creator,0 as qty, -(b.item_qty-b.real_qty) AS OUTSTOCK_QTY,0 as INSTOCK_QTY
+		    FROM BILL_CON_STORELOCK a
+		    inner join BILL_CON_STORELOCK_DTL b on a.storelock_no = b.storelock_no
+		    inner join ITEM_BARCODE c on b.ITEM_NO = c.ITEM_NO and b.SIZE_NO = c.SIZE_NO and c.PACK_QTY = b.pack_qty
+		    and c.package_id='0'
+		    inner join ITEM d on b.ITEM_NO = d.ITEM_NO
+		    and d.sys_no=c.sys_no
+		    where a.storelock_no = #{params.billNo,jdbcType=DECIMAL}
+     </if>
+          
+     <!--城市仓库存分货扣减来源库存及预下-->
+     <if test="params.billType=='SR' and params.ioFlag=='O'.toString() and params.locType=='2' " >
+	   select
+	      rownum, bid.LOCNO,-1 as cell_id, bid.CELL_NO,bid.ITEM_NO, c.BARCODE,'0' as ITEM_TYPE,'0' as quality,
+	      bid.cell_id,bid.OWNER_NO, d.SUPPLIER_NO,brd.recheck_no as billNO , bid.BOX_NO as CON_NO ,nvl(brd.real_qty,0)as qty, -nvl(brd.real_qty,0)as OUTSTOCK_QTY,0 as INSTOCK_QTY,'1' as HM_MANUAL_FLAG, brd.RECHECK_NAME as CREATOR
+	    from bill_im_receipt_dtl bid
+	    inner join bill_im_receipt b on bid.locno=b.locno and bid.owner_no=b.owner_no and bid.receipt_no = b.receipt_no
+	    inner join
+	              (select c.locno,c.owner_no,c.divide_no,c.source_no,c.box_no,c.item_no,c.size_no,sum(c.item_qty) item_qty,sum(c.real_qty) real_qty from bill_om_divide_dtl c
+	                group by c.locno,c.owner_no,c.divide_no,c.source_no,c.box_no,c.item_no,c.size_no
+	                ) bod
+	    on bod.locno=bid.locno and bod.owner_no=bid.owner_no and bod.source_no=bid.receipt_no and bod.box_no=bid.box_no
+	    and bod.item_no=bid.item_no and bod.size_no=bid.size_no
+	    inner join bill_om_recheck bor on bor.locno=bod.locno and bor.divide_no=bod.divide_no
+	    and bor.status='13'
+	    inner join (select locno,recheck_no,item_no,size_no,box_no,RECHECK_NAME,sum(item_qty) as item_qty,sum(real_qty) as real_qty from bill_om_recheck_dtl
+	    group by locno,recheck_no,item_no,size_no,box_no,RECHECK_NAME) brd on brd.locno=bor.locno and brd.recheck_no=bor.recheck_no
+	    and brd.item_no=bod.item_no and brd.size_no=bod.size_no and brd.box_no=bod.box_no
+	    inner join ITEM_BARCODE c on bid.ITEM_NO = c.ITEM_NO and bid.SIZE_NO = c.SIZE_NO and c.PACK_QTY = bid.pack_qty
+	    and c.package_id='0'
+	    inner join ITEM d on bid.ITEM_NO = d.ITEM_NO
+	    and d.sys_no=c.sys_no
+	    where brd.recheck_no = #{params.billNo,jdbcType=DECIMAL}
+     </if>
+     
+    <!--预分货单整单删除-->
+     <if test="params.billType=='IR' and params.ioFlag=='O'.toString() and params.locType=='2' " >
+	   select
+	      b.ROW_ID, b.LOCNO,-1 as cell_id, b.CELL_NO, b.ITEM_NO, c.BARCODE,'0' as ITEM_TYPE,'0' as quality,
+	      b.cell_id,b.OWNER_NO, d.SUPPLIER_NO, a.receipt_no as billNO,'N' as CON_NO,0 as QTY, -b.receipt_qty as outstock_QTY,0 as INSTOCK_QTY,'1' as HM_MANUAL_FLAG, a.creator  as creator
+	    from BILL_IM_RECEIPT a
+	    inner join BILL_IM_RECEIPT_DTL b on a.receipt_no = b.receipt_no and a.locno=b.locno and a.owner_no=b.owner_no
+	    inner join ITEM_BARCODE c on b.ITEM_NO = c.ITEM_NO and b.SIZE_NO = c.SIZE_NO and c.PACK_QTY = b.pack_qty
+	    and c.package_id='0'
+	    inner join ITEM d on b.ITEM_NO = d.ITEM_NO
+	    and d.sys_no=c.sys_no
+	    where
+	    a.business_type='1'
+	    and a.receipt_no = #{params.billNo,jdbcType=DECIMAL}
+     </if>
+     
+ 	<!--转货来源仓扣库存-->
+    <if test="params.billType=='CV' and params.ioFlag=='O'.toString() and params.locType=='2' " >
+	 select
+	      rownum, b.LOCNO,-1 as cell_id, b.CELL_NO, b.ITEM_NO, tt.BARCODE,'0' as ITEM_TYPE,'0' as quality,
+	      b.cell_id,b.OWNER_NO, tt.SUPPLIER_NO, b.convert_no as billNO,'N' as CON_NO, b.realy_qty as QTY,0  as outstock_QTY,0 as INSTOCK_QTY,'1' as HM_MANUAL_FLAG, t.creator  as creator
+	     from bill_con_convert_dtl b
+	     inner join bill_con_convert t
+	     on b.locno=t.locno
+	     and b.owner_no=t.owner_no
+	     and b.convert_no=t.convert_no
+	     and b.convert_no=#{params.billNo,jdbcType=DECIMAL}
+	     inner join con_content tt
+	     on tt.locno=b.locno
+	     and tt.cell_no=b.cell_no
+	     and tt.cell_id=b.cell_id
+	     and tt.item_no=b.item_no
+	     and tt.item_type=b.item_type
+	     and tt.quality=b.quality
+	     inner join item_barcode bar
+	     on bar.item_no=b.item_no
+	     and bar.size_no=b.size_no
+	     and bar.package_id='0'
+	     and bar.pack_qty=1
+	     and bar.barcode=tt.barcode
+     </if>  
+     
+   <!--城市仓转货，转入目的仓新增库存-->
+    <if test="params.billType=='CV' and params.ioFlag=='I'.toString() and params.locType=='2' " >    
+    SELECT ROWNUM,k.store_no as LOCNO,-1 as cell_id, dtl.Dest_Cell_No as CELL_NO ,DTL.ITEM_NO,BAR.BARCODE,
+	       dtl.item_type,dtl.quality as quality,DTL.OWNER_NO,ITE.SUPPLIER_NO,K.CONVERT_NO as billNO,
+	       'N'as CON_NO,DTL.REALY_QTY as QTY,0  as outstock_QTY,0 as INSTOCK_QTY,'1' as HM_MANUAL_FLAG,k.CREATOR  as creator
+	    FROM bill_con_convert_dtl dtl
+	   INNER JOIN bill_con_convert K
+	      ON DTL.Locno = K.LOCNO
+	     AND DTL.Owner_No = K.Owner_No
+	     AND DTL.CONVERT_NO=K.CONVERT_NO
+	     AND K.CONVERT_NO = #{params.billNo,jdbcType=DECIMAL}
+	   INNER JOIN ITEM ITE
+	      ON ITE.ITEM_NO = DTL.ITEM_NO
+	   INNER JOIN ITEM_BARCODE BAR
+	      ON BAR.ITEM_NO = DTL.ITEM_NO
+	     AND BAR.SIZE_NO = DTL.SIZE_NO
+	     AND BAR.PACK_QTY = 1
+	     and bar.package_id = '0'
+	     and bar.sys_no = ite.sys_no
+     </if>      
+     
+  <!--城市仓库存调整单调出-->
+    <if test="params.billType=='CA' and params.ioFlag=='O'.toString() and params.locType=='2' " >    
+       select
+      b.ROW_ID, b.LOCNO,-1 as cell_id, b.CELL_NO, b.ITEM_NO, c.BARCODE,
+      case when ADJ_TYPE = '1' then a.S_ITEM_TYPE else b.ITEM_TYPE end ITEM_TYPE,
+      case when ADJ_TYPE = '0' then a.S_ITEM_TYPE else b.QUALITY end QUALITY,
+       b.OWNER_NO, d.SUPPLIER_NO, a.ADJ_NO as billNO,'N'as CON_NO, b.ADJ_QTY QTY,0  as outstock_QTY,0 as INSTOCK_QTY,'0' as HM_MANUAL_FLAG,a.editor  as creator
+    from BILL_CON_ADJ a
+    inner join BILL_CON_ADJ_DTL b on a.ADJ_NO = b.ADJ_NO
+    inner join ITEM_BARCODE c on b.ITEM_NO = c.ITEM_NO and b.SIZE_NO = c.SIZE_NO and c.PACK_QTY = 1
+    and c.package_id='0'
+    inner join ITEM d on b.ITEM_NO = d.ITEM_NO
+    and d.sys_no=c.sys_no
+    where a.ADJ_NO =#{params.billNo,jdbcType=DECIMAL}
+     </if>           
+     
+    <!--城市仓库存调整单调入-->
+    <if test="params.billType=='CA' and params.ioFlag=='I'.toString() and params.locType=='2' " >    
+     select
+        b.ROW_ID, b.LOCNO,-1 as cell_id,  
+        <if test="params.v_strFlag=='0'.toString() and params.V_D_CELL_NO!=null">
+     	  #{params.V_D_CELL_NO,jdbcType=DECIMAL} as cell_no
+        </if>
+        <if test="params.v_strFlag!='0'.toString()" >
+        b.cell_no
+        </if>
+         , b.ITEM_NO, c.BARCODE,
+        case when ADJ_TYPE = '1' then a.D_ITEM_TYPE else b.ITEM_TYPE end ITEM_TYPE,
+        case when ADJ_TYPE = '0' then a.D_ITEM_TYPE else b.QUALITY end QUALITY,
+              b.OWNER_NO, d.SUPPLIER_NO,a.ADJ_NO as billNO ,'N' as CON_NO, b.ADJ_QTY QTY,0 as outstock_QTY,0 as INSTOCK_QTY,'1' as HM_MANUAL_FLAG,a.editor as creator
+      from BILL_CON_ADJ a
+      inner join BILL_CON_ADJ_DTL b on a.ADJ_NO = b.ADJ_NO
+      inner join ITEM_BARCODE c on b.ITEM_NO = c.ITEM_NO and b.SIZE_NO = c.SIZE_NO and c.PACK_QTY = 1
+      and c.package_id='0'
+      inner join ITEM d on b.ITEM_NO = d.ITEM_NO
+      and d.sys_no=c.sys_no
+      where a.ADJ_NO =#{params.billNo,jdbcType=DECIMAL}
+     </if>           
+
+    <!--城市仓其他入库，增加目的储位库存-->
+    <if test="params.billType=='OI' and params.ioFlag=='I'.toString() and params.locType=='2' " >    
+     SELECT ROWNUM,DTL.LOCNO,-1 as cell_id,dtl.cell_no,DTL.ITEM_NO,BAR.BARCODE,k.item_type, k.area_quality as quality,
+              DTL.OWNER_NO,ITE.SUPPLIER_NO,K.Otherin_No as billNO,'N' as CON_NO,0  as outstock_QTY,0 as INSTOCK_QTY,
+              DTL.INSTORAGE_QTY as qty,'1' as HM_MANUAL_FLAG,k.CREATOR as CREATOR
+	    FROM Bill_Sm_Otherin_Dtl dtl
+	   INNER JOIN Bill_Sm_Otherin K
+	      ON DTL.Locno = K.LOCNO
+	     AND DTL.Otherin_No = K.Otherin_No
+	     AND K.Otherin_No = #{params.billNo,jdbcType=DECIMAL}
+	   INNER JOIN ITEM ITE
+	      ON ITE.ITEM_NO = DTL.ITEM_NO
+	   INNER JOIN ITEM_BARCODE BAR
+	      ON BAR.ITEM_NO = DTL.ITEM_NO
+	     AND BAR.SIZE_NO = DTL.SIZE_NO
+	     AND BAR.PACK_QTY = 1
+	     and bar.package_id = '0'
+	     and bar.sys_no = ite.sys_no
+     </if>     
+
+
+
+	<!--城市仓退仓上架回单，扣除来源库存-->
+    <if test="params.billType=='MO' and params.ioFlag=='O'.toString() and params.locType=='2' " >    
+      SELECT  ROWNUM,DTL.LOCNO,dtl.dest_cell_id as cell_id,dtl.dest_cell_no as cell_no,DTL.ITEM_NO,BAR.BARCODE,k.item_type,k.quality as quality,
+      DTL.OWNER_NO,ITE.SUPPLIER_NO,K.INSTOCK_NO as billNo,'N' as CON_NO,'1' as HM_MANUAL_FLAG,k.CREATOR as CREATOR, 0  as outstock_QTY,0 as INSTOCK_QTY,
+      case when dtl.instocked_qty>0 then abs(dtl.real_qty-dtl.instocked_qty) else dtl.real_qty end as qty,0  as outstock_QTY,0 as INSTOCK_QTY
+      FROM BILL_UM_INSTOCK_DTL DTL INNER JOIN BILL_UM_INSTOCK  K
+      ON DTL.LOCNO=K.LOCNO
+      AND DTL.INSTOCK_NO=K.INSTOCK_NO
+      AND K.INSTOCK_NO=#{params.billNo,jdbcType=DECIMAL}
+      INNER JOIN ITEM ITE
+      ON ITE.ITEM_NO=DTL.ITEM_NO
+      INNER JOIN ITEM_BARCODE BAR
+      ON BAR.ITEM_NO=DTL.ITEM_NO
+      AND BAR.SIZE_NO=DTL.SIZE_NO
+      AND BAR.PACK_QTY=1
+      and bar.package_id='0'
+      and bar.sys_no=ite.sys_no
+      where dtl.dest_cell_no &lt;&gt; dtl.real_cell_no
+      
+     </if> 
+
+    <!--城市仓退仓上架回单，增加目的储位库存-->
+    <if test="params.billType=='MO' and params.ioFlag=='I'.toString() and params.locType=='2' " >    
+      SELECT     ROWNUM,DTL.LOCNO,-1 as cell_id,dtl.real_cell_no as cell_no, DTL.ITEM_NO,BAR.BARCODE,k.item_type,k.quality as quality,
+      DTL.OWNER_NO,ITE.SUPPLIER_NO,K.INSTOCK_NO as billNO,'N' as CON_NO,'1' as HM_MANUAL_FLAG,k.CREATOR  as creator,
+      case when dtl.instocked_qty>0 then abs(dtl.real_qty-dtl.instocked_qty) else dtl.real_qty end as qty,0  as outstock_QTY,0 as INSTOCK_QTY
+      FROM BILL_UM_INSTOCK_DTL DTL INNER JOIN BILL_UM_INSTOCK  K
+      ON DTL.LOCNO=K.LOCNO
+      AND DTL.INSTOCK_NO=K.INSTOCK_NO
+      AND K.INSTOCK_NO=#{params.billNo,jdbcType=DECIMAL}
+      INNER JOIN ITEM ITE
+      ON ITE.ITEM_NO=DTL.ITEM_NO
+      INNER JOIN ITEM_BARCODE BAR
+      ON BAR.ITEM_NO=DTL.ITEM_NO
+      AND BAR.SIZE_NO=DTL.SIZE_NO
+      AND BAR.PACK_QTY=1
+      and bar.package_id='0'
+      and bar.sys_no=ite.sys_no
+      where dtl.dest_cell_no &lt;&gt; dtl.real_cell_no
+      
+     </if>     
+     
+     
+    <!--城市仓其他入库，LMP下发差异单直接记录库存-->
+    <if test="params.billType=='SI' and params.ioFlag=='I'.toString() and params.locType=='2' " >    
+	   SELECT ROWNUM,DTL.LOCNO,-1 as cell_id,dtl.cell_no,DTL.ITEM_NO,BAR.BARCODE,k.item_type,k.area_quality as quality,
+	       DTL.OWNER_NO,ITE.SUPPLIER_NO,K.Otherin_No as billNO,'N' as CON_NO,'1' as HM_MANUAL_FLAG,k.CREATOR  as creator,
+	       DTL.INSTORAGE_QTY as qty,0  as outstock_QTY,0 as INSTOCK_QTY
+	    FROM Bill_Sm_Otherin_Dtl dtl
+	   INNER JOIN Bill_Sm_Otherin K
+	      ON DTL.Locno = K.LOCNO
+	     AND DTL.Otherin_No = K.Otherin_No
+	     AND K.Otherin_No = #{params.billNo,jdbcType=DECIMAL}
+	   INNER JOIN ITEM ITE
+	      ON ITE.ITEM_NO = DTL.ITEM_NO
+	   INNER JOIN ITEM_BARCODE BAR
+	      ON BAR.ITEM_NO = DTL.ITEM_NO
+	     AND BAR.SIZE_NO = DTL.SIZE_NO
+	     AND BAR.PACK_QTY = 1
+	     and bar.package_id = '0'
+	     and bar.sys_no = ite.sys_no
+     </if>     
+     
+         
+    <!--城市仓库存报损单  业务描述：城市仓库存报损 直接扣减储位库存即可-->
+    <if test="(params.billType=='SW' or params.billType=='DS') and params.ioFlag=='O'.toString() and params.locType=='2' " >    
+	 select
+	      b.ROW_ID,b.LOCNO,-1 as cell_id, b.CELL_NO, b.ITEM_NO, c.BARCODE, b.ITEM_TYPE as ITEM_TYPE, b.QUALITY as quality,
+	      b.OWNER_NO, d.SUPPLIER_NO, a.WASTE_NO as billNO,'' as CON_NO, b.WASTE_QTY as QTY,0  as outstock_QTY,0 as INSTOCK_QTY,'1' as HM_MANUAL_FLAG, a.AUDITOR  as creator
+	    from BILL_SM_WASTE a
+	    inner join BILL_SM_WASTE_DTL b on a.WASTE_NO = b.WASTE_NO
+	    inner join ITEM_BARCODE c on b.ITEM_NO = c.ITEM_NO and b.SIZE_NO = c.SIZE_NO and c.PACK_QTY = 1
+	    and c.package_id='0'
+	    inner join ITEM d on b.ITEM_NO = d.ITEM_NO
+	    and d.sys_no=c.sys_no
+	    where a.WASTE_NO =#{params.billNo,jdbcType=DECIMAL}
+     </if>     
+     
+     
+     <!-- 2014.7.28 start -->
+     <!-- 城市仓盘点计划单确认  盘亏--> 
+     <if test="params.billType=='CP' and params.ioFlag=='O'.toString() and params.locType=='2' " >
+      	select
+	        rownum,
+	        b.LOCNO, -1 as cell_id,b.CELL_NO, b.ITEM_NO, b.BARCODE, b.ITEM_TYPE as ITEM_TYPE, b.QUALITY as quality,
+	        b.OWNER_NO, d.SUPPLIER_NO,  a.plan_no as billNO,'' as CON_NO ,'1' as HM_MANUAL_FLAG, a.AUDITOR as creator,
+	        ABS(CASE WHEN b.check_type = '1' THEN b.CHECK_QTY - b.item_qty ELSE b.RECHECK_QTY - b.item_qty END) QTY,0 as OUTSTOCK_QTY, 0 as INSTOCK_QTY
+	    from bill_ch_check a
+	    inner join bill_ch_check_dtl b on a.check_no = b.check_no
+	    inner join ITEM d on b.ITEM_NO = d.ITEM_NO
+	    where a.plan_no = #{params.billNo,jdbcType=DECIMAL}
+	    AND (CASE WHEN b.check_type = '1' THEN b.CHECK_QTY - b.item_qty ELSE b.RECHECK_QTY - b.item_qty END) &lt; 0
+     </if>
+     
+     
+     <!-- 城市仓盘点计划单确认 盘盈--> 
+     <if test="params.billType=='CP' and params.ioFlag=='I'.toString() and params.locType=='2' " >
+      	select
+	        rownum,
+	        b.LOCNO,-1 as cell_id, b.CELL_NO, b.ITEM_NO, b.BARCODE, b.ITEM_TYPE as ITEM_TYPE, b.QUALITY as quality,
+	        b.OWNER_NO, d.SUPPLIER_NO,  a.plan_no as billNO,'' as CON_NO,'1' as HM_MANUAL_FLAG, a.AUDITOR as creator,
+	        ABS(CASE WHEN b.check_type = '1' THEN b.CHECK_QTY - b.item_qty ELSE b.RECHECK_QTY - b.item_qty END) QTY,0 as OUTSTOCK_QTY, 0 as INSTOCK_QTY
+	    from bill_ch_check a
+	    inner join bill_ch_check_dtl b on a.check_no = b.check_no
+	    inner join ITEM d on b.ITEM_NO = d.ITEM_NO
+	    where a.plan_no = #{params.billNo,jdbcType=DECIMAL}
+	    AND (CASE WHEN b.check_type = '1' THEN b.CHECK_QTY - b.item_qty ELSE b.RECHECK_QTY - b.item_qty END) &gt; 0
+     </if>
+     
+     
+      
+     <!-- 城市仓移库计划单确认  移出--> 
+     <if test="params.billType=='HM' and params.ioFlag=='O'.toString() and params.locType=='2' " >
+      	select b.ROW_ID, b.LOCNO, -1 as cell_id,b.S_CELL_NO CELL_NO, b.ITEM_NO, c.BARCODE, b.ITEM_TYPE as ITEM_TYPE, b.QUALITY as quality,
+	      b.OWNER_NO, d.SUPPLIER_NO,a.PLAN_NO as billNO, '' as CON_NO,'1' as HM_MANUAL_FLAG, a.AUDITOR as creator ,b.ORIGIN_QTY qty ,0 as OUTSTOCK_QTY, 0 as INSTOCK_QTY
+	    from BILL_HM_PLAN a
+	    inner join BILL_HM_PLAN_DTL b on a.PLAN_NO = b.PLAN_NO
+	    inner join ITEM_BARCODE c on b.ITEM_NO = c.ITEM_NO and b.SIZE_NO = c.SIZE_NO and c.PACK_QTY = 1
+	    and c.package_id='0'
+	    inner join ITEM d on b.ITEM_NO = d.ITEM_NO
+	    and c.sys_no=d.sys_no
+	    where a.PLAN_NO=#{params.billNo,jdbcType=DECIMAL}
+     </if>
+     
+     <!-- 城市仓移库计划单确认  移出--> 
+     <if test="params.billType=='HM' and params.ioFlag=='I'.toString() and params.locType=='2' " >
+      	select
+      b.ROW_ID, b.LOCNO, b.D_CELL_NO CELL_NO, b.ITEM_NO, c.BARCODE, b.ITEM_TYPE as ITEM_TYPE, b.QUALITY as quality,
+      b.OWNER_NO, d.SUPPLIER_NO, a.PLAN_NO  as billNO, '' as CON_NO,'1' as HM_MANUAL_FLAG, a.AUDITOR as creator , b.ORIGIN_QTY INSTOCK_QTY,0 as qty ,0 as OUTSTOCK_QTY
+      from BILL_HM_PLAN a
+     inner join BILL_HM_PLAN_DTL b on a.PLAN_NO = b.PLAN_NO
+     inner join ITEM d on b.ITEM_NO = d.ITEM_NO
+     inner join ITEM_BARCODE c on b.ITEM_NO = c.ITEM_NO and b.SIZE_NO = c.SIZE_NO and c.PACK_QTY = 1
+     and c.package_id='0' and c.sys_no=d.sys_no
+     where a.PLAN_NO=#{params.billNo,jdbcType=DECIMAL}
+     </if>
+         <!--  2014.7.28 end  --> 
+     
+     
+     <!-- 城市仓退厂下架回单，扣除原储位库存和预下库存--> 
+     <if test="params.billType=='RO' and params.ioFlag=='O'.toString() and params.locType=='2' " >
+      	SELECT     ROWNUM,DTL.LOCNO,DTL.S_CELL_ID  as cell_id,DTL.S_CELL_NO as cell_no,DTL.ITEM_NO,BAR.BARCODE,'0' as ITEM_TYPE,'0' as quality,
+      DTL.OWNER_NO,ITE.SUPPLIER_NO,K.OUTSTOCK_NO as billNO,'N' as CON_NO,'1' as HM_MANUAL_FLAG,k.creator as creator ,-DTL.ITEM_QTY as OUTSTOCK_QTY,0 as INSTOCK_QTY,DTL.ITEM_QTY qty
+      FROM BILL_WM_OUTSTOCK_DTL DTL INNER JOIN BILL_WM_OUTSTOCK  K
+      ON DTL.LOCNO=K.LOCNO 
+      AND DTL.OUTSTOCK_NO=K.OUTSTOCK_NO
+      AND K.OUTSTOCK_NO= #{params.billNo,jdbcType=DECIMAL}
+      INNER JOIN ITEM ITE
+      ON ITE.ITEM_NO=DTL.ITEM_NO
+      INNER JOIN ITEM_BARCODE BAR
+      ON BAR.ITEM_NO=DTL.ITEM_NO
+      AND BAR.SIZE_NO=DTL.SIZE_NO
+      AND BAR.PACK_QTY=DTL.PACK_QTY
+      and bar.package_id='0'
+      and bar.sys_no=ite.sys_no
+     </if>   
+     
+     <if test="params.billType=='RO' and params.ioFlag=='I'.toString() and params.locType=='2' " >
+      	SELECT ROWNUM,DTL.LOCNO,DTL.S_CELL_ID as cell_id,DTL.S_CELL_NO as cell_no,DTL.ITEM_NO,BAR.BARCODE,'0' as ITEM_TYPE,'0' as quality,
+      		DTL.OWNER_NO,ITE.SUPPLIER_NO,K.OUTSTOCK_NO as billNO,'N' as CON_NO,'1' as HM_MANUAL_FLAG,k.creator as creator ,-DTL.ITEM_QTY as INSTOCK_QTY,0 as OUTSTOCK_QTY,DTL.ITEM_QTY qty
+	      FROM BILL_WM_OUTSTOCK_DTL DTL INNER JOIN BILL_WM_OUTSTOCK  K
+	      ON DTL.LOCNO=K.LOCNO 
+	      AND DTL.OUTSTOCK_NO=K.OUTSTOCK_NO
+	      AND K.OUTSTOCK_NO=#{params.billNo,jdbcType=DECIMAL}
+	      INNER JOIN ITEM ITE
+	      ON ITE.ITEM_NO=DTL.ITEM_NO
+	      INNER JOIN ITEM_BARCODE BAR
+	      ON BAR.ITEM_NO=DTL.ITEM_NO
+	      AND BAR.SIZE_NO=DTL.SIZE_NO
+	      AND BAR.PACK_QTY=DTL.PACK_QTY
+	      and bar.package_id='0'
+	      and bar.sys_no=ite.sys_no
+     </if>
+     
+    <if test="params.billType=='CN' and params.ioFlag=='I'.toString() and params.locType=='2' " >
+      	select rownum,dtl.locno,-1 as cell_id,dtl.d_cell_no as cell_no,dtl.item_no,bar.barcode,dtl.item_type,dtl.quality,'BL' owner_no,ite.supplier_no,
+      	dtl.contask_no as billNO,dtl.d_sub_container_no con_no,dtl.qty as qty,
+      	<if test="params.outStockFlag != null" >
+     	  -1*dtl.qty as OUTSTOCK_QTY
+        </if>
+        <if test="params.outStockFlag == null" >
+     	  0 as OUTSTOCK_QTY
+        </if>      	
+      	,0 as INSTOCK_QTY,'1' as HM_MANUAL_FLAG,dtl.creator as creator
+		  from bill_container_task_dtl dtl
+		 inner join item ite
+		    on dtl.item_no = ite.item_no
+		 inner join item_barcode bar
+		    on dtl.item_no = bar.item_no
+		   and dtl.size_no = bar.size_no
+		   and ite.sys_no = bar.sys_no
+		   and bar.package_id = 0
+		 where dtl.contask_no =#{params.billNo,jdbcType=DECIMAL}
+     </if>
+          
+      <if test="params.billType=='CN' and  params.ioFlag=='O'.toString() and params.locType=='2' " >
+      	select rownum,dtl.locno,-1 as cell_id,dtl.s_cell_no as cell_no,dtl.item_no,bar.barcode,dtl.item_type,dtl.quality,'BL' owner_no,ite.supplier_no,
+      	dtl.contask_no as billNO,dtl.s_sub_container_no con_no,dtl.qty as qty,0 as OUTSTOCK_QTY,0 as INSTOCK_QTY,'1' as HM_MANUAL_FLAG,dtl.creator as creator
+		  from bill_container_task_dtl dtl
+		 inner join item ite
+		    on dtl.item_no = ite.item_no
+		 inner join item_barcode bar
+		    on dtl.item_no = bar.item_no
+		   and dtl.size_no = bar.size_no
+		   and ite.sys_no = bar.sys_no
+		   and bar.package_id = 0
+		 where dtl.contask_no =#{params.billNo,jdbcType=DECIMAL}
+     </if>
+     
+  </select>
+</mapper>

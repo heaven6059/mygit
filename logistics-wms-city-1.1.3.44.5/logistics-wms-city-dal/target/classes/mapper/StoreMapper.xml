@@ -1,0 +1,782 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.StoreMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.Store" >
+    <id column="STORE_NO" property="storeNo" jdbcType="VARCHAR" />
+    <result column="STORE_CODE" property="storeCode" jdbcType="VARCHAR" />
+    <result column="STORE_NAME" property="storeName" jdbcType="VARCHAR" />
+    <result column="STORE_LNAME" property="storeLname" jdbcType="VARCHAR" />
+    <result column="SEARCH_CODE" property="searchCode" jdbcType="VARCHAR" />
+    <result column="STORE_NO_HEAD" property="storeNoHead" jdbcType="VARCHAR" />
+    <result column="STORE_STATUS" property="storeStatus" jdbcType="VARCHAR" />
+    <result column="STORE_TYPE" property="storeType" jdbcType="DECIMAL" />
+    <result column="STORE_TYPE2" property="storeType2" jdbcType="VARCHAR" />
+    <result column="DTS_NO" property="dtsNo" jdbcType="VARCHAR" />
+    <result column="SYS_NO" property="sysNo" jdbcType="VARCHAR" />
+    <result column="TELNO" property="telno" jdbcType="VARCHAR" />
+    <result column="FAXNO" property="faxno" jdbcType="VARCHAR" />
+    <result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+    <result column="ZIPNO" property="zipno" jdbcType="VARCHAR" />
+    <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+    <result column="CMAN" property="cman" jdbcType="VARCHAR" />
+    <result column="cphone" property="cphone" jdbcType="VARCHAR" />
+    <result column="CMAN1" property="cman1" jdbcType="VARCHAR" />
+    <result column="cphone1" property="cphone1" jdbcType="VARCHAR" />
+    <result column="MANAGER" property="manager" jdbcType="VARCHAR" />
+    <result column="CLASS3" property="class3" jdbcType="VARCHAR" />
+    <result column="AREA_TOTAL" property="areaTotal" jdbcType="DECIMAL" />
+    <result column="AREA" property="area" jdbcType="DECIMAL" />
+    <result column="MANAGE_CITY" property="manageCity" jdbcType="VARCHAR" />
+    <result column="MANAGE_ZONE_NO" property="manageZoneNo" jdbcType="VARCHAR" />
+    <result column="WORK_CITY" property="workCity" jdbcType="VARCHAR" />
+    <result column="PROVINCE" property="province" jdbcType="VARCHAR" />
+    <result column="INCITY" property="incity" jdbcType="VARCHAR" />
+    <result column="CIRCLE_NO" property="circleNo" jdbcType="VARCHAR" />
+    <result column="CIRCLE" property="circle" jdbcType="VARCHAR" />
+    <result column="CIRCLE_NAME" property="circleName" jdbcType="VARCHAR" />
+    <result column="CLASS2" property="class2" jdbcType="VARCHAR" />
+    <result column="store_Email" property="storeEmail" jdbcType="VARCHAR" />
+    <result column="ZONE_NO" property="zoneNo" jdbcType="VARCHAR" />
+    <result column="STORE_NO_DC" property="storeNoDc" jdbcType="VARCHAR" />
+    <result column="STORE_NO2" property="storeNo2" jdbcType="VARCHAR" />
+    <result column="STORE_NO3" property="storeNo3" jdbcType="VARCHAR" />
+    <result column="MANAGER_NO" property="managerNo" jdbcType="VARCHAR" />
+    <result column="OPENDT" property="opendt" jdbcType="TIMESTAMP" />
+    <result column="CLOSEDT" property="closedt" jdbcType="TIMESTAMP" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="AUDIT_STATUS" property="auditStatus" jdbcType="VARCHAR" />
+    <result column="PRIO_TYPE" property="prioType" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="storeTypeStr" property="storeTypeStr" jdbcType="VARCHAR" />
+    <result column="storeNoHeadStr" property="storeNoHeadStr" jdbcType="VARCHAR" />
+    <result column="sysNoStr" property="sysNoStr" jdbcType="VARCHAR" />
+    <result column="childrenCount" property="childrenCount" jdbcType="DECIMAL" />
+    <result column="RECIEVETM" property="recievetm" jdbcType="TIMESTAMP" />
+    <result column="isTree" property="isTree" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    STORE_NO, STORE_CODE, STORE_NAME, STORE_LNAME, SEARCH_CODE, STORE_NO_HEAD, STORE_STATUS, 
+    STORE_TYPE, STORE_TYPE2, DTS_NO, SYS_NO, TELNO, FAXNO, ADDRESS, ZIPNO, EMAIL, 
+    MANAGER, CLASS3, AREA_TOTAL, AREA, MANAGE_CITY, MANAGE_ZONE_NO, WORK_CITY, PROVINCE, 
+    INCITY, CIRCLE, CLASS2, ZONE_NO, STORE_NO_DC, STORE_NO2, STORE_NO3, MANAGER_NO, OPENDT, 
+    CLOSEDT, STATUS, AUDIT_STATUS, PRIO_TYPE, CREATOR, CREATETM, EDITTM, EDITOR,  RECIEVETM,
+    CIRCLE_NO, CMAN, cphone, CMAN1, cphone1,store_Email
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+    	    <if test="null!=params.storeCode and ''!=params.storeCode">
+		         and STORE_CODE=#{params.storeCode,jdbcType=VARCHAR}
+		    </if>
+		    <if test="null!=params.cman and ''!=params.cman">
+		         and CMAN LIKE '%${params.cman}%'
+		    </if>
+    	    <if test="null!=params.storeNoHead and ''!=params.storeNoHead">
+		         and STORE_NO_HEAD=#{params.storeNoHead,jdbcType=VARCHAR}
+		    </if>
+    	    <if test="null!=params.circle and ''!=params.circle">
+		         and CIRCLE_NO=#{params.circle,jdbcType=VARCHAR}
+		    </if>
+		    <if test="null!=params.circleNo and ''!=params.circleNo">
+		         and CIRCLE_NO=#{params.circleNo,jdbcType=VARCHAR}
+		    </if>
+		   <if test="null!=params.storeNo and ''!=params.storeNo">
+		         and STORE_NO=#{params.storeNo,jdbcType=VARCHAR}
+		   </if>
+		   <if test="null!=params.storeName and ''!=params.storeName">
+		         and STORE_NAME LIKE '%${params.storeName}%'
+		   </if>
+		   <if test="null!=params.isTree and ''!=params.isTree">
+		         and STORE_TYPE!=11
+		   </if>
+		   <if test="null!=params.storeLname and ''!=params.storeLname">
+		         and STORE_LNAME LIKE '%${params.storeLname}%'
+		   </if>
+		   <if test="null!=params.sysNo and ''!=params.sysNo">
+		         and SYS_NO=#{params.sysNo,jdbcType=VARCHAR}
+		   </if>
+		   <if test="null!=params.storeType and ''!=params.storeType">
+		         and STORE_TYPE=#{params.storeType,jdbcType=VARCHAR}
+		   </if>
+		   <if test="null!=params.zoneNo and ''!=params.zoneNo">
+		         and ZONE_NO=#{params.zoneNo,jdbcType=VARCHAR}
+		   </if>
+		   <if test="null!=params.status and ''!=params.status">
+		         and STATUS=#{params.status,jdbcType=VARCHAR}
+		   </if>
+		   <if test="null!=params.storeNoDc and ''!=params.storeNoDc">
+		         and store_no_dc=#{params.storeNoDc,jdbcType=VARCHAR}
+		   </if>
+		   <if test="null!=params.sysNoStr and ''!=params.sysNoStr" >
+            	 and sys_no in (select ld.itemval from LOOKUPDTL ld where SYS_NO = ld.itemval and ld.lookupcode = 'SYS_NO' and ld.ITEMNAME LIKE '%${params.sysNoStr}%')
+      	   </if>
+		    
+	      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+	             ${params.queryCondition}
+	      </if>
+	      <if test="null!=params.q and ''!=params.q" >
+	           and ( 
+                 store_no like CONCAT(CONCAT('%','${params.q}'),'%')  
+                 or store_name like CONCAT(CONCAT('%','${params.q}'),'%') 
+              )
+	       </if>
+	       
+	       <if test="null!=params.queryStoreType and ''!=params.queryStoreType" >
+	           and Store_Type in (${params.queryStoreType})
+	       </if>
+	       <if test="params.isLimitLocno == 'yes'">
+	       		and ((Store_Type = '11'
+	       			<if test="params.locno != null and params.locno != ''">
+	       				and store_No_Dc = #{params.locno,jdbcType=VARCHAR}
+	       			</if>
+	       			) or (Store_Type != '11')
+	       		)
+	       </if>
+	       
+	       <if test="null!=params.dataList and ''!=params.dataList">
+	    		and store_no not in (${params.dataList})
+	       </if>
+	       
+	       <!-- 查询未绑定的客户暂存区客户 -->
+	       <if test="null!=params.isOsCustBuffer and ''!=params.isOsCustBuffer">
+		         and not exists(
+		         	select 'X' from os_cust_buffer ocb
+		         		where ocb.STORE_NO = st.STORE_NO
+		         		and ocb.LOCNO = #{params.locno,jdbcType=VARCHAR}
+		         		and ocb.WARE_NO = #{params.wareNo,jdbcType=VARCHAR}
+		         		and ocb.AREA_NO = #{params.areaNo,jdbcType=VARCHAR}
+		         		and ocb.STOCK_NO = #{params.stockNo,jdbcType=VARCHAR}
+		         		and ocb.CELL_NO = #{params.cellNo,jdbcType=VARCHAR}
+		         )
+		   </if>
+    </if>
+  </sql>
+ <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and sys_no in (select sys_no from brand b where  b.brand_no 
+       in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+       union all select '00' from dual
+       ) 
+    </if>
+  </sql>
+  <select id="selectByStoreName" resultMap="BaseResultMap" parameterType="map" >
+  	select <include refid="Base_Column_List" />
+  	from STORE
+  	where STORE_NAME = #{params.storeName,jdbcType=VARCHAR}
+  	and status = #{params.status,jdbcType=VARCHAR}
+  	and store_Type = #{params.storeType,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select <include refid="Base_Column_List" />
+    from STORE st
+    where STORE_NO = #{storeNo,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="queryStoreNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  	select store_no from store where store_name = #{storeName,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="queryStoreByStoreNo" resultType="java.lang.String" parameterType="java.lang.String" >
+  	select store_no from store where store_no = #{params.storeNo,jdbcType=VARCHAR} and STORE_TYPE = #{params.storeType} 
+  </select>
+  <!-- 查询所有客户 -->
+  <select id="queryStoreList" resultMap="BaseResultMap" parameterType="map">
+	 select B.* from (select A.*,rownum rn from( 
+	     select store_no,store_name from store where 1=1
+	  	 <if test="null!=params" >
+		    <if test="null!=params.storeType and ''!=params.storeType">
+		         and STORE_TYPE=#{params.storeType}
+		    </if>
+		    <if test="null!=params.storeNo and ''!=params.storeNo">
+		         and STORE_NO=#{params.storeNo}
+		    </if>
+		    <if test="null!=params.storeName and ''!=params.storeName">
+		         and STORE_NAME like '%${params.storeName}%'
+		    </if>
+		</if>
+    	) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <select id="queryStoreCount" resultType="java.lang.Integer" parameterType="map">
+	  	 select count(1) from store where 1=1
+	  	 <if test="null!=params" >
+		    <if test="null!=params.storeType and ''!=params.storeType">
+		         and STORE_TYPE=#{params.storeType}
+		    </if>
+		    <if test="null!=params.storeNo and ''!=params.storeNo">
+		         and STORE_NO=#{params.storeNo}
+		    </if>
+		    <if test="null!=params.storeName and ''!=params.storeName">
+		         and STORE_NAME like '%${params.storeName}%'
+		    </if>
+		    <if test="null!=params.status and ''!=params.status">
+		         and STATUS = #{params.status}
+		    </if>
+		</if>
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from STORE st where 1=1 
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (
+    	select A.*,rownum rn from(select 
+	    	<include refid="Base_Column_List" />,
+	    	(select ld.ITEMNAME from LOOKUPDTL ld
+	    		where st.SYS_NO = ld.itemval and ld.lookupcode = 'SYS_NO' and rownum = 1) as sysNoStr,
+	     	(select ld.ITEMNAME from LOOKUPDTL ld
+				where st.STORE_TYPE = ld.itemval and ld.lookupcode = 'STORE_TYPE' and rownum = 1) as storeTypeStr,
+	     	(select pst.STORE_NAME from STORE pst
+				where pst.STORE_NO=st.STORE_NO_HEAD and rownum = 1) as storeNoHeadStr,
+	     	(select c.CIRCLE_NAME from BM_CIRCLE c
+	      		where c.CIRCLE_NO=st.CIRCLE_NO 
+	     		<if test="null!=params.locno and ''!=params.locno" >
+					and c.locno = #{params.locno,jdbcType=VARCHAR}
+		  		</if>
+		  		and rownum = 1) as CIRCLE_NAME
+     	from STORE st where 1 = 1
+    	<include refid="condition" />
+    	<include refid="AuthorityCondition" />
+    <choose>
+    	<when test="orderByField != null and ''!=orderByField">
+    		order by ${orderByField}
+    		<if test="orderByField" >
+	        	${orderBy}
+	      	</if>
+    	</when>
+    	<otherwise>
+    		order by edittm desc,store_no asc
+    	</otherwise>
+    </choose>
+    
+    <!-- 
+    	<if test="orderByField != null and ''!=orderByField" >
+	      order by ${orderByField}
+	      <if test="orderByField" >
+	        ${orderBy}
+	      </if>
+	    </if>
+     -->
+    
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />,
+    (select count(1) from STORE cst where cst.STORE_NO_HEAD=st.STORE_NO) as childrenCount
+     from STORE st where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByParamsByBrand" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from STORE st where 1=1 
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+  </select>
+  
+  
+  <select id="selectWarehouseListByLocno" resultMap="BaseResultMap" parameterType="map" >
+  	select  
+  	<include refid="Base_Column_List" />
+       from store st 
+       where zone_no=(select zone_no from store where store_no=#{params.locno,jdbcType=VARCHAR}) 
+       		 and store_type='22'
+  </select>
+  
+  
+  
+  
+  
+   <select id="selectAll4Simple" resultType="com.yougou.logistics.city.common.model.StoreSimple" parameterType="map" >
+    select store_no storeNo,store_name storeName
+     from STORE st where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <select id="selectCircle" resultMap="BaseResultMap" >
+  	select s1.CIRCLE_NO, s1.CIRCLE
+	  from store s1
+	 where 1 = 1
+	   and s1.CIRCLE_NO is not null
+	 group by s1.CIRCLE_NO, s1.CIRCLE
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from STORE
+    where STORE_NO = #{storeNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.Store" >
+    delete from STORE
+    where STORE_NO = #{storeNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.Store" >
+    insert into STORE (STORE_NO, STORE_CODE, STORE_NAME, 
+      STORE_LNAME, SEARCH_CODE, STORE_NO_HEAD, 
+      STORE_STATUS, STORE_TYPE, STORE_TYPE2, 
+      DTS_NO, SYS_NO, TELNO, 
+      FAXNO, ADDRESS, ZIPNO, 
+      EMAIL, CMAN, MANAGER, 
+      CLASS3, AREA_TOTAL, AREA, 
+      MANAGE_CITY, MANAGE_ZONE_NO, WORK_CITY, 
+      PROVINCE, INCITY, CIRCLE, 
+      CLASS2, ZONE_NO, STORE_NO_DC, 
+      STORE_NO2, STORE_NO3, MANAGER_NO, 
+      OPENDT, CLOSEDT, STATUS, 
+      AUDIT_STATUS, PRIO_TYPE, CREATOR, 
+      CREATETM, EDITTM, 
+      EDITOR)
+    values (#{storeNo,jdbcType=VARCHAR}, #{storeCode,jdbcType=VARCHAR}, #{storeName,jdbcType=VARCHAR}, 
+      #{storeLname,jdbcType=VARCHAR}, #{searchCode,jdbcType=VARCHAR}, #{storeNoHead,jdbcType=VARCHAR}, 
+      #{storeStatus,jdbcType=VARCHAR}, #{storeType,jdbcType=DECIMAL}, #{storeType2,jdbcType=VARCHAR}, 
+      #{dtsNo,jdbcType=VARCHAR}, #{sysNo,jdbcType=VARCHAR}, #{telno,jdbcType=VARCHAR}, 
+      #{faxno,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{zipno,jdbcType=VARCHAR}, 
+      #{email,jdbcType=VARCHAR}, #{cman,jdbcType=VARCHAR}, #{manager,jdbcType=VARCHAR}, 
+      #{class3,jdbcType=VARCHAR}, #{areaTotal,jdbcType=DECIMAL}, #{area,jdbcType=DECIMAL}, 
+      #{manageCity,jdbcType=VARCHAR}, #{manageZoneNo,jdbcType=VARCHAR}, #{workCity,jdbcType=VARCHAR}, 
+      #{province,jdbcType=VARCHAR}, #{incity,jdbcType=VARCHAR}, #{circle,jdbcType=VARCHAR}, 
+      #{class2,jdbcType=VARCHAR}, #{zoneNo,jdbcType=VARCHAR}, #{storeNoDc,jdbcType=VARCHAR}, 
+      #{storeNo2,jdbcType=VARCHAR}, #{storeNo3,jdbcType=VARCHAR}, #{managerNo,jdbcType=VARCHAR}, 
+      #{opendt,jdbcType=TIMESTAMP}, #{closedt,jdbcType=TIMESTAMP}, #{status,jdbcType=VARCHAR}, 
+      #{auditStatus,jdbcType=VARCHAR}, #{prioType,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
+      #{createtm,jdbcType=TIMESTAMP}, #{edittm,jdbcType=TIMESTAMP}, 
+      #{editor,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.Store" >
+    insert into STORE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="storeNo != null" >
+        STORE_NO,
+      </if>
+      <if test="storeCode != null" >
+        STORE_CODE,
+      </if>
+      <if test="storeName != null" >
+        STORE_NAME,
+      </if>
+      <if test="storeLname != null" >
+        STORE_LNAME,
+      </if>
+      <if test="searchCode != null" >
+        SEARCH_CODE,
+      </if>
+      <if test="storeNoHead != null" >
+        STORE_NO_HEAD,
+      </if>
+      <if test="storeStatus != null" >
+        STORE_STATUS,
+      </if>
+      <if test="storeType != null" >
+        STORE_TYPE,
+      </if>
+      <if test="storeType2 != null" >
+        STORE_TYPE2,
+      </if>
+      <if test="dtsNo != null" >
+        DTS_NO,
+      </if>
+      <if test="sysNo != null" >
+        SYS_NO,
+      </if>
+      <if test="telno != null" >
+        TELNO,
+      </if>
+      <if test="faxno != null" >
+        FAXNO,
+      </if>
+      <if test="address != null" >
+        ADDRESS,
+      </if>
+      <if test="zipno != null" >
+        ZIPNO,
+      </if>
+      <if test="email != null" >
+        EMAIL,
+      </if>
+      <if test="cman != null" >
+        CMAN,
+      </if>
+      <if test="manager != null" >
+        MANAGER,
+      </if>
+      <if test="class3 != null" >
+        CLASS3,
+      </if>
+      <if test="areaTotal != null" >
+        AREA_TOTAL,
+      </if>
+      <if test="area != null" >
+        AREA,
+      </if>
+      <if test="manageCity != null" >
+        MANAGE_CITY,
+      </if>
+      <if test="manageZoneNo != null" >
+        MANAGE_ZONE_NO,
+      </if>
+      <if test="workCity != null" >
+        WORK_CITY,
+      </if>
+      <if test="province != null" >
+        PROVINCE,
+      </if>
+      <if test="incity != null" >
+        INCITY,
+      </if>
+      <if test="circle != null" >
+        CIRCLE,
+      </if>
+      <if test="class2 != null" >
+        CLASS2,
+      </if>
+      <if test="zoneNo != null" >
+        ZONE_NO,
+      </if>
+      <if test="storeNoDc != null" >
+        STORE_NO_DC,
+      </if>
+      <if test="storeNo2 != null" >
+        STORE_NO2,
+      </if>
+      <if test="storeNo3 != null" >
+        STORE_NO3,
+      </if>
+      <if test="managerNo != null" >
+        MANAGER_NO,
+      </if>
+      <if test="opendt != null" >
+        OPENDT,
+      </if>
+      <if test="closedt != null" >
+        CLOSEDT,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="auditStatus != null" >
+        AUDIT_STATUS,
+      </if>
+      <if test="prioType != null" >
+        PRIO_TYPE,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="storeNo != null" >
+        #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="storeCode != null" >
+        #{storeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="storeName != null" >
+        #{storeName,jdbcType=VARCHAR},
+      </if>
+      <if test="storeLname != null" >
+        #{storeLname,jdbcType=VARCHAR},
+      </if>
+      <if test="searchCode != null" >
+        #{searchCode,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNoHead != null" >
+        #{storeNoHead,jdbcType=VARCHAR},
+      </if>
+      <if test="storeStatus != null" >
+        #{storeStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="storeType != null" >
+        #{storeType,jdbcType=DECIMAL},
+      </if>
+      <if test="storeType2 != null" >
+        #{storeType2,jdbcType=VARCHAR},
+      </if>
+      <if test="dtsNo != null" >
+        #{dtsNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sysNo != null" >
+        #{sysNo,jdbcType=VARCHAR},
+      </if>
+      <if test="telno != null" >
+        #{telno,jdbcType=VARCHAR},
+      </if>
+      <if test="faxno != null" >
+        #{faxno,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="zipno != null" >
+        #{zipno,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="cman != null" >
+        #{cman,jdbcType=VARCHAR},
+      </if>
+      <if test="manager != null" >
+        #{manager,jdbcType=VARCHAR},
+      </if>
+      <if test="class3 != null" >
+        #{class3,jdbcType=VARCHAR},
+      </if>
+      <if test="areaTotal != null" >
+        #{areaTotal,jdbcType=DECIMAL},
+      </if>
+      <if test="area != null" >
+        #{area,jdbcType=DECIMAL},
+      </if>
+      <if test="manageCity != null" >
+        #{manageCity,jdbcType=VARCHAR},
+      </if>
+      <if test="manageZoneNo != null" >
+        #{manageZoneNo,jdbcType=VARCHAR},
+      </if>
+      <if test="workCity != null" >
+        #{workCity,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="incity != null" >
+        #{incity,jdbcType=VARCHAR},
+      </if>
+      <if test="circle != null" >
+        #{circle,jdbcType=VARCHAR},
+      </if>
+      <if test="class2 != null" >
+        #{class2,jdbcType=VARCHAR},
+      </if>
+      <if test="zoneNo != null" >
+        #{zoneNo,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNoDc != null" >
+        #{storeNoDc,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo2 != null" >
+        #{storeNo2,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo3 != null" >
+        #{storeNo3,jdbcType=VARCHAR},
+      </if>
+      <if test="managerNo != null" >
+        #{managerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="opendt != null" >
+        #{opendt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="closedt != null" >
+        #{closedt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="auditStatus != null" >
+        #{auditStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="prioType != null" >
+        #{prioType,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.Store" >
+    update STORE
+    <set >
+      <if test="storeCode != null" >
+        STORE_CODE = #{storeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="storeName != null" >
+        STORE_NAME = #{storeName,jdbcType=VARCHAR},
+      </if>
+      <if test="storeLname != null" >
+        STORE_LNAME = #{storeLname,jdbcType=VARCHAR},
+      </if>
+      <if test="searchCode != null" >
+        SEARCH_CODE = #{searchCode,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNoHead != null" >
+        STORE_NO_HEAD = #{storeNoHead,jdbcType=VARCHAR},
+      </if>
+      <if test="storeStatus != null" >
+        STORE_STATUS = #{storeStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="storeType != null" >
+        STORE_TYPE = #{storeType,jdbcType=DECIMAL},
+      </if>
+      <if test="storeType2 != null" >
+        STORE_TYPE2 = #{storeType2,jdbcType=VARCHAR},
+      </if>
+      <if test="dtsNo != null" >
+        DTS_NO = #{dtsNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sysNo != null" >
+        SYS_NO = #{sysNo,jdbcType=VARCHAR},
+      </if>
+      <if test="telno != null" >
+        TELNO = #{telno,jdbcType=VARCHAR},
+      </if>
+      <if test="faxno != null" >
+        FAXNO = #{faxno,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        ADDRESS = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="zipno != null" >
+        ZIPNO = #{zipno,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        EMAIL = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="cman != null" >
+        CMAN = #{cman,jdbcType=VARCHAR},
+      </if>
+      <if test="manager != null" >
+        MANAGER = #{manager,jdbcType=VARCHAR},
+      </if>
+      <if test="class3 != null" >
+        CLASS3 = #{class3,jdbcType=VARCHAR},
+      </if>
+      <if test="areaTotal != null" >
+        AREA_TOTAL = #{areaTotal,jdbcType=DECIMAL},
+      </if>
+      <if test="area != null" >
+        AREA = #{area,jdbcType=DECIMAL},
+      </if>
+      <if test="manageCity != null" >
+        MANAGE_CITY = #{manageCity,jdbcType=VARCHAR},
+      </if>
+      <if test="manageZoneNo != null" >
+        MANAGE_ZONE_NO = #{manageZoneNo,jdbcType=VARCHAR},
+      </if>
+      <if test="workCity != null" >
+        WORK_CITY = #{workCity,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        PROVINCE = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="incity != null" >
+        INCITY = #{incity,jdbcType=VARCHAR},
+      </if>
+      <if test="circle != null" >
+        CIRCLE = #{circle,jdbcType=VARCHAR},
+      </if>
+      <if test="class2 != null" >
+        CLASS2 = #{class2,jdbcType=VARCHAR},
+      </if>
+      <if test="zoneNo != null" >
+        ZONE_NO = #{zoneNo,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNoDc != null" >
+        STORE_NO_DC = #{storeNoDc,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo2 != null" >
+        STORE_NO2 = #{storeNo2,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo3 != null" >
+        STORE_NO3 = #{storeNo3,jdbcType=VARCHAR},
+      </if>
+      <if test="managerNo != null" >
+        MANAGER_NO = #{managerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="opendt != null" >
+        OPENDT = #{opendt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="closedt != null" >
+        CLOSEDT = #{closedt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="auditStatus != null" >
+        AUDIT_STATUS = #{auditStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="prioType != null" >
+        PRIO_TYPE = #{prioType,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where STORE_NO = #{storeNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.Store" >
+    update STORE
+    set STORE_CODE = #{storeCode,jdbcType=VARCHAR},
+      STORE_NAME = #{storeName,jdbcType=VARCHAR},
+      STORE_LNAME = #{storeLname,jdbcType=VARCHAR},
+      SEARCH_CODE = #{searchCode,jdbcType=VARCHAR},
+      STORE_NO_HEAD = #{storeNoHead,jdbcType=VARCHAR},
+      STORE_STATUS = #{storeStatus,jdbcType=VARCHAR},
+      STORE_TYPE = #{storeType,jdbcType=DECIMAL},
+      STORE_TYPE2 = #{storeType2,jdbcType=VARCHAR},
+      DTS_NO = #{dtsNo,jdbcType=VARCHAR},
+      SYS_NO = #{sysNo,jdbcType=VARCHAR},
+      TELNO = #{telno,jdbcType=VARCHAR},
+      FAXNO = #{faxno,jdbcType=VARCHAR},
+      ADDRESS = #{address,jdbcType=VARCHAR},
+      ZIPNO = #{zipno,jdbcType=VARCHAR},
+      EMAIL = #{email,jdbcType=VARCHAR},
+      CMAN = #{cman,jdbcType=VARCHAR},
+      MANAGER = #{manager,jdbcType=VARCHAR},
+      CLASS3 = #{class3,jdbcType=VARCHAR},
+      AREA_TOTAL = #{areaTotal,jdbcType=DECIMAL},
+      AREA = #{area,jdbcType=DECIMAL},
+      MANAGE_CITY = #{manageCity,jdbcType=VARCHAR},
+      MANAGE_ZONE_NO = #{manageZoneNo,jdbcType=VARCHAR},
+      WORK_CITY = #{workCity,jdbcType=VARCHAR},
+      PROVINCE = #{province,jdbcType=VARCHAR},
+      INCITY = #{incity,jdbcType=VARCHAR},
+      CIRCLE = #{circle,jdbcType=VARCHAR},
+      CLASS2 = #{class2,jdbcType=VARCHAR},
+      ZONE_NO = #{zoneNo,jdbcType=VARCHAR},
+      STORE_NO_DC = #{storeNoDc,jdbcType=VARCHAR},
+      STORE_NO2 = #{storeNo2,jdbcType=VARCHAR},
+      STORE_NO3 = #{storeNo3,jdbcType=VARCHAR},
+      MANAGER_NO = #{managerNo,jdbcType=VARCHAR},
+      OPENDT = #{opendt,jdbcType=TIMESTAMP},
+      CLOSEDT = #{closedt,jdbcType=TIMESTAMP},
+      STATUS = #{status,jdbcType=VARCHAR},
+      AUDIT_STATUS = #{auditStatus,jdbcType=VARCHAR},
+      PRIO_TYPE = #{prioType,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR}
+    where STORE_NO = #{storeNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.ConBoxMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.ConBox" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="BOX_NO" property="boxNo" jdbcType="VARCHAR" />
+    <result column="CREAT_DATE" property="creatDate" jdbcType="TIMESTAMP" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="WITH_CODE_NO" property="withCodeNo" jdbcType="VARCHAR" />
+    <result column="QTY" property="qty" jdbcType="DECIMAL" />
+    <result column="COST" property="cost" jdbcType="DECIMAL" />
+    <result column="FLAG" property="flag" jdbcType="VARCHAR" />
+    <result column="S_IMPORT_NO" property="sImportNo" jdbcType="VARCHAR" />
+    <result column="EXPORT_NO" property="exportNo" jdbcType="VARCHAR" />
+    <result column="STORE_NO" property="storeNo" jdbcType="VARCHAR" />
+    <result column="BOX_TYPE" property="boxType" jdbcType="VARCHAR" />
+    <result column="BATCH_SERIAL_NO" property="batchSerialNo" jdbcType="VARCHAR" />
+    <result column="IMPORT_DATE" property="importDate" jdbcType="TIMESTAMP" />
+    <result column="OWNER_NAME" property="ownerName" jdbcType="VARCHAR" />
+    <result column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+    <result column="ITEM_TYPE" property="itemType" jdbcType="VARCHAR" />
+    <result column="PAN_NO" property="panNo" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, OWNER_NO, BOX_NO, CREAT_DATE, STATUS, WITH_CODE_NO, QTY, COST, FLAG, S_IMPORT_NO, 
+    EXPORT_NO, STORE_NO, BOX_TYPE, BATCH_SERIAL_NO, IMPORT_DATE,PAN_NO
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.locno and ''!=params.locno" >
+        and LOCNO = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        and OWNER_NO = #{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.status and ''!=params.status" >
+        and STATUS = #{params.status,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.importNoIsNull and ''!=params.importNoIsNull" >
+        and (s_import_no is null  OR  s_import_no ='')
+      </if>
+      <if test="null!=params.boxNo and ''!=params.boxNo" >
+        and box_No = #{params.boxNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.panNo and ''!=params.panNo" >
+        and pan_no = #{params.panNo,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.ConBoxKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from CON_BOX
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and BOX_NO = #{boxNo,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from CON_BOX where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.* ,
+    (select o.owner_name from BM_DEFOWNER o where o.owner_no = A.owner_no) as owner_name
+    ,rownum rn
+    from( select 
+    <include refid="Base_Column_List" />
+     from CON_BOX where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from CON_BOX where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.ConBoxKey" >
+    delete from CON_BOX
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and BOX_NO = #{boxNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.ConBox" >
+    delete from CON_BOX
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and BOX_NO = #{boxNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.ConBox" >
+    insert into CON_BOX (LOCNO, OWNER_NO, BOX_NO, 
+      CREAT_DATE, STATUS, WITH_CODE_NO, 
+      QTY, COST, FLAG, S_IMPORT_NO, 
+      EXPORT_NO, STORE_NO, BOX_TYPE, 
+      BATCH_SERIAL_NO, IMPORT_DATE)
+    values (#{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, #{boxNo,jdbcType=VARCHAR}, 
+      #{creatDate,jdbcType=TIMESTAMP}, #{status,jdbcType=VARCHAR}, #{withCodeNo,jdbcType=VARCHAR}, 
+      #{qty,jdbcType=DECIMAL}, #{cost,jdbcType=DECIMAL}, #{flag,jdbcType=VARCHAR}, #{sImportNo,jdbcType=VARCHAR}, 
+      #{exportNo,jdbcType=VARCHAR}, #{storeNo,jdbcType=VARCHAR}, #{boxType,jdbcType=VARCHAR}, 
+      #{batchSerialNo,jdbcType=VARCHAR}, #{importDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.ConBox" >
+    insert into CON_BOX
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO,
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO,
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE,
+      </if>
+      <if test="creatDate != null" >
+        CREAT_DATE,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="withCodeNo != null" >
+        WITH_CODE_NO,
+      </if>
+      <if test="qty != null" >
+        QTY,
+      </if>
+      <if test="cost != null" >
+        COST,
+      </if>
+      <if test="flag != null" >
+        FLAG,
+      </if>
+      <if test="sImportNo != null" >
+        S_IMPORT_NO,
+      </if>
+      <if test="exportNo != null" >
+        EXPORT_NO,
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO,
+      </if>
+      <if test="boxType != null" >
+        BOX_TYPE,
+      </if>
+      <if test="batchSerialNo != null" >
+        BATCH_SERIAL_NO,
+      </if>
+      <if test="importDate != null" >
+        IMPORT_DATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="boxNo != null" >
+        #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null" >
+        #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="creatDate != null" >
+        #{creatDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="withCodeNo != null" >
+        #{withCodeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="qty != null" >
+        #{qty,jdbcType=DECIMAL},
+      </if>
+      <if test="cost != null" >
+        #{cost,jdbcType=DECIMAL},
+      </if>
+      <if test="flag != null" >
+        #{flag,jdbcType=VARCHAR},
+      </if>
+      <if test="sImportNo != null" >
+        #{sImportNo,jdbcType=VARCHAR},
+      </if>
+      <if test="exportNo != null" >
+        #{exportNo,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo != null" >
+        #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="boxType != null" >
+        #{boxType,jdbcType=VARCHAR},
+      </if>
+      <if test="batchSerialNo != null" >
+        #{batchSerialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="importDate != null" >
+        #{importDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.ConBox" >
+    update CON_BOX
+    <set >
+      <if test="creatDate != null" >
+        CREAT_DATE = #{creatDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="withCodeNo != null" >
+        WITH_CODE_NO = #{withCodeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="qty != null" >
+        QTY = #{qty,jdbcType=DECIMAL},
+      </if>
+      <if test="cost != null" >
+        COST = #{cost,jdbcType=DECIMAL},
+      </if>
+      <if test="flag != null" >
+        FLAG = #{flag,jdbcType=VARCHAR},
+      </if>
+      <if test="sImportNo != null" >
+      	<if test="sImportNo=='9999'">
+	      S_IMPORT_NO = null,
+	    </if>
+	    <if test="sImportNo!='9999'">
+	      S_IMPORT_NO = #{sImportNo,jdbcType=VARCHAR},
+	    </if>
+      </if>
+      <if test="exportNo != null" >
+        EXPORT_NO = #{exportNo,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="boxType != null" >
+        BOX_TYPE = #{boxType,jdbcType=VARCHAR},
+      </if>
+      <if test="batchSerialNo != null" >
+        BATCH_SERIAL_NO = #{batchSerialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="importDate != null" >
+        IMPORT_DATE = #{importDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and BOX_NO = #{boxNo,jdbcType=VARCHAR}
+      <if test="formerStatus != null and formerStatus != ''">
+      	and STATUS = #{formerStatus,jdbcType=VARCHAR}
+      </if>
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.ConBox" >
+    update CON_BOX
+    set CREAT_DATE = #{creatDate,jdbcType=TIMESTAMP},
+      STATUS = #{status,jdbcType=VARCHAR},
+      WITH_CODE_NO = #{withCodeNo,jdbcType=VARCHAR},
+      QTY = #{qty,jdbcType=DECIMAL},
+      COST = #{cost,jdbcType=DECIMAL},
+      FLAG = #{flag,jdbcType=VARCHAR},
+      S_IMPORT_NO = #{sImportNo,jdbcType=VARCHAR},
+      EXPORT_NO = #{exportNo,jdbcType=VARCHAR},
+      STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      BOX_TYPE = #{boxType,jdbcType=VARCHAR},
+      BATCH_SERIAL_NO = #{batchSerialNo,jdbcType=VARCHAR},
+      IMPORT_DATE = #{importDate,jdbcType=TIMESTAMP}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and BOX_NO = #{boxNo,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateCellNoByBoxNo" parameterType="java.util.Map" >
+  	UPDATE con_box set cell_no =  #{params.cellNo,jdbcType=VARCHAR} 
+  	<if test="params.quality != null">
+		,quality= #{params.quality,jdbcType=VARCHAR}
+	</if>
+	<if test="params.itemType != null">
+		,item_type = #{params.itemType,jdbcType=VARCHAR}
+	</if>
+	<if test="params.panNoFlag != null">
+		,pan_no = ''
+	</if>
+  	WHERE locno = #{params.locno,jdbcType=VARCHAR} 
+  	AND  box_no = #{params.boxNo,jdbcType=VARCHAR} 
+  </update>	
+  
+  <delete id="deleteBox4Recheck" parameterType="map" >
+    delete from CON_BOX c
+    where c.LOCNO = #{params.locno,jdbcType=VARCHAR}
+      and c.BOX_NO = #{params.boxNo,jdbcType=VARCHAR}
+      and NOT EXISTS(select 'X' from con_box_dtl dtl
+                     where dtl.locno = c.locno
+                     and dtl.box_no = c.box_no)
+  </delete>
+  
+  <delete id="updateBoxSumQty4Recheck" parameterType="map" >
+    UPDATE CON_BOX CB
+       SET CB.QTY =
+           (SELECT NVL(SUM(CBD.QTY), 0)
+              FROM CON_BOX_DTL CBD
+             WHERE CBD.LOCNO = CB.LOCNO
+               AND CBD.OWNER_NO = CB.OWNER_NO
+               AND CBD.BOX_NO = CB.BOX_NO)
+     WHERE CB.LOCNO = #{params.locno,jdbcType=VARCHAR}
+       and CB.BOX_NO = #{params.boxNo,jdbcType=VARCHAR}
+  </delete>
+  
+  <!-- 查询板号对应的箱数量 -->
+  <select id="selectBoxNumByPanNo" resultMap="BaseResultMap" parameterType="map" >
+   		select cb.pan_no as panNo,count(cb.box_no) as boxNum from con_box cb 
+   			where cb.locno = #{params.locno,jdbcType=VARCHAR}
+   			<if test="null!=panList and panList.size > 0">
+	    		and cb.pan_no in 
+				<foreach collection="panList" item="item"  open="(" separator="," close=")">  
+	        		#{item}  
+	    		</foreach> 
+	        </if>
+   		group by cb.pan_no
+  </select>
+  
+   <select id="findByPanNo" resultType="java.lang.Integer" parameterType="map" >
+     SELECT COUNT(*) FROM CON_BOX T WHERE 
+     T.PAN_NO=#{params.panNo,jdbcType=VARCHAR}
+      AND T.LOCNO=#{params.locno,jdbcType=VARCHAR} AND T.OWNER_NO='BL'
+  </select>
+  
+</mapper>

@@ -1,0 +1,598 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillImInstockDirectMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillImInstockDirect" >
+    <id column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <result column="LOCATE_TYPE" property="locateType" jdbcType="VARCHAR" />
+    <result column="LOCATE_ROW_ID" property="locateRowId" jdbcType="DECIMAL" />
+    <result column="SOURCE_NO" property="sourceNo" jdbcType="VARCHAR" />
+    <result column="AUTO_LOCATE_FLAG" property="autoLocateFlag" jdbcType="VARCHAR" />
+    <result column="OPERATE_TYPE" property="operateType" jdbcType="VARCHAR" />
+    <result column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+    <result column="CELL_ID" property="cellId" jdbcType="DECIMAL" />
+    <result column="CONTAINER_NO" property="containerNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+    <result column="UNIT_NAME" property="unitName" jdbcType="VARCHAR" />
+    <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+    <result column="PACK_QTY" property="packQty" jdbcType="DECIMAL" />
+    <result column="DEST_CELL_NO" property="destCellNo" jdbcType="VARCHAR" />
+    <result column="DEST_CELL_ID" property="destCellId" jdbcType="DECIMAL" />
+    <result column="DEST_CONTAINER_NO" property="destContainerNo" jdbcType="VARCHAR" />
+    <result column="INSTOCK_QTY" property="instockQty" jdbcType="DECIMAL" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="INSTOCK_TYPE" property="instockType" jdbcType="VARCHAR" />
+    <result column="CHECK_CHUTE_NO" property="checkChuteNo" jdbcType="VARCHAR" />
+    <result column="CONTAINER_LOCATE_FLAG" property="containerLocateFlag" jdbcType="VARCHAR" />
+    <result column="STOCK_TYPE" property="stockType" jdbcType="VARCHAR" />
+    <result column="STOCK_VALUE" property="stockValue" jdbcType="VARCHAR" />
+    <result column="MID_LABEL_NO" property="midLabelNo" jdbcType="VARCHAR" />
+    <result column="LABEL_NO" property="labelNo" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="ITEM_TYPE" property="itemType" jdbcType="VARCHAR" />
+    <result column="QUALITY" property="quality" jdbcType="VARCHAR" />
+    <result column="BOX_NO" property="boxNo" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ROW_ID, LOCNO, OWNER_NO, LOCATE_TYPE, LOCATE_ROW_ID, SOURCE_NO, AUTO_LOCATE_FLAG, 
+    OPERATE_TYPE, CELL_NO, CELL_ID, CONTAINER_NO, ITEM_NO, ITEM_ID, PACK_QTY, DEST_CELL_NO, 
+    DEST_CELL_ID, DEST_CONTAINER_NO, INSTOCK_QTY, STATUS, CREATOR, CREATETM, EDITOR, 
+    EDITTM, INSTOCK_TYPE, CHECK_CHUTE_NO, CONTAINER_LOCATE_FLAG, STOCK_TYPE, STOCK_VALUE, 
+    MID_LABEL_NO, LABEL_NO,ITEM_TYPE,QUALITY
+  </sql>
+  <sql id="Exend_Column_List" >
+    d.ROW_ID, d.LOCNO, d.OWNER_NO, d.LOCATE_TYPE, d.LOCATE_ROW_ID, d.SOURCE_NO, d.AUTO_LOCATE_FLAG, 
+    d.OPERATE_TYPE, d.CELL_NO, d.CELL_ID, d.CONTAINER_NO, d.ITEM_NO,i.ITEM_NAME, i.STYLE_NO,i.UNIT_NAME,d.ITEM_ID, d.PACK_QTY, d.DEST_CELL_NO, 
+    d.DEST_CELL_ID, d.DEST_CONTAINER_NO, d.INSTOCK_QTY, d.STATUS, d.CREATOR, d.CREATETM, d.EDITOR, d.EDITTM, 
+    d.INSTOCK_TYPE, d.CHECK_CHUTE_NO, d.CONTAINER_LOCATE_FLAG, d.STOCK_TYPE, d.STOCK_VALUE, d.MID_LABEL_NO, d.LABEL_NO,D.SIZE_NO,d.ITEM_TYPE,d.QUALITY
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.sourceNo and ''!=params.sourceNo" >
+         and d.SOURCE_NO=#{params.sourceNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+         and d.OWNER_NO=#{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+         and d.locno=#{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.status and ''!=params.status" >
+         and d.STATUS =#{params.status,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.locateType and ''!=params.locateType" >
+         and d.LOCATE_TYPE =#{params.locateType,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.itemType and ''!=params.itemType" >
+         and d.ITEM_TYPE =#{params.itemType,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.quality and ''!=params.quality" >
+         and d.QUALITY =#{params.quality,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillImInstockDirectKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_IM_INSTOCK_DIRECT
+    where ROW_ID = #{rowId,jdbcType=DECIMAL}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 按照收货单号，查询定位信息    总数 -->
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_IM_INSTOCK_DIRECT d
+     left join ITEM i on d.ITEM_NO = i.ITEM_NO 
+	 left join bill_im_receipt bd 
+	 	on bd.receipt_no = d.SOURCE_NO 
+	 	and bd.locno=d.locno 
+	 	and bd.OWNER_NO = d.owner_no
+     where d.STATUS = '10' 
+     	and bd.business_type = '0'
+    <include refid="condition" />
+  </select>
+  
+  <!-- 按照收货单号，查询定位信息   带分页 -->
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Exend_Column_List" />
+     from BILL_IM_INSTOCK_DIRECT d 
+     left join ITEM i on d.ITEM_NO = i.ITEM_NO 
+	 left join bill_im_receipt bd 
+	 	on bd.receipt_no = d.SOURCE_NO 
+	 	and bd.locno=d.locno 
+	 	and bd.OWNER_NO = d.owner_no
+     where d.STATUS = '10'<!-- 只查询未处理的定位信息-->
+     	and bd.business_type = '0'
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    <if test="orderByField == null or ''==orderByField" >
+      order by d.DEST_CELL_NO,d.DEST_CELL_ID,d.ITEM_NO,D.SIZE_NO
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and d.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+	  select sum(nvl(INSTOCK_QTY,0)) INSTOCK_QTY
+	  from BILL_IM_INSTOCK_DIRECT d 
+	   where d.STATUS = '10'
+	  <include refid="condition" />
+  </select>
+  
+  
+  
+   <!-- 按照验收单号，查询定位信息   总数 -->
+   <select id="countInstockDirectByMainId" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_IM_INSTOCK_DIRECT d
+     	left join ITEM i
+			on d.ITEM_NO = i.ITEM_NO
+		left join bill_im_check c
+            on d.source_no = c.check_no
+           and d.locno = c.locno
+           and d.owner_no = c.owner_no
+		left join BILL_IM_CHECK_DTL dtl
+            on d.source_no = dtl.check_no
+           and d.locno = dtl.locno
+           and d.owner_no = dtl.owner_no
+           and d.item_no = dtl.item_no
+           and d.size_no = dtl.size_no
+     where d.STATUS = '10'
+    <include refid="condition" />
+     <include refid="AuthorityCondition" />
+  </select>
+  
+  <!-- 按照验收单号，查询定位信息   带分页-->
+  <select id="findInstockDirectByMainIdPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Exend_Column_List" />,
+    	dtl.BOX_NO
+     from BILL_IM_INSTOCK_DIRECT d 
+     	left join ITEM i
+			on d.ITEM_NO = i.ITEM_NO
+		left join bill_im_check c
+            on d.source_no = c.check_no
+           and d.locno = c.locno
+           and d.owner_no = c.owner_no
+		left join BILL_IM_CHECK_DTL dtl
+            on d.source_no = dtl.check_no
+           and d.locno = dtl.locno
+           and d.owner_no = dtl.owner_no
+           and d.item_no = dtl.item_no
+           and d.size_no = dtl.size_no
+     where d.STATUS = '10' <!-- 只查询未处理的定位信息-->
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+     order by d.DEST_CELL_NO,dtl.BOX_NO,d.ITEM_NO,D.SIZE_NO
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+
+  
+   <!-- 按照单据类型，查询定位信息   总数 -->
+   <select id="countInstockDirectByType" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_IM_INSTOCK_DIRECT d
+     left join ITEM i on d.ITEM_NO = i.ITEM_NO 
+     where 1=1
+    <include refid="condition" />
+     <include refid="AuthorityCondition" />
+  </select>
+  
+  <!-- 按照单据类型，查询定位信息   带分页-->
+  <select id="findInstockDirectByTypePage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Exend_Column_List" />
+     from BILL_IM_INSTOCK_DIRECT d 
+     left join ITEM i on d.ITEM_NO = i.ITEM_NO 
+     where 1=1
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+     order by d.row_id desc
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <select id="selectInstockDirectByTypePage4Sum" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+  	select sum(nvl(d.instock_qty,0))instock_qty from BILL_IM_INSTOCK_DIRECT d
+  	 where 1=1
+    <include refid="condition" />
+     <include refid="AuthorityCondition" />
+  </select>
+  
+    <select id="selectSumQty4CheckDirect" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+	  select sum(nvl(INSTOCK_QTY, 0)) INSTOCK_QTY
+	  from BILL_IM_INSTOCK_DIRECT d
+	  left join ITEM i
+	    on d.ITEM_NO = i.ITEM_NO
+	  left join bill_im_check c
+	    on d.source_no = c.check_no
+	   and d.locno = c.locno
+	   and d.owner_no = c.owner_no
+	  left join BILL_IM_CHECK_DTL dtl
+	    on d.source_no = dtl.check_no
+	   and d.locno = dtl.locno
+	   and d.owner_no = dtl.owner_no
+	   and d.item_no = dtl.item_no
+	   and d.size_no = dtl.size_no
+	     where d.STATUS = '10'
+	  <include refid="condition" />
+	    <include refid="AuthorityCondition" />
+  </select>
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_IM_INSTOCK_DIRECT where 1=1 
+    <include refid="condition" />
+  </select>
+	<select id="selectDetail" resultMap="BaseResultMap">
+		select d.locno,d.owner_no ownerNo,d.ROW_ID ,d.item_no itemNo,d.item_id itemId,
+		d.pack_qty packQty,CELL_NO,CELL_ID,d.dest_cell_id destCellId,d.dest_cell_no destCellNo,d.instock_qty instockQty,
+		d.source_no sourceNo,LABEL_NO,LOCATE_TYPE,CONTAINER_NO,d.size_no sizeNo
+		<!--b.sys_no sysNO,-->
+		from BILL_IM_INSTOCK_DIRECT d 
+		<!--left join bill_im_check b on b.locno=d.locno and b.owner_no=d.owner_no and d.SOURCE_NO=b.check_no-->
+		where d.ROW_ID = #{rowId,jdbcType=DECIMAL}
+      	and d.LOCNO = #{locno,jdbcType=VARCHAR}
+	</select>
+
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillImInstockDirectKey" >
+    delete from BILL_IM_INSTOCK_DIRECT
+    where ROW_ID = #{rowId,jdbcType=DECIMAL}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillImInstockDirect" >
+    delete from BILL_IM_INSTOCK_DIRECT
+    where ROW_ID = #{rowId,jdbcType=DECIMAL}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillImInstockDirect" >
+    insert into BILL_IM_INSTOCK_DIRECT (ROW_ID, LOCNO, OWNER_NO, 
+      LOCATE_TYPE, LOCATE_ROW_ID, SOURCE_NO, 
+      AUTO_LOCATE_FLAG, OPERATE_TYPE, CELL_NO, 
+      CELL_ID, CONTAINER_NO, ITEM_NO, 
+      ITEM_ID, PACK_QTY, DEST_CELL_NO, 
+      DEST_CELL_ID, DEST_CONTAINER_NO, INSTOCK_QTY, 
+      STATUS, CREATOR, CREATETM, 
+      EDITOR, EDITTM, INSTOCK_TYPE, 
+      CHECK_CHUTE_NO, CONTAINER_LOCATE_FLAG, STOCK_TYPE, 
+      STOCK_VALUE, MID_LABEL_NO, LABEL_NO
+      )
+    values (#{rowId,jdbcType=DECIMAL}, #{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, 
+      #{locateType,jdbcType=VARCHAR}, #{locateRowId,jdbcType=DECIMAL}, #{sourceNo,jdbcType=VARCHAR}, 
+      #{autoLocateFlag,jdbcType=VARCHAR}, #{operateType,jdbcType=VARCHAR}, #{cellNo,jdbcType=VARCHAR}, 
+      #{cellId,jdbcType=DECIMAL}, #{containerNo,jdbcType=VARCHAR}, #{itemNo,jdbcType=VARCHAR}, 
+      #{itemId,jdbcType=DECIMAL}, #{packQty,jdbcType=DECIMAL}, #{destCellNo,jdbcType=VARCHAR}, 
+      #{destCellId,jdbcType=DECIMAL}, #{destContainerNo,jdbcType=VARCHAR}, #{instockQty,jdbcType=DECIMAL}, 
+      #{status,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{createtm,jdbcType=TIMESTAMP}, 
+      #{editor,jdbcType=VARCHAR}, #{edittm,jdbcType=TIMESTAMP}, #{instockType,jdbcType=VARCHAR}, 
+      #{checkChuteNo,jdbcType=VARCHAR}, #{containerLocateFlag,jdbcType=VARCHAR}, #{stockType,jdbcType=VARCHAR}, 
+      #{stockValue,jdbcType=VARCHAR}, #{midLabelNo,jdbcType=VARCHAR}, #{labelNo,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillImInstockDirect" >
+    insert into BILL_IM_INSTOCK_DIRECT
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="rowId != null" >
+        ROW_ID,
+      </if>
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="locateType != null" >
+        LOCATE_TYPE,
+      </if>
+      <if test="locateRowId != null" >
+        LOCATE_ROW_ID,
+      </if>
+      <if test="sourceNo != null" >
+        SOURCE_NO,
+      </if>
+      <if test="autoLocateFlag != null" >
+        AUTO_LOCATE_FLAG,
+      </if>
+      <if test="operateType != null" >
+        OPERATE_TYPE,
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO,
+      </if>
+      <if test="cellId != null" >
+        CELL_ID,
+      </if>
+      <if test="containerNo != null" >
+        CONTAINER_NO,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="itemId != null" >
+        ITEM_ID,
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY,
+      </if>
+      <if test="destCellNo != null" >
+        DEST_CELL_NO,
+      </if>
+      <if test="destCellId != null" >
+        DEST_CELL_ID,
+      </if>
+      <if test="destContainerNo != null" >
+        DEST_CONTAINER_NO,
+      </if>
+      <if test="instockQty != null" >
+        INSTOCK_QTY,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="instockType != null" >
+        INSTOCK_TYPE,
+      </if>
+      <if test="checkChuteNo != null" >
+        CHECK_CHUTE_NO,
+      </if>
+      <if test="containerLocateFlag != null" >
+        CONTAINER_LOCATE_FLAG,
+      </if>
+      <if test="stockType != null" >
+        STOCK_TYPE,
+      </if>
+      <if test="stockValue != null" >
+        STOCK_VALUE,
+      </if>
+      <if test="midLabelNo != null" >
+        MID_LABEL_NO,
+      </if>
+      <if test="labelNo != null" >
+        LABEL_NO,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="rowId != null" >
+        #{rowId,jdbcType=DECIMAL},
+      </if>
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="locateType != null" >
+        #{locateType,jdbcType=VARCHAR},
+      </if>
+      <if test="locateRowId != null" >
+        #{locateRowId,jdbcType=DECIMAL},
+      </if>
+      <if test="sourceNo != null" >
+        #{sourceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="autoLocateFlag != null" >
+        #{autoLocateFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="operateType != null" >
+        #{operateType,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cellId != null" >
+        #{cellId,jdbcType=DECIMAL},
+      </if>
+      <if test="containerNo != null" >
+        #{containerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=DECIMAL},
+      </if>
+      <if test="packQty != null" >
+        #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="destCellNo != null" >
+        #{destCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="destCellId != null" >
+        #{destCellId,jdbcType=DECIMAL},
+      </if>
+      <if test="destContainerNo != null" >
+        #{destContainerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="instockQty != null" >
+        #{instockQty,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="instockType != null" >
+        #{instockType,jdbcType=VARCHAR},
+      </if>
+      <if test="checkChuteNo != null" >
+        #{checkChuteNo,jdbcType=VARCHAR},
+      </if>
+      <if test="containerLocateFlag != null" >
+        #{containerLocateFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="stockType != null" >
+        #{stockType,jdbcType=VARCHAR},
+      </if>
+      <if test="stockValue != null" >
+        #{stockValue,jdbcType=VARCHAR},
+      </if>
+      <if test="midLabelNo != null" >
+        #{midLabelNo,jdbcType=VARCHAR},
+      </if>
+      <if test="labelNo != null" >
+        #{labelNo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillImInstockDirect" >
+    update BILL_IM_INSTOCK_DIRECT
+    <set >
+      <if test="ownerNo != null" >
+        OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="locateType != null" >
+        LOCATE_TYPE = #{locateType,jdbcType=VARCHAR},
+      </if>
+      <if test="locateRowId != null" >
+        LOCATE_ROW_ID = #{locateRowId,jdbcType=DECIMAL},
+      </if>
+      <if test="sourceNo != null" >
+        SOURCE_NO = #{sourceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="autoLocateFlag != null" >
+        AUTO_LOCATE_FLAG = #{autoLocateFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="operateType != null" >
+        OPERATE_TYPE = #{operateType,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO = #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cellId != null" >
+        CELL_ID = #{cellId,jdbcType=DECIMAL},
+      </if>
+      <if test="containerNo != null" >
+        CONTAINER_NO = #{containerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        ITEM_ID = #{itemId,jdbcType=DECIMAL},
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="destCellNo != null" >
+        DEST_CELL_NO = #{destCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="destCellId != null" >
+        DEST_CELL_ID = #{destCellId,jdbcType=DECIMAL},
+      </if>
+      <if test="destContainerNo != null" >
+        DEST_CONTAINER_NO = #{destContainerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="instockQty != null" >
+        INSTOCK_QTY = #{instockQty,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="instockType != null" >
+        INSTOCK_TYPE = #{instockType,jdbcType=VARCHAR},
+      </if>
+      <if test="checkChuteNo != null" >
+        CHECK_CHUTE_NO = #{checkChuteNo,jdbcType=VARCHAR},
+      </if>
+      <if test="containerLocateFlag != null" >
+        CONTAINER_LOCATE_FLAG = #{containerLocateFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="stockType != null" >
+        STOCK_TYPE = #{stockType,jdbcType=VARCHAR},
+      </if>
+      <if test="stockValue != null" >
+        STOCK_VALUE = #{stockValue,jdbcType=VARCHAR},
+      </if>
+      <if test="midLabelNo != null" >
+        MID_LABEL_NO = #{midLabelNo,jdbcType=VARCHAR},
+      </if>
+      <if test="labelNo != null" >
+        LABEL_NO = #{labelNo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ROW_ID = #{rowId,jdbcType=DECIMAL}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillImInstockDirect" >
+    update BILL_IM_INSTOCK_DIRECT
+    set OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      LOCATE_TYPE = #{locateType,jdbcType=VARCHAR},
+      LOCATE_ROW_ID = #{locateRowId,jdbcType=DECIMAL},
+      SOURCE_NO = #{sourceNo,jdbcType=VARCHAR},
+      AUTO_LOCATE_FLAG = #{autoLocateFlag,jdbcType=VARCHAR},
+      OPERATE_TYPE = #{operateType,jdbcType=VARCHAR},
+      CELL_NO = #{cellNo,jdbcType=VARCHAR},
+      CELL_ID = #{cellId,jdbcType=DECIMAL},
+      CONTAINER_NO = #{containerNo,jdbcType=VARCHAR},
+      ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      <!-- ITEM_ID = #{itemId,jdbcType=DECIMAL}, -->
+      PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      DEST_CELL_NO = #{destCellNo,jdbcType=VARCHAR},
+      DEST_CELL_ID = #{destCellId,jdbcType=DECIMAL},
+      DEST_CONTAINER_NO = #{destContainerNo,jdbcType=VARCHAR},
+      INSTOCK_QTY = #{instockQty,jdbcType=DECIMAL},
+      STATUS = #{status,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      INSTOCK_TYPE = #{instockType,jdbcType=VARCHAR},
+      CHECK_CHUTE_NO = #{checkChuteNo,jdbcType=VARCHAR},
+      CONTAINER_LOCATE_FLAG = #{containerLocateFlag,jdbcType=VARCHAR},
+      STOCK_TYPE = #{stockType,jdbcType=VARCHAR},
+      STOCK_VALUE = #{stockValue,jdbcType=VARCHAR},
+      MID_LABEL_NO = #{midLabelNo,jdbcType=VARCHAR},
+      LABEL_NO = #{labelNo,jdbcType=VARCHAR}
+    where ROW_ID = #{rowId,jdbcType=DECIMAL}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+  </update>
+</mapper>

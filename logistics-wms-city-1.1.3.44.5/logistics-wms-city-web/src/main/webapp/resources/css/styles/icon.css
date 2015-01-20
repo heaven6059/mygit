@@ -1,0 +1,182 @@
+.icon-blank{
+	background:url('icons/blank.gif') no-repeat center center;
+}
+.icon-add{
+	background:url('icons/edit_add.png') no-repeat center center;
+}
+.icon-edit{
+	background:url('icons/pencil.png') no-repeat center center;
+}
+.icon-remove{
+	background:url('icons/edit_remove.png') no-repeat center center;
+}
+.icon-save{
+	background:url('icons/filesave.png') no-repeat center center;
+}
+.icon-cut{
+	background:url('icons/cut.png') no-repeat center center;
+}
+.icon-ok{
+	background:url('icons/ok.png') no-repeat center center;
+}
+.icon-no{
+	background:url('icons/no.png') no-repeat center center;
+}
+.icon-cancel{
+	background:url('icons/cancel.png') no-repeat center center;
+}
+.icon-reload{
+	background:url('icons/reload.png') no-repeat center center;
+}
+.icon-search{
+	background:url('icons/search.png') no-repeat center center;
+}
+.icon-print{
+	background:url('icons/print.png') no-repeat center center;
+}
+.icon-help{
+	background:url('icons/help.png') no-repeat center center;
+}
+.icon-undo{
+	background:url('icons/undo.png') no-repeat center center;
+}
+.icon-redo{
+	background:url('icons/redo.png') no-repeat center center;
+}
+.icon-back{
+	background:url('icons/back.png') no-repeat center center;
+}
+.icon-sum{
+	background:url('icons/sum.png') no-repeat center center;
+}
+.icon-tip{
+	background:url('icons/tip.png') no-repeat center center;
+}
+
+.icon-mini-add{
+	background:url('icons/mini_add.png') no-repeat center center;
+}
+.icon-mini-edit{
+	background:url('icons/mini_edit.png') no-repeat center center;
+}
+.icon-mini-refresh{
+	background:url('icons/mini_refresh.png') no-repeat center center;
+}
+.icon-mini-tis{
+	background:url('icons/image474.gif') no-repeat center center;
+}
+
+
+
+
+
+.btn-del{
+	background:url('icons/lsp-icons/btn-del.png') no-repeat center center;
+}
+.btn-del-dis{
+	background:url('icons/lsp-icons/btn-del-dis.png') no-repeat center center;
+}
+
+.btn-next{
+	background:url('icons/lsp-icons/btn-next.png') no-repeat center center;
+}
+.btn-next-dis{
+	background:url('icons/lsp-icons/btn-next-dis.png') no-repeat center center;
+}
+
+.btn-pre{
+	background:url('icons/lsp-icons/btn-pre.png') no-repeat center center;
+}
+.btn-pre-dis{
+	background:url('icons/lsp-icons/btn-pre-dis.png') no-repeat center center;
+}
+
+.btn-query{
+	background:url('icons/lsp-icons/btn-query.png') no-repeat center center;
+}
+.btn-query-dis{
+	background:url('icons/lsp-icons/btn-query-dis.png') no-repeat center center;
+}
+
+.btn-qx{
+	background:url('icons/lsp-icons/btn-qx.png') no-repeat center center;
+}
+.btn-qx-dis{
+	background:url('icons/lsp-icons/btn-qx-dis.png') no-repeat center center;
+}
+
+.btn-reload{
+	background:url('icons/lsp-icons/btn-reload.png') no-repeat center center;
+}
+.btn-reload-dis{
+	background:url('icons/lsp-icons/btn-reload-dis.png') no-repeat center center;
+}
+
+.btn-save1{
+	background:url('icons/lsp-icons/btn-save.png') no-repeat center center;
+}
+.btn-save1-dis{
+	background:url('icons/lsp-icons/btn-save-dis.png') no-repeat center center;
+}
+
+.btn-sh{
+	background:url('icons/lsp-icons/btn-sh.png') no-repeat center center;
+}
+.btn-sh-dis{
+	background:url('icons/lsp-icons/btn-sh-dis.png') no-repeat center center;
+}
+
+.btn-add1{
+	background:url('icons/lsp-icons/btn-add.png') no-repeat center center;
+}
+.btn-add1-dis{
+	background:url('icons/lsp-icons/btn-add-dis.png') no-repeat center center;
+}
+
+.btn-close{
+	background:url('icons/lsp-icons/btn-close1.png') no-repeat center center;
+}
+.btn-close-dis{
+	background:url('icons/lsp-icons/btn-close1-dis.png') no-repeat center center;
+}
+
+
+.btn-edit{
+	background:url('icons/lsp-icons/btn-edit.png') no-repeat center center;
+}
+.btn-edit-dis{
+	background:url('icons/lsp-icons/btn-edit-dis.png') no-repeat center center;
+}
+
+.selectAll{
+	background:url('icons/lsp-icons/selectAll.png') no-repeat center center;
+}
+.selectAll-dis{
+	background:url('icons/lsp-icons/selectAll-dis.png') no-repeat center center;
+}
+
+.noSelectAll{
+	background:url('icons/lsp-icons/noSelectAll.png') no-repeat center center;
+}
+.noSelectAll-dis{
+	background:url('icons/lsp-icons/noSelectAll-dis.png') no-repeat center center;
+}
+
+
+.btn-export{
+	background:url('icons/lsp-icons/btn-export.gif') no-repeat center center;
+}
+.btn-export-dis{
+	background:url('icons/lsp-icons/btn-export-dis.gif') no-repeat center center;
+}
+
+/*wei.b add*/
+.icon-window-max{
+	background:url('icons/window_max.gif') no-repeat center center;
+}
+.icon-window-min{
+	background:url('icons/window_min.gif') no-repeat center center;
+}
+.text_list_bullets{
+	background:url('icons/text_list_bullets.png') no-repeat center center;
+}

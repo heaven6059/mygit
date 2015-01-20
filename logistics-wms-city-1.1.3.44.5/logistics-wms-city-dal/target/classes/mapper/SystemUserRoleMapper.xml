@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.SystemUserRoleMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.SystemUserRoleKey" >
+    <id column="USERID" property="userid" jdbcType="DECIMAL" />
+    <id column="ROLEID" property="roleid" jdbcType="DECIMAL" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    USERID, ROLEID
+  </sql>
+  
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from SYSTEM_USER_ROLE where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.SystemUserRoleKey" >
+    delete from SYSTEM_USER_ROLE
+    where USERID = #{userid,jdbcType=DECIMAL}
+      and ROLEID = #{roleid,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.SystemUserRoleKey" >
+    delete from SYSTEM_USER_ROLE
+    where USERID = #{userid,jdbcType=DECIMAL}
+      and ROLEID = #{roleid,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.SystemUserRoleKey" >
+    insert into SYSTEM_USER_ROLE (USERID, ROLEID)
+    values (#{userid,jdbcType=DECIMAL}, #{roleid,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.SystemUserRoleKey" >
+    insert into SYSTEM_USER_ROLE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userid != null" >
+        USERID,
+      </if>
+      <if test="roleid != null" >
+        ROLEID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userid != null" >
+        #{userid,jdbcType=DECIMAL},
+      </if>
+      <if test="roleid != null" >
+        #{roleid,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+</mapper>

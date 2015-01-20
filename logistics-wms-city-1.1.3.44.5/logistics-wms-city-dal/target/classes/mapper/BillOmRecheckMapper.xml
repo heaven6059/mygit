@@ -1,0 +1,914 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillOmRecheckMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillOmRecheck" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="RECHECK_NO" property="recheckNo" jdbcType="VARCHAR" />
+    <result column="LINE_NO" property="lineNo" jdbcType="VARCHAR" />
+    <result column="STORE_NO" property="storeNo" jdbcType="VARCHAR" />
+    <result column="SUB_STORE_NO" property="subStoreNo" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="SEND_FLAG" property="sendFlag" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATORname" property="creatorname" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="EDITORname" property="editorname" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="PRINT_STATUS" property="printStatus" jdbcType="VARCHAR" />
+    <result column="SERIAL_NO" property="serialNo" jdbcType="VARCHAR" />
+    <result column="EXP_DATE" property="expDate" jdbcType="TIMESTAMP" />
+    <result column="AUDITOR" property="auditor" jdbcType="VARCHAR" />
+    <result column="AUDITORname" property="auditorname" jdbcType="VARCHAR" />
+    <result column="AUDITTM" property="audittm" jdbcType="TIMESTAMP" />
+    <result column="DIVIDE_NO" property="divideNo" jdbcType="VARCHAR" />
+    <result column="RECHECK_TYPE" property="recheckType" jdbcType="VARCHAR" />
+    <result column="BUSINESS_TYPE" property="businessType" jdbcType="VARCHAR" />
+    <result column="SOURCE_TYPE" property="sourceType" jdbcType="VARCHAR" />
+    <result column="storeName" property="storeName" jdbcType="VARCHAR" />
+    <result column="printStatusStr" property="printStatusStr" jdbcType="VARCHAR" />
+    <result column="brandNo" property="brandNo" jdbcType="VARCHAR" />
+    <result column="qty" property="qty" jdbcType="DECIMAL" />
+    <result column="divide_type" property="divideType" jdbcType="VARCHAR" />
+    <result column="divide_type_name" property="divideTypeName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, RECHECK_NO, LINE_NO, STORE_NO, SUB_STORE_NO, STATUS, SEND_FLAG, CREATOR,CREATORname, CREATETM, 
+    EDITOR,EDITORname, EDITTM, PRINT_STATUS, SERIAL_NO, EXP_DATE, AUDITOR,AUDITORname, AUDITTM,DIVIDE_NO,RECHECK_TYPE,
+    SOURCE_TYPE
+  </sql>
+  
+  <sql id="Base_Column_List_Left" >
+    r.LOCNO, r.RECHECK_NO, r.LINE_NO, r.STORE_NO, r.SUB_STORE_NO, r.STATUS, r.SEND_FLAG, r.CREATOR,r.CREATORname, r.CREATETM, 
+    r.EDITOR,r.EDITORname, r.EDITTM, r.PRINT_STATUS, r.SERIAL_NO, r.EXP_DATE, r.AUDITOR,r.AUDITORname, r.AUDITTM,r.DIVIDE_NO,r.RECHECK_TYPE,
+    r.SOURCE_TYPE
+  </sql>
+  
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+        and r.LOCNO = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.status and ''!=params.status" >
+        and r.STATUS = #{params.status,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.recheckNo and ''!=params.recheckNo" >
+        and r.RECHECK_NO LIKE '%${params.recheckNo}%'
+      </if>
+      <if test="null!=params.creator and ''!=params.creator" >
+        and r.CREATOR LIKE '%${params.creator}%'
+      </if>
+      <if test="null!=params.auditor and ''!=params.auditor" >
+        and r.AUDITOR LIKE '%${params.auditor}%'
+      </if>
+      <if test="null!=params.expNo and ''!=params.expNo" >
+        and r.STORE_NO LIKE '%${params.expNo}%'
+      </if>
+      <if test="null!=params.divideNo and ''!=params.divideNo" >
+        and r.DIVIDE_NO = #{params.divideNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.recheckType and ''!=params.recheckType" >
+        and r.RECHECK_TYPE = #{params.recheckType,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.sourceType and ''!=params.sourceType" >
+        and r.SOURCE_TYPE = #{params.sourceType,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.storeNo and ''!=params.storeNo" >
+        and r.STORE_NO = #{params.storeNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.startCreatetm and ''!=params.startCreatetm" >
+       	<![CDATA[
+       		and r.CREATETM >= to_date('${params.startCreatetm} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+      	]]>
+      </if>
+      <if test="null!=params.endCreatetm and ''!=params.endCreatetm" >
+       	<![CDATA[
+       		and r.CREATETM <= to_date('${params.endCreatetm} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+      	]]>
+      </if>
+      
+      <if test="null!=params.startAudittm and ''!=params.startAudittm" >
+       	<![CDATA[
+       		and r.AUDITTM >= to_date('${params.startAudittm} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+      	]]>
+      </if>
+      <if test="null!=params.endAudittm and ''!=params.endAudittm" >
+       	<![CDATA[
+       		and r.AUDITTM <= to_date('${params.endAudittm} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+      	]]>
+      </if>
+      <if test="null!=params.startExpDate and ''!=params.startExpDate" >
+       	<![CDATA[
+       		and r.EDITTM >= to_date('${params.startExpDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+      	]]>
+      </if>
+      <if test="null!=params.endExpDate and ''!=params.endExpDate" >
+       	<![CDATA[
+       		and r.EDITTM <= to_date('${params.endExpDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+      	]]>
+      </if>
+      <if test="null!=params.brandNo and ''!=params.brandNo" >
+      		and r.recheck_no in (
+      			select distinct rd.recheck_no from bill_om_recheck_dtl rd,item i
+      				where rd.locno = r.locno 
+      				and rd.recheck_no = r.recheck_no
+      				and rd.item_no = i.item_no
+      				and i.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+      		)
+	  </if>
+       <if test="null!=params.sysNo and ''!=params.sysNo" >
+            and r.recheck_no in (
+                select distinct rd.recheck_no from bill_om_recheck_dtl rd,item i
+                    where rd.locno = r.locno 
+                    and rd.recheck_no = r.recheck_no
+                    and rd.item_no = i.item_no
+                    and i.SYS_NO = #{params.sysNo,jdbcType=VARCHAR}
+            )
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillOmRecheckKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_OM_RECHECK 
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RECHECK_NO = #{recheckNo,jdbcType=VARCHAR}
+  </select>
+  
+  <!--权限过滤左连接子查询-->
+  <sql id="selectByPageAuthorityLeftJoin" >
+   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+            left join (select locno, recheck_no
+                         from BILL_OM_RECHECK_DTL                         
+                        where brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+                         <include refid="child_condition" />   
+                          group by locno, recheck_no
+                        ) sub1
+              on sub1.locno = r.locno
+             and sub1.recheck_no = r.recheck_no
+                          
+             left join (select locno, recheck_no
+                         from BILL_OM_RECHECK_DTL where 1=1
+                         <include refid="child_condition" />  
+                          group by locno, recheck_no                   
+                        ) sub2
+              on sub2.locno = r.locno
+             and sub2.recheck_no = r.recheck_no
+    </if>
+  </sql>
+  
+  <!--权限过滤查询条件-->
+  <sql id="selectByPageAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and (sub1.recheck_no is not null or sub2.recheck_no is null)
+    </if>
+  </sql>
+  
+  <!--权限过滤子查询条件-->
+  <sql id="child_condition">
+  	<if test="null!=params" >
+      <if test="null!=params.locno and ''!=params.locno" >
+      	and locno = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.recheckNo and ''!=params.recheckNo" >
+      	and recheck_no = #{params.recheckNo,jdbcType=VARCHAR}
+      </if>
+     </if>
+  </sql>
+  
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_OM_RECHECK r 
+    <include refid="selectByPageAuthorityLeftJoin" />
+    where 1=1 
+    <include refid="condition" />
+    <include refid="selectByPageAuthorityCondition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List_Left" />,
+    (select ld.ITEMNAME from LOOKUPDTL ld where r.status = ld.itemval and ld.lookupcode = 'CITY_RECITY_CHECK_STATUS' and rownum = 1) as statusStr,
+    (select ld.ITEMNAME from LOOKUPDTL ld where r.print_status = ld.itemval and ld.lookupcode = 'CITY_RECHECK_PRINT_STATUS' and rownum = 1) as printStatusStr,
+    (select s.store_name from store s where s.store_no = r.store_no) as storeName,
+    
+    (select nvl(sum(od.item_qty),0) from bill_om_divide_dtl od where od.locno = r.locno and od.store_no = r.store_no and od.divide_no = r.divide_no) as itemQty,
+    (select nvl(sum(ord.real_qty),0) from bill_om_recheck_dtl ord where ord.locno = r.locno and ord.recheck_no = r.recheck_no) as realQty,
+    (select nvl(sum(ord.real_qty),0) from bill_om_recheck_dtl ord where ord.locno = r.locno and ord.recheck_no = r.recheck_no and ord.container_no != 'N') as packageQty
+    
+     from BILL_OM_RECHECK r 
+     <include refid="selectByPageAuthorityLeftJoin" />
+     where 1=1 
+    <include refid="condition" />
+    <include refid="selectByPageAuthorityCondition" />
+    <choose>
+	    <when test="orderByField != null and ''!=orderByField">
+			order by ${orderByField}
+			<if test="orderByField">
+			${orderBy}
+			</if>
+		</when>
+		<otherwise>
+			order by r.CREATETM desc,r.RECHECK_NO desc
+		</otherwise>
+    </choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <sql id="condition4source">
+  		<if test="params.locno != null and params.locno != '' ">
+  			and r.locno = #{params.locno,jdbcType=VARCHAR}
+  		</if>
+  		<if test="params.status != null and params.status != '' ">
+  			and r.status = #{params.status,jdbcType=VARCHAR}
+  		</if>
+  		<if test="params.divideTypeList != null">
+  		 	and 
+  			<foreach collection="params.divideTypeList" item="divideType" open="(" close=")" separator=" or ">
+				r.divide_no like '${params.locno}${divideType}%'
+			</foreach>
+  		</if>
+  		<if test="params.audittmStart != null and params.audittmStart != '' ">
+  			<![CDATA[
+	       		and r.AUDITTM >= to_date('${params.audittmStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+	      	]]>
+  		</if>
+  		<if test="params.audittmEnd != null and params.audittmEnd != '' ">
+  			<![CDATA[
+	       		and r.AUDITTM <= to_date('${params.audittmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+	      	]]>
+  		</if>
+  </sql>
+  
+  <select id="selectCount4Source" resultType="java.lang.Integer" >
+    select count(1) s from (
+		select r.divide_no
+		  from BILL_OM_RECHECK r
+		  <include refid="selectByPageAuthorityLeftJoin" />
+		 where 1 = 1
+		 	<include refid="condition4source" />
+		   <include refid="selectByPageAuthorityCondition" />
+		 group by r.divide_no)
+  </select>
+  <select id="selectByPage4Source" resultMap="BaseResultMap" parameterType="map" >
+  	select B.* from (select A.*,rownum rn from(
+  	select r.divide_no,
+	       max(rs.divide_type) divide_type,
+	       max(rs.divide_type_name) divide_type_name,
+	       sum(rsd.qty) qty,
+	       max(r.audittm) audittm
+	  from BILL_OM_RECHECK r
+	  left join (select d.divide_no divide_no, d.locno, 'DO' divide_type,'分货任务单' divide_type_name
+	               From bill_om_divide d
+	              where 1 = 1
+	                and d.locno = #{params.locno,jdbcType=VARCHAR}
+	             union all
+	             select d.locate_no divide_no, d.locno, 'LC' divide_type,'拣货波次单' divide_type_name
+	               from bill_om_locate d
+	              where 1 = 1
+	                and d.locno = #{params.locno,jdbcType=VARCHAR}
+	             union all
+	             select d.check_no divide_no, d.locno, 'UC' divide_type,'退仓验收单' divide_type_name
+	               from bill_um_check d
+	              where 1 = 1
+	                and d.locno = #{params.locno,jdbcType=VARCHAR}
+	             union all
+	             select d.otherin_no divide_no, d.locno, 'OI' divide_type,'其他入库单' divide_type_name
+	               From bill_sm_otherin d
+	              where 1 = 1
+	                and d.locno = #{params.locno,jdbcType=VARCHAR}) rs
+	    on r.divide_no = rs.divide_no
+	  left join (select d.recheck_no, sum(d.real_qty) qty
+	               from Bill_Om_Recheck_Dtl d
+	              where d.locno = #{params.locno,jdbcType=VARCHAR}
+	              group by d.recheck_no) rsd
+	    on rsd.recheck_no = r.recheck_no
+	    <include refid="selectByPageAuthorityLeftJoin" />
+	 where 1 = 1
+	   <include refid="condition4source" />
+		   <include refid="selectByPageAuthorityCondition" />
+	 group by r.divide_no
+	 ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectOutstockRecheckCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_OM_RECHECK r 
+    <include refid="selectByPageAuthorityLeftJoin" />
+    where 1=1 
+    <include refid="condition" />
+    <include refid="selectByPageAuthorityCondition" />
+  </select>
+  <select id="selectOutstockRecheckByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List_Left" />,
+    
+    (select ld.ITEMNAME from LOOKUPDTL ld where r.status = ld.itemval and ld.lookupcode = 'CITY_RECITY_CHECK_STATUS' and rownum = 1) as statusStr,
+    (select ld.ITEMNAME from LOOKUPDTL ld where r.print_status = ld.itemval and ld.lookupcode = 'CITY_RECHECK_PRINT_STATUS' and rownum = 1) as printStatusStr,
+    (select ld.ITEMNAME from LOOKUPDTL ld where r.source_type = ld.itemval and ld.lookupcode = 'CITY_RECHECK_SOURCE_TYPE' and rownum = 1) as sourceTypeStr,
+    (select s.store_name from store s where s.store_no = r.store_no) as storeName,
+    
+     case
+         when r.source_type = '1' or r.source_type = '2'  or r.source_type = '3' then
+          (select nvl(sum(ord.real_qty), 0)
+             from bill_om_recheck_dtl ord
+            where ord.locno = r.locno
+              and ord.recheck_no = r.recheck_no)
+         else
+          (select nvl(sum(ood.real_qty), 0) as realQty
+             from bill_om_outstock_dtl ood
+            where ood.locno = r.locno
+              and ood.locate_no = r.divide_no
+              and ood.store_no = r.store_no
+              and ood.status = '13')
+       
+       end as realQty,
+       
+       <!-- 
+       case
+         when r.source_type = '1' or r.source_type = '2' then
+         
+          (select nvl(sum(ord.real_qty), 0)
+             from bill_om_recheck_dtl ord
+            where ord.locno = r.locno
+              and ord.recheck_no = r.recheck_no)
+         else
+          (select nvl(sum(ood.recheck_qty), 0)
+             from bill_om_outstock_dtl ood
+            where ood.locno = r.locno
+              and ood.locate_no = r.divide_no
+              and ood.store_no = r.store_no
+              and ood.status = '13')
+       end as recheckQty,
+    -->
+    
+    (select nvl(sum(ord.real_qty), 0)
+             from bill_om_recheck_dtl ord
+            where ord.locno = r.locno
+              and ord.recheck_no = r.recheck_no) 
+              as recheckQty,
+    
+    (select 
+    	nvl(sum(ord.real_qty),0) 
+    	from bill_om_recheck_dtl ord 
+    	where ord.locno = r.locno 
+    	and ord.recheck_no = r.recheck_no 
+    	and ord.container_no != 'N'
+    ) as packageQty
+    
+     from BILL_OM_RECHECK r 
+     <include refid="selectByPageAuthorityLeftJoin" />
+     where 1=1 
+    <include refid="condition" />
+    <include refid="selectByPageAuthorityCondition" />
+    <choose>
+	    <when test="orderByField != null and ''!=orderByField">
+			order by ${orderByField}
+			<if test="orderByField">
+			${orderBy}
+			</if>
+		</when>
+		<otherwise>
+			order by r.CREATETM desc,r.RECHECK_NO desc
+		</otherwise>
+    </choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_OM_RECHECK r where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillOmRecheckKey" >
+    delete from BILL_OM_RECHECK
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RECHECK_NO = #{recheckNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillOmRecheck" >
+    delete from BILL_OM_RECHECK
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RECHECK_NO = #{recheckNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillOmRecheck" >
+    insert into BILL_OM_RECHECK (LOCNO, RECHECK_NO, LINE_NO, 
+      STORE_NO, SUB_STORE_NO, STATUS, 
+      SEND_FLAG, CREATOR,CREATORname, CREATETM, 
+      EDITOR,EDITORname, EDITTM, PRINT_STATUS, 
+      SERIAL_NO, EXP_DATE, AUDITOR, AUDITORname
+      AUDITTM,RECHECK_TYPE)
+    values (#{locno,jdbcType=VARCHAR}, #{recheckNo,jdbcType=VARCHAR}, #{lineNo,jdbcType=VARCHAR}, 
+      #{storeNo,jdbcType=VARCHAR}, #{subStoreNo,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{sendFlag,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR},#{creatorCh,jdbcType=VARCHAR}, #{createtm,jdbcType=TIMESTAMP}, 
+      #{editor,jdbcType=VARCHAR},#{editorCh,jdbcType=VARCHAR}, #{edittm,jdbcType=TIMESTAMP}, #{printStatus,jdbcType=VARCHAR}, 
+      #{serialNo,jdbcType=VARCHAR}, #{expDate,jdbcType=TIMESTAMP}, #{auditor,jdbcType=VARCHAR}, #{auditorCh,jdbcType=VARCHAR},
+      #{audittm,jdbcType=TIMESTAMP},#{recheckType,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillOmRecheck" >
+    insert into BILL_OM_RECHECK
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="recheckNo != null" >
+        RECHECK_NO,
+      </if>
+      <if test="lineNo != null" >
+        LINE_NO,
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO,
+      </if>
+      <if test="subStoreNo != null" >
+        SUB_STORE_NO,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="sendFlag != null" >
+        SEND_FLAG,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="creatorname != null" >
+        CREATORname,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="editorname != null" >
+        EDITORNAME,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="printStatus != null" >
+        PRINT_STATUS,
+      </if>
+      <if test="serialNo != null" >
+        SERIAL_NO,
+      </if>
+      <if test="expDate != null" >
+        EXP_DATE,
+      </if>
+      <if test="auditor != null" >
+        AUDITOR,
+      </if>
+      <if test="auditorname != null" >
+        AUDITORname,
+      </if>
+      <if test="audittm != null" >
+        AUDITTM,
+      </if>
+      <if test="divideNo != null" >
+        DIVIDE_NO,
+      </if>
+      <if test="recheckType != null" >
+        RECHECK_TYPE,
+      </if>
+      <if test="businessType != null" >
+        BUSINESS_TYPE,
+      </if>
+      <if test="sourceType != null" >
+        SOURCE_TYPE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="recheckNo != null" >
+        #{recheckNo,jdbcType=VARCHAR},
+      </if>
+      <if test="lineNo != null" >
+        #{lineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo != null" >
+        #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="subStoreNo != null" >
+        #{subStoreNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="sendFlag != null" >
+        #{sendFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorname != null" >
+        #{creatorname,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorname != null" >
+        #{editorname,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="printStatus != null" >
+        #{printStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="serialNo != null" >
+        #{serialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="expDate != null" >
+        #{expDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditor != null" >
+        #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorname != null" >
+        #{auditorname,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        #{audittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="divideNo != null" >
+         #{divideNo,jdbcType=VARCHAR},
+      </if>
+      <if test="recheckType != null" >
+         #{recheckType,jdbcType=VARCHAR},
+      </if>
+      <if test="businessType != null" >
+         #{businessType,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null" >
+         #{sourceType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillOmRecheck" >
+    update BILL_OM_RECHECK
+    <set >
+      <if test="lineNo != null" >
+        LINE_NO = #{lineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="subStoreNo != null" >
+        SUB_STORE_NO = #{subStoreNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="sendFlag != null" >
+        SEND_FLAG = #{sendFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorname != null" >
+        CREATORname = #{creatorname,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorname != null" >
+        EDITORname = #{editorname,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="printStatus != null" >
+        PRINT_STATUS = #{printStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="serialNo != null" >
+        SERIAL_NO = #{serialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="expDate != null" >
+        EXP_DATE = #{expDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditor != null" >
+        AUDITOR = #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorname != null" >
+        AUDITORname = #{auditorname,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="divideNo != null" >
+        DIVIDE_NO = #{divideNo,jdbcType=VARCHAR},
+      </if>
+      <if test="recheckType != null" >
+        RECHECK_TYPE = #{recheckType,jdbcType=VARCHAR},
+      </if>
+      <if test="businessType != null" >
+        BUSINESS_TYPE = #{businessType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RECHECK_NO = #{recheckNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillOmRecheck" >
+    update BILL_OM_RECHECK
+    set LINE_NO = #{lineNo,jdbcType=VARCHAR},
+      STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      SUB_STORE_NO = #{subStoreNo,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      SEND_FLAG = #{sendFlag,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATORname = #{creatorname,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITORname = #{editorname,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      PRINT_STATUS = #{printStatus,jdbcType=VARCHAR},
+      SERIAL_NO = #{serialNo,jdbcType=VARCHAR},
+      EXP_DATE = #{expDate,jdbcType=TIMESTAMP},
+      AUDITOR = #{auditor,jdbcType=VARCHAR},
+      AUDITORname = #{auditorname,jdbcType=VARCHAR},
+      AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      DIVIDE_NO = #{divideNo,jdbcType=VARCHAR},
+      RECHECK_TYPE = #{recheckType,jdbcType=VARCHAR}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and RECHECK_NO = #{recheckNo,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="checkDiffRecheckQty" resultType="java.lang.Integer" >
+    select count(1) as s
+	   from (select t.store_no
+	           from (select d.store_no
+	                   from bill_om_divide_dtl d
+	                  where d.locno = #{locno,jdbcType=VARCHAR}
+	                    and d.divide_no = #{divideNo,jdbcType=VARCHAR}
+	                    and d.item_qty > d.real_qty
+	                    and exists (select 'X'
+	                           from bill_om_recheck r
+	                          inner join bill_om_recheck_dtl rd
+	                             on r.locno = rd.locno
+	                            and r.recheck_no = rd.recheck_no
+	                          where r.locno = d.locno
+	                            and r.divide_no = d.divide_no)) t
+	          group by t.store_no)
+  </select>
+  
+  <!-- 创建分货任务单调用存储过程 -->
+  <select id="procDeleteBillOmRecheck" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE" >
+		<![CDATA[
+			{call pkg_om_city_recheck.PROC_OM_RECHECK_DEL (
+				#{I_locno, mode=IN, jdbcType=VARCHAR},
+				#{I_recheckNo, mode=IN, jdbcType=VARCHAR},
+			 	#{strOutMsg, mode=OUT, jdbcType=VARCHAR}
+			 )} 
+		]]>
+  </select>
+  
+  
+  <!-- 复核完成单调用存储过程 -->
+  <select id="procRecheckComplete" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE" >
+		<![CDATA[
+			{call PKG_OM_CITY_RECHECK.PROC_OM_CREATERELabel (
+				#{I_locno, mode=IN, jdbcType=VARCHAR},
+			 	#{I_divideNo, mode=IN, jdbcType=VARCHAR},
+			 	#{I_serialNo, mode=IN, jdbcType=VARCHAR},
+			 	#{I_recheckNo, mode=IN, jdbcType=VARCHAR},
+			 	#{creator, mode=IN, jdbcType=VARCHAR},
+			 	#{O_newBoxNo, mode=IN, jdbcType=VARCHAR},
+			 	#{strOutMsg, mode=OUT, jdbcType=VARCHAR}
+			 )}
+		]]>
+		<!--  <![CDATA[
+			{call PKG_IM_CITY_RECEIPT.PROC_IM_CREATECHECKDTL (
+				#{I_locno, mode=IN, jdbcType=VARCHAR},
+			 	#{I_divideNo, mode=IN, jdbcType=VARCHAR},
+			 	#{I_recheckNo, mode=IN, jdbcType=VARCHAR},
+			 	#{creator, mode=IN, jdbcType=VARCHAR},
+			 	#{strOutMsg, mode=OUT, jdbcType=VARCHAR}
+			 )}
+		]]>-->
+  </select>
+  
+  
+  <!-- 审核分货复核单调用存储过程 -->
+  <select id="procOmRecheckAudit" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE" >
+		<![CDATA[
+			{call PKG_OM_CITY_RECHECK.PROC_OM_AUDIT_RecheckOrder (
+				#{I_locno, mode=IN, jdbcType=VARCHAR},
+			 	#{I_divideNo, mode=IN, jdbcType=VARCHAR},
+			 	#{I_serialNo, mode=IN, jdbcType=VARCHAR},
+			 	#{I_recheckNo, mode=IN, jdbcType=VARCHAR},
+			 	#{I_creator, mode=IN, jdbcType=VARCHAR},
+			 	#{O_msg, mode=OUT, jdbcType=VARCHAR}
+			 )}
+		]]>
+  </select>
+  
+  
+  <!-- 审核拣货复核单调用存储过程 -->
+  <select id="procOmOutStockRecheckAudit" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE" >
+		<![CDATA[
+			{call PKG_OM_CITY_OUTSTOCK_RECHECK.PROC_OM_OUTSTOCK_RECHECK_AUDIT (
+				#{I_locno, mode=IN, jdbcType=VARCHAR},
+			 	#{I_recheckNo, mode=IN, jdbcType=VARCHAR},
+			 	#{I_creator, mode=IN, jdbcType=VARCHAR},
+			 	#{O_msg, mode=OUT, jdbcType=VARCHAR}
+			 )}
+		]]>
+  </select>
+  
+  
+  <!-- 删除拣货复核单调用存储过程 -->
+  <select id="procOmOutStockRecheckDel" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE" >
+		<![CDATA[
+			{call PKG_OM_CITY_OUTSTOCK_RECHECK.PROC_OM_OUTSTOCK_RECHECK_DEL (
+				#{I_locno, mode=IN, jdbcType=VARCHAR},
+			 	#{I_recheckNo, mode=IN, jdbcType=VARCHAR},
+			 	#{O_msg, mode=OUT, jdbcType=VARCHAR}
+			 )}
+		]]>
+  </select>
+  
+  <select id="selectOwnerCellNo" resultType="java.lang.String" >
+     select cdc.cell_no
+	    from cm_defcell cdc
+	   inner join cm_defarea cda
+	      on cdc.locno = cda.locno
+	     and cdc.ware_no = cda.ware_no
+	     and cdc.area_no = cda.area_no
+	    where cda.attribute_type = '3'
+         and cda.area_attribute='1' 
+	     and cdc.locno = #{locno,jdbcType=VARCHAR}
+	     and cdc.cell_status = '0'
+	     and cdc.check_status = '0'
+	     and rownum = 1
+  </select>
+  
+  <!-- 查询复核单计划数量实际数量总数 -->
+  <select id="selectRecheckSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+	select 
+		sum(nvl(dtls.itemQty,0)) ITEM_QTY, 
+		sum(nvl(dtls.realQty,0)) REAL_QTY,
+		sum(nvl(dtls.packageQty,0)) PACKAGE_QTY
+		from 
+		(
+			select 
+			(
+				select 
+				nvl(sum(odd.item_qty),0) as itemQty
+		        from bill_om_divide_dtl odd
+	    		inner join item itm on odd.item_no = itm.item_no  
+	    		where odd.locno = r.locno
+	    		and odd.divide_no = r.divide_no
+	    		and odd.store_no = r.store_no
+			    <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+			       and odd.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+			    </if>
+			) as itemQty,
+			
+			(select 
+				nvl(sum(ord.real_qty),0) as realQty
+		        from bill_om_recheck_dtl ord
+	    		inner join item itm on ord.item_no = itm.item_no  
+	    		where ord.locno = r.locno
+	    		and ord.recheck_no = r.recheck_no
+			    <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+			       and ord.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+			    </if>
+			) as realQty,
+			
+			(select 
+				nvl(sum(ord.real_qty),0) as packageQty
+		        from bill_om_recheck_dtl ord
+	    		inner join item itm on ord.item_no = itm.item_no  
+	    		where ord.locno = r.locno
+	    		and ord.recheck_no = r.recheck_no
+	    		and ord.container_no != 'N'
+			    <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+			       and ord.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+			    </if>
+			) as packageQty
+			
+			from BILL_OM_RECHECK r 
+		    <include refid="selectByPageAuthorityLeftJoin" />
+		    where 1=1 
+		    <include refid="condition" />
+		    <include refid="selectByPageAuthorityCondition" />
+		)dtls
+  </select>
+  
+  
+  <!-- 查询复核单计划数量实际数量总数 -->
+  <select id="selectOutstockRecheckSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+	select 
+		sum(nvl(dtls.realQty,0)) REAL_QTY,
+		sum(nvl(dtls.recheckQty,0)) RECHECK_QTY,
+		sum(nvl(dtls.packageQty,0)) PACKAGE_QTY
+		from 
+		(
+		   select 
+		   <!-- 
+			(
+				select 
+				nvl(sum(odd.item_qty),0) as itemQty
+		        from bill_om_outstock_dtl odd
+	    		inner join item itm on odd.item_no = itm.item_no  
+	    		where odd.locno = r.locno
+	    		and odd.locate_no = r.divide_no
+	    		and odd.store_no = r.store_no
+	    		and odd.status = '13'
+			    <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+			       and odd.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+			    </if>
+			) as itemQty,
+			 -->
+			 
+			  case
+         		when r.source_type = '1' or r.source_type = '2' or r.source_type = '3' then
+         			(select nvl(sum(ord.real_qty), 0)
+			             from bill_om_recheck_dtl ord
+			            where ord.locno = r.locno
+			              and ord.recheck_no = r.recheck_no
+			              <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+					       and ord.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+					      </if>
+					    )
+         		else
+         			(select 
+						nvl(sum(odd.real_qty),0) as realQty
+				        from bill_om_outstock_dtl odd
+			    		inner join item itm on odd.item_no = itm.item_no  
+			    		where odd.locno = r.locno
+			    		and odd.locate_no = r.divide_no
+			    		and odd.store_no = r.store_no
+			    		and odd.status = '13'
+					    <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+					       and odd.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+					    </if>
+					)
+         		end 
+			 as realQty,
+			
+			(select nvl(sum(ord.real_qty), 0)
+			 	from bill_om_recheck_dtl ord
+			    	where ord.locno = r.locno
+			        	and ord.recheck_no = r.recheck_no
+			            <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+					    	and ord.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+					    </if>
+			 ) as recheckQty,
+			
+			(select 
+				nvl(sum(ord.real_qty),0) as packageQty
+		        from bill_om_recheck_dtl ord
+	    		inner join item itm on ord.item_no = itm.item_no  
+	    		where ord.locno = r.locno
+	    		and ord.recheck_no = r.recheck_no
+	    		and ord.container_no != 'N'
+			    <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+			       and ord.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+			    </if>
+			) as packageQty
+			
+			from BILL_OM_RECHECK r 
+		    <include refid="selectByPageAuthorityLeftJoin" />
+		    where 1=1
+		    <include refid="condition" />
+		    <include refid="selectByPageAuthorityCondition" />
+		)dtls
+  </select>
+  
+  <select id="selectRecheckByStoreAndCheckNo" resultMap="BaseResultMap" parameterType="map" >
+  		select r.recheck_no,r.divide_no,s.store_name as storeName
+  			from bill_om_recheck r 
+  			left join store s on s.store_no = r.store_no
+  		 where 1=1
+  		 <include refid="condition" />
+  		 <if test="null!=list and list.size > 0">
+    		and r.store_no in
+			<foreach collection="list" item="item"  open="(" separator="," close=")">  
+        		#{item.storeNo}  
+    		</foreach> 
+        </if>
+  </select>
+  
+   <select id="findBillOmRecheckConNo" resultMap="BaseResultMap" parameterType="map">
+	   select cb.scan_label_no as conNo, cb.owner_cell_no as cellNo,max(t.supplier_no) as supplierNo,
+	    sum(d.real_qty) as skuQty, max(cb.creator) as creator
+	  from bill_om_recheck_dtl d inner join con_label cb
+	    on d.locno = cb.locno and d.container_no = cb.container_no
+	 	inner join item t on t.item_no = d.item_no
+	 where d.recheck_no = #{params.I_recheckNo,jdbcType=VARCHAR}
+	   and d.locno = #{params.I_locno,jdbcType=VARCHAR}
+	 group by cb.scan_label_no, cb.owner_cell_no
+	</select>
+  
+</mapper>

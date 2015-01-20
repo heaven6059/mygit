@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.AccInventoryConMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.AccInventoryCon" >
+    <id column="CON_NO" property="conNo" jdbcType="VARCHAR" />
+    <id column="CON_TYPE" property="conType" jdbcType="VARCHAR" />
+    <result column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <result column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+    <result column="ITEM_TYPE" property="itemType" jdbcType="VARCHAR" />
+    <result column="QUALITY" property="quality" jdbcType="VARCHAR" />
+    <result column="SUPPLIER_NO" property="supplierNo" jdbcType="VARCHAR" />
+    <result column="CHILDREN_QTY" property="childrenQty" jdbcType="DECIMAL" />
+    <result column="SKU_QTY" property="skuQty" jdbcType="DECIMAL" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="PARENT_CON_NO" property="pConNo" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    CON_NO, LOCNO, OWNER_NO, CELL_NO, ITEM_TYPE, QUALITY, CHILDREN_QTY, 
+    SKU_QTY,CREATETM,STATUS
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.creator and ''!=params.creator" >
+        AND CREATOR = #{params.creator,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+        AND LOCNO = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.conNo and ''!=params.conNo" >
+        AND CON_NO = #{params.conNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.cellNo and ''!=params.cellNo" >
+        AND CELL_NO = #{params.cellNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.status and ''!=params.status" >
+        AND STATUS=#{params.status,jdbcType=VARCHAR}
+      </if>
+       <if test="null!=params.itemType and ''!=params.itemType" >
+        AND ITEM_TYPE=#{params.itemType,jdbcType=VARCHAR}
+      </if>
+       <if test="null!=params.quality and ''!=params.quality" >
+        AND QUALITY=#{params.quality,jdbcType=VARCHAR}
+      </if>
+	  <if test="null!=params.startCreatetm and ''!=params.startCreatetm">
+        <![CDATA[
+        AND CREATETM >= to_date('${params.startCreatetm} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+     	]]>
+	  </if>
+	  <if test="null!=params.endCreatetm and ''!=params.endCreatetm">
+        <![CDATA[
+         AND CREATETM <= to_date('${params.endCreatetm} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+     	]]>
+	 </if>
+	  <if test="null!=params.startEdittm and ''!=params.startEdittm">
+        <![CDATA[
+        AND EDITTM >= to_date('${params.startEdittm} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+     	]]>
+	  </if>
+	  <if test="null!=params.endEdittm and ''!=params.endEdittm">
+        <![CDATA[
+         AND EDITTM <= to_date('${params.endEdittm} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+     	]]>
+	 </if>
+    </if>
+  </sql>
+   <!--权限过滤查询条件-->
+  <sql id="i_AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+      dtl.locno=#{params.locno,jdbcType=VARCHAR} and  brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    SELECT 
+    <include refid="Base_Column_List" />
+    FROM (
+    	SELECT T.BOX_NO CON_NO,
+           T.OWNER_NO, T.LOCNO, T.CELL_NO,
+           T.ITEM_TYPE, T.QUALITY,
+           0 CHILDREN_QTY, T.QTY SKU_QTY,
+           T.CREAT_DATE CREATETM,
+           T.STATUS STATUS
+          FROM CON_BOX T  where t.box_no=#{conNo,jdbcType=VARCHAR}
+        UNION ALL
+        SELECT T1.PAN_NO CON_NO,
+               MAX(T1.OWNER_NO) OWNER_NO,
+               MAX(T1.LOCNO) LOCNO,
+               MAX(T1.CELL_NO) CELL_NO,
+               MAX(T1.ITEM_TYPE) ITEM_TYPE,
+               MAX(T1.QUALITY) QUALITY,
+               COUNT(1) CHILDREN_QTY,
+               SUM(T1.QTY) SKU_QTY,
+               MAX(T1.CREAT_DATE)CREATETM,
+               MAX(T1.STATUS) STATUS
+          FROM CON_BOX T1 
+          WHERE T1.PAN_NO =#{conNo,jdbcType=VARCHAR}
+         GROUP BY T1.PAN_NO
+    )
+    WHERE CON_NO = #{conNo,jdbcType=VARCHAR} AND LOCNO=#{locno,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+  SELECT COUNT(1) as s from (
+  	SELECT CON_NO,LOCNO FROM 
+  	 <include refid="accInventoryView" />
+	 WHERE 1=1 
+    <include refid="condition" />
+  	) A inner JOIN BM_CONTAINER S ON S.CON_NO=A.CON_NO AND S.LOCNO=A.LOCNO
+  	   where 1=1 
+  	  <if test="null!=params.conType and ''!=params.conType" >
+         and  S.CON_TYPE = #{params.conType,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.bmStatus and ''!=params.bmStatus" >
+         and  S.STATUS = #{params.bmStatus,jdbcType=VARCHAR}
+      </if>
+  </select> 
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    SELECT B.* from (SELECT A.*,S.CON_TYPE,ROWNUM rn FROM( SELECT 
+    <include refid="Base_Column_List" />
+     FROM <include refid="accInventoryView" />
+      WHERE 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      ORDER BY ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A inner JOIN BM_CONTAINER S ON S.CON_NO=A.CON_NO AND S.LOCNO=A.LOCNO
+    WHERE ROWNUM &lt; #{page.endRowNum} 
+      <if test="null!=params.conType and ''!=params.conType" >
+        AND S.CON_TYPE = #{params.conType,jdbcType=VARCHAR}
+      </if>
+       <if test="null!=params.bmStatus and ''!=params.bmStatus" >
+        AND  S.STATUS = #{params.bmStatus,jdbcType=VARCHAR}
+      </if>
+    ) B WHERE rn &gt; #{page.startRowNum}
+   
+  </select>
+  <sql id="accInventoryView">
+  	(SELECT T.BOX_NO CON_NO,
+           T.OWNER_NO, T.LOCNO, T.CELL_NO,
+           T.ITEM_TYPE, T.QUALITY,
+           0 CHILDREN_QTY, T.QTY SKU_QTY,
+           T.CREAT_DATE CREATETM,
+           T.STATUS STATUS
+          FROM CON_BOX T  INNER JOIN (
+          <include refid="selectConDtlByBrandNo" />)M ON T.BOX_NO=M.BOX_NO AND M.LOCNO=T.LOCNO
+          <if test="null!=params.panFlag and ''!=params.panFlag" >
+		  	   inner join cm_defcell ce on ce.locno = t.locno and ce.owner_no = t.owner_no  and ce.cell_no =t.cell_no
+		       inner join cm_defarea cda on cda.locno = ce.locno and cda.ware_no = ce.ware_no  and cda.area_no = ce.area_no
+        	 where ((cda.attribute_type = '0' and cda.area_attribute = '0' and
+               cda.area_usetype = '1') or
+               (cda.attribute_type = '0' and cda.area_attribute = '0' and
+               cda.area_usetype = '3') or
+               (cda.attribute_type = '0' and cda.area_attribute = '0' and
+               cda.area_usetype = '7') or
+               (cda.attribute_type = '1' and cda.area_attribute = '1' and
+               cda.area_usetype = '1') or
+               (cda.attribute_type = '6' and cda.area_attribute = '1' and
+               cda.area_usetype = '1'))
+               AND t.STATUS = '2'
+               <if test="null!=params.itemType and ''!=params.itemType" >
+        			AND t.ITEM_TYPE=#{params.itemType,jdbcType=VARCHAR}
+     		   </if>
+		       <if test="null!=params.quality and ''!=params.quality" >
+		        	AND t.QUALITY=#{params.quality,jdbcType=VARCHAR}
+		       </if>
+             and not exists(
+                  SELECT 1 FROM CON_BOX_DTL DTL  inner join con_box b
+                  on b.locno = dtl.locno and b.box_no = dtl.box_no
+                  inner join v_content c  on c.locno = b.locno and  c.item_type=b.item_type and c.quality=b.quality and c.cell_no = b.cell_no
+                   and dtl.item_no = c.item_no and c.size_no = dtl.size_no
+                 WHERE dtl.locno =#{params.locno,jdbcType=VARCHAR}  and (c.hm_manual_flag != '1'
+                   or c.status != '0' or (c.qty - nvl(c.outstock_qty,0)) = 0 or (c.qty - nvl(c.outstock_qty,0)) &lt; 0 or c.flag != '0')
+                   and t.box_no=dtl.box_no and t.locno=dtl.locno and b.status='2'
+                    <if test="null!=params.itemType and ''!=params.itemType" >
+        				AND b.ITEM_TYPE=#{params.itemType,jdbcType=VARCHAR}
+	     		   </if>
+			       <if test="null!=params.quality and ''!=params.quality" >
+			        	AND b.QUALITY=#{params.quality,jdbcType=VARCHAR}
+			       </if>
+                   and not exists(
+                     select 1 from bill_con_adj_dtl aj where aj.item_no=dtl.item_no 
+                     and aj.locno=dtl.locno and aj.size_no=dtl.size_no and aj.cell_no=b.cell_no and aj.adj_no=#{params.adjNo,jdbcType=VARCHAR}
+                    )
+                   GROUP BY DTL.BOX_NO, DTL.LOCNO )
+      		</if>
+        UNION ALL
+        SELECT T1.PAN_NO CON_NO,
+               MAX(T1.OWNER_NO) OWNER_NO,
+               MAX(T1.LOCNO) LOCNO,
+               MAX(T1.CELL_NO) CELL_NO,
+               MAX(T1.ITEM_TYPE) ITEM_TYPE,
+               MAX(T1.QUALITY) QUALITY,
+               COUNT(1) CHILDREN_QTY,
+               SUM(T1.QTY) SKU_QTY,
+               MAX(T1.CREAT_DATE)CREATETM,
+               MAX(T1.STATUS) STATUS
+          FROM CON_BOX T1  INNER JOIN (<include refid="selectConDtlByBrandNo" />)
+           M ON T1.BOX_NO=M.BOX_NO AND M.LOCNO=T1.LOCNO
+            <if test="null!=params.panFlag and ''!=params.panFlag" >
+		  	   inner join cm_defcell ce on ce.locno = t1.locno and ce.owner_no = t1.owner_no  and ce.cell_no =t1.cell_no
+		       inner join cm_defarea cda on cda.locno = ce.locno and cda.ware_no = ce.ware_no  and cda.area_no = ce.area_no
+  	  		</if>
+          WHERE T1.PAN_NO IS NOT NULL
+          <if test="null!=params.panFlag and ''!=params.panFlag" >
+        	 and ((cda.attribute_type = '0' and cda.area_attribute = '0' and
+               cda.area_usetype = '1') or
+               (cda.attribute_type = '0' and cda.area_attribute = '0' and
+               cda.area_usetype = '3') or
+               (cda.attribute_type = '0' and cda.area_attribute = '0' and
+               cda.area_usetype = '7') or
+               (cda.attribute_type = '1' and cda.area_attribute = '1' and
+               cda.area_usetype = '1') or
+               (cda.attribute_type = '6' and cda.area_attribute = '1' and
+               cda.area_usetype = '1'))
+              <if test="null!=params.itemType and ''!=params.itemType" >
+       			AND t1.ITEM_TYPE=#{params.itemType,jdbcType=VARCHAR}
+    		  </if>
+		      <if test="null!=params.quality and ''!=params.quality" >
+		        AND t1.QUALITY=#{params.quality,jdbcType=VARCHAR}
+		     </if>
+             and not exists(
+                  SELECT 1 FROM CON_BOX_DTL DTL  inner join con_box b
+                  on b.locno = dtl.locno and b.box_no = dtl.box_no
+                  inner join bm_container bm on bm.locno = b.locno and b.box_no =bm.con_no
+                   where t1.pan_no=b.pan_no and t1.locno=b.locno  and (b.status!='2' or bm.status!='0')
+                )
+             and not exists(
+                  SELECT 1 FROM CON_BOX_DTL DTL  inner join con_box b
+                  on b.locno = dtl.locno and b.box_no = dtl.box_no
+                  inner join v_content c  on c.locno = b.locno and c.item_type=b.item_type and c.quality=b.quality and c.cell_no = b.cell_no
+                   and dtl.item_no = c.item_no and c.size_no = dtl.size_no
+                 WHERE dtl.locno =#{params.locno,jdbcType=VARCHAR}  
+                 and (c.hm_manual_flag != '1' or c.status != '0' or (c.qty - nvl(c.outstock_qty,0)) = 0 or (c.qty - nvl(c.outstock_qty,0)) &lt; 0 or c.flag != '0') 
+                 and t1.pan_no=b.pan_no and t1.locno=b.locno
+                 and not exists(
+                     select 1 from bill_con_adj_dtl aj where aj.item_no=dtl.item_no 
+                     and aj.locno=dtl.locno and aj.size_no=dtl.size_no and aj.cell_no=b.cell_no and aj.adj_no=#{params.adjNo,jdbcType=VARCHAR}
+                    )
+                )
+      		</if>
+         GROUP BY T1.PAN_NO)
+  </sql>
+  <!-- 根据品牌权限查询容器 -->
+  <sql id="selectConDtlByBrandNo">
+    SELECT DTL.BOX_NO,DTL.LOCNO FROM CON_BOX_DTL DTL INNER JOIN ITEM I ON I.ITEM_NO=DTL.ITEM_NO 
+    WHERE <include refid="i_AuthorityCondition" />
+     GROUP BY DTL.BOX_NO,DTL.LOCNO
+  </sql>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    SELECT 
+    <include refid="Base_Column_List" />
+     FROM ACC_INVENTORY_CON
+      WHERE 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    DELETE FROM ACC_INVENTORY_CON
+    WHERE CON_NO = #{conNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.AccInventoryCon" >
+    DELETE FROM ACC_INVENTORY_CON
+    WHERE CON_NO = #{conNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.AccInventoryCon" >
+    INSERT INTO ACC_INVENTORY_CON (CON_NO, LOCNO, OWNER_NO, 
+      CELL_NO, ITEM_TYPE, QUALITY, 
+      SUPPLIER_NO, CHILDREN_QTY, SKU_QTY, 
+      CREATOR, CREATETM, EDITOR, 
+      EDITTM)
+    VALUES (#{conNo,jdbcType=VARCHAR}, #{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, 
+      #{cellNo,jdbcType=VARCHAR}, #{itemType,jdbcType=VARCHAR}, #{quality,jdbcType=VARCHAR}, 
+      #{supplierNo,jdbcType=VARCHAR}, #{childrenQty,jdbcType=DECIMAL}, #{skuQty,jdbcType=DECIMAL}, 
+      #{creator,jdbcType=VARCHAR}, #{createtm,jdbcType=TIMESTAMP}, #{editor,jdbcType=VARCHAR}, 
+      #{edittm,jdbcType=TIMESTAMP})
+  </insert>
+  
+    <insert id="insertAccInverntory" parameterType="com.yougou.logistics.city.common.model.AccInventoryCon" >
+    INSERT INTO ACC_INVENTORY_CON (CON_NO, LOCNO, OWNER_NO, 
+      CELL_NO, ITEM_TYPE, QUALITY, 
+      SUPPLIER_NO, CHILDREN_QTY, SKU_QTY, 
+      CREATOR, CREATETM, EDITOR, 
+      EDITTM)
+    VALUES (#{conNo,jdbcType=VARCHAR}, #{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, 
+      #{cellNo,jdbcType=VARCHAR}, #{itemType,jdbcType=VARCHAR}, #{quality,jdbcType=VARCHAR}, 
+      #{supplierNo,jdbcType=VARCHAR}, #{childrenQty,jdbcType=DECIMAL}, #{skuQty,jdbcType=DECIMAL}, 
+      #{creator,jdbcType=VARCHAR}, #{createtm,jdbcType=TIMESTAMP}, #{editor,jdbcType=VARCHAR}, 
+      #{edittm,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <!-- 批量插入容器信息 -->
+  <select id="batchInsertAccInventory" parameterType="java.util.List">
+  	insert into ACC_INVENTORY_CON   
+        (CON_NO, LOCNO, OWNER_NO, 
+      CELL_NO, ITEM_TYPE, QUALITY, 
+      SUPPLIER_NO, CHILDREN_QTY, SKU_QTY, 
+      CREATOR, CREATETM, EDITOR, 
+      EDITTM)  
+        <foreach collection="list" item="item" index="index"  separator="union all">  
+            select
+				#{item.conNo,jdbcType=VARCHAR}, #{item.locno,jdbcType=VARCHAR}, #{item.ownerNo,jdbcType=VARCHAR}, 
+      			#{item.cellNo,jdbcType=VARCHAR}, #{item.itemType,jdbcType=VARCHAR}, #{item.quality,jdbcType=VARCHAR}, 
+     			#{item.supplierNo,jdbcType=VARCHAR}, #{item.childrenQty,jdbcType=DECIMAL}, #{item.skuQty,jdbcType=DECIMAL}, 
+      			#{item.creator,jdbcType=VARCHAR}, #{item.createtm,jdbcType=TIMESTAMP}, #{item.editor,jdbcType=VARCHAR}, 
+      			#{item.edittm,jdbcType=TIMESTAMP}
+             from DUAL
+        </foreach>
+  </select>
+  
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.AccInventoryCon" >
+    INSERT INTO ACC_INVENTORY_CON
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="conNo != null" >
+        CON_NO,
+      </if>
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO,
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE,
+      </if>
+      <if test="quality != null" >
+        QUALITY,
+      </if>
+      <if test="supplierNo != null" >
+        SUPPLIER_NO,
+      </if>
+      <if test="childrenQty != null" >
+        CHILDREN_QTY,
+      </if>
+      <if test="skuQty != null" >
+        SKU_QTY,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="conNo != null" >
+        #{conNo,jdbcType=VARCHAR},
+      </if>
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null" >
+        #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="childrenQty != null" >
+        #{childrenQty,jdbcType=DECIMAL},
+      </if>
+      <if test="skuQty != null" >
+        #{skuQty,jdbcType=DECIMAL},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.AccInventoryCon" >
+    UPDATE ACC_INVENTORY_CON
+    <set >
+      <if test="locno != null" >
+        LOCNO = #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO = #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        QUALITY = #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        SUPPLIER_NO = #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="childrenQty != null" >
+        CHILDREN_QTY = #{childrenQty,jdbcType=DECIMAL},
+      </if>
+      <if test="skuQty != null" >
+        SKU_QTY = #{skuQty,jdbcType=DECIMAL},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+     <!--  <if test="edittm != null" > -->
+        EDITTM = sysdate,
+      <!-- </if> -->
+    </set>
+    WHERE CON_NO = #{conNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.AccInventoryCon" >
+    UPDATE ACC_INVENTORY_CON
+    SET LOCNO = #{locno,jdbcType=VARCHAR},
+      OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      CELL_NO = #{cellNo,jdbcType=VARCHAR},
+      ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+      QUALITY = #{quality,jdbcType=VARCHAR},
+      SUPPLIER_NO = #{supplierNo,jdbcType=VARCHAR},
+      CHILDREN_QTY = #{childrenQty,jdbcType=DECIMAL},
+      SKU_QTY = #{skuQty,jdbcType=DECIMAL},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP}
+    WHERE CON_NO = #{conNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateAccountConByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.AccInventoryCon" >
+    UPDATE ACC_INVENTORY_CON
+    SET 
+      CHILDREN_QTY = #{childrenQty,jdbcType=DECIMAL},
+      SKU_QTY = #{skuQty,jdbcType=DECIMAL},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITTM=sysdate
+    WHERE LOCNO=#{locno,jdbcType=VARCHAR} and CON_NO=#{conNo,jdbcType=VARCHAR} AND CELL_NO=#{cellNo,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updatelockAccinverntoryCon" parameterType="com.yougou.logistics.city.common.model.AccInventoryCon">
+  	UPDATE ACC_INVENTORY_CON set EDITTM=sysdate 
+  	WHERE LOCNO=#{locno,jdbcType=VARCHAR} and CON_NO=#{conNo,jdbcType=VARCHAR} AND CELL_NO=#{cellNo,jdbcType=VARCHAR}
+  </update>
+  <select id="selectAccInvertyroConExist" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.AccInventoryCon">
+  	SELECT T.*  FROM ACC_INVENTORY_CON T 
+  	WHERE T.LOCNO=#{locno,jdbcType=VARCHAR} AND T.CON_NO=#{conNo,jdbcType=VARCHAR} AND CELL_NO=#{cellNo,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteAccinverntoryCon" parameterType="com.yougou.logistics.city.common.model.AccInventoryCon">
+   	delete from ACC_INVENTORY_CON 
+   	WHERE LOCNO=#{locno,jdbcType=VARCHAR} and CON_NO=#{conNo,jdbcType=VARCHAR} AND CELL_NO=#{cellNo,jdbcType=VARCHAR}
+  </delete>
+  <update id="updateAccinverntoryCon">
+  	UPDATE ACC_INVENTORY_CON set SKU_QTY= #{skuQty,jdbcType=DECIMAL},CHILDREN_QTY = #{childrenQty,jdbcType=DECIMAL},
+  	  EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITTM =sysdate  
+      WHERE LOCNO=#{locno,jdbcType=VARCHAR} and CON_NO=#{conNo,jdbcType=VARCHAR} AND CELL_NO=#{cellNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

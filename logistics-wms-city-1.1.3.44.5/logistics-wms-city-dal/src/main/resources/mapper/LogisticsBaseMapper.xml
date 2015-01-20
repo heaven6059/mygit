@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.LogisticsBaseMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.LogisticsBase" >
+    <id column="BASE_ID" property="baseId" jdbcType="DECIMAL" />
+    <result column="WAREHORSE_NAME" property="warehorseName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    BASE_ID, WAREHORSE_NAME
+  </sql>
+  <select id="selectByPage" resultMap="BaseResultMap">
+  	select B.* from (
+	    select A.*,rownum rn from(
+	    select 
+	    <include refid="Base_Column_List" />
+	    from LOGISTICS_BASE
+	    <if test="null!=orderByField and ''!=orderByField">
+	   		order by ${orderByField}
+	   		<if test="null!=orderBy and ''!=orderBy">
+	   			${orderBy}
+	  	 	</if>
+	   	</if>
+     ) A where rownum &lt; #{page.endRowNum}
+    ) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from LOGISTICS_BASE
+    where BASE_ID = #{baseId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer">
+  	select count(1) as s
+    from LOGISTICS_BASE
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="Long" >
+    delete from LOGISTICS_BASE
+    where BASE_ID = #{baseId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.LogisticsBase">
+  	delete from LOGISTICS_BASE where BASE_ID = #{baseId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.LogisticsBase" >
+  	<selectKey keyProperty="baseId" order="BEFORE" resultType="java.lang.Long">
+  		select seq_logistics_base_id.nextval as baseId from dual
+  	</selectKey>
+    insert into LOGISTICS_BASE (BASE_ID, WAREHORSE_NAME)
+    values (#{baseId,jdbcType=DECIMAL}, #{warehorseName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.LogisticsBase" >
+  	<selectKey keyProperty="baseId" order="BEFORE" resultType="java.lang.Long">
+  		select seq_logistics_base_id.nextval as baseId from dual
+  	</selectKey>
+    insert into LOGISTICS_BASE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="baseId != null" >
+        BASE_ID,
+      </if>
+      <if test="warehorseName != null" >
+        WAREHORSE_NAME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="baseId != null" >
+        #{baseId,jdbcType=DECIMAL},
+      </if>
+      <if test="warehorseName != null" >
+        #{warehorseName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.LogisticsBase" >
+    update LOGISTICS_BASE
+    <set >
+      <if test="warehorseName != null" >
+        WAREHORSE_NAME = #{warehorseName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where BASE_ID = #{baseId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.LogisticsBase" >
+    update LOGISTICS_BASE
+    set WAREHORSE_NAME = #{warehorseName,jdbcType=VARCHAR}
+    where BASE_ID = #{baseId,jdbcType=DECIMAL}
+  </update>
+  
+  <select id="executeProcedure" statementType="CALLABLE"
+		parameterType="java.lang.String">
+		{call ${procedureName}}
+	</select>
+</mapper>

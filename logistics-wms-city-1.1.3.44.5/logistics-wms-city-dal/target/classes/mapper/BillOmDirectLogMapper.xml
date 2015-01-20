@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BillOmDirectLogMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillOmDirectLog" >
+    <result column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <result column="EXP_NO" property="expNo" jdbcType="VARCHAR" />
+    <result column="LOCATE_NO" property="locateNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="ERROR_REASON" property="errorReason" jdbcType="VARCHAR" />
+    <result column="item_name" property="itemName" jdbcType="VARCHAR" />
+    <result column="color_name" property="colorName" jdbcType="VARCHAR" />
+    <result column="style_no" property="styleNo" jdbcType="VARCHAR" />
+    <result column="brandNo" property="brandNo" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    LOCNO, OWNER_NO, EXP_NO, LOCATE_NO, ITEM_NO, SIZE_NO, ERROR_REASON
+  </sql>
+  
+  <sql id="Base_Column_List_Contact" >
+    od.LOCNO, od.OWNER_NO, od.EXP_NO, od.LOCATE_NO, od.ITEM_NO, od.SIZE_NO, od.ERROR_REASON,
+    I.ITEM_NAME,I.STYLE_NO,C.COLOR_NAME
+  </sql>
+  
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno">
+      		and locno = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.itemNo and ''!=params.itemNo">
+      		and od.item_no LIKE '%${params.itemNo}%'
+      </if>
+      <if test="null!=params.locateNo and ''!=params.locateNo">
+      		and locate_no LIKE '%${params.locateNo}%'
+      </if>
+      <if test="null!=params.expNo and ''!=params.expNo">
+      		and exp_no LIKE '%${params.expNo}%'
+      </if>
+      <if test="null!=params.brandNo and ''!=params.brandNo" >
+			and I.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+	  </if>
+	   <if test="null!=params.sysNo and ''!=params.sysNo" >
+            and I.sys_NO = #{params.sysNo,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+  <!--权限过滤查询条件-->
+  <sql id="i_AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and i.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_OM_DIRECT_LOG od 
+    inner join ITEM I on od.ITEM_NO = I.ITEM_NO 
+    left outer join COLOR_INFO C on I.COLOR_NO = C.COLOR_NO where 1=1 
+    <include refid="condition" />
+    <include refid="i_AuthorityCondition" />
+  </select>
+  
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List_Contact" />
+     from BILL_OM_DIRECT_LOG od 
+     inner join ITEM I on od.ITEM_NO = I.ITEM_NO 
+     left outer join COLOR_INFO C on I.COLOR_NO = C.COLOR_NO where 1=1 
+    <include refid="condition" />
+    <include refid="i_AuthorityCondition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_OM_DIRECT_LOG where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillOmDirectLog" >
+    insert into BILL_OM_DIRECT_LOG (LOCNO, OWNER_NO, EXP_NO, 
+      LOCATE_NO, ITEM_NO, SIZE_NO, 
+      ERROR_REASON)
+    values (#{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, #{expNo,jdbcType=VARCHAR}, 
+      #{locateNo,jdbcType=VARCHAR}, #{itemNo,jdbcType=VARCHAR}, #{sizeNo,jdbcType=VARCHAR}, 
+      #{errorReason,jdbcType=VARCHAR})
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillOmDirectLog" >
+    insert into BILL_OM_DIRECT_LOG
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="expNo != null" >
+        EXP_NO,
+      </if>
+      <if test="locateNo != null" >
+        LOCATE_NO,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="errorReason != null" >
+        ERROR_REASON,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="expNo != null" >
+        #{expNo,jdbcType=VARCHAR},
+      </if>
+      <if test="locateNo != null" >
+        #{locateNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="errorReason != null" >
+        #{errorReason,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

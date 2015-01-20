@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillOmDeliverExportMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillOmDeliverExport" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="DELIVER_NO" property="deliverNo" jdbcType="VARCHAR" />
+    <id column="CONTAINER_NO" property="containerNo" jdbcType="VARCHAR" />
+    <id column="CONTAINER_ID" property="containerId" jdbcType="DECIMAL" />
+    <result column="EXP_NO" property="expNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="size_no" property="sizeNo" jdbcType="VARCHAR" />
+     <result column="size_kind" property="sizeKind" jdbcType="VARCHAR" />
+    <result column="item_Name" property="itemName" jdbcType="VARCHAR" />
+    <result column="BARCODE" property="barcode" jdbcType="VARCHAR" />
+    <result column="QTY" property="qty" jdbcType="DECIMAL" />
+    <result column="EXP_DATE" property="expDate" jdbcType="TIMESTAMP" />
+    <result column="STORE_NO" property="storeNo" jdbcType="VARCHAR" />
+    <result column="store_name" property="storeName" jdbcType="VARCHAR" />
+    <result column="BRAND_NO" property="brandNo" jdbcType="VARCHAR" />
+    <result column="BRAND_NAME" property="brandName" jdbcType="VARCHAR" />
+    <result column="cate_No" property="cateNo" jdbcType="VARCHAR" />
+    <result column="cate_Name" property="cateName" jdbcType="VARCHAR" />
+    <result column="years" property="years" jdbcType="VARCHAR" />
+	<result column="years_name" property="yearsName" jdbcType="VARCHAR" />
+	<result column="season" property="season" jdbcType="VARCHAR" />
+	<result column="season_name" property="seasonName" jdbcType="VARCHAR" />
+	<result column="gender" property="gender" jdbcType="VARCHAR" />
+	<result column="gender_name" property="genderName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_selectSql" >
+    		select A.*,
+	               	i.item_name,
+	               	i.size_kind,
+	                i.years,
+               		i.season,
+               		i.gender,
+	              	b.brand_no,
+	               	b.brand_name,
+	               	c.cate_no,
+	               	c.cate_name,
+	               	s.store_name
+	          from (select dd.store_no,
+	          			   dd.locno,
+	                       dd.item_no,
+	                       dd.size_no,
+	                       dd.deliver_no,
+	                       dd.exp_no,
+	                       to_date(to_char(max(d.exp_date), 'yyyy-MM-dd'),
+                               'yyyy-MM-dd') exp_date,
+	                       sum(nvl(dd.qty, 0)) total
+	                  from bill_om_deliver_dtl dd
+	                  inner join bill_om_deliver d
+	                    on d.locno = dd.locno
+	                   and d.owner_no = dd.owner_no
+	                   and d.deliver_no = dd.deliver_no
+	                 where 1 = 1
+	                 <if test="null!=params.locno and ''!=params.locno">
+			           	and dd.locno = #{params.locno,jdbcType=VARCHAR}
+			         </if>
+	                 <if test="null!=params.deliverNo and ''!=params.deliverNo">
+	                 	and dd.deliver_no = #{params.deliverNo,jdbcType=VARCHAR}
+	                 </if>
+	                 <if test="null!=params.itemNo and ''!=params.itemNo">
+			           	and dd.item_no like '%${params.itemNo}%'
+			         </if>
+	                 <if test="null!=params.barcode and ''!=params.barcode">
+	                 	and dd.barcode like '%${params.barcode}%'
+	                 </if>
+	                 <if test="null!=params.expNo and ''!=params.expNo">
+	                 	and dd.exp_no = #{params.expNo,jdbcType=VARCHAR}
+	                 </if>
+	                 <if test="null!=params.storeNo and ''!=params.storeNo">
+	                 	and dd.store_no = #{params.storeNo,jdbcType=VARCHAR}
+	                 </if>
+	                 <if test="null!=params.startExpDate and ''!=params.startExpDate" >
+				      <![CDATA[
+				        and d.exp_date >= to_date('${params.startExpDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+				        ]]>
+				      </if>
+				      <if test="null!=params.endExpDate and ''!=params.endExpDate" >
+				      <![CDATA[
+				        and d.exp_date <= to_date('${params.endExpDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+				        ]]>
+				      </if>
+				      <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList">
+							and dd.brand_no in
+							<include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+					  </if>
+	                 group by dd.store_no, dd.locno, dd.item_no, dd.size_no, dd.deliver_no, dd.exp_no, d.exp_date) A
+	         inner join item i
+	            on i.item_no = A.item_no
+	         inner join brand b
+	            on i.brand_no = b.brand_no
+	              and i.sys_no = b.sys_no
+	         inner join category c
+	            on c.cate_no = i.cate_no
+	         inner join store s
+	            on s.store_no = A.store_no
+	         where 1=1
+	         <if test="params.sysNo != null and params.sysNo != ''">
+				    and b.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+			 </if>
+	         <if test="null!=params.itemName and ''!=params.itemName">
+               		and i.item_name like '%${params.itemName}%'
+               	</if> 
+	           	<if test="null!=params.brandNo and ''!=params.brandNo">
+               		and i.brand_no = #{params.brandNo,jdbcType=VARCHAR}
+               	</if>
+               	<if test="null!=params.yearsName and ''!=params.yearsName" >
+	            	and i.years in (select itemval from LOOKUPDTL where lookupcode = 'YEARS' and ITEMNAME like '%${params.yearsName}%')
+	           	</if>
+	        	<if test="null!=params.seasonValues and ''!=params.seasonValues" >
+			    	and i.season in
+			    	<foreach collection="params.seasonValues" item="seasonName" open="(" close=")" separator=",">
+						#{seasonName}
+					</foreach>
+			  	</if>
+			   	<if test="null!=params.genderValues and ''!=params.genderValues" >
+			   		and i.gender in
+			    	<foreach collection="params.genderValues" item="genderName" open="(" close=")" separator=",">
+						#{genderName}
+					</foreach>
+			   	</if>
+               	 <choose>
+			 		<when test="params.cateThreeValues != null">
+				 		<foreach collection="params.cateThreeValues" item="value" open=" and (" close=")" separator="or">
+							c.search_code like '${value}%'
+						</foreach>
+			 		</when>
+			 		<when test="params.cateTwoValues != null">
+			 			<foreach collection="params.cateTwoValues" item="value" open="and (" close=")" separator="or">
+							c.search_code like '${value}%'
+						</foreach>
+			 		</when>
+			 		<when test="params.cateOneValues != null">
+			 			<foreach collection="params.cateOneValues" item="value" open="and (" close=")" separator="or">
+							c.search_code like '${value}%'
+						</foreach>
+			 		</when>
+			 		<otherwise>
+			 		</otherwise>
+	            </choose> 
+  </sql>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    	select count(1) as s from (
+			select locno, store_no,
+                item_no, size_kind,
+                sum(nvl(total, 0)) total,
+                exp_no, deliver_no,
+                exp_date, item_name,
+                brand_no, brand_name,
+                cate_no, cate_name,
+                store_name, years,
+                season, gender
+          	from (<include refid="Base_selectSql" />) T
+         	group by locno, store_no,
+                item_no, size_kind,
+                exp_no, deliver_no,
+                exp_date, item_name,
+                brand_no, brand_name,
+                cate_no, cate_name,
+                store_name, years,
+                season, gender
+	    ) B
+  </select>
+  
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+  	select C.* from (
+  		select B.*,
+  			(select ITEMNAME
+	          from LOOKUPDTL
+	         where lookupcode = 'YEARS'
+	           and itemval = B.years) years_Name,
+	       (select ITEMNAME
+	          from LOOKUPDTL
+	         where lookupcode = 'SEASON'
+	           and itemval = B.season) season_Name,
+	       (select ITEMNAME
+	          from LOOKUPDTL
+	         where lookupcode = 'GENDER'
+	           and itemval = B.gender) gender_Name,
+			rownum rn
+	  		from (
+	  		select locno, store_no,
+                item_no, size_kind,
+                sum(nvl(total, 0)) total,
+                exp_no, deliver_no,
+                exp_date, item_name,
+                brand_no, brand_name,
+                cate_no, cate_name,
+                store_name, years,
+                season, gender
+          	from (<include refid="Base_selectSql" />) T
+         	group by locno, store_no,
+                item_no, size_kind,
+                exp_no, deliver_no,
+                exp_date, item_name,
+                brand_no, brand_name,
+                cate_no, cate_name,
+                store_name, years,
+                season, gender
+	  		order by exp_no desc, exp_date desc, store_no, item_no) B
+	where rownum &lt; #{page.endRowNum}
+	) C	where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+	select sum(nvl(total, 0)) total
+          	from (<include refid="Base_selectSql" />) T
+  </select>
+  <select id="selectAllDtlSizeKind" resultType="java.lang.String">
+		select size_kind
+          	from (<include refid="Base_selectSql" />) T
+        group by size_kind
+  </select>
+  <select id="selectDeliverDtlSize" resultType="java.util.Map" parameterType="map">
+  	select si.size_no, si.size_code
+	  from bill_om_deliver_dtl dd
+	left join item itm
+        on dd.item_no = itm.item_no
+	 inner join size_info si
+	    on dd.size_no = si.size_no and si.size_kind =  itm.size_kind
+	    where 1=1
+	    <if test="null!=params.locno and ''!=params.locno">
+        	and dd.locno = #{params.locno,jdbcType=VARCHAR}
+        </if>
+	 group by si.size_no, si.size_code
+	 order by si.size_code
+  </select>
+  <select id="selectDeliverDtlSizeNum" resultType="java.util.Map">
+  	select dd.size_no,
+       max(si.size_code) size_code,
+       max(si.size_kind) size_kind,
+       sum(dd.qty) as qty
+  from bill_om_deliver_dtl dd
+ inner join item i
+    on i.item_no = dd.item_no
+    <!--  
+ inner join category c
+			on c.cate_no = i.cate_no
+    -->
+ inner join size_info si
+    on si.size_kind = i.size_kind
+    and si.size_no = dd.size_no
+	 where 1=1
+		<if test="null!=params.locno and ''!=params.locno">
+			and dd.locno = #{params.locno,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.itemNo and ''!=params.itemNo">
+			and dd.item_no = #{params.itemNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.deliverNo and ''!=params.deliverNo">
+			and dd.deliver_no = #{params.deliverNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.expNo and ''!=params.expNo">
+			and dd.exp_no = #{params.expNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.storeNo and ''!=params.storeNo">
+			and dd.store_no = #{params.storeNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.barcode and ''!=params.barcode">
+			and dd.barcode = #{params.barcode,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.cateNo and params.cateNo!=''">
+	      	and i.cate_no = #{params.cateNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.years and params.years!=''">
+			and i.years = #{params.years,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.season and params.season!=''">
+			and i.season = #{params.season,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.gender and params.gender!=''">
+			and i.gender = #{params.gender,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=authorityParams and null!=authorityParams.hasBrandNoList">
+			and dd.brand_no in
+			<include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+		</if>
+		<!--  
+            <choose>
+			 		<when test="params.cateThreeValues != null">
+				 		<foreach collection="params.cateThreeValues" item="value" open=" and (" close=")" separator="or">
+							c.search_code like '${value}%'
+						</foreach>
+			 		</when>
+			 		<when test="params.cateTwoValues != null">
+			 			<foreach collection="params.cateTwoValues" item="value" open="and (" close=")" separator="or">
+							c.search_code like '${value}%'
+						</foreach>
+			 		</when>
+			 		<when test="params.cateOneValues != null">
+			 			<foreach collection="params.cateOneValues" item="value" open="and (" close=")" separator="or">
+							c.search_code like '${value}%'
+						</foreach>
+			 		</when>
+			 		<otherwise>
+			 		</otherwise>
+	            </choose> 
+	     -->
+	 group by dd.size_no,dd.barcode
+  </select>
+  
+   <select id="selectExportCount" resultType="java.lang.Integer" >
+    	select count(1) as s from (
+			select locno, store_no,
+                item_no, size_kind,
+                sum(nvl(total, 0)) total,
+                exp_no, deliver_no,
+                exp_date, item_name,
+                brand_no, brand_name,
+                cate_no, cate_name,
+                store_name, years,
+                season, gender
+          	from (<include refid="Base_selectSql" />) T
+         	group by locno, store_no,
+                item_no, size_kind,
+                exp_no, deliver_no,
+                exp_date, item_name,
+                brand_no, brand_name,
+                cate_no, cate_name,
+                store_name, years,
+                season, gender
+	    ) B
+  </select>
+  
+  <select id="selectBillOmDeliverExportByGroup" resultMap="BaseResultMap" parameterType="map" >
+  		select B.*,
+  			(select ITEMNAME
+	          from LOOKUPDTL
+	         where lookupcode = 'YEARS'
+	           and itemval = B.years) years_Name,
+	       (select ITEMNAME
+	          from LOOKUPDTL
+	         where lookupcode = 'SEASON'
+	           and itemval = B.season) season_Name,
+	       (select ITEMNAME
+	          from LOOKUPDTL
+	         where lookupcode = 'GENDER'
+	           and itemval = B.gender) gender_Name,
+			rownum rn
+	  		from (
+	  		select locno, store_no,
+                item_no, size_no, size_kind,
+                nvl(total, 0) total,
+                exp_no, deliver_no,
+                exp_date, item_name,
+                brand_no, brand_name,
+                cate_no, cate_name,
+                store_name, years,
+                season, gender
+          	from (<include refid="Base_selectSql" />) T
+	  		order by exp_no desc, exp_date desc, store_no, item_no) B
+  </select>
+  
+</mapper>

@@ -1,0 +1,1457 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.SplitDepotLedgerReportMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.SplitDepotLedgerReport" >
+   	<result property="qty" column="qty" jdbcType="DECIMAL" />
+    <result property="rkCrkQty" column="rk_crk_qty" jdbcType="DECIMAL" />
+    <result property="rkCyrQty" column="rk_cyr_qty" jdbcType="DECIMAL" />
+    <result property="rkDthQty" column="rk_dth_qty" jdbcType="DECIMAL" />
+    <result property="rkQtrkQty" column="rk_qtrk_qty" jdbcType="DECIMAL" />
+    <result property="ckCcdQty" column="ck_ccd_qty" jdbcType="DECIMAL" />
+    <result property="ckCycQty" column="ck_cyc_qty" jdbcType="DECIMAL" />
+    <result property="ckQtckQty" column="ck_qtck_qty" jdbcType="DECIMAL" />
+    <result property="ckKbmzhQty" column="ck_kbmzh_qty" jdbcType="DECIMAL" />
+    <result property="pdPyQty" column="pd_py_qty" jdbcType="DECIMAL" />
+    <result property="pdPkQty" column="pd_pk_qty" jdbcType="DECIMAL" />
+    <result property="tzKctzQty" column="tz_kctz_qty" jdbcType="DECIMAL" />
+    <result property="tzKctzTypeQty" column="tz_kctz_type_qty" jdbcType="DECIMAL" />
+    <result property="ydhCrQty" column="ydh_cr_qty" jdbcType="DECIMAL" />
+    <result property="ydhCyrQty" column="ydh_cyr_qty" jdbcType="DECIMAL" />
+    <result property="ydhDtcQty" column="ydh_dtc_qty" jdbcType="DECIMAL" />
+    <result property="yswyCrQty" column="yswy_cr_qty" jdbcType="DECIMAL" />
+    <result property="yswyCyrQty" column="yswy_cyr_qty" jdbcType="DECIMAL" />
+    <result property="yswyDtcQty" column="yswy_dtc_qty" jdbcType="DECIMAL" />
+    <result property="yshCrQty" column="ysh_cr_qty" jdbcType="DECIMAL" />
+    <result property="yshCyrQty" column="ysh_cyr_qty" jdbcType="DECIMAL" />
+    <result property="yshDtcQty" column="ysh_dtc_qty" jdbcType="DECIMAL" />
+    <result property="selectDate" column="select_date" jdbcType="TIMESTAMP" />
+    <result property="startDate" column="startDate" jdbcType="TIMESTAMP" />
+    <result property="endDate" column="endDate" jdbcType="TIMESTAMP" />
+    <result property="brandName" column="brand_name" jdbcType="VARCHAR" />
+  </resultMap>
+  
+   
+  <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and it.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <sql id="condition">		
+  		<if test="params.brandNoValues != null">
+  		 	and it.brand_no in
+			<foreach collection="params.brandNoValues" item="brandNo" open="(" close=")" separator=",">
+				#{brandNo}
+			</foreach>
+		</if>
+		
+		<choose>
+	 		<when test="params.cateThreeValues != null">
+		 		<foreach collection="params.cateThreeValues" item="value" open=" and (" close=")" separator="or">
+					c.search_code like '${value}%'
+				</foreach>
+	 		</when>
+	 		<when test="params.cateTwoValues != null">
+	 			<foreach collection="params.cateTwoValues" item="value" open="and (" close=")" separator="or">
+					c.search_code like '${value}%'
+				</foreach>
+	 		</when>
+	 		<when test="params.cateOneValues != null">
+	 			<foreach collection="params.cateOneValues" item="value" open="and (" close=")" separator="or">
+					c.search_code like '${value}%'
+				</foreach>
+	 		</when>
+	 		<otherwise>
+	 		</otherwise>
+	 	</choose> 
+		
+		<if test="null!=params.sysNo and ''!=params.sysNo">
+			and it.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.years and ''!=params.years">
+			and s3.itemname LIKE '%${params.years}%'
+		</if>
+		<!-- <if test="null!=params.season and ''!=params.season">
+			and s1.itemname LIKE '%${params.season}%'
+		</if>
+		<if test="null!=params.gender and ''!=params.gender">
+			and s2.itemname LIKE '%${params.gender}%'
+		</if> -->
+		<if test="null != params.seasonValues">
+		    and it.season in
+		    <foreach collection="params.seasonValues" item="season" open="(" close=")" separator=",">
+				#{season}
+			</foreach>
+		</if>
+		<if test="null != params.genderValues">
+		    and it.gender in
+		    <foreach collection="params.genderValues" item="gender" open="(" close=")" separator=",">
+				#{gender}
+			</foreach>
+		</if>
+		<include refid="AuthorityCondition" />
+   </sql>
+   
+   
+   <!-- 查询往前推一天的库存条件 -->
+   <sql id="condition_kc_qty">
+		<if test="params.qualityValues != null">
+  		 	and v.quality in
+			<foreach collection="params.qualityValues" item="quality" open="(" close=")" separator=",">
+				#{quality}
+			</foreach>
+		</if>
+		<if test="null!=params.itemType and ''!=params.itemType">
+			and v.item_type = #{params.itemType,jdbcType=VARCHAR}
+		</if>
+	</sql>
+   
+   <!-- 库存条件 -->
+   <sql id="condition_kc">
+		<if test="params.qualityValues != null">
+  		 	and v.quality in
+			<foreach collection="params.qualityValues" item="quality" open="(" close=")" separator=",">
+				#{quality}
+			</foreach>
+		</if>
+		<if test="null!=params.itemType and ''!=params.itemType">
+			and v.item_type = #{params.itemType,jdbcType=VARCHAR}
+		</if>
+	</sql>
+   
+   <!-- 预到货通知单条件 -->
+   <sql id="condition_im_import">
+		<if test="null!=params.startDate and ''!=params.startDate">
+				<![CDATA[
+					and ii.audittm >= to_date('${params.startDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="null!=params.endDate and ''!=params.endDate">
+				<![CDATA[
+					and ii.audittm <= to_date('${params.endDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="params.qualityValues != null">
+  		 	and ii.quality in
+			<foreach collection="params.qualityValues" item="quality" open="(" close=")" separator=",">
+				#{quality}
+			</foreach>
+		</if>
+	</sql>
+	
+   <!-- 店退仓通知单未收条件 -->
+   <sql id="condition_uu_untread">
+		<if test="null!=params.startDate and ''!=params.startDate">
+				<![CDATA[
+					and uu.audittm >= to_date('${params.startDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="null!=params.endDate and ''!=params.endDate">
+				<![CDATA[
+					and uu.audittm <= to_date('${params.endDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="params.qualityValues != null">
+  		 	and uu.quality in
+			<foreach collection="params.qualityValues" item="quality" open="(" close=")" separator=",">
+				#{quality}
+			</foreach>
+		</if>
+	</sql>
+	
+	<!-- 店退仓通知单已收未验条件 -->
+   <sql id="condition_uu_receipt">
+		<if test="null!=params.startDate and ''!=params.startDate">
+				<![CDATA[
+					and ur.audittm >= to_date('${params.startDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="null!=params.endDate and ''!=params.endDate">
+				<![CDATA[
+					and ur.audittm <= to_date('${params.endDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="params.qualityValues != null">
+  		 	and ur.quality in
+			<foreach collection="params.qualityValues" item="quality" open="(" close=")" separator=",">
+				#{quality}
+			</foreach>
+		</if>
+	</sql>
+	
+	<!-- 收货单条件 -->
+   <sql id="condition_im_receipt">
+		<if test="null!=params.startDate and ''!=params.startDate">
+				<![CDATA[
+					and ir.audittm >= to_date('${params.startDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="null!=params.endDate and ''!=params.endDate">
+				<![CDATA[
+					and ir.audittm <= to_date('${params.endDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="params.qualityValues != null">
+  		 	and ird.quality in
+			<foreach collection="params.qualityValues" item="quality" open="(" close=")" separator=",">
+				#{quality}
+			</foreach>
+		</if>
+	</sql>
+   
+   <!-- 记账条件 -->
+   <sql id="condition_ccm">
+		<if test="null!=params.startDate and ''!=params.startDate">
+				<![CDATA[
+					and ccm.createtm >= to_date('${params.startDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="null!=params.endDate and ''!=params.endDate">
+				<![CDATA[
+					and ccm.createtm <= to_date('${params.endDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="params.qualityValues != null">
+  		 	and ccm.quality in
+			<foreach collection="params.qualityValues" item="quality" open="(" close=")" separator=",">
+				#{quality}
+			</foreach>
+		</if>
+	</sql>
+	
+	<!-- 验收单条件 -->
+	<sql id="condition_icd">
+		<if test="null!=params.startDate and ''!=params.startDate">
+				<![CDATA[
+					and ic.audittm >= to_date('${params.startDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="null!=params.endDate and ''!=params.endDate">
+				<![CDATA[
+					and ic.audittm <= to_date('${params.endDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="params.qualityValues != null">
+  		 	and icd.quality in
+			<foreach collection="params.qualityValues" item="quality" open="(" close=")" separator=",">
+				#{quality}
+			</foreach>
+		</if>
+	</sql>
+	
+	<!-- 装车单条件 -->
+	<sql id="condition_odd">
+		<if test="null!=params.startDate and ''!=params.startDate">
+				<![CDATA[
+					and od.audittm >= to_date('${params.startDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="null!=params.endDate and ''!=params.endDate">
+				<![CDATA[
+					and od.audittm <= to_date('${params.endDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="params.qualityValues != null">
+  		 	and odd.quality in
+			<foreach collection="params.qualityValues" item="quality" open="(" close=")" separator=",">
+				#{quality}
+			</foreach>
+		</if>
+	</sql>
+   <!-- 业务单据查询条件 -->
+   <sql id="condition_v">
+		<if test="null!=params.startDate and ''!=params.startDate">
+				<![CDATA[
+					and v.select_date >= to_date('${params.startDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="null!=params.endDate and ''!=params.endDate">
+				<![CDATA[
+					and v.select_date <= to_date('${params.endDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+				]]>
+		</if>
+		<if test="params.qualityValues != null">
+  		 	and v.quality in
+			<foreach collection="params.qualityValues" item="quality" open="(" close=")" separator=",">
+				#{quality}
+			</foreach>
+		</if>
+		<if test="null!=params.itemType and ''!=params.itemType">
+			and v.item_type = #{params.itemType,jdbcType=VARCHAR}
+		</if>
+	</sql>
+
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from (
+	  <include refid="Base_Sql" />
+	  )
+  </select>
+
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map">
+		select B.* from (select 
+		A.*,rownum rn
+		<include refid="SelectByPage_Other_Column_List" />	from(
+		<include refid="Base_Sql" />
+		) A where rownum &lt; #{page.endRowNum}) B where rn &gt;
+		#{page.startRowNum}
+  </select>
+  
+  <!-- 其他通用条件 -->
+  <sql id="item_other_condition">
+  		inner join item it on it.item_no = sub2.item_no
+		left join brand b on b.brand_no = it.brand_no
+		left join category c on it.cate_no=c.cate_no		
+	  	left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+			from LOOKUPDTL ld
+			where ld.lookupcode = 'SEASON') s1
+			on it.season = s1.itemval
+	    left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+			from LOOKUPDTL ld
+			where ld.lookupcode = 'GENDER') s2
+			on it.gender = s2.itemval
+		left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+			from LOOKUPDTL ld
+			where ld.lookupcode = 'YEARS') s3
+		on it.years = s3.itemval
+		
+  </sql>
+  
+  <sql id="item_history_condition">
+  		inner join item it on it.item_no = v.item_no
+	  	left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+			from LOOKUPDTL ld
+			where ld.lookupcode = 'SEASON') s1
+			on it.season = s1.itemval
+	    left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+			from LOOKUPDTL ld
+			where ld.lookupcode = 'GENDER') s2
+			on it.gender = s2.itemval
+		left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+			from LOOKUPDTL ld
+			where ld.lookupcode = 'YEARS') s3
+		on it.years = s3.itemval
+  </sql>
+  
+  <!-- 库存查询sql -->
+  <sql id="KC_Base_Sql" >
+  		select
+			v.item_no,
+			v.quality,
+			v.qty as lastIssueQty,
+			0 as rk_crk_qty,
+			0 as rk_cyr_qty,
+			0 as rk_dth_qty,
+			0 as rk_qtrk_qty,
+			0 as ck_ccd_qty,
+			0 as ck_cyc_qty,
+			0 as ck_qtck_qty,
+			0 as ck_kbmzh_qty,
+			0 as pd_py_qty,
+			0 as pd_pk_qty,
+			0 as tz_kctz_qty,
+			0 as tz_kctz_type_qty,
+			0 as ydh_cr_qty,
+			0 as ydh_cyr_qty,
+			0 as ydh_dtc_qty,
+			0 as yswy_cr_qty,
+			0 as yswy_cyr_qty,
+			0 as yswy_dtc_qty,
+			0 as ysh_cr_qty,
+			0 as ysh_cyr_qty,
+			0 as ysh_dtc_qty
+		from con_content_history v
+			where v.locno = #{params.locno,jdbcType=VARCHAR}
+			and v.content_date = to_date('${params.startDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')-1
+			<include refid="condition_kc" />
+  </sql>
+  
+  <!-- 入库  厂入库sql -->
+  <sql id="Rk_Crk_Base_Sql" >
+  		select 
+			icd.item_no,
+			icd.quality,
+			0 as lastIssueQty,
+			icd.check_qty as rk_crk_qty,
+			0 as rk_cyr_qty,
+			0 as rk_dth_qty,
+			0 as rk_qtrk_qty,
+			0 as ck_ccd_qty,
+			0 as ck_cyc_qty,
+			0 as ck_qtck_qty,
+			0 as ck_kbmzh_qty,
+			0 as pd_py_qty,
+			0 as pd_pk_qty,
+			0 as tz_kctz_qty,
+			0 as ydh_cr_qty,
+			0 as ydh_cyr_qty,
+			0 as ydh_dtc_qty,
+			0 as yswy_cr_qty,
+			0 as yswy_cyr_qty,
+			0 as yswy_dtc_qty,
+			0 as ysh_cr_qty,
+			0 as ysh_cyr_qty,
+			0 as ysh_dtc_qty
+			  from bill_im_check ic
+			 inner join bill_im_check_dtl icd
+			    on icd.locno = ic.locno
+			   and icd.owner_no = ic.owner_no
+			   and icd.check_no = ic.check_no
+			 where ic.locno = #{params.locno,jdbcType=VARCHAR}
+			   and ic.status != '10'
+			   <include refid="condition_icd" />
+			   and exists (select 'X'
+			          from bill_im_receipt_dtl ird
+			         inner join bill_im_import ii
+			            on ii.locno = ird.locno
+			           and ii.owner_no = ird.owner_no
+			           and ii.import_no = ird.import_no
+			         where ii.business_type = '0'
+			           and ird.locno = ic.locno
+			           and ird.owner_no = ic.owner_no
+			           and ird.receipt_no = ic.s_import_no)
+  </sql>
+  
+  <!-- 入库  仓移入sql -->
+  <sql id="Rk_Cyr_Base_Sql" >
+  		select 
+			icd.item_no,
+			icd.quality,
+			0 as lastIssueQty,
+			0 as rk_crk_qty,
+			icd.check_qty as rk_cyr_qty,
+			0 as rk_dth_qty,
+			0 as rk_qtrk_qty,
+			0 as ck_ccd_qty,
+			0 as ck_cyc_qty,
+			0 as ck_qtck_qty,
+			0 as ck_kbmzh_qty,
+			0 as pd_py_qty,
+			0 as pd_pk_qty,
+			0 as tz_kctz_qty,
+			0 as ydh_cr_qty,
+			0 as ydh_cyr_qty,
+			0 as ydh_dtc_qty,
+			0 as yswy_cr_qty,
+			0 as yswy_cyr_qty,
+			0 as yswy_dtc_qty,
+			0 as ysh_cr_qty,
+			0 as ysh_cyr_qty,
+			0 as ysh_dtc_qty
+			  from bill_im_check ic
+			 inner join bill_im_check_dtl icd
+			    on icd.locno = ic.locno
+			   and icd.owner_no = ic.owner_no
+			   and icd.check_no = ic.check_no
+			 where ic.locno = #{params.locno,jdbcType=VARCHAR}
+			   and ic.status != '10'
+			   <include refid="condition_icd" />
+			   and exists (select 'X'
+			          from bill_im_receipt_dtl ird
+			         inner join bill_im_import ii
+			            on ii.locno = ird.locno
+			           and ii.owner_no = ird.owner_no
+			           and ii.import_no = ird.import_no
+			         where ii.business_type = '4'
+			           and ird.locno = ic.locno
+			           and ird.owner_no = ic.owner_no
+			           and ird.receipt_no = ic.s_import_no)
+  </sql>
+  
+  <!-- 入库  店退货sql -->
+  <sql id="Rk_Dth_Base_Sql" >
+  		select 
+			ccm.item_no,
+			ccm.quality,
+			0 as lastIssueQty,
+			0 as rk_crk_qty,
+			0 as rk_cyr_qty,
+			ccm.move_qty as rk_dth_qty,
+			0 as rk_qtrk_qty,
+			0 as ck_ccd_qty,
+			0 as ck_cyc_qty,
+			0 as ck_qtck_qty,
+			0 as ck_kbmzh_qty,
+			0 as pd_py_qty,
+			0 as pd_pk_qty,
+			0 as tz_kctz_qty,
+			0 as ydh_cr_qty,
+			0 as ydh_cyr_qty,
+			0 as ydh_dtc_qty,
+			0 as yswy_cr_qty,
+			0 as yswy_cyr_qty,
+			0 as yswy_dtc_qty,
+			0 as ysh_cr_qty,
+			0 as ysh_cyr_qty,
+			0 as ysh_dtc_qty
+			  from con_content_move ccm
+			 where ccm.paper_type = 'UC'
+			   and ccm.locno = #{params.locno,jdbcType=VARCHAR}
+			   and ccm.io_flag = 'I'
+			   <include refid="condition_ccm" />
+  </sql>
+  
+  <!-- 入库  其他入库sql -->
+  <sql id="Rk_Qtrk_Base_Sql" >
+  		select 
+			ccm.item_no,
+			ccm.quality,
+			0 as lastIssueQty,
+			0 as rk_crk_qty,
+			0 as rk_cyr_qty,
+			0 as rk_dth_qty,
+			ccm.move_qty as rk_qtrk_qty,
+			0 as ck_ccd_qty,
+			0 as ck_cyc_qty,
+			0 as ck_qtck_qty,
+			0 as ck_kbmzh_qty,
+			0 as pd_py_qty,
+			0 as pd_pk_qty,
+			0 as tz_kctz_qty,
+			0 as ydh_cr_qty,
+			0 as ydh_cyr_qty,
+			0 as ydh_dtc_qty,
+			0 as yswy_cr_qty,
+			0 as yswy_cyr_qty,
+			0 as yswy_dtc_qty,
+			0 as ysh_cr_qty,
+			0 as ysh_cyr_qty,
+			0 as ysh_dtc_qty
+			 from con_content_move ccm
+			 where ccm.paper_type = 'OI'
+			   and ccm.locno = #{params.locno,jdbcType=VARCHAR}
+			   and ccm.io_flag = 'I'
+			   <include refid="condition_ccm" />
+  </sql>
+  
+  <!-- 出库  仓出店sql -->
+  <sql id="Ck_Ccd_Base_Sql" >
+  		select 
+			odd.item_no,
+			odd.quality,
+			0 as lastIssueQty,
+			0 as rk_crk_qty,
+			0 as rk_cyr_qty,
+			0 as rk_dth_qty,
+			0 as rk_qtrk_qty,
+			odd.qty as ck_ccd_qty,
+			0 as ck_cyc_qty,
+			0 as ck_qtck_qty,
+			0 as ck_kbmzh_qty,
+			0 as pd_py_qty,
+			0 as pd_pk_qty,
+			0 as tz_kctz_qty,
+			0 as ydh_cr_qty,
+			0 as ydh_cyr_qty,
+			0 as ydh_dtc_qty,
+			0 as yswy_cr_qty,
+			0 as yswy_cyr_qty,
+			0 as yswy_dtc_qty,
+			0 as ysh_cr_qty,
+			0 as ysh_cyr_qty,
+			0 as ysh_dtc_qty
+			  from bill_om_deliver od
+			 inner join bill_om_deliver_dtl odd
+			    on od.locno = odd.locno
+			   and od.owner_no = odd.owner_no
+			   and od.deliver_no = odd.deliver_no
+			 where od.locno = #{params.locno,jdbcType=VARCHAR}
+			   and od.status != '10' 
+			   <include refid="condition_odd" />
+			   and exists (select 'X'
+			          from bill_om_exp oe
+			         where oe.business_type = '1'
+			           and oe.exp_no = odd.exp_no)
+  </sql>
+  
+  
+  <!-- 出库  仓移出sql -->
+  <sql id="Ck_Cyc_Base_Sql" >
+  		select 
+			odd.item_no,
+			odd.quality,
+			0 as lastIssueQty,
+			0 as rk_crk_qty,
+			0 as rk_cyr_qty,
+			0 as rk_dth_qty,
+			0 as rk_qtrk_qty,
+			0 as ck_ccd_qty,
+			odd.qty as ck_cyc_qty,
+			0 as ck_qtck_qty,
+			0 as ck_kbmzh_qty,
+			0 as pd_py_qty,
+			0 as pd_pk_qty,
+			0 as tz_kctz_qty,
+			0 as ydh_cr_qty,
+			0 as ydh_cyr_qty,
+			0 as ydh_dtc_qty,
+			0 as yswy_cr_qty,
+			0 as yswy_cyr_qty,
+			0 as yswy_dtc_qty,
+			0 as ysh_cr_qty,
+			0 as ysh_cyr_qty,
+			0 as ysh_dtc_qty
+			  from bill_om_deliver od
+			 inner join bill_om_deliver_dtl odd
+			    on od.locno = odd.locno
+			   and od.owner_no = odd.owner_no
+			   and od.deliver_no = odd.deliver_no
+			 where od.locno = #{params.locno,jdbcType=VARCHAR}
+			   and od.status != '10' 
+			   <include refid="condition_odd" />
+			   and exists (select 'X'
+			          from bill_om_exp oe
+			         where oe.business_type = '4'
+			           and oe.exp_no = odd.exp_no)
+  </sql>
+  
+  <!-- 出库 其他出库sql -->
+  <sql id="Ck_Qtck_Base_Sql" >
+  		select
+			ccm.item_no,
+			ccm.quality,
+			0 as lastIssueQty,
+			0 as rk_crk_qty,
+			0 as rk_cyr_qty,
+			0 as rk_dth_qty,
+			0 as rk_qtrk_qty,
+			0 as ck_ccd_qty,
+			0 as ck_cyc_qty,
+			ccm.move_qty as ck_qtck_qty,
+			0 as ck_kbmzh_qty,
+			0 as pd_py_qty,
+			0 as pd_pk_qty,
+			0 as tz_kctz_qty,
+			0 as ydh_cr_qty,
+			0 as ydh_cyr_qty,
+			0 as ydh_dtc_qty,
+			0 as yswy_cr_qty,
+			0 as yswy_cyr_qty,
+			0 as yswy_dtc_qty,
+			0 as ysh_cr_qty,
+			0 as ysh_cyr_qty,
+			0 as ysh_dtc_qty
+			  from con_content_move ccm
+			 where ccm.paper_type = 'SW'
+			   and ccm.locno = #{params.locno,jdbcType=VARCHAR}
+			   and ccm.io_flag = 'O'
+			   <include refid="condition_ccm" />
+  </sql>
+  
+  <!-- 出库 跨部门转货sql -->
+  <sql id="Ck_Kbmzh_Base_Sql" >
+  		select 
+			ccm.item_no,
+			ccm.quality,
+			0 as lastIssueQty,
+			0 as rk_crk_qty,
+			0 as rk_cyr_qty,
+			0 as rk_dth_qty,
+			0 as rk_qtrk_qty,
+			0 as ck_ccd_qty,
+			0 as ck_cyc_qty,
+			0 as ck_qtck_qty,
+			ccm.move_qty as ck_kbmzh_qty,
+			0 as pd_py_qty,
+			0 as pd_pk_qty,
+			0 as tz_kctz_qty,
+			0 as ydh_cr_qty,
+			0 as ydh_cyr_qty,
+			0 as ydh_dtc_qty,
+			0 as yswy_cr_qty,
+			0 as yswy_cyr_qty,
+			0 as yswy_dtc_qty,
+			0 as ysh_cr_qty,
+			0 as ysh_cyr_qty,
+			0 as ysh_dtc_qty
+			  from con_content_move ccm
+			 where ccm.paper_type = 'CV'
+			   and ccm.locno = #{params.locno,jdbcType=VARCHAR}
+			   and ccm.io_flag = 'O'
+			   <include refid="condition_ccm" />
+  </sql>
+  
+  <!-- 盘点 盘赢sql -->
+  <sql id="Pd_Py_Base_Sql" >
+  		select 
+			ccm.item_no,
+			ccm.quality,
+			0 as lastIssueQty,
+			0 as rk_crk_qty,
+			0 as rk_cyr_qty,
+			0 as rk_dth_qty,
+			0 as rk_qtrk_qty,
+			0 as ck_ccd_qty,
+			0 as ck_cyc_qty,
+			0 as ck_qtck_qty,
+			0 as ck_kbmzh_qty,
+			ccm.move_qty as pd_py_qty,
+			0 as pd_pk_qty,
+			0 as tz_kctz_qty,
+			0 as ydh_cr_qty,
+			0 as ydh_cyr_qty,
+			0 as ydh_dtc_qty,
+			0 as yswy_cr_qty,
+			0 as yswy_cyr_qty,
+			0 as yswy_dtc_qty,
+			0 as ysh_cr_qty,
+			0 as ysh_cyr_qty,
+			0 as ysh_dtc_qty
+			  from con_content_move ccm
+			 where ccm.paper_type = 'CP'
+			   and ccm.locno = #{params.locno,jdbcType=VARCHAR}
+			   and ccm.io_flag = 'I'
+			   <include refid="condition_ccm" />
+  </sql>
+  
+  <!-- 盘点 盘赢sql -->
+  <sql id="Pd_Pk_Base_Sql" > 
+  		select 
+			ccm.item_no,
+			ccm.quality,
+			0 as lastIssueQty,
+			0 as rk_crk_qty,
+			0 as rk_cyr_qty,
+			0 as rk_dth_qty,
+			0 as rk_qtrk_qty,
+			0 as ck_ccd_qty,
+			0 as ck_cyc_qty,
+			0 as ck_qtck_qty,
+			0 as ck_kbmzh_qty,
+			0 as pd_py_qty,
+			-ccm.move_qty as pd_pk_qty,
+			0 as tz_kctz_qty,
+			0 as ydh_cr_qty,
+			0 as ydh_cyr_qty,
+			0 as ydh_dtc_qty,
+			0 as yswy_cr_qty,
+			0 as yswy_cyr_qty,
+			0 as yswy_dtc_qty,
+			0 as ysh_cr_qty,
+			0 as ysh_cyr_qty,
+			0 as ysh_dtc_qty
+			  from con_content_move ccm
+			 where ccm.paper_type = 'CP'
+			   and ccm.locno = #{params.locno,jdbcType=VARCHAR}
+			   and ccm.io_flag = 'O'
+			   <include refid="condition_ccm" />
+  </sql>
+  
+  <!-- 调整 库存调整sql -->
+  <sql id="Tz_Kctz_Base_Sql" >
+  		select 
+			ccm.item_no,
+			ccm.quality,
+			0 as lastIssueQty,
+			0 as rk_crk_qty,
+			0 as rk_cyr_qty,
+			0 as rk_dth_qty,
+			0 as rk_qtrk_qty,
+			0 as ck_ccd_qty,
+			0 as ck_cyc_qty,
+			0 as ck_qtck_qty,
+			0 as ck_kbmzh_qty,
+			0 as pd_py_qty,
+			0 as pd_pk_qty,
+			ccm.move_qty as tz_kctz_qty,
+			0 as ydh_cr_qty,
+			0 as ydh_cyr_qty,
+			0 as ydh_dtc_qty,
+			0 as yswy_cr_qty,
+			0 as yswy_cyr_qty,
+			0 as yswy_dtc_qty,
+			0 as ysh_cr_qty,
+			0 as ysh_cyr_qty,
+			0 as ysh_dtc_qty
+			  from con_content_move ccm
+			 where ccm.paper_type = 'CA'
+			   and ccm.locno = #{params.locno,jdbcType=VARCHAR}
+			   and ccm.io_flag = 'I'
+			   <include refid="condition_ccm" />
+  </sql>
+  
+  <!-- 预计到货未收  厂入sql -->
+  <sql id="Ydh_Cr_Base_Sql" >
+  		select 
+			iid.item_no,
+			ii.quality,
+			0 as lastIssueQty,
+			0 as rk_crk_qty,
+			0 as rk_cyr_qty,
+			0 as rk_dth_qty,
+			0 as rk_qtrk_qty,
+			0 as ck_ccd_qty,
+			0 as ck_cyc_qty,
+			0 as ck_qtck_qty,
+			0 as ck_kbmzh_qty,
+			0 as pd_py_qty,
+			0 as pd_pk_qty,
+			0 as tz_kctz_qty,
+			nvl(iid.po_qty,0)-nvl(iid.receipt_qty,0) as ydh_cr_qty,
+			0 as ydh_cyr_qty,
+			0 as ydh_dtc_qty,
+			0 as yswy_cr_qty,
+			0 as yswy_cyr_qty,
+			0 as yswy_dtc_qty,
+			0 as ysh_cr_qty,
+			0 as ysh_cyr_qty,
+			0 as ysh_dtc_qty
+			  from bill_im_import ii
+			 inner join bill_im_import_dtl iid
+			    on ii.locno = iid.locno
+			   and ii.owner_no = iid.owner_no
+			   and ii.import_no = iid.import_no
+			 where ii.business_type = '0'
+			    and ii.locno = #{params.locno,jdbcType=VARCHAR}
+			    and ii.status not in ('10','90','91')
+			    and nvl(iid.po_qty,0) > nvl(iid.receipt_qty,0)
+			    <include refid="condition_im_import" />
+  </sql>
+  
+  <!-- 预计到货未收  仓移入sql -->
+  <sql id="Ydh_Cyr_Base_Sql" >
+  		select 
+			iid.item_no,
+			ii.quality,
+			0 as lastIssueQty,
+			0 as rk_crk_qty,
+			0 as rk_cyr_qty,
+			0 as rk_dth_qty,
+			0 as rk_qtrk_qty,
+			0 as ck_ccd_qty,
+			0 as ck_cyc_qty,
+			0 as ck_qtck_qty,
+			0 as ck_kbmzh_qty,
+			0 as pd_py_qty,
+			0 as pd_pk_qty,
+			0 as tz_kctz_qty,
+			0 as ydh_cr_qty,
+			nvl(iid.po_qty,0)-nvl(iid.receipt_qty,0) as ydh_cyr_qty,
+			0 as ydh_dtc_qty,
+			0 as yswy_cr_qty,
+			0 as yswy_cyr_qty,
+			0 as yswy_dtc_qty,
+			0 as ysh_cr_qty,
+			0 as ysh_cyr_qty,
+			0 as ysh_dtc_qty
+			  from bill_im_import ii
+			 inner join bill_im_import_dtl iid
+			    on ii.locno = iid.locno
+			   and ii.owner_no = iid.owner_no
+			   and ii.import_no = iid.import_no
+			 where ii.business_type = '4'
+			    and ii.locno = #{params.locno,jdbcType=VARCHAR}
+			    and ii.status not in ('10','90','91')
+			    and nvl(iid.po_qty,0) > nvl(iid.receipt_qty,0)
+			    <include refid="condition_im_import" />
+  </sql>
+  
+  <!-- 预计到货未收  店退仓sql -->
+  <sql id="Ydh_Dtc_Base_Sql" >
+  		select 
+			uud.item_no,
+			uu.quality,
+			0 as lastIssueQty,
+			0 as rk_crk_qty,
+			0 as rk_cyr_qty,
+			0 as rk_dth_qty,
+			0 as rk_qtrk_qty,
+			0 as ck_ccd_qty,
+			0 as ck_cyc_qty,
+			0 as ck_qtck_qty,
+			0 as ck_kbmzh_qty,
+			0 as pd_py_qty,
+			0 as pd_pk_qty,
+			0 as tz_kctz_qty,
+			0 as ydh_cr_qty,
+			0 as ydh_cyr_qty,
+			nvl(uud.item_qty, 0) - nvl(uud.receipt_qty, 0) as ydh_dtc_qty,
+			0 as yswy_cr_qty,
+			0 as yswy_cyr_qty,
+			0 as yswy_dtc_qty,
+			0 as ysh_cr_qty,
+			0 as ysh_cyr_qty,
+			0 as ysh_dtc_qty
+			  from bill_um_untread uu
+			 inner join bill_um_untread_dtl uud
+			    on uu.locno = uud.locno
+			   and uu.owner_no = uud.owner_no
+			   and uu.untread_no = uud.untread_no
+			 where uu.status in ('11','20')
+			   and nvl(uud.item_qty, 0) > nvl(uud.receipt_qty, 0)
+			   and uu.locno = #{params.locno,jdbcType=VARCHAR}
+			   <include refid="condition_uu_untread" />
+  </sql>
+  
+  <!-- 已收未验  厂入sql -->
+  <sql id="Yswy_Cr_Base_Sql" >
+  		select 
+			ird.item_no,
+			ird.quality,
+			0 as lastIssueQty,
+			0 as rk_crk_qty,
+			0 as rk_cyr_qty,
+			0 as rk_dth_qty,
+			0 as rk_qtrk_qty,
+			0 as ck_ccd_qty,
+			0 as ck_cyc_qty,
+			0 as ck_qtck_qty,
+			0 as ck_kbmzh_qty,
+			0 as pd_py_qty,
+			0 as pd_pk_qty,
+			0 as tz_kctz_qty,
+			0 as ydh_cr_qty,
+			0 as ydh_cyr_qty,
+			0 as ydh_dtc_qty,
+			nvl(ird.receipt_qty,0)-nvl(ird.check_qty,0) as yswy_cr_qty,
+			0 as yswy_cyr_qty,
+			0 as yswy_dtc_qty,
+			0 as ysh_cr_qty,
+			0 as ysh_cyr_qty,
+			0 as ysh_dtc_qty
+			  from bill_im_receipt ir
+			 inner join bill_im_receipt_dtl ird
+			    on ir.locno = ird.locno
+			   and ir.owner_no = ird.owner_no
+			   and ir.receipt_no = ird.receipt_no
+			 where ir.status != '10'
+			   and ir.locno = #{params.locno,jdbcType=VARCHAR}
+			   and nvl(ird.receipt_qty,0) > nvl(ird.check_qty,0)
+			   and ir.business_type = '0'
+			   <include refid="condition_im_receipt" />
+			   and exists (select 'X'
+			          from bill_im_import ii
+			         where ii.status != '10'
+			           and ii.locno = ird.locno
+			           and ii.owner_no = ird.owner_no
+			           and ii.import_no = ird.import_no
+			           and ii.business_type = '0')
+  </sql>
+  
+  <!-- 已收未验  仓移入sql -->
+  <sql id="Yswy_Cyr_Base_Sql" >
+  		select 
+			ird.item_no,
+			ird.quality,
+			0 as lastIssueQty,
+			0 as rk_crk_qty,
+			0 as rk_cyr_qty,
+			0 as rk_dth_qty,
+			0 as rk_qtrk_qty,
+			0 as ck_ccd_qty,
+			0 as ck_cyc_qty,
+			0 as ck_qtck_qty,
+			0 as ck_kbmzh_qty,
+			0 as pd_py_qty,
+			0 as pd_pk_qty,
+			0 as tz_kctz_qty,
+			0 as ydh_cr_qty,
+			0 as ydh_cyr_qty,
+			0 as ydh_dtc_qty,
+			0 as yswy_cr_qty,
+			nvl(ird.receipt_qty,0)-nvl(ird.check_qty,0) as yswy_cyr_qty,
+			0 as yswy_dtc_qty,
+			0 as ysh_cr_qty,
+			0 as ysh_cyr_qty,
+			0 as ysh_dtc_qty
+			  from bill_im_receipt ir
+			 inner join bill_im_receipt_dtl ird
+			    on ir.locno = ird.locno
+			   and ir.owner_no = ird.owner_no
+			   and ir.receipt_no = ird.receipt_no
+			 where ir.status != '10'
+			   and ir.locno = #{params.locno,jdbcType=VARCHAR}
+			   and nvl(ird.receipt_qty,0) > nvl(ird.check_qty,0)
+			   and ir.business_type = '0'
+			   <include refid="condition_im_receipt" />
+			   and exists (select 'X'
+			          from bill_im_import ii
+			         where ii.status != '10'
+			           and ii.locno = ird.locno
+			           and ii.owner_no = ird.owner_no
+			           and ii.import_no = ird.import_no
+			           and ii.business_type = '4')
+  </sql>
+  
+  <!-- 已收未验  店退仓sql -->
+  <sql id="Yswy_Dtc_Base_Sql" >
+  		select 
+			uud.item_no,
+			ur.quality,
+			0 as lastIssueQty,
+			0 as rk_crk_qty,
+			0 as rk_cyr_qty,
+			0 as rk_dth_qty,
+			0 as rk_qtrk_qty,
+			0 as ck_ccd_qty,
+			0 as ck_cyc_qty,
+			0 as ck_qtck_qty,
+			0 as ck_kbmzh_qty,
+			0 as pd_py_qty,
+			0 as pd_pk_qty,
+			0 as tz_kctz_qty,
+			0 as ydh_cr_qty,
+			0 as ydh_cyr_qty,
+			0 as ydh_dtc_qty,
+			0 as yswy_cr_qty,
+			0 as yswy_cyr_qty,
+			nvl(uud.receipt_qty,0)-nvl(uud.check_qty,0) as yswy_dtc_qty,
+			0 as ysh_cr_qty,
+			0 as ysh_cyr_qty,
+			0 as ysh_dtc_qty
+			  from bill_um_untread uu
+			 inner join bill_um_untread_dtl uud
+			    on uu.locno = uud.locno
+			   and uu.owner_no = uud.owner_no
+			   and uu.untread_no = uud.untread_no
+			 inner join bill_um_receipt ur
+			    on ur.locno = uu.locno
+			    and ur.owner_no = uu.owner_no
+			    and ur.untread_no = uu.untread_no
+			 where ur.status != '10'
+			   and nvl(uud.receipt_qty,0) > 0
+			   and nvl(uud.receipt_qty,0) > nvl(uud.check_qty,0)
+			   and uu.locno = #{params.locno,jdbcType=VARCHAR}
+			   <include refid="condition_uu_receipt" />
+  </sql>
+  
+  <!-- 已收货数  厂入sql -->
+  <sql id="Ysh_Cr_Base_Sql" >
+  		select 
+			ird.item_no,
+			ird.quality,
+			0 as lastIssueQty,
+			0 as rk_crk_qty,
+			0 as rk_cyr_qty,
+			0 as rk_dth_qty,
+			0 as rk_qtrk_qty,
+			0 as ck_ccd_qty,
+			0 as ck_cyc_qty,
+			0 as ck_qtck_qty,
+			0 as ck_kbmzh_qty,
+			0 as pd_py_qty,
+			0 as pd_pk_qty,
+			0 as tz_kctz_qty,
+			0 as ydh_cr_qty,
+			0 as ydh_cyr_qty,
+			0 as ydh_dtc_qty,
+			0 as yswy_cr_qty,
+			0 as yswy_cyr_qty,
+			0 as yswy_dtc_qty,
+			ird.receipt_qty as ysh_cr_qty,
+			0 as ysh_cyr_qty,
+			0 as ysh_dtc_qty
+			  from bill_im_receipt ir
+			 inner join bill_im_receipt_dtl ird
+			    on ir.locno = ird.locno
+			   and ir.owner_no = ird.owner_no
+			   and ir.receipt_no = ird.receipt_no
+			 where ir.status != '10'
+			   and ir.locno = #{params.locno,jdbcType=VARCHAR}
+			   and ir.business_type = '0'
+			   <include refid="condition_im_receipt" />
+			   and exists (select 'X'
+			          from bill_im_import ii
+			         where ii.status != '10'
+			           and ii.locno = ird.locno
+			           and ii.owner_no = ird.owner_no
+			           and ii.import_no = ird.import_no
+			           and ii.business_type = '0')
+  </sql>
+  
+  <!-- 已收货数 仓移入sql -->
+  <sql id="Ysh_Cyr_Base_Sql" >
+  		select 
+			ird.item_no,
+			ird.quality,
+			0 as lastIssueQty,
+			0 as rk_crk_qty,
+			0 as rk_cyr_qty,
+			0 as rk_dth_qty,
+			0 as rk_qtrk_qty,
+			0 as ck_ccd_qty,
+			0 as ck_cyc_qty,
+			0 as ck_qtck_qty,
+			0 as ck_kbmzh_qty,
+			0 as pd_py_qty,
+			0 as pd_pk_qty,
+			0 as tz_kctz_qty,
+			0 as ydh_cr_qty,
+			0 as ydh_cyr_qty,
+			0 as ydh_dtc_qty,
+			0 as yswy_cr_qty,
+			0 as yswy_cyr_qty,
+			0 as yswy_dtc_qty,
+			0 as ysh_cr_qty,
+			ird.receipt_qty as ysh_cyr_qty,
+			0 as ysh_dtc_qty
+			  from bill_im_receipt ir
+			 inner join bill_im_receipt_dtl ird
+			    on ir.locno = ird.locno
+			   and ir.owner_no = ird.owner_no
+			   and ir.receipt_no = ird.receipt_no
+			 where ir.status != '10'
+			   and ir.locno = #{params.locno,jdbcType=VARCHAR}
+			   and ir.business_type = '0'
+			   <include refid="condition_im_receipt" />
+			   and exists (select 'X'
+			          from bill_im_import ii
+			         where ii.status != '10'
+			           and ii.locno = ird.locno
+			           and ii.owner_no = ird.owner_no
+			           and ii.import_no = ird.import_no
+			           and ii.business_type = '4')
+  </sql>
+  
+  <!-- 已收货数 店退仓sql -->
+  <sql id="Ysh_Dtc_Base_Sql" >
+  		select 
+			uud.item_no,
+			ur.quality,
+			0 as lastIssueQty,
+			0 as rk_crk_qty,
+			0 as rk_cyr_qty,
+			0 as rk_dth_qty,
+			0 as rk_qtrk_qty,
+			0 as ck_ccd_qty,
+			0 as ck_cyc_qty,
+			0 as ck_qtck_qty,
+			0 as ck_kbmzh_qty,
+			0 as pd_py_qty,
+			0 as pd_pk_qty,
+			0 as tz_kctz_qty,
+			0 as ydh_cr_qty,
+			0 as ydh_cyr_qty,
+			0 as ydh_dtc_qty,
+			0 as yswy_cr_qty,
+			0 as yswy_cyr_qty,
+			0 as yswy_dtc_qty,
+			0 as ysh_cr_qty,
+			0 as ysh_cyr_qty,
+			uud.receipt_qty as ysh_dtc_qty
+			  from bill_um_untread uu
+			 inner join bill_um_untread_dtl uud
+			    on uu.locno = uud.locno
+			   and uu.owner_no = uud.owner_no
+			   and uu.untread_no = uud.untread_no
+			 inner join bill_um_receipt ur
+			    on ur.locno = uu.locno
+			    and ur.owner_no = uu.owner_no
+			    and ur.untread_no = uu.untread_no
+			 where ur.status != '10'
+			 and nvl(uud.receipt_qty,0) > 0
+			 and uu.locno = #{params.locno,jdbcType=VARCHAR}
+			 <include refid="condition_uu_receipt" />
+  </sql>
+  
+  <!-- 业务单据查询sql -->
+  <sql id="KC_V_Sql" >
+  		select
+			v.item_no,
+			v.quality,
+			sum(v.last_issue_qty) as lastIssueQty,
+			sum(v.rk_crk_qty) as rk_crk_qty,
+			sum(v.rk_cyr_qty) as rk_cyr_qty,
+			sum(v.rk_dth_qty) as rk_dth_qty,
+			sum(v.rk_qtrk_qty) as rk_qtrk_qty,
+			sum(v.ck_ccd_qty) as ck_ccd_qty,
+			sum(v.ck_cyc_qty) as ck_cyc_qty,
+			sum(v.ck_qtck_qty) as ck_qtck_qty,
+			sum(v.ck_kbmzh_qty) as ck_kbmzh_qty,
+			sum(v.pd_py_qty) as pd_py_qty,
+			sum(v.pd_pk_qty) as pd_pk_qty,
+			sum(v.tz_kctz_qty) as tz_kctz_qty,
+			sum(v.tz_kctz_type_qty) as tz_kctz_type_qty,
+			sum(v.ydh_cr_qty) as ydh_cr_qty,
+			sum(v.ydh_cyr_qty) as ydh_cyr_qty,
+			sum(v.ydh_dtc_qty) as ydh_dtc_qty,
+			sum(v.yswy_cr_qty) as yswy_cr_qty,
+			sum(v.yswy_cyr_qty) as yswy_cyr_qty,
+			sum(v.yswy_dtc_qty) as yswy_dtc_qty,
+			sum(v.ysh_cr_qty) as ysh_cr_qty,
+			sum(v.ysh_cyr_qty) as ysh_cyr_qty,
+			sum(v.ysh_dtc_qty) as ysh_dtc_qty
+		from v_split_depot_data_sum_report v
+			where v.locno = #{params.locno,jdbcType=VARCHAR}
+			<include refid="condition_v" />
+			group by v.item_no,v.quality
+  </sql>
+  
+  
+  <sql id="Base_Sql" >
+  		select 
+		       nvl(sum(sub1.lastIssueQty), 0) AS lastIssueQty,		       		       
+		       <!--本期库存=上期库存+厂入库+仓移入+店退货+其他入库—仓出店-仓移出-其他出库-跨部门转货+盘赢-盘亏-->
+		       nvl(sum(sub1.lastIssueQty), 0)+nvl(sum(sub1.rk_crk_qty), 0)+nvl(sum(sub1.rk_cyr_qty), 0)+nvl(sum(sub1.rk_dth_qty), 0)+nvl(sum(sub1.rk_qtrk_qty), 0)
+		       -nvl(sum(sub1.ck_ccd_qty), 0)-nvl(sum(sub1.ck_cyc_qty), 0)-nvl(sum(sub1.ck_qtck_qty), 0)-nvl(sum(sub1.ck_kbmzh_qty), 0)+ nvl(sum(sub1.pd_py_qty), 0)-(-nvl(sum(sub1.pd_pk_qty), 0)) AS thisIssueQty,		       
+		       nvl(sum(sub1.rk_crk_qty), 0) AS rk_crk_qty,
+		       nvl(sum(sub1.rk_cyr_qty), 0) AS rk_cyr_qty,
+		       nvl(sum(sub1.rk_dth_qty), 0) AS rk_dth_qty,
+		       nvl(sum(sub1.rk_qtrk_qty), 0) AS rk_qtrk_qty,
+		       nvl(sum(sub1.ck_ccd_qty), 0) AS ck_ccd_qty,
+		       nvl(sum(sub1.ck_cyc_qty), 0) AS ck_cyc_qty,
+		       nvl(sum(sub1.ck_qtck_qty), 0) AS ck_qtck_qty,
+		       nvl(sum(sub1.ck_kbmzh_qty), 0) AS ck_kbmzh_qty,		       
+		       nvl(sum(sub1.pd_py_qty), 0) AS pd_py_qty,
+		       nvl(sum(sub1.pd_pk_qty), 0) AS pd_pk_qty,
+		       nvl(sum(sub1.tz_kctz_qty), 0) AS tz_kctz_qty,
+		       nvl(sum(sub1.tz_kctz_type_qty), 0) AS tz_kctz_type_qty,
+		       nvl(sum(sub1.ydh_cr_qty), 0) AS ydh_cr_qty,
+		       nvl(sum(sub1.ydh_cyr_qty), 0) AS ydh_cyr_qty,
+		       nvl(sum(sub1.ydh_dtc_qty), 0) AS ydh_dtc_qty,
+		       nvl(sum(sub1.yswy_cr_qty), 0) AS yswy_cr_qty,
+		       nvl(sum(sub1.yswy_cyr_qty), 0) AS yswy_cyr_qty,
+		       nvl(sum(sub1.yswy_dtc_qty), 0) AS yswy_dtc_qty,
+		       nvl(sum(sub1.ysh_cr_qty), 0) AS ysh_cr_qty,
+		       nvl(sum(sub1.ysh_cyr_qty), 0) AS ysh_cyr_qty,
+		       nvl(sum(sub1.ysh_dtc_qty), 0) AS ysh_dtc_qty
+		       <include refid="Base_Sql_Other_Column_List" />
+		    from(
+		        select sub2.*
+		               <include refid="Sub2_Other_Column_List" />		               
+		           from (
+					<include refid="KC_Base_Sql" />
+					union all 
+					<include refid="KC_V_Sql" />
+					<!--   
+					union all 
+					<include refid="Rk_Crk_Base_Sql" />
+					union all
+					<include refid="Rk_Cyr_Base_Sql" />
+					union all
+					<include refid="Rk_Dth_Base_Sql" />
+					union all
+					<include refid="Rk_Qtrk_Base_Sql" />
+					union all
+					<include refid="Ck_Ccd_Base_Sql" />
+					union all
+					<include refid="Ck_Cyc_Base_Sql" />
+					union all
+					<include refid="Ck_Qtck_Base_Sql" />
+					union all
+					<include refid="Ck_Kbmzh_Base_Sql" />
+					union all
+					<include refid="Pd_Py_Base_Sql" />
+					union all
+					<include refid="Pd_Pk_Base_Sql" />
+					union all
+					<include refid="Tz_Kctz_Base_Sql" />
+					union all
+					<include refid="Ydh_Cr_Base_Sql" />
+					union all
+					<include refid="Ydh_Cyr_Base_Sql" />
+					union all
+					<include refid="Ydh_Dtc_Base_Sql" />
+					union all
+					<include refid="Yswy_Cr_Base_Sql" />
+					union all
+					<include refid="Yswy_Cyr_Base_Sql" />
+					union all
+					<include refid="Yswy_Dtc_Base_Sql" />
+					union all
+					<include refid="Ysh_Cr_Base_Sql" />
+					union all
+					<include refid="Ysh_Cyr_Base_Sql" />
+					union all
+					<include refid="Ysh_Dtc_Base_Sql" />  --> 
+				) sub2 <include refid="item_other_condition" />
+				WHERE 1=1
+			     <include refid="condition" />					
+		    ) sub1 
+			  <include refid="Base_Sql_Groupby" />
+			  <include refid="Base_Sql_Orderby" />
+  </sql>
+  
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+		select 
+			sum(t.lastIssueQty) lastIssueQty,
+ 			sum(t.thisIssueQty) thisIssueQty,
+			sum(t.rk_crk_qty) rk_crk_qty,
+			sum(t.rk_cyr_qty) rk_cyr_qty,
+			sum(t.rk_dth_qty) rk_dth_qty,
+			sum(t.rk_qtrk_qty) rk_qtrk_qty,
+			sum(t.ck_ccd_qty) ck_ccd_qty,
+			sum(t.ck_cyc_qty) ck_cyc_qty,
+			sum(t.ck_qtck_qty) ck_qtck_qty,
+			sum(t.ck_kbmzh_qty) ck_kbmzh_qty,
+			sum(t.pd_py_qty) pd_py_qty,
+			sum(t.pd_pk_qty) pd_pk_qty,
+			sum(t.tz_kctz_qty) tz_kctz_qty,
+			sum(t.tz_kctz_type_qty) tz_kctz_type_qty,
+			sum(t.ydh_cr_qty) ydh_cr_qty,
+			sum(t.ydh_cyr_qty) ydh_cyr_qty,
+			sum(t.ydh_dtc_qty) ydh_dtc_qty,
+			sum(t.yswy_cr_qty) yswy_cr_qty,
+			sum(t.yswy_cyr_qty) yswy_cyr_qty,
+			sum(t.yswy_dtc_qty) yswy_dtc_qty,
+			sum(t.ysh_cr_qty) ysh_cr_qty,
+			sum(t.ysh_cyr_qty) ysh_cyr_qty,
+			sum(t.ysh_dtc_qty) ysh_dtc_qty
+        from (<include refid="Base_Sql" />) t
+  </select>
+     
+  <sql id="Sub2_Other_Column_List" >  		
+  
+		<if test="(null!=params.sysNo and ''!=params.sysNo) or (null!=params.brandNo and ''!=params.brandNo)">
+		    ,b.brand_name
+		    ,b.brand_no
+		</if>
+				
+		<if test="null!=params.cateOne and ''!=params.cateOne">
+		    ,(select sub2_c.cate_code from category sub2_c where sub2_c.cate_levelid='1' and instr(c.search_code,sub2_c.search_code)=1 and rownum=1) as cateCodeOne
+		</if>
+		
+		<if test="null!=params.cateTwo and ''!=params.cateTwo">
+		    ,(select sub2_c.cate_code from category sub2_c where sub2_c.cate_levelid='2' and instr(c.search_code,sub2_c.search_code)=1 and rownum=1) as cateCodeTwo
+		</if>
+		
+		<if test="null!=params.cateThree and ''!=params.cateThree">
+		    ,(select sub2_c.cate_code from category sub2_c where sub2_c.cate_levelid='3' and instr(c.search_code,sub2_c.search_code)=1 and rownum=1) as cateCodeThree
+		</if>
+		
+		<if test="null!=params.years and ''!=params.years">
+		    ,s3.ITEMNAME as years
+		</if>
+		
+		<if test="null!=params.season and ''!=params.season">
+		   ,s1.ITEMNAME as season 
+		</if>
+		
+		<if test="null!=params.gender and ''!=params.gender">
+		    ,s2.ITEMNAME as gender
+		</if>
+  </sql>
+     
+  <sql id="Base_Sql_Other_Column_List" >
+		<if test="(null!=params.sysNo and ''!=params.sysNo) or (null!=params.brandNo and ''!=params.brandNo)">
+		    ,max(sub1.brand_name) as brand_name
+		</if>
+		
+		<if test="null!=params.cateOne and ''!=params.cateOne">
+		    ,sub1.cateCodeOne
+		</if>
+		
+		<if test="null!=params.cateTwo and ''!=params.cateTwo">
+		    ,sub1.cateCodeTwo
+		</if>
+		
+		<if test="null!=params.cateThree and ''!=params.cateThree">
+		    ,sub1.cateCodeThree
+		</if>
+		
+		<if test="null!=params.quality and ''!=params.quality">
+		    ,sub1.quality
+		</if>
+		
+		<if test="null!=params.years and ''!=params.years">
+		    ,sub1.years
+		</if>
+		
+		<if test="null!=params.season and ''!=params.season">
+		    ,sub1.season
+		</if>
+		
+		<if test="null!=params.gender and ''!=params.gender">
+		    ,sub1.gender
+		</if>
+  </sql>
+  
+  
+  <sql id="SelectByPage_Other_Column_List" >
+  
+        ,(select s.store_name from store s where s.store_no= #{params.locno,jdbcType=VARCHAR} ) as locName
+        
+        <if test="null!=params.quality and ''!=params.quality">
+			    ,(select l.itemname from lookupdtl l  where l.status='1' and l.systemid='22' and l.lookupcode ='AREA_QUALITY' and l.itemval = A.quality ) as qualityName
+		</if>        
+        
+		<if test="null!=params.cateCode and ''!=params.cateCode">
+			   ,(select cate_name from category where cate_levelid='1' and cate_code=A.cate_code and rownum=1) as cateName
+		</if>	
+		
+		<if test="null!=params.cateOne and ''!=params.cateOne">
+			   ,(select cate_name from category where cate_levelid='1' and cate_code=A.cateCodeOne and rownum=1) as cateOneName
+		</if>
+		
+		<if test="null!=params.cateTwo and ''!=params.cateTwo">
+			    ,(select cate_name from category where cate_levelid='2' and cate_code=A.cateCodeTwo and rownum=1) as cateTwoName
+		</if>
+		
+		<if test="null!=params.cateThree and ''!=params.cateThree">
+			    ,(select cate_name from category where cate_levelid='3' and cate_code=A.cateCodeThree and rownum=1) as cateThreeName
+		</if>
+  </sql>
+  
+  <sql id="Base_Sql_Groupby" >  
+        <trim prefix="group by" prefixOverrides=",">
+			<if test="(null!=params.sysNo and ''!=params.sysNo) or (null!=params.brandNo and ''!=params.brandNo)" >
+			    ,sub1.brand_no
+			</if>
+					
+			<if test="null!=params.cateOne and ''!=params.cateOne">
+			    ,sub1.cateCodeOne
+			</if>
+		
+			<if test="null!=params.cateTwo and ''!=params.cateTwo">
+			    ,sub1.cateCodeTwo
+			</if>
+		
+			<if test="null!=params.cateThree and ''!=params.cateThree">
+			    ,sub1.cateCodeThree
+			</if>
+			
+			<if test="null!=params.quality and ''!=params.quality">
+			    ,sub1.quality
+			</if>
+			
+			<if test="null!=params.years and ''!=params.years">
+			    ,sub1.years
+			</if>
+			
+			<if test="null!=params.season and ''!=params.season">
+			    ,sub1.season
+			</if>
+			
+			<if test="null!=params.gender and ''!=params.gender">
+			    ,sub1.gender
+			</if>
+        </trim>
+  </sql>
+    
+  <sql id="Base_Sql_Orderby" >
+        <trim prefix="order by" prefixOverrides=",">
+			<if test="(null!=params.sysNo and ''!=params.sysNo) or (null!=params.brandNo and ''!=params.brandNo)" >
+			    ,sub1.brand_no
+			</if>
+					
+			<if test="null!=params.cateOne and ''!=params.cateOne">
+			    ,sub1.cateCodeOne
+			</if>
+		
+			<if test="null!=params.cateTwo and ''!=params.cateTwo">
+			    ,sub1.cateCodeTwo
+			</if>
+		
+			<if test="null!=params.cateThree and ''!=params.cateThree">
+			    ,sub1.cateCodeThree
+			</if>
+			
+			<if test="null!=params.quality and ''!=params.quality">
+			    ,sub1.quality
+			</if>
+			
+			<if test="null!=params.years and ''!=params.years">
+			    ,sub1.years
+			</if>
+			
+			<if test="null!=params.season and ''!=params.season">
+			    ,sub1.season
+			</if>
+			
+			<if test="null!=params.gender and ''!=params.gender">
+			    ,sub1.gender
+			</if>
+        </trim>
+  </sql>
+  
+</mapper>

@@ -1,0 +1,712 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BillConConvertGoodsDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillConConvertGoodsDtl" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="CONVERT_GOODS_NO" property="convertGoodsNo" jdbcType="VARCHAR" />
+    <id column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+    <result column="CHECK_NO" property="checkNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="ITEM_QTY" property="itemQty" jdbcType="DECIMAL" />
+    <result column="REAL_QTY" property="realQty" jdbcType="DECIMAL" />
+    <result column="BOX_NO" property="boxNo" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="BRAND_NO" property="brandNo" jdbcType="VARCHAR" />
+    <result column="PACK_QTY" property="packQty" jdbcType="DECIMAL" />
+    <result column="ITEM_TYPE" property="itemType" jdbcType="VARCHAR" />
+    <result column="QUALITY" property="quality" jdbcType="VARCHAR" />
+    <result column="SOURCE_NO" property="sourceNo" jdbcType="VARCHAR" />
+    <result column="BUSINESS_TYPE" property="businessType" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="S_CELL_NO" property="sCellNo" jdbcType="VARCHAR" />
+    <result column="D_CELL_NO" property="dCellNo" jdbcType="VARCHAR" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="COLOR_NAME" property="colorName" jdbcType="VARCHAR" />
+    <result column="BRAND_NAME" property="brandName" jdbcType="VARCHAR" />
+    <result column="STORE_NAME" property="storeName" jdbcType="VARCHAR" />
+    <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+  <sql id="Base_Column_List" >
+    LOCNO, OWNER_NO, CONVERT_GOODS_NO, ROW_ID, CHECK_NO, ITEM_NO, SIZE_NO, ITEM_QTY, 
+    REAL_QTY, BOX_NO, STATUS, BRAND_NO, PACK_QTY, ITEM_TYPE, QUALITY, SOURCE_NO, BUSINESS_TYPE, 
+    EDITTM, S_CELL_NO, D_CELL_NO, REMARK
+  </sql>
+  
+  <!--  
+  <sql id="Base_Column_List_Item" >
+    d.LOCNO, d.OWNER_NO, d.CONVERT_GOODS_NO, d.ROW_ID, d.CHECK_NO, d.ITEM_NO, d.SIZE_NO, d.ITEM_QTY, 
+    d.REAL_QTY, d.BOX_NO, d.STATUS, d.BRAND_NO, d.PACK_QTY, d.ITEM_TYPE, d.QUALITY, d.SOURCE_NO, d.BUSINESS_TYPE, 
+    d.EDITTM, d.S_CELL_NO, d.D_CELL_NO, d.REMARK,it.SUPPLIER_NO as supplierNo
+  </sql>
+  -->
+  
+  <sql id="Base_Column_List_Item" >
+    d.LOCNO, d.OWNER_NO, d.CONVERT_GOODS_NO, d.ITEM_NO, d.SIZE_NO, 
+    d.BRAND_NO, d.PACK_QTY, d.ITEM_TYPE, d.QUALITY, d.S_CELL_NO, d.D_CELL_NO, 
+    d.REMARK,it.SUPPLIER_NO as supplierNo
+  </sql>
+  
+  <sql id="Base_Column_List_Page" >
+    d.LOCNO, d.OWNER_NO, d.CONVERT_GOODS_NO as convertGoodsNo, d.ROW_ID, d.CHECK_NO as checkNo, 
+    d.ITEM_NO as itemNo, d.SIZE_NO as sizeNo, d.ITEM_QTY, d.REAL_QTY as realQty, 
+    d.BOX_NO as boxNo, d.STATUS, d.BRAND_NO, d.PACK_QTY, 
+    d.ITEM_TYPE, d.QUALITY, d.SOURCE_NO as sourceNo, d.BUSINESS_TYPE,d.EDITTM, d.S_CELL_NO, d.D_CELL_NO, d.REMARK,
+    i.ITEM_NAME as itemName,c.COLOR_NAME as colorName,b.BRAND_NAME as brandName
+  </sql>
+  
+  
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.convertGoodsNo and ''!=params.convertGoodsNo" >
+         and  CONVERT_GOODS_NO = #{params.convertGoodsNo}
+      </if>
+       <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+         and  OWNER_NO = #{params.ownerNo}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+         and  locno = #{params.locno}
+      </if>
+      <if test="null!=params.checkNo and ''!=params.checkNo" >
+         and  check_no = #{params.checkNo}
+      </if>
+    </if>
+  </sql>
+  
+  
+  <sql id="conditionPage" >
+    <if test="null!=params" >
+      <if test="null!=params.convertGoodsNo and ''!=params.convertGoodsNo" >
+         and  d.CONVERT_GOODS_NO = #{params.convertGoodsNo}
+      </if>
+       <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+         and  d.OWNER_NO = #{params.ownerNo}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+         and  d.locno = #{params.locno}
+      </if>
+      <if test="null!=params.checkNo and ''!=params.checkNo" >
+         and  d.check_no = #{params.checkNo}
+      </if>
+    </if>
+  </sql>
+  
+  <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and d.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillConConvertGoodsDtlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_CON_CONVERT_GOODS_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and CONVERT_GOODS_NO = #{convertGoodsNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </select>
+  
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_CON_CONVERT_GOODS_DTL d where 1=1 
+    <include refid="conditionPage" />
+    <include refid="AuthorityCondition" />
+  </select>
+  
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List_Page" />
+     from BILL_CON_CONVERT_GOODS_DTL d 
+     left join item i on i.item_no = d.item_no
+     LEFT JOIN color_info c ON c.color_no = i.color_no
+	 left join brand b on b.brand_no = i.brand_no
+     where 1=1 
+     <include refid="conditionPage" />
+     <include refid="AuthorityCondition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_CON_CONVERT_GOODS_DTL where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillConConvertGoodsDtlKey" >
+    delete from BILL_CON_CONVERT_GOODS_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and CONVERT_GOODS_NO = #{convertGoodsNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillConConvertGoodsDtl" >
+    delete from BILL_CON_CONVERT_GOODS_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and CONVERT_GOODS_NO = #{convertGoodsNo,jdbcType=VARCHAR}
+      <if test="null!=rowId and ''!=rowId" >
+     	 and ROW_ID = #{rowId,jdbcType=DECIMAL}
+      </if>
+      <if test="null!=checkNo and ''!=checkNo" >
+     	 and CHECK_NO = #{checkNo,jdbcType=VARCHAR}
+      </if>
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillConConvertGoodsDtl" >
+    insert into BILL_CON_CONVERT_GOODS_DTL (LOCNO, OWNER_NO, CONVERT_GOODS_NO, 
+      ROW_ID, CHECK_NO, ITEM_NO, 
+      SIZE_NO, ITEM_QTY, REAL_QTY, 
+      BOX_NO, STATUS, BRAND_NO, 
+      PACK_QTY, ITEM_TYPE, QUALITY, 
+      SOURCE_NO, BUSINESS_TYPE, EDITTM, 
+      S_CELL_NO, D_CELL_NO, REMARK
+      )
+    values (#{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, #{convertGoodsNo,jdbcType=VARCHAR}, 
+      #{rowId,jdbcType=DECIMAL}, #{checkNo,jdbcType=VARCHAR}, #{itemNo,jdbcType=VARCHAR}, 
+      #{sizeNo,jdbcType=VARCHAR}, #{itemQty,jdbcType=DECIMAL}, #{realQty,jdbcType=DECIMAL}, 
+      #{boxNo,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{brandNo,jdbcType=VARCHAR}, 
+      #{packQty,jdbcType=DECIMAL}, #{itemType,jdbcType=VARCHAR}, #{quality,jdbcType=VARCHAR}, 
+      #{sourceNo,jdbcType=VARCHAR}, #{businessType,jdbcType=VARCHAR}, #{edittm,jdbcType=TIMESTAMP}, 
+      #{sCellNo,jdbcType=VARCHAR}, #{dCellNo,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillConConvertGoodsDtl" >
+    insert into BILL_CON_CONVERT_GOODS_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="convertGoodsNo != null" >
+        CONVERT_GOODS_NO,
+      </if>
+      <if test="rowId != null" >
+        ROW_ID,
+      </if>
+      <if test="checkNo != null" >
+        CHECK_NO,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="itemQty != null" >
+        ITEM_QTY,
+      </if>
+      <if test="realQty != null" >
+        REAL_QTY,
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="brandNo != null" >
+        BRAND_NO,
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY,
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE,
+      </if>
+      <if test="quality != null" >
+        QUALITY,
+      </if>
+      <if test="sourceNo != null" >
+        SOURCE_NO,
+      </if>
+      <if test="businessType != null" >
+        BUSINESS_TYPE,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="sCellNo != null" >
+        S_CELL_NO,
+      </if>
+      <if test="dCellNo != null" >
+        D_CELL_NO,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="convertGoodsNo != null" >
+        #{convertGoodsNo,jdbcType=VARCHAR},
+      </if>
+      <if test="rowId != null" >
+        #{rowId,jdbcType=DECIMAL},
+      </if>
+      <if test="checkNo != null" >
+        #{checkNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemQty != null" >
+        #{itemQty,jdbcType=DECIMAL},
+      </if>
+      <if test="realQty != null" >
+        #{realQty,jdbcType=DECIMAL},
+      </if>
+      <if test="boxNo != null" >
+        #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="brandNo != null" >
+        #{brandNo,jdbcType=VARCHAR},
+      </if>
+      <if test="packQty != null" >
+        #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="itemType != null" >
+        #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceNo != null" >
+        #{sourceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="businessType != null" >
+        #{businessType,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sCellNo != null" >
+        #{sCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="dCellNo != null" >
+        #{dCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillConConvertGoodsDtl" >
+    update BILL_CON_CONVERT_GOODS_DTL
+    <set >
+      <if test="checkNo != null" >
+        CHECK_NO = #{checkNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemQty != null" >
+        ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+      </if>
+      <if test="realQty != null" >
+        REAL_QTY = #{realQty,jdbcType=DECIMAL},
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO = #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="brandNo != null" >
+        BRAND_NO = #{brandNo,jdbcType=VARCHAR},
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        QUALITY = #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceNo != null" >
+        SOURCE_NO = #{sourceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="businessType != null" >
+        BUSINESS_TYPE = #{businessType,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sCellNo != null" >
+        S_CELL_NO = #{sCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="dCellNo != null" >
+        D_CELL_NO = #{dCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and CONVERT_GOODS_NO = #{convertGoodsNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillConConvertGoodsDtl" >
+    update BILL_CON_CONVERT_GOODS_DTL
+    set CHECK_NO = #{checkNo,jdbcType=VARCHAR},
+      ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+      REAL_QTY = #{realQty,jdbcType=DECIMAL},
+      BOX_NO = #{boxNo,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      BRAND_NO = #{brandNo,jdbcType=VARCHAR},
+      PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+      QUALITY = #{quality,jdbcType=VARCHAR},
+      SOURCE_NO = #{sourceNo,jdbcType=VARCHAR},
+      BUSINESS_TYPE = #{businessType,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      S_CELL_NO = #{sCellNo,jdbcType=VARCHAR},
+      D_CELL_NO = #{dCellNo,jdbcType=VARCHAR},
+      REMARK = #{remark,jdbcType=VARCHAR}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and CONVERT_GOODS_NO = #{convertGoodsNo,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+  </update>
+  
+  <select id="selectMaxRowId" resultType="java.lang.Integer" parameterType="com.yougou.logistics.city.common.model.BillConConvertGoods">
+  		select nvl(max(row_id),0) from BILL_CON_CONVERT_GOODS_DTL 
+  			where locno = #{locno,jdbcType=VARCHAR}
+  			    and owner_no = #{ownerNo,jdbcType=VARCHAR}
+  			    and convert_goods_no = #{convertGoodsNo,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectSCellNo" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE">
+  
+  		<!--  
+  		select c.cell_no
+		  from CM_DEFCELL c
+		 inner join CM_DEFAREA a
+		    on c.AREA_NO = a.AREA_NO
+		   and c.locno = a.locno
+		   and c.ware_no = a.ware_no
+		 where a.AREA_USETYPE = '1'
+		      and a.AREA_ATTRIBUTE = '1'
+		      and a.ATTRIBUTE_TYPE = '6'
+		      and a.locno = #{params.locno,jdbcType=VARCHAR}
+		      and rownum = 1
+		-->
+		<![CDATA[
+			{call PKG_WMS_BASE.proc_GetSpecailCellNo (
+				#{params.locno, mode=IN, jdbcType=VARCHAR},
+				#{params.areaUsetype, mode=IN, jdbcType=VARCHAR},
+				#{params.areaQuality, mode=IN, jdbcType=VARCHAR},
+				#{params.areaAttribute, mode=IN, jdbcType=VARCHAR},
+			 	#{params.attributeType, mode=IN, jdbcType=VARCHAR},
+			 	#{params.itemType, mode=IN, jdbcType=VARCHAR},
+			 	#{params.cellNo, mode=OUT, jdbcType=VARCHAR},
+			 	#{params.strOutMsg, mode=OUT, jdbcType=VARCHAR}
+			 )} 
+		]]>
+  </select>
+  
+  <select id="selectDCellNo" resultType="java.lang.String" parameterType="com.yougou.logistics.city.common.model.BillUmCheck">
+  		select c.cell_no
+		  from CM_DEFCELL c
+		 inner join CM_DEFAREA a
+		    on c.AREA_NO = a.AREA_NO
+		   and c.locno = a.locno
+		   and c.ware_no = a.ware_no
+		 where a.AREA_USETYPE = '1'
+		      and a.AREA_ATTRIBUTE = '0'
+		      and a.ATTRIBUTE_TYPE = '6'
+		      and c.AREA_QUALITY = 'A'
+		      and c.item_type = '0'
+		      and a.locno = #{params.locno,jdbcType=VARCHAR}
+		      and rownum = 1
+		 
+  </select>
+  
+  <select id="selectDCellNotoPropetyChange" resultType="java.lang.String" parameterType="com.yougou.logistics.city.common.model.BillUmCheck">
+  		select c.cell_no
+		  from CM_DEFCELL c
+		 inner join CM_DEFAREA a
+		    on c.AREA_NO = a.AREA_NO
+		   and c.locno = a.locno
+		   and c.ware_no = a.ware_no
+		 where a.AREA_USETYPE = '1'
+		      and a.AREA_ATTRIBUTE = '1'
+		      and a.ATTRIBUTE_TYPE = '6'
+		      and c.AREA_QUALITY = '0'
+		      and c.item_type = #{params.itemType,jdbcType=VARCHAR}
+		      and a.locno = #{params.locno,jdbcType=VARCHAR}
+		      and rownum = 1
+		 
+  </select>
+  
+   <!-- 批量插入用户信息 -->
+  <select id="insertBatchDtl" parameterType="java.util.List">  
+        insert into bill_con_convert_goods_dtl
+		  (locno,
+		   owner_no,
+		   convert_goods_no,
+		   check_no,
+		   row_id,
+		   item_no,
+		   size_no,
+		   item_qty,
+		   real_qty,
+		   box_no,
+		   brand_no,
+		   item_type,
+		   quality,
+		   source_no,
+		   edittm,
+		   s_cell_no,
+		   d_cell_no,
+		   remark)
+        <foreach collection="list" item="item" index="index" separator="union all">  
+            select
+             #{item.locno,jdbcType=VARCHAR},
+             #{item.ownerNo,jdbcType=VARCHAR},
+             #{item.convertGoodsNo,jdbcType=VARCHAR},
+             #{item.checkNo,jdbcType=VARCHAR},
+             #{item.rowId,jdbcType=DECIMAL},
+             #{item.itemNo,jdbcType=VARCHAR},
+             #{item.sizeNo,jdbcType=VARCHAR},
+             #{item.itemQty,jdbcType=DECIMAL},
+             #{item.realQty,jdbcType=DECIMAL},
+             #{item.boxNo,jdbcType=VARCHAR},
+             #{item.brandNo,jdbcType=VARCHAR},
+             #{item.itemType,jdbcType=VARCHAR},
+             #{item.quality,jdbcType=VARCHAR},
+             #{item.sourceNo,jdbcType=VARCHAR},
+             #{item.edittm,jdbcType=TIMESTAMP},
+             #{item.sCellNo,jdbcType=VARCHAR},
+             #{item.dCellNo,jdbcType=VARCHAR},
+             #{item.remark,jdbcType=VARCHAR}
+             from DUAL
+        </foreach>  
+   </select>
+   
+   <sql id="checkGroupBySql">
+  		select d.locno,d.owner_no,d.convert_goods_no as convertGoodsNo,
+  			d.check_no as checkNo,d.source_no as sourceNo,d.remark,
+  			nvl(sum(d.item_qty),0) as itemQty,nvl(sum(d.real_qty),0) as realQty
+  			from BILL_CON_CONVERT_GOODS_DTL d
+  			where 1=1
+  		<include refid="condition" />
+    	<include refid="AuthorityCondition" />
+    	group by d.locno,d.owner_no,d.convert_goods_no,d.check_no,d.source_no,d.remark,d.edittm
+  </sql>
+  
+  <!-- 汇总 -->
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+  		select 
+       		NVL(sum(d.ITEM_QTY), 0) ITEM_QTY,
+       		NVL(sum(d.REAL_QTY), 0) REAL_QTY
+	  	from 
+		(
+			 select 
+    			<include refid="Base_Column_List" />
+     		 from BILL_CON_CONVERT_GOODS_DTL d where 1=1 
+    			<include refid="condition" />
+    		    <include refid="AuthorityCondition" />
+		)d
+  </select>
+  
+  <!-- 根据验收单汇总 -->
+  <select id="selectGroupByCheckSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+  		select 
+       		NVL(sum(d.itemQty), 0) ITEM_QTY,
+       		NVL(sum(d.realQty), 0) REAL_QTY
+	  	from 
+		(
+			<include refid="checkGroupBySql"/>
+		)d
+  </select>
+  
+  <select id="selectConvertGoodsDtlGroupByCheckCount" resultType="java.lang.Integer" >
+    select count(1) as s from (
+    	<include refid="checkGroupBySql"/>
+    )
+  </select>
+  
+  <select id="selectConvertGoodsDtlGroupByCheckByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( 
+    	<include refid="checkGroupBySql"/>
+    	<choose>
+		    <when test="orderByField != null and ''!=orderByField">
+				order by ${orderByField}
+				<if test="orderByField">
+				${orderBy}
+				</if>
+			</when>
+			<otherwise>
+				order by d.edittm desc
+			</otherwise>
+	     </choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <select id="selectConvertGoodsDtlGroupByCheck" resultMap="BaseResultMap" parameterType="map" >
+  		select d.locno,d.owner_no,d.convert_goods_no,d.check_no,d.source_no,d.remark,
+  			nvl(sum(d.item_qty),0) as itemQty,nvl(sum(d.real_qty),0) as realQty
+  			from BILL_CON_CONVERT_GOODS_DTL d
+  			where 1=1
+  		<include refid="condition" />
+    	group by d.locno,d.owner_no,d.convert_goods_no,d.check_no,d.source_no,d.remark,d.edittm
+    	order by d.edittm desc
+  </select>
+  
+  
+  
+  <select id="selectItemDtlByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List_Item" />,
+     v.barcode as barcode,
+     v.cell_id as cellId,
+     nvl(sum(d.item_qty),0) as itemQty,
+     nvl(sum(d.real_qty),0) as realQty
+     from BILL_CON_CONVERT_GOODS_DTL d
+     inner join item it on it.item_no = d.item_no
+     left join v_content v  
+     	on d.item_no = v.item_no
+   		and d.size_no = v.size_no
+   		and d.s_cell_no = v.cell_no
+   		and d.quality = v.quality
+   		and d.item_type = v.item_type  
+   		and d.locno = v.locno
+     where 1=1 
+    <include refid="conditionPage" />
+    group by 
+    d.LOCNO, d.OWNER_NO, d.CONVERT_GOODS_NO,d.ITEM_NO, d.SIZE_NO, 
+    d.BRAND_NO, d.PACK_QTY, d.ITEM_TYPE, d.QUALITY, d.S_CELL_NO, d.D_CELL_NO, 
+    d.REMARK,it.SUPPLIER_NO,v.barcode,v.cell_id
+  </select>
+  
+  
+  <select id="selectCheckContent4Convert" resultMap="BaseResultMap" parameterType="map" >
+	    select gd.check_no,gd.item_no,gd.size_no from (
+		    select 
+			     d.item_no,
+			     d.size_no,
+			     d.quality,
+			     d.item_type,
+			     d.s_cell_no,
+			     max(d.check_no) check_no,
+			     nvl(sum(d.real_qty),0) as real_qty
+			     from BILL_CON_CONVERT_GOODS_DTL d
+			     where 1=1 
+			     <include refid="conditionPage" />
+			     group by d.item_no,
+			     		  d.size_no,
+			              d.quality,
+			              d.item_type,
+			              d.s_cell_no
+	     )gd inner join item it on it.item_no = gd.item_no
+     		left join (select v.locno,
+		                    v.item_no,
+		                    v.size_no,
+		                    v.cell_no,
+		                    v.quality,
+		                    v.item_type,
+		                    v.qty
+		               from v_content v
+		              where v.locno = #{params.locno}
+		                and v.hm_manual_flag = '1') v
+		    on gd.item_no = v.item_no
+		   and gd.size_no = v.size_no
+		   and gd.s_cell_no = v.cell_no
+		   and gd.quality = v.quality
+		   and gd.item_type = v.item_type
+		 where nvl(gd.real_qty, 0) > nvl(v.qty, 0)
+  </select>
+  
+  <select id="selectItemContentDtlByParams" resultMap="BaseResultMap" parameterType="map" >
+  <!-- 
+    select 
+    <include refid="Base_Column_List_Item" />,
+     v.content_qty as contentQty,
+     v.cell_id as cellId
+     from BILL_CON_CONVERT_GOODS_DTL d
+     inner join item it on it.item_no = d.item_no
+     left join
+     	(
+     		select v.item_no,v.size_no,v.cell_no,nvl(sum(v.qty),0) as qty
+     		 from v_content v 
+     		group by v.item_no,v.size_no,v.cell_no
+     			
+     	)c on v.item_no = d.item_no
+     	and v.size_no = d.size_no
+     	and v.cell_no = d.s_cell_no 
+     	
+     where 1=1
+    <include refid="conditionPage" />
+     -->
+  </select>
+  <select id="selectDtl4SizeHorizontal" parameterType="Map" resultType="com.yougou.logistics.city.common.model.BillConConvertGoodsDtlSizeDto">
+	 select d.CONVERT_GOODS_NO as convertGoodsNo,
+	       d.ITEM_NO          as itemNo,
+	       d.REAL_QTY         as itemQty,
+	       d.SOURCE_NO        as sourceNo,
+	       sz.size_kind       as sizeKind,
+	       sz.size_code       as sizeCode,
+	       it.ITEM_NAME       as itemName
+	  from BILL_CON_CONVERT_GOODS_DTL d
+	  inner join size_info sz
+	    on sz.size_no = d.size_no
+	  inner join item it
+	    on it.item_no = d.item_no
+	   and it.size_kind = sz.size_kind
+	   and it.sys_no = sz.sys_no
+	 where 1 = 1
+	   and d.CONVERT_GOODS_NO = #{params.convertGoodsNo,jdbcType=VARCHAR}
+	   and d.OWNER_NO = #{params.ownerNo,jdbcType=VARCHAR}
+	   and d.locno = #{params.locno,jdbcType=VARCHAR}
+	  <!--  and d.check_no = #{params.checkNo,jdbcType=VARCHAR} -->
+ </select> 
+ 
+ <!-- 更新库存转货单容器箱状态,次品转货不改状态 -->
+ <update id="batchUpdateBoxStatus4Container" parameterType="map" >
+ 		update con_box c set status = '3'
+ 			where c.locno = #{params.locno,jdbcType=VARCHAR}
+ 			      and c.status != '3'
+ 				  and exists(
+ 				  		select 'X' from bill_con_convert_goods_dtl gd
+ 				  		    inner join bill_con_convert_goods cg
+ 				  		    	on cg.locno = gd.locno
+ 				  		       and cg.owner_no = gd.owner_no
+ 				  		       and cg.convert_goods_no = gd.convert_goods_no
+ 				  			where gd.locno = c.locno
+ 				  			  and gd.box_no = c.box_no
+ 				  			  and cg.convert_type != '0'
+	   						  and gd.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+ 				  			  and gd.convert_goods_no = #{params.convertGoodsNo,jdbcType=VARCHAR}
+ 				   )
+ </update>  
+ 
+</mapper>

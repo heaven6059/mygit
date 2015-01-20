@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.TmpConBoxExcelMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.TmpConBoxExcel" >  
+  	<result column="CON_NO" property="conNo" jdbcType="VARCHAR" />
+	<result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+	<result column="LOC_NO" property="locNo" jdbcType="VARCHAR" />
+	<result column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+	<result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+	<result column="BARCODE" property="barcode" jdbcType="VARCHAR" />
+	<result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+	<result column="QTY" property="qty" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List">
+	  CON_NO ,OWNER_NO,LOC_NO, CELL_NO,ITEM_NO,BARCODE,SIZE_NO,QTY
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.locNo and ''!=params.locNo" >
+        AND LOC_NO = #{params.locNo,jdbcType=VARCHAR}
+      </if>
+     <if test="null!=params.uuId and ''!=params.uuId" >
+        AND UUID = #{params.uuId,jdbcType=VARCHAR}
+      </if>
+     </if>
+  </sql>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from TMP_CON_BOX_EXCEL where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from TMP_CON_BOX_EXCEL where 1=1 
+    <include refid="condition" />
+      order by CREATETM desc
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <delete id="deleteByUuid" parameterType="com.yougou.logistics.city.common.model.TmpConBoxExcel" >
+    <![CDATA[ DELETE FROM TMP_CON_BOX_EXCEL T WHERE T.UUID =#{params.uuId,jdbcType=VARCHAR}
+       OR T.CREATETM<TRUNC(SYSDATE)]]>
+  </delete>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.TmpConBoxExcel" >
+    MERGE INTO TMP_CON_BOX_EXCEL P USING (
+  		SELECT #{conNo,jdbcType=VARCHAR} CON_NO,'BL' OWNER_NO,#{locNo,jdbcType=VARCHAR} LOC_NO,
+  		#{cellNo,jdbcType=VARCHAR} CELL_NO,#{itemNo,jdbcType=VARCHAR} ITEM_NO,
+   		#{barcode,jdbcType=VARCHAR} BARCODE,#{sizeNo,jdbcType=VARCHAR} SIZE_NO,
+   		#{qty,jdbcType=DECIMAL} QTY,#{uuId,jdbcType=VARCHAR} UUID,#{boxType,jdbcType=VARCHAR} BOXTYPE
+   		 FROM DUAL) NP
+	ON (P.LOC_NO = NP.LOC_NO AND P.CON_NO = NP.CON_NO AND P.BARCODE=NP.BARCODE)
+	WHEN MATCHED THEN
+  	UPDATE SET P.UUID =NP.UUID,P.QTY=NP.QTY,P.CELL_NO=NP.CELL_NO,P.ITEM_NO=NP.ITEM_NO,P.SIZE_NO=NP.SIZE_NO
+	WHEN NOT MATCHED THEN
+  	INSERT(P.CON_NO,P.OWNER_NO,P.LOC_NO,P.CELL_NO, P.ITEM_NO, P.BARCODE,P.SIZE_NO,P.QTY,P.UUID,P.LINE_NO,P.BOX_TYPE)
+  	VALUES (NP.CON_NO,NP.OWNER_NO,NP.LOC_NO,NP.CELL_NO, NP.ITEM_NO,NP.BARCODE,NP.SIZE_NO,NP.QTY,NP.UUID,
+  	(SELECT COUNT(1) FROM TMP_CON_BOX_EXCEL T1 WHERE T1.LOC_NO=LOC_NO AND T1.CON_NO=NP.CON_NO )+1,
+  	NP.BOXTYPE
+  	)
+  </insert>
+ <!-- 批量插入临时表 -->
+  <select id="batchInsertSelective" parameterType="java.util.List">
+  	insert into TMP_CON_BOX_EXCEL   
+        (CON_NO,OWNER_NO,LOC_NO,CELL_NO,ITEM_NO,BARCODE,SIZE_NO,QTY,UUID,LINE_NO,BOX_TYPE)  
+        <foreach collection="list" item="item" index="index"  separator="union all">  
+          SELECT #{item.conNo,jdbcType=VARCHAR},'BL',#{item.locNo,jdbcType=VARCHAR},
+  			#{item.cellNo,jdbcType=VARCHAR},#{item.itemNo,jdbcType=VARCHAR},
+   			#{item.barcode,jdbcType=VARCHAR},#{item.sizeNo,jdbcType=VARCHAR},
+   			#{item.qty,jdbcType=DECIMAL},#{item.uuId,jdbcType=VARCHAR},
+   			#{item.lineNo,jdbcType=VARCHAR},#{item.boxType,jdbcType=VARCHAR}
+   		 FROM DUAL
+        </foreach>
+  </select>
+   <delete id="batchDeleteBy" parameterType="map" >
+    	DELETE FROM TMP_CON_BOX_EXCEL T WHERE  T.LOC_NO =#{params.locNo,jdbcType=VARCHAR} and
+    		T.CON_NO in 
+    		<foreach collection="params.list" index="index" item="item" open="(" separator="," close=")">   
+        		#{item}   
+    		</foreach>  
+  </delete>
+  <!--增加con_box表-->
+  <insert id="batshSaveConBoxExcel" parameterType="map">
+	INSERT INTO CON_BOX (LOCNO, OWNER_NO, BOX_NO, CREAT_DATE, QTY, IMPORT_DATE,
+	 STATUS,CELL_NO,BOX_TYPE,CON_TYPE,REMARK)
+	SELECT #{params.locNo,jdbcType=VARCHAR},'BL',T.CON_NO, SYSDATE,SUM(T.QTY), 
+	SYSDATE,2,T.CELL_NO,max(T.BOX_TYPE),1,'Excel导入'
+	FROM TMP_CON_BOX_EXCEL T
+	WHERE T.UUID =#{params.uuId,jdbcType=VARCHAR} 
+	 AND T.LOC_NO = #{params.locNo,jdbcType=VARCHAR} GROUP BY T.CON_NO,T.CELL_NO
+  </insert>
+  <!--增加con_box_dtl表-->
+  <insert id="batshSaveConBoxDtlExcel" parameterType="map">
+	INSERT INTO CON_BOX_DTL (LOCNO,OWNER_NO,BOX_NO,BOX_ID,ITEM_NO,STYLE_NO,SIZE_NO,QTY)
+ 	SELECT #{params.locNo,jdbcType=VARCHAR},'BL',T.CON_NO,T.LINE_NO,T.ITEM_NO,
+ 	NVL((SELECT I.STYLE_NO FROM ITEM I WHERE I.ITEM_NO = T.ITEM_NO),'-'),T.SIZE_NO,T.QTY
+	FROM TMP_CON_BOX_EXCEL T
+	WHERE T.UUID =#{params.uuId,jdbcType=VARCHAR} 
+	 AND T.LOC_NO = #{params.locNo,jdbcType=VARCHAR}
+  </insert>
+  <!--增加ACC_INVENTORY_CON表-->
+  <insert id="batshSaveAccInventory" parameterType="map">
+	INSERT INTO ACC_INVENTORY_CON
+     (CON_NO, LOCNO, OWNER_NO, CELL_NO, ITEM_TYPE, QUALITY, 
+     SUPPLIER_NO,CHILDREN_QTY,SKU_QTY,CREATOR,CREATETM,EDITOR,EDITTM)  
+	SELECT T.CON_NO,#{params.locNo,jdbcType=VARCHAR},
+	'BL',T.CELL_NO,'0','0','N',0,SUM(T.QTY),#{params.userName,jdbcType=VARCHAR},
+	SYSDATE,#{params.userName,jdbcType=VARCHAR},SYSDATE
+	FROM TMP_CON_BOX_EXCEL T
+	WHERE T.UUID =#{params.uuId,jdbcType=VARCHAR} 
+	 AND T.LOC_NO = #{params.locNo,jdbcType=VARCHAR} GROUP BY T.CON_NO,T.CELL_NO
+  </insert>
+  <!--增加ACC_INVENTORY_SKU表-->
+  <insert id="batshSaveAccInventorySku" parameterType="map">
+	INSERT INTO ACC_CONTAINER_SKU (
+	  CON_NO,LOCNO,OWNER_NO,SEQ_ID,ITEM_NO,BARCODE,ITEM_TYPE,QUALITY,STYLE_NO,SIZE_NO,QTY,SUPPLIER_NO,CREATETM,UPDATETM)
+ 	SELECT T.CON_NO,#{params.locNo,jdbcType=VARCHAR},'BL','1',T.ITEM_NO,T.BARCODE,
+ 	'0','0',NVL((SELECT I.STYLE_NO FROM ITEM I WHERE I.ITEM_NO = T.ITEM_NO),'N'),
+ 	T.SIZE_NO,T.QTY,'N',sysdate,sysdate
+	FROM TMP_CON_BOX_EXCEL T
+	WHERE T.UUID =#{params.uuId,jdbcType=VARCHAR} 
+	 AND T.LOC_NO = #{params.locNo,jdbcType=VARCHAR}
+  </insert>
+  <!--增加bm_container表-->
+  <insert id="batshSaveBmContainerExcel" parameterType="map">
+	INSERT INTO BM_CONTAINER (CON_NO, LOCNO,OWNER_NO,CON_TYPE,CREATOR,CREATETM, EDITOR, EDITTM)
+	  SELECT T.CON_NO, #{params.locNo,jdbcType=VARCHAR}, 'BL','C',
+	  #{params.userName,jdbcType=VARCHAR},sysdate,#{params.userName,jdbcType=VARCHAR},sysdate
+	   FROM TMP_CON_BOX_EXCEL T
+	   WHERE T.UUID = #{params.uuId,jdbcType=VARCHAR} 
+	     AND T.LOC_NO = #{params.locNo,jdbcType=VARCHAR}
+	   GROUP BY T.CON_NO, T.CELL_NO
+  </insert>
+  
+  <select id="selectConBoxBy" resultType="java.lang.String" parameterType="map" >
+    SELECT BOX_NO  CON_NO FROM CON_BOX  C WHERE C.LOCNO=#{params.locNo,jdbcType=VARCHAR}
+       AND C.BOX_NO IN 
+        <foreach collection="params.conNoList" item="conBoxNo" open="(" close=")" separator=",">
+				#{conBoxNo}
+	   </foreach>
+  </select>
+   <select id="selectConBoxByUuId" resultType="java.lang.String" parameterType="map" >
+     SELECT distinct T.CON_NO FROM CON_BOX C JOIN TMP_CON_BOX_EXCEL T ON C.LOCNO=T.LOC_NO AND C.BOX_NO=T.CON_NO 
+       where t.uuid=#{params.uuId,jdbcType=VARCHAR}
+  </select>
+   <select id="selectBmContainerByUuId" resultType="java.lang.String" parameterType="map" >
+     SELECT distinct T.CON_NO FROM bm_container C JOIN TMP_CON_BOX_EXCEL T ON C.LOCNO=T.LOC_NO AND C.Con_No=T.CON_NO 
+       where t.uuid=#{params.uuId,jdbcType=VARCHAR} and c.con_type!='C'
+  </select>
+  
+  <select id="selectCellNoByList" resultType="java.lang.String" parameterType="map" >
+    SELECT C.CELL_NO FROM CM_DEFCELL C WHERE C.LOCNO=#{params.locNo,jdbcType=VARCHAR}
+       AND C.CELL_NO IN 
+        <foreach collection="params.list" item="cellNo" open="(" close=")" separator=",">
+				#{cellNo}
+	   </foreach>
+  </select>
+  <select id="selectCellNoBy" resultType="java.lang.String" parameterType="map" >
+    SELECT DISTINCT C.CELL_NO FROM CM_DEFCELL C INNER JOIN TMP_CON_BOX_EXCEL T
+  		ON C.LOCNO=T.LOC_NO AND C.CELL_NO=T.CELL_NO
+ 		WHERE C.LOCNO=#{params.locNo,jdbcType=VARCHAR} AND T.UUID=#{params.uuId,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectItemNoByItem" resultType="java.lang.String" parameterType="map" >
+    SELECT I.BARCODE FROM  ITEM_BARCODE I where 
+     	 I.BARCODE=#{params.barcode,jdbcType=VARCHAR} 
+      	 AND I.ITEM_NO=#{params.itemNo,jdbcType=VARCHAR} 
+      	 AND I.SIZE_NO=#{params.sizeNo,jdbcType=VARCHAR}
+  </select>
+  <select id="selectItemNoBy" resultType="java.lang.String" parameterType="map" >
+    SELECT I.ITEM_NO||';'||I.BARCODE||';'||I.SIZE_NO FROM ITEM_BARCODE I INNER JOIN TMP_CON_BOX_EXCEL T 
+  	 ON I.ITEM_NO=T.ITEM_NO AND I.BARCODE=T.BARCODE AND I.SIZE_NO=T.SIZE_NO 
+ 	 WHERE T.LOC_NO=#{params.locNo,jdbcType=VARCHAR} AND T.UUID=#{params.uuId,jdbcType=VARCHAR}
+  </select>
+  
+</mapper>

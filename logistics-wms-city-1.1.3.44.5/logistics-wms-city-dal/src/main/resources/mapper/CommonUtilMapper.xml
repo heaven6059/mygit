@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.CommonUtilMapper" >
+
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.vo.LookupDtl" >
+    <result column="lookupcode" property="lookupcode" jdbcType="VARCHAR" />
+    <result column="itemval" property="itemvalue" jdbcType="VARCHAR" />
+    <result column="itemname" property="itemname" jdbcType="VARCHAR" />
+    <result column="systemid" property="systemid" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+  <sql id="Base_Column" >
+     lookupcode,itemval,itemname,systemid
+  </sql>
+  
+  
+  
+
+  
+  <select id="queryLookupDtlsList" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.vo.LookupDtl">
+        select 
+	    <include refid="Base_Column" />
+	    from lookupdtl  where status='1'
+	    <if test="lookupcode != null" >
+            and lookupcode = #{lookupcode,jdbcType=VARCHAR}
+       </if>
+       <if test="itemvalue != null" >
+            and itemval = #{itemvalue,jdbcType=VARCHAR}
+       </if>
+       
+       order by lookupcode,itemval
+  </select>
+  
+ 
+</mapper>

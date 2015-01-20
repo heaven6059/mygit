@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.LoginuserMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.Loginuser" >
+    <id column="USERID" property="userid" jdbcType="DECIMAL" />
+    <result column="USERCODE" property="usercode" jdbcType="VARCHAR" />
+    <result column="USERNAME" property="username" jdbcType="VARCHAR" />
+    <result column="PASSWORD" property="password" jdbcType="VARCHAR" />
+    <result column="DEPTID" property="deptid" jdbcType="DECIMAL" />
+    <result column="ISADMINGROUP" property="isadmingroup" jdbcType="DECIMAL" />
+    <result column="ENABLEFLAG" property="enableflag" jdbcType="DECIMAL" />
+    <result column="LASTLOGINTIME" property="lastlogintime" jdbcType="TIMESTAMP" />
+    <result column="LASTLOGINIP" property="lastloginip" jdbcType="VARCHAR" />
+    <result column="USEVERSION" property="useversion" jdbcType="VARCHAR" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="rolename" property="roleName" jdbcType="VARCHAR" />
+    <result column="roleid" property="roleid" jdbcType="DECIMAL" />
+    <collection property="listRole" javaType="ArrayList" column="USERID" 
+    ofType="com.yougou.logistics.city.common.model.Rolelist" select="selectRoleList"/>
+  </resultMap>
+  
+  <resultMap id="BaseResultMap2" type="com.yougou.logistics.city.common.model.Rolelist" >
+  	<result column="ROLEID" property="roleid" jdbcType="DECIMAL" />
+    <result column="ROLEOWNER" property="roleowner" jdbcType="VARCHAR" />
+    <result column="ROLENAME" property="rolename" jdbcType="VARCHAR" />
+    <result column="ENABLEFLAG" property="enableflag" jdbcType="DECIMAL" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    USERID, USERCODE, USERNAME, PASSWORD, DEPTID, ISADMINGROUP, ENABLEFLAG, LASTLOGINTIME, 
+    LASTLOGINIP, USEVERSION, REMARK
+  </sql>
+  <sql id="condition" >
+	<if test="null!=params" >
+      <if test="null!=params.usercode and ''!=params.usercode">
+		 and USERCODE=#{params.usercode,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.username and ''!=params.username">
+		 and USERNAME=#{params.username,jdbcType=VARCHAR}
+	  </if>
+	  <if test="params.roleid > 0">
+		 and userid in (select u.userid from LOGINUSER u,userrole ur where u.userid=ur.userid and ur.roleid = #{params.roleid,jdbcType=DECIMAL})  
+	  </if>
+	</if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.math.BigDecimal" >
+    select 
+    <include refid="Base_Column_List" />
+    from LOGINUSER
+    where USERID = #{userid,jdbcType=DECIMAL}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from LOGINUSER where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from LOGINUSER where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from LOGINUSER where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <!-- 根据角色ID查询对应下的所有用户信息   @author zuo.sw  -->
+  <select id="getUserListByRoleId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+   select distinct l.usercode,l.username,rl.rolename 
+   from loginuser l ,userrole u, rolelist rl
+		where  l.userid = u.userid
+		 and rl.roleid = u.roleid
+		 and l.enableflag = 1 
+		 and u.roleid = #{roleId,jdbcType=DECIMAL}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.math.BigDecimal" >
+    delete from LOGINUSER
+    where USERID = #{userid,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.Loginuser" >
+    delete from LOGINUSER
+    where USERID = #{userid,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.Loginuser" >
+    insert into LOGINUSER (USERID, USERCODE, USERNAME, 
+      PASSWORD, DEPTID, ISADMINGROUP, 
+      ENABLEFLAG, LASTLOGINTIME, LASTLOGINIP, 
+      USEVERSION, REMARK)
+    values (#{userid,jdbcType=DECIMAL}, #{usercode,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, 
+      #{password,jdbcType=VARCHAR}, #{deptid,jdbcType=DECIMAL}, #{isadmingroup,jdbcType=DECIMAL}, 
+      #{enableflag,jdbcType=DECIMAL}, #{lastlogintime,jdbcType=TIMESTAMP}, #{lastloginip,jdbcType=VARCHAR}, 
+      #{useversion,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.Loginuser" >
+    insert into LOGINUSER
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userid != null" >
+        USERID,
+      </if>
+      <if test="usercode != null" >
+        USERCODE,
+      </if>
+      <if test="username != null" >
+        USERNAME,
+      </if>
+      <if test="password != null" >
+        PASSWORD,
+      </if>
+      <if test="deptid != null" >
+        DEPTID,
+      </if>
+      <if test="isadmingroup != null" >
+        ISADMINGROUP,
+      </if>
+      <if test="enableflag != null" >
+        ENABLEFLAG,
+      </if>
+      <if test="lastlogintime != null" >
+        LASTLOGINTIME,
+      </if>
+      <if test="lastloginip != null" >
+        LASTLOGINIP,
+      </if>
+      <if test="useversion != null" >
+        USEVERSION,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userid != null" >
+        #{userid,jdbcType=DECIMAL},
+      </if>
+      <if test="usercode != null" >
+        #{usercode,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="deptid != null" >
+        #{deptid,jdbcType=DECIMAL},
+      </if>
+      <if test="isadmingroup != null" >
+        #{isadmingroup,jdbcType=DECIMAL},
+      </if>
+      <if test="enableflag != null" >
+        #{enableflag,jdbcType=DECIMAL},
+      </if>
+      <if test="lastlogintime != null" >
+        #{lastlogintime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastloginip != null" >
+        #{lastloginip,jdbcType=VARCHAR},
+      </if>
+      <if test="useversion != null" >
+        #{useversion,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.Loginuser" >
+    update LOGINUSER
+    <set >
+      <if test="usercode != null" >
+        USERCODE = #{usercode,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null" >
+        USERNAME = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        PASSWORD = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="deptid != null" >
+        DEPTID = #{deptid,jdbcType=DECIMAL},
+      </if>
+      <if test="isadmingroup != null" >
+        ISADMINGROUP = #{isadmingroup,jdbcType=DECIMAL},
+      </if>
+      <if test="enableflag != null" >
+        ENABLEFLAG = #{enableflag,jdbcType=DECIMAL},
+      </if>
+      <if test="lastlogintime != null" >
+        LASTLOGINTIME = #{lastlogintime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastloginip != null" >
+        LASTLOGINIP = #{lastloginip,jdbcType=VARCHAR},
+      </if>
+      <if test="useversion != null" >
+        USEVERSION = #{useversion,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where USERID = #{userid,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.Loginuser" >
+    update LOGINUSER
+    set USERCODE = #{usercode,jdbcType=VARCHAR},
+      USERNAME = #{username,jdbcType=VARCHAR},
+      PASSWORD = #{password,jdbcType=VARCHAR},
+      DEPTID = #{deptid,jdbcType=DECIMAL},
+      ISADMINGROUP = #{isadmingroup,jdbcType=DECIMAL},
+      ENABLEFLAG = #{enableflag,jdbcType=DECIMAL},
+      LASTLOGINTIME = #{lastlogintime,jdbcType=TIMESTAMP},
+      LASTLOGINIP = #{lastloginip,jdbcType=VARCHAR},
+      USEVERSION = #{useversion,jdbcType=VARCHAR},
+      REMARK = #{remark,jdbcType=VARCHAR}
+    where USERID = #{userid,jdbcType=DECIMAL}
+  </update>
+  
+  
+  <select id="selectRoleList" parameterType="int" resultMap="BaseResultMap2">
+  	select rl.roleid,rl.rolename from USERROLE ur,ROLELIST rl where ur.ROLEID=rl.ROLEID  
+  	and ur.userid=#{userid} 
+  	group by rl.roleid,rl.rolename
+  </select>
+  
+</mapper>

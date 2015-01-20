@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.CategoryMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.Category" >
+    <id column="CATE_NO" property="cateNo" jdbcType="VARCHAR" />
+    <result column="CATE_CODE" property="cateCode" jdbcType="VARCHAR" />
+    <result column="CATE_NAME" property="cateName" jdbcType="VARCHAR" />
+    <result column="SEARCH_CODE" property="searchCode" jdbcType="VARCHAR" />
+    <result column="SYS_NO" property="sysNo" jdbcType="VARCHAR" />
+    <result column="CATE_LEVELID" property="cateLevelid" jdbcType="DECIMAL" />
+    <result column="HEAD_CATE_NO" property="headCateNo" jdbcType="VARCHAR" />
+    <result column="CATE_DEPART" property="cateDepart" jdbcType="DECIMAL" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="AUDIT_STATUS" property="auditStatus" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="REMARKS" property="remarks" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <!-- 新增字段 -->
+    <result column="ALARMRATE" property="alarmrate" jdbcType="DECIMAL" />
+    <result column="FREEZERATE" property="freezerate" jdbcType="DECIMAL" />
+    <result column="RECIEVETM" property="recievetm" jdbcType="TIMESTAMP" />
+    <!-- 删除没有的字段
+    <result column="headCateNoStr" property="headCateNoStr" jdbcType="VARCHAR" />
+    <result column="sysNoStr" property="sysNoStr" jdbcType="VARCHAR" />
+    <result column="childrenCount" property="childrenCount" jdbcType="DECIMAL" />
+     -->
+     
+  </resultMap>
+  <sql id="Base_Column_List" >
+    zc.CATE_NO, zc.CATE_CODE, zc.CATE_NAME, zc.SEARCH_CODE, zc.SYS_NO, zc.CATE_LEVELID, zc.HEAD_CATE_NO, 
+    zc.CATE_DEPART, zc.STATUS, zc.AUDIT_STATUS, zc.CREATOR, zc.CREATETM, zc.REMARKS, zc.EDITTM, zc.EDITOR,
+    zc.ALARMRATE,zc.FREEZERATE,zc.RECIEVETM
+  </sql>
+  <sql id="condition" >
+		    <if test="null!=params" >
+			    <if test="null!=params.headCateNo and ''!=params.headCateNo">
+			         and zc.HEAD_CATE_NO=#{params.headCateNo,jdbcType=VARCHAR}
+			    </if>
+			    
+			    <if test="params.headCateCodeValues != null and params.headCateCodeValues != ''">
+  		 			and zc.HEAD_CATE_NO in
+					<foreach collection="params.headCateCodeValues" item="headCateCode" open="(" close=")" separator=",">
+						zc.SYS_NO || #{headCateCode}
+					</foreach>
+				</if>
+			    
+			    <if test="null!=params.cateNo and ''!=params.cateNo">
+			         and zc.CATE_NO LIKE '%${params.cateNo}%'
+			    </if>
+			    <if test="null!=params.cateName and ''!=params.cateName" >
+            		 and zc.CATE_NAME LIKE '%${params.cateName}%'
+      			</if>
+      			<if test="null!=params.sysNo and ''!=params.sysNo">
+		         	 and zc.SYS_NO=#{params.sysNo,jdbcType=VARCHAR}
+		   		</if>
+		   		<if test="null!=params.cateLevelid and ''!=params.cateLevelid">
+		         	 and zc.cate_levelid=#{params.cateLevelid,jdbcType=VARCHAR}
+		   		</if>
+			    <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+			         ${params.queryCondition}
+			    </if>
+		    </if>
+  </sql>
+  <!--权限过滤左连接子查询-->
+  <sql id="selectByPageAuthorityInnerJoin" >
+   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+            inner join (select sys_no
+                         from brand                         
+                        where brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+                        group by sys_no
+                        ) sub1
+             ON sub1.sys_no = zc.sys_no
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />,
+     (select fc.Cate_Name from CATEGORY fc where fc.Cate_NO=zc.Head_Cate_NO) as headCateNoStr
+    from CATEGORY zc
+    where CATE_NO = #{cateNo,jdbcType=VARCHAR}
+  </select>
+  <!--luohaili 10-09-->
+  <select id="selectByCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from CATEGORY zc
+    where CATE_No = #{code,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectCount" resultType="java.lang.Integer">
+    select count(1) as s from CATEGORY zc
+    <include refid="selectByPageAuthorityInnerJoin" />
+    where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />,
+    (select ld.ITEMNAME from LOOKUPDTL ld where zc.SYS_NO = ld.itemval and ld.lookupcode = 'SYS_NO' and rownum=1) as sysNoStr,
+     (select fc.Cate_Name from CATEGORY fc where fc.Cate_NO=zc.Head_Cate_NO) as headCateNoStr
+     from CATEGORY zc
+     <include refid="selectByPageAuthorityInnerJoin" />
+     where 1=1 
+    <include refid="condition" />
+    <choose>
+    	<when test="orderByField != null and ''!=orderByField">
+    		order by ${orderByField}
+    		<if test="orderByField" >
+	        	${orderBy}
+	      	</if>
+    	</when>
+    	<otherwise>
+    		order by edittm desc,cate_no asc
+    	</otherwise>
+    </choose>
+    
+    <!-- 
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+     -->
+    
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectCategory4Simple" resultType="com.yougou.logistics.city.common.dto.CategorySimpleDto" parameterType="map" >
+    select zc.cate_code as cateCode,max(zc.cate_name) as cateName,max(zc.search_Code) as searchCode
+    from CATEGORY zc
+    <include refid="selectByPageAuthorityInnerJoin" />
+    where 1=1 
+    <include refid="condition" />
+    group by zc.cate_code
+  </select>
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />,
+    (select ld.ITEMNAME from LOOKUPDTL ld where zc.SYS_NO = ld.itemval and ld.lookupcode = 'SYS_NO' and rownum=1) as sysNoStr,
+    (select count(1) from CATEGORY ccg where ccg.Head_Cate_NO=zc.Cate_NO) as childrenCount
+     from CATEGORY zc where 1=1 
+    <include refid="condition" />
+     order by zc.SYS_NO
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from CATEGORY
+    where CATE_NO = #{cateNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.Category" >
+    delete from CATEGORY
+    where CATE_NO = #{cateNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.Category" >
+    insert into CATEGORY (CATE_NO, CATE_CODE, CATE_NAME, 
+      SEARCH_CODE, SYS_NO, CATE_LEVELID, 
+      HEAD_CATE_NO, CATE_DEPART, STATUS, 
+      AUDIT_STATUS, CREATOR, CREATETM, 
+      REMARKS, EDITTM, EDITOR
+      )
+    values (#{cateNo,jdbcType=VARCHAR}, #{cateCode,jdbcType=VARCHAR}, #{cateName,jdbcType=VARCHAR}, 
+      #{searchCode,jdbcType=VARCHAR}, #{sysNo,jdbcType=VARCHAR}, #{cateLevelid,jdbcType=DECIMAL}, 
+      #{headCateNo,jdbcType=VARCHAR}, #{cateDepart,jdbcType=DECIMAL}, #{status,jdbcType=VARCHAR}, 
+      #{auditStatus,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{createtm,jdbcType=TIMESTAMP}, 
+      #{remarks,jdbcType=VARCHAR}, #{edittm,jdbcType=TIMESTAMP}, #{editor,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.Category" >
+    insert into CATEGORY
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="cateNo != null" >
+        CATE_NO,
+      </if>
+      <if test="cateCode != null" >
+        CATE_CODE,
+      </if>
+      <if test="cateName != null" >
+        CATE_NAME,
+      </if>
+      <if test="searchCode != null" >
+        SEARCH_CODE,
+      </if>
+      <if test="sysNo != null" >
+        SYS_NO,
+      </if>
+      <if test="cateLevelid != null" >
+        CATE_LEVELID,
+      </if>
+      <if test="headCateNo != null" >
+        HEAD_CATE_NO,
+      </if>
+      <if test="cateDepart != null" >
+        CATE_DEPART,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="auditStatus != null" >
+        AUDIT_STATUS,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="remarks != null" >
+        REMARKS,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="cateNo != null" >
+        #{cateNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cateCode != null" >
+        #{cateCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cateName != null" >
+        #{cateName,jdbcType=VARCHAR},
+      </if>
+      <if test="searchCode != null" >
+        #{searchCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sysNo != null" >
+        #{sysNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cateLevelid != null" >
+        #{cateLevelid,jdbcType=DECIMAL},
+      </if>
+      <if test="headCateNo != null" >
+        #{headCateNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cateDepart != null" >
+        #{cateDepart,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="auditStatus != null" >
+        #{auditStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remarks != null" >
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.Category" >
+    update CATEGORY
+    <set >
+      <if test="cateCode != null" >
+        CATE_CODE = #{cateCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cateName != null" >
+        CATE_NAME = #{cateName,jdbcType=VARCHAR},
+      </if>
+      <if test="searchCode != null" >
+        SEARCH_CODE = #{searchCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sysNo != null" >
+        SYS_NO = #{sysNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cateLevelid != null" >
+        CATE_LEVELID = #{cateLevelid,jdbcType=DECIMAL},
+      </if>
+      <if test="headCateNo != null" >
+        HEAD_CATE_NO = #{headCateNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cateDepart != null" >
+        CATE_DEPART = #{cateDepart,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="auditStatus != null" >
+        AUDIT_STATUS = #{auditStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remarks != null" >
+        REMARKS = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where CATE_NO = #{cateNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.Category" >
+    update CATEGORY
+    set CATE_CODE = #{cateCode,jdbcType=VARCHAR},
+      CATE_NAME = #{cateName,jdbcType=VARCHAR},
+      SEARCH_CODE = #{searchCode,jdbcType=VARCHAR},
+      SYS_NO = #{sysNo,jdbcType=VARCHAR},
+      CATE_LEVELID = #{cateLevelid,jdbcType=DECIMAL},
+      HEAD_CATE_NO = #{headCateNo,jdbcType=VARCHAR},
+      CATE_DEPART = #{cateDepart,jdbcType=DECIMAL},
+      STATUS = #{status,jdbcType=VARCHAR},
+      AUDIT_STATUS = #{auditStatus,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      REMARKS = #{remarks,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR}
+    where CATE_NO = #{cateNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

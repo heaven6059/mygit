@@ -1,0 +1,1791 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillImReceiptMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillImReceipt" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="RECEIPT_NO" property="receiptNo" jdbcType="VARCHAR" />
+    <result column="RECEIPT_TYPE" property="receiptType" jdbcType="VARCHAR" />
+    <result column="STORE_NO_FROM" property="storeNoFrom" jdbcType="VARCHAR" />
+    <result column="DOCK_NO" property="dockNo" jdbcType="VARCHAR" />
+    <result column="dockName" property="dockName" jdbcType="VARCHAR" />
+    <result column="RECEIPT_WORKER" property="receiptWorker" jdbcType="VARCHAR" />
+    <result column="RECEIPT_NAME" property="receiptName" jdbcType="VARCHAR" />
+    <result column="CAR_PLATE" property="carPlate" jdbcType="VARCHAR" />
+    <result column="SHIP_DRIVER" property="shipDriver" jdbcType="VARCHAR" />
+    <result column="RECEIPT_START_DATE" property="receiptStartDate" jdbcType="TIMESTAMP" />
+    <result column="RECEIPT_END_DATE" property="receiptEndDate" jdbcType="TIMESTAMP" />
+    <result column="PRINTER_GROUP_NO" property="printerGroupNo" jdbcType="VARCHAR" />
+    <result column="PRINT_TIMES" property="printTimes" jdbcType="DECIMAL" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="STATUS_TRANS" property="statusTrans" jdbcType="VARCHAR" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="RECIVEDATE" property="recivedate" jdbcType="TIMESTAMP" />
+    <result column="TRANS_NO" property="transNo" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATOR_NAME" property="creatorName" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="AUDITOR" property="auditor" jdbcType="VARCHAR" />
+    <result column="AUDITOR_NAME" property="auditorName" jdbcType="VARCHAR" />
+    <result column="AUDITTM" property="audittm" jdbcType="TIMESTAMP" />
+    <result column="BUSINESS_TYPE" property="businessType" jdbcType="VARCHAR" />
+    <result column="totalBoxQty" property="totalBoxQty" jdbcType="DECIMAL" />
+    <result column="totalReciveQty" property="totalReciveQty" jdbcType="DECIMAL" />
+    <result column="importNo" property="importNo" jdbcType="VARCHAR" />
+    <result column="startReciveDate" property="startReciveDate" jdbcType="VARCHAR" />
+    <result column="endReciveDate" property="endReciveDate" jdbcType="VARCHAR" />
+    <result column="storeNoFromStr" property="storeNoFromStr" jdbcType="VARCHAR" />
+    <result column="SUPPLIER_NO" property="supplierNo" jdbcType="VARCHAR" />
+    <result column="supplierName" property="supplierName" jdbcType="VARCHAR" />
+    <result column="deliver_no" property="deliverNo" jdbcType="VARCHAR" />
+    <result column="receiptqty" property="receiptqty" jdbcType="DECIMAL" />
+    <result column="boxqty" property="boxqty" jdbcType="DECIMAL" />
+    <result column="BRAND_NO" property="brandNo" jdbcType="VARCHAR"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, OWNER_NO, RECEIPT_NO, RECEIPT_TYPE, STORE_NO_FROM, DOCK_NO, RECEIPT_WORKER, 
+    CAR_PLATE, SHIP_DRIVER, RECEIPT_START_DATE, RECEIPT_END_DATE, PRINTER_GROUP_NO, PRINT_TIMES, 
+    STATUS, STATUS_TRANS, REMARK, RECIVEDATE, TRANS_NO, CREATOR, CREATETM, EDITOR, EDITTM, 
+    AUDITOR, AUDITTM,SUPPLIER_NO
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+       <!--状态-->
+      <if test="null!=params.status and ''!=params.status" >
+        and STATUS=#{params.status,jdbcType=VARCHAR}
+      </if>
+      <!--单据编号-->
+      <if test="null!=params.receiptNo and ''!=params.receiptNo" >
+        and RECEIPT_NO=#{params.receiptNo,jdbcType=VARCHAR}
+      </if>
+      <!--仓别-->
+      <if test="null!=params.locno and ''!=params.locno" >
+         and LOCNO=#{params.locno,jdbcType=VARCHAR}
+      </if>
+      <!--供应商-->
+      <if test="null!=params.storeNoFrom and ''!=params.storeNoFrom" >
+         and STORE_NO_FROM=#{params.storeNoFrom,jdbcType=VARCHAR}
+      </if>
+      <!--委托业主-->
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        and OWNER_NO=#{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+      <!--收货日期-->
+      <if test="null!=params.startTm and ''!=params.startTm" >
+		<![CDATA[
+         and RECIVEDATE >=to_date('${params.startTm} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+		]]>	
+      </if>
+      <!--收货日期end-->
+      <if test="null!=params.endTm and ''!=params.endTm" >
+      	<![CDATA[
+       	 and RECIVEDATE <=to_date('${params.endTm} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+        ]]>	
+      </if>
+       <!--收货类型-->
+       <if test="null!=params.receiptType and ''!=params.receiptType" >
+     	 and RECEIPT_TYPE=#{params.receiptType,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+  <sql id="conditionReceipt" >
+  		
+  		<!--仓别-->
+      	<if test="null!=receipt.locno and ''!=receipt.locno" >
+         	and br.LOCNO=#{receipt.locno,jdbcType=VARCHAR}
+      	</if>
+    	<if test="null!=receipt.receiptNo and ''!=receipt.receiptNo" >
+            and br.RECEIPT_NO LIKE '%${receipt.receiptNo}%'
+		</if>
+		<if test="null!=receipt.importNo and ''!=receipt.importNo" >
+			and brt.IMPORT_NO LIKE '%${receipt.importNo}%'
+		</if>
+		<if test="null!=receipt.transNo and ''!=receipt.transNo" >
+			and bi.trans_No like '%${receipt.transNo}%'
+		</if>
+		<if test="null!=receipt.supplierNo and ''!=receipt.supplierNo" >
+			and bi.supplier_no like '%${receipt.supplierNo}%'
+		</if>
+		<choose>
+			    <when test="receipt.businessType == 1">
+			    	<if test="null!=receipt.deliverNo and ''!=receipt.deliverNo" >
+					     AND 1=2
+					</if>
+				</when>
+				<otherwise>
+					<if test="null!=receipt.deliverNo and ''!=receipt.deliverNo" >
+					    AND bit.deliver_no like '%${receipt.deliverNo}%'
+					</if>
+				</otherwise>
+		    </choose>
+		    
+		
+		<!-- 
+		<if test="null!=receipt.businessType and ''!=receipt.businessType" >
+			and br.business_type=#{receipt.businessType,jdbcType=VARCHAR}
+			
+			<if test="receipt.businessType == 1" >
+				and br.status = '11'
+			</if>
+		</if>
+		 -->
+		<!--收货日期-->
+      <if test="null!=receipt.startReciveDate and ''!=receipt.startReciveDate" >
+		<![CDATA[
+         AND br.RECIVEDATE >=to_date('${receipt.startReciveDate} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+		]]>	
+      </if>
+      <!--收货日期end-->
+      <if test="null!=receipt.endReciveDate and ''!=receipt.endReciveDate" >
+      	<![CDATA[
+       	 AND br.RECIVEDATE <=to_date('${receipt.endReciveDate} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+        ]]> 
+	  </if>
+  </sql>
+  
+  <sql id="checkReciptCon" >
+    <if test="null!=params" >
+      <!--单据编号-->
+      <if test="null!=params.receiptNo and ''!=params.receiptNo" >
+        and b.RECEIPT_NO=#{params.receiptNo,jdbcType=VARCHAR}
+      </if>
+      <!--仓别-->
+      <if test="null!=params.locno and ''!=params.locno" >
+         and b.LOCNO=#{params.locno,jdbcType=VARCHAR}
+      </if>
+      <!--车牌号-->
+      <if test="null!=params.carPlate and ''!=params.carPlate" >
+         and b.CAR_PLATE=#{params.carPlate,jdbcType=VARCHAR}
+      </if>
+      <!--收货日期-->
+      <if test="null!=params.startCreatetm and ''!=params.startCreatetm" >
+		<![CDATA[
+         and b.RECIVEDATE >=to_date('${params.startCreatetm} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+		]]>	
+      </if>
+      <!--收货日期end-->
+      <if test="null!=params.endCreatetm and ''!=params.endCreatetm" >
+      	<![CDATA[
+       	 and b.RECIVEDATE <=to_date('${params.endCreatetm} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+        ]]>	
+      </if>
+      <!--收货人-->
+      <if test="null!=params.receiptWorker and ''!=params.receiptWorker" >
+         and b.RECEIPT_WORKER=#{params.receiptWorker,jdbcType=VARCHAR}
+      </if>
+    </if>
+  </sql>
+  
+    <sql id="condition4BoxNo4Divide" >  
+    	<if test="null!=params.cellNo and ''!=params.cellNo" >
+            and b.cell_no=#{params.cellNo,jdbcType=VARCHAR}
+      	</if>	  	
+    	<if test="null!=params.boxNo and ''!=params.boxNo" >
+            and  b.box_no=#{params.boxNo,jdbcType=VARCHAR}
+      	</if>
+      	<if test="null!=params.panNo and ''!=params.panNo" >
+            and  b.pan_no=#{params.panNo,jdbcType=VARCHAR}
+      	</if>
+      	
+      	<!--
+      	商品编号、品牌库、品牌、大类的查询条件记录在   selectBoxNo4DivideJoin
+      	-->
+      	
+      	<!--入库验收-->
+      	<if test="null!=params.billSource and 1==params.billSource" >
+      	    and b.FLAG='0'
+      	</if>  
+      	
+      	<!--退仓验收-->
+      	<if test="null!=params.billSource and 2==params.billSource" >
+      	    and b.FLAG='1'
+      	</if>
+      	
+    	 <!--入库验收-->
+      	<if test="null!=params.billSource and 1==params.billSource" >
+      		<!--收货验收单号-->
+         	<if test="null!=params.checkNo and ''!=params.checkNo" >
+         	and exists (select 1 from bill_im_check_dtl icd
+                               where icd.locno = #{params.locNo,jdbcType=VARCHAR}
+                                 and icd.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+                                 and icd.check_no = #{params.checkNo,jdbcType=VARCHAR}
+                                 and icd.box_no = b.box_no)
+      		</if>
+      		<!--预到货通知单-->
+         	<if test="null!=params.adviceNo and ''!=params.adviceNo" >
+         	and exists (select 1 from con_box_dtl cbd
+                               where cbd.locno = #{params.locNo,jdbcType=VARCHAR}
+                                 and cbd.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+                                 and cbd.import_no = #{params.adviceNo,jdbcType=VARCHAR}
+                                 and cbd.box_no = b.box_no)
+      		</if>
+      	</if>
+      	
+      	 <!--退仓验收-->
+      	<if test="null!=params.billSource and 2==params.billSource" >
+         	<!--退仓验收单号-->
+         	<if test="null!=params.checkNo and ''!=params.checkNo" >
+         	and exists (select 1 from bill_um_check_dtl ucd
+                               where ucd.locno = #{params.locNo,jdbcType=VARCHAR}
+                                 and ucd.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+                                 and ucd.check_no = #{params.checkNo,jdbcType=VARCHAR}
+                                 and ucd.box_no = b.box_no)
+      		</if>
+      		<!--店退仓单号 -->
+         	<if test="null!=params.adviceNo and ''!=params.adviceNo" >
+         	and exists (select 1 from bill_um_untread_dtl uud
+                               where uud.locno = #{params.locNo,jdbcType=VARCHAR}
+                                 and uud.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+                                 and uud.untread_no = #{params.adviceNo,jdbcType=VARCHAR}
+                                 and uud.box_no = b.box_no)
+      		</if>
+      	</if>
+      	<!-- 预分货单查询，根据发货通知单过滤箱子 -->
+      	<if test="null!=params.expNos and ''!=params.expNos">
+      		and exists (select 1 from bill_om_exp_dtl exp
+                               where exp.locno = #{params.locNo,jdbcType=VARCHAR}
+                                 and exp.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+                                 and exp.exp_no in (${params.expNos}) 
+                                 and exp.item_no = vc.item_no
+                                 and exp.size_no = vc.size_no)
+      	
+		</if>	
+      	
+  </sql>
+  
+  <!--权限过滤左连接子查询-->
+  <sql id="import4DivideAuthorityLeftJoin" >
+   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+            left join (select locno, owner_no, import_no
+                         from BILL_IM_IMPORT_DTL                         
+                        where 
+                        locno = #{params.locNo,jdbcType=VARCHAR}
+                        and brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+                        group by locno, owner_no, import_no
+                        ) sub1
+              on sub1.locno = bii.locno
+             and sub1.owner_no = bii.owner_no
+             and sub1.import_no = bii.import_no
+    </if>
+  </sql>
+  <!--权限过滤左连接子查询-->
+  <sql id="untread4DivideAuthorityLeftJoin" >
+   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+            left join (select locno, owner_no, untread_no
+                         from bill_um_untread_dtl                         
+                        where 
+                        locno = #{params.locNo,jdbcType=VARCHAR}
+                        and brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+                        group by locno, owner_no, untread_no
+                        ) sub1
+              on sub1.locno = uu.locno
+             and sub1.owner_no = uu.owner_no
+             and sub1.untread_no = uu.untread_no
+    </if>
+  </sql>
+  <!--权限过滤查询条件-->
+  <sql id="4DivideAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and sub1.locno is not null
+    </if>
+  </sql>
+  <sql id="sql4BoxNo4Divide" >
+        <!--入库验收-->
+      	<if test="null!=params.billSource and 1==params.billSource" >
+      	 (select max(bii.quality) as quality,max(biid.item_type) as item_type,biid.box_no
+          from BILL_IM_IMPORT bii
+          <include refid="import4DivideAuthorityLeftJoin" />
+          left join Bill_Im_Import_Dtl biid
+            on bii.locno = biid.locno
+           and bii.owner_no = biid.owner_no
+           and bii.import_no = biid.import_no
+         where
+          bii.locno = #{params.locNo,jdbcType=VARCHAR}
+           and bii.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+           <include refid="4DivideAuthorityCondition" />
+           group by biid.box_no) 
+      	</if>      	
+      	 <!--退仓验收-->
+      	<if test="null!=params.billSource and 2==params.billSource" >
+      	  (select max(uu.quality) as quality,
+               max(uu.untread_type) as item_type,
+               uud.box_no
+          from bill_um_untread uu
+          <include refid="untread4DivideAuthorityLeftJoin" />
+          left join bill_um_untread_dtl uud
+            on uu.locno = uud.locno
+           and uu.owner_no = uud.owner_no
+           and uu.untread_no = uud.untread_no
+         where uu.locno = #{params.locNo,jdbcType=VARCHAR}
+           and uu.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+           <include refid="4DivideAuthorityCondition" />
+         group by uud.box_no) 
+      	</if>
+  </sql>
+  
+  <!--权限过滤-->
+  <sql id="selectBoxNo4DivideJoin" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+      inner join (select sub3_d.locno,sub3_d.box_no
+         from con_box_dtl sub3_d
+        inner join item sub3_i
+           on sub3_d.item_no = sub3_i.item_no 
+        where sub3_i.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+        group by sub3_d.locno,sub3_d.box_no) sub3 on b.locno=sub3.locno and b.box_no=sub3.box_no
+    </if>
+    
+    <!--商品编号、品牌库、品牌、大类的查询条件  -->
+    <if test="(null!=params.itemNo and ''!=params.itemNo) or (null!=params.sysNo and ''!=params.sysNo) or (null!=params.brandNo and ''!=params.brandNo) or (null!=params.cateCode and ''!=params.cateCode)" >
+           inner join (select sub4_b.box_no
+                          from con_box_dtl sub4_b
+                          
+                          <if test="(null!=params.sysNo and ''!=params.sysNo) or (null!=params.brandNo and ''!=params.brandNo) or (null!=params.cateCode and ''!=params.cateCode)" >
+                          left join item sub4_i
+                            on sub4_b.item_no = sub4_i.item_no
+                          </if>
+                          
+                          <if test="null!=params.cateCode and ''!=params.cateCode" >
+                          left join CATEGORY sub4_c
+                            on sub4_i.cate_no = sub4_c.cate_no
+                          </if>
+                          
+                         where 1=1
+                            and sub4_b.locno=#{params.locNo,jdbcType=VARCHAR}
+                            
+                           <if test="null!=params.itemNo and ''!=params.itemNo" >
+                                and sub4_b.item_no = #{params.itemNo,jdbcType=VARCHAR}
+                           </if>      
+                           
+                           <if test="null!=params.sysNo and ''!=params.sysNo" >
+                                and sub4_i.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+                           </if>    
+                           
+                           <if test="null!=params.brandNo and ''!=params.brandNo" >
+                                and sub4_i.brand_no = #{params.brandNo,jdbcType=VARCHAR}
+                           </if>
+                           
+                           <if test="null!=params.cateCode and ''!=params.cateCode" >
+                           	<foreach collection="params.cateCode" item="value" open=" and (" close=")" separator="or">
+			                      sub4_c.search_code like  '${value}%'
+			           			</foreach>
+                           </if>
+                           
+                         group by sub4_b.box_no
+           ) sub4 on sub4.box_no=b.box_no
+    </if>
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillImReceiptKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_IM_RECEIPT r
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and RECEIPT_NO = #{receiptNo,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_IM_RECEIPT where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />,
+    (select s.store_name from store s where s.store_no = r.store_no_from) as storeNoFromStr
+     from BILL_IM_RECEIPT r where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+	      order by ${orderByField}
+	      <if test="orderByField" >
+	        ${orderBy}
+	      </if>
+    </if>
+    <if test="orderByField == null or ''==orderByField" >
+      	   order by CREATETM desc,RECEIPT_NO desc
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <select id="selectBatchSelectBox" resultType="com.yougou.logistics.city.common.dto.BillImImportDtlDto"  parameterType="map">
+	    select ii.import_no as importNo,
+	       max(ii.s_po_no) as spoNo,
+	       ii.locno,
+	       iid.box_no as boxNo,
+	       sum(iid.PO_QTY) as qty,
+	       max(iid.deliver_no) deliverNo,
+	       max(ld.itemname) brandName
+	  from (select box_no, MAX(owner_no) AS owner_no, MAX(locno) AS locno
+	          from bill_im_import_dtl
+	         where owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+	           and locno = #{params.locNo,jdbcType=VARCHAR}
+	           and import_no in 
+				<foreach collection="importNoList" item="list"  open="(" separator="," close=")">  
+        			#{list}  
+    			</foreach> 
+				<include refid="AuthorityCondition" />
+	         group by box_no) iidTemp
+	 inner join bill_im_import_dtl iid
+	    on (iidTemp.box_no = iid.box_no and iidTemp.Owner_No = iid.owner_no and
+	       iidTemp.Locno = iid.locno)
+	 inner join con_box c
+	    on c.locno = iid.locno
+	   and c.box_no = iid.box_no
+	 inner join bill_im_import ii
+	    on (iid.locno = ii.locno and iid.owner_no = ii.owner_no and
+	       iid.import_no = ii.import_no and ii.status not in ('90''91'))
+	  left join lookupdtl ld
+	    on (ld.itemval = ii.sys_no and ld.lookupcode = 'SYS_NO' and
+	       ld.systemid = '21')
+	 where c.status = '0'
+	 group by ii.import_no, ii.locno, ii.owner_no, iid.box_no
+  </select>
+  
+  
+  
+  
+  <select id="selectCount4Direct" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_IM_RECEIPT r 
+    	where 1=1 and r.business_type = '0'   
+     <!--只显示收货完成 或 已定位但未全部发单的收货单-->
+     and (r.status = '20' 
+     	  or 
+     	  exists (select 1 from  BILL_IM_INSTOCK_DIRECT iid where iid.LOCNO=r.LOCNO and iid.OWNER_NO=r.OWNER_NO 
+     	  		 and iid.locate_type='4' and iid.status='10' and iid.source_no=r.RECEIPT_NO and r.status='30' and rownum=1)
+     	 )
+    <if test="null!=params" >
+      <!--单据编号-->
+      <if test="null!=params.receiptNo and ''!=params.receiptNo" >
+        and r.RECEIPT_NO=#{params.receiptNo,jdbcType=VARCHAR}
+      </if>
+      <!--仓别-->
+      <if test="null!=params.locno and ''!=params.locno" >
+         and r.LOCNO=#{params.locno,jdbcType=VARCHAR}
+      </if>
+      <!--委托业主-->
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        and r.OWNER_NO=#{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+      <!--状态-->
+      <if test="null!=params.status and ''!=params.status" >
+        and r.status=#{params.status,jdbcType=VARCHAR}
+      </if>
+      <!--收货日期-->
+      <if test="null!=params.startTm and ''!=params.startTm" >
+		<![CDATA[
+         and r.RECIVEDATE >=to_date('${params.startTm} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+		]]>	
+      </if>
+      <!--收货日期-->
+      <if test="null!=params.endTm and ''!=params.endTm" >
+      	<![CDATA[
+       	 and r.RECIVEDATE <=to_date('${params.endTm} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+        ]]>	
+      </if>
+      <!--所属品牌end-->
+      <if test="null!=params.brandNo and ''!=params.brandNo" >
+      	<![CDATA[
+      		and EXISTS (
+      			select 1 from BILL_IM_RECEIPT_DTL d,item i
+      				where d.LOCNO = r.LOCNO 
+      				and d.RECEIPT_NO = r.RECEIPT_NO 
+      				and d.ITEM_NO = i.ITEM_NO
+      				and i.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+      				and rownum=1
+      		)
+      	]]>
+	  </if>
+    </if>
+  </select>
+  <select id="selectByPage4Direct" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from BILL_IM_RECEIPT r 
+     	where 1=1 and r.business_type = '0'
+     <!--只显示收货完成 或 已定位但未全部发单的收货单-->
+     and (r.status = '20' 
+     	  or 
+     	  exists (select 1 from  BILL_IM_INSTOCK_DIRECT iid where iid.LOCNO=r.LOCNO and iid.OWNER_NO=r.OWNER_NO 
+     	  		 and iid.locate_type='4' and iid.status='10' and iid.source_no=r.RECEIPT_NO and r.status='30' and rownum=1)
+     	 )
+   <if test="null!=params" >
+      <!--单据编号-->
+      <if test="null!=params.receiptNo and ''!=params.receiptNo" >
+        and r.RECEIPT_NO=#{params.receiptNo,jdbcType=VARCHAR}
+      </if>
+      <!--仓别-->
+      <if test="null!=params.locno and ''!=params.locno" >
+         and r.LOCNO=#{params.locno,jdbcType=VARCHAR}
+      </if>
+      <!--委托业主-->
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        and r.OWNER_NO=#{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+      <!--状态-->
+      <if test="null!=params.status and ''!=params.status" >
+        and r.status=#{params.status,jdbcType=VARCHAR}
+      </if>
+      <!--收货日期-->
+      <if test="null!=params.startTm and ''!=params.startTm" >
+		<![CDATA[
+         and r.RECIVEDATE >=to_date('${params.startTm} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+		]]>	
+      </if>
+      <!--收货日期-->
+      <if test="null!=params.endTm and ''!=params.endTm" >
+      	<![CDATA[
+       	 and r.RECIVEDATE <=to_date('${params.endTm} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+        ]]>	
+      </if>
+      <!--所属品牌end-->
+      <if test="null!=params.brandNo and ''!=params.brandNo" >
+      	<![CDATA[
+      		and EXISTS (
+      			select 1 from BILL_IM_RECEIPT_DTL d,item i
+      				where d.LOCNO = r.LOCNO 
+      				and d.RECEIPT_NO = r.RECEIPT_NO 
+      				and d.ITEM_NO = i.ITEM_NO
+      				and i.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+      				and rownum=1
+      		)
+      	]]>
+	  </if>
+	   <if test="null!=params.sysNo and ''!=params.sysNo" >
+        <![CDATA[
+            and EXISTS (
+                select 1 from BILL_IM_RECEIPT_DTL d,item i
+                    where d.LOCNO = r.LOCNO 
+                    and d.RECEIPT_NO = r.RECEIPT_NO 
+                    and d.ITEM_NO = i.ITEM_NO
+                    and i.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+                    and rownum=1
+            )
+        ]]>
+      </if>
+    </if>
+    <if test="params.orderByField == null or ''==params.orderByField" >
+      	   order by r.CREATETM desc,r.RECEIPT_NO desc
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_IM_RECEIPT where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  
+  <select id="selectBoxNo4DivideCount" resultType="java.lang.Integer">
+    select count(*) from (select 1 as c
+                from (select b.box_no,
+                             b.cell_no,
+                             bd.qty,
+                             case
+                               when nvl(vc.qty, 0)- nvl(vc.outstock_qty, 0)-bd.qty >= 0 then
+                                1
+                               else
+                                0
+                             end as enoughqty
+                        from con_box b       
+                        inner join CM_DEFCELL z on b.cell_no = z.cell_no and b.locno = z.locno
+                        inner join CM_DEFAREA df on z.ware_no = df.ware_no and z.area_no = df.area_no and z.locno = df.locno
+                        <include refid="selectBoxNo4DivideJoin" />                 
+                        
+                        left join (select d.box_no
+                                    from BILL_IM_RECEIPT m, BILL_IM_RECEIPT_DTL d
+                                      where m.locno = d.locno
+                                        and m.owner_no = d.owner_no
+                                        and m.receipt_no = d.receipt_no
+                                        and m.business_type='1'
+                                        and m.status not in ('40','60','91')
+                                        and m.locno=#{params.locNo,jdbcType=VARCHAR}
+                                        and m.owner_no=#{params.ownerNo,jdbcType=VARCHAR}
+                                        group by d.box_no
+                                        ) sub2
+                        on b.box_no=sub2.box_no                        
+                        
+                        <!--
+                        inner join                         
+                        <include refid="sql4BoxNo4Divide" /> cd 
+                        on b.box_no=cd.box_no   
+                        -->
+                        
+                        left join v_city_content_box bd
+                          on b.locno = bd.locno
+                         and b.owner_no = bd.owner_no
+                         and b.box_no = bd.box_no
+                        left join v_content vc
+                          on b.cell_no = vc.cell_no
+                         and b.locno=vc.locno
+                         and b.owner_no=vc.owner_no  
+                         and vc.STATUS ='0'
+                         and vc.FLAG ='0'
+                         and vc.HM_MANUAL_FLAG ='1'                       
+                         
+                         <!--and cd.quality=vc.quality
+                         and cd.item_type=vc.item_type-->
+                         and vc.quality='0' <!--目前只写为正品-->
+                         and vc.item_type='0' <!--目前只写为零售-->
+                         
+                         and bd.item_no = vc.item_no
+                         and bd.size_no = vc.size_no
+                       where b.status = '2'
+                       and b.cell_no is not null 
+                       and sub2.box_no is null               
+                       and b.locno=#{params.locNo,jdbcType=VARCHAR} 
+                       and b.owner_no=#{params.ownerNo,jdbcType=VARCHAR}
+                       
+                       and (
+			           		<!-- 属性类型：存储区，库区属性：作业区，库区用途：普通存储区 ,库区类型：地堆堆叠-->
+			           		(df.attribute_type = '0' and df.area_attribute = '0' and df.area_usetype = '1' and df.area_type ='3') or
+			           		<!-- 属性类型：进货，库区属性：暂存区，库区用途：普通存储区 -->
+			           		(df.attribute_type = '1' and df.area_attribute = '1' and df.area_usetype = '1') or
+			           		<!-- 属性类型：退货，库区属性：暂存区，库区用途：普通存储区 -->
+			           		(df.attribute_type = '6' and df.area_attribute = '1' and df.area_usetype = '1')
+			           )
+			           
+			           <if test="null!=params.wareNo and ''!=params.wareNo" >
+                       and z.ware_no in
+                       	<foreach item="wareNo" index="index" collection="params.wareNo" 
+			                    open="(" separator="," close=")">
+			                    #{wareNo}
+			           </foreach>
+                       </if>
+                       <if test="null!=params.areaNo and ''!=params.areaNo" >
+	                       and  z.ware_no||'-'|| z.area_no  in 
+			    		<foreach item="areaNo" index="index" collection="params.areaNo" 
+			                    open="(" separator="," close=")">
+			                    #{areaNo}
+			           </foreach>
+    					 </if> 
+                       <include refid="condition4BoxNo4Divide" />    
+                      ) t
+               group by t.box_no
+              having min(t.enoughqty) = 1 and sum(t.qty)>0) t
+  </select>
+  
+  
+  <select id="selectBoxNo4Divide"  resultType="com.yougou.logistics.city.common.model.BillImReceiptDtl"  parameterType="map">
+	    select B.* from (select A.*,rownum rn from( 
+	                  select t.box_no as boxNo,max(t.quality) as quality,max(t.item_type) as itemType,max(t.cell_no) as cellNo, sum(t.qty) as receiptQty
+                from (select b.box_no,
+                             vc.quality,
+                             vc.item_type,
+                             b.cell_no,
+                             bd.qty,
+                             case
+                               when nvl(vc.qty, 0)- nvl(vc.outstock_qty, 0)-bd.qty >= 0 then
+                                1
+                               else
+                                0
+                             end as enoughqty
+                        from con_box b
+                        inner join CM_DEFCELL z on b.cell_no = z.cell_no and b.locno = z.locno
+                        inner join CM_DEFAREA df on z.ware_no = df.ware_no and z.area_no = df.area_no and z.locno = df.locno
+                        <include refid="selectBoxNo4DivideJoin" />
+                        
+                        left join (select d.box_no
+                                    from BILL_IM_RECEIPT m, BILL_IM_RECEIPT_DTL d
+                                      where m.locno = d.locno
+                                        and m.owner_no = d.owner_no
+                                        and m.receipt_no = d.receipt_no
+                                        and m.business_type='1'
+                                        and m.status not in ('40','60','91')
+                                        and m.locno=#{params.locNo,jdbcType=VARCHAR}
+                                        and m.owner_no=#{params.ownerNo,jdbcType=VARCHAR}
+                                        group by d.box_no
+                                        ) sub2
+                        on b.box_no=sub2.box_no  
+                        
+                        <!--
+                        inner join                         
+                        <include refid="sql4BoxNo4Divide" /> cd 
+                        on b.box_no=cd.box_no  
+                        -->
+                                             
+                        left join v_city_content_box bd
+                          on b.locno = bd.locno
+                         and b.owner_no = bd.owner_no
+                         and b.box_no = bd.box_no
+                        left join v_content vc
+                          on b.cell_no = vc.cell_no
+                         and b.locno=vc.locno
+                         and b.owner_no=vc.owner_no
+                         and vc.STATUS ='0'
+                         and vc.FLAG ='0'
+                         and vc.HM_MANUAL_FLAG ='1'  
+                         
+                         <!--and cd.quality=vc.quality
+                         and cd.item_type=vc.item_type-->
+                         
+                         and vc.quality='0' <!--目前只写为正品-->
+                         and vc.item_type='0' <!--目前只写为零售-->
+                         and bd.item_no = vc.item_no
+                         and bd.size_no = vc.size_no
+                       where b.status = '2'
+                       and b.cell_no is not null 
+                       and sub2.box_no is null 
+                       and b.locno=#{params.locNo,jdbcType=VARCHAR} 
+                       and b.owner_no=#{params.ownerNo,jdbcType=VARCHAR}
+                       
+                       and (
+			           		<!-- 属性类型：存储区，库区属性：作业区，库区用途：普通存储区 ,库区类型：地堆堆叠-->
+			           		(df.attribute_type = '0' and df.area_attribute = '0' and df.area_usetype = '1' and df.area_type ='3') or
+			           		<!-- 属性类型：进货，库区属性：暂存区，库区用途：普通存储区 -->
+			           		(df.attribute_type = '1' and df.area_attribute = '1' and df.area_usetype = '1') or
+			           		<!-- 属性类型：退货，库区属性：暂存区，库区用途：普通存储区 -->
+			           		(df.attribute_type = '6' and df.area_attribute = '1' and df.area_usetype = '1')
+			           )
+                       
+                        <if test="null!=params.wareNo and ''!=params.wareNo" >
+                       and z.ware_no in
+                       	<foreach item="wareNo" index="index" collection="params.wareNo" 
+			                    open="(" separator="," close=")">
+			                    #{wareNo}
+			           </foreach>
+                       </if>
+                       <if test="null!=params.areaNo and ''!=params.areaNo" >
+	                       and  z.ware_no||'-'|| z.area_no  in 
+			    		<foreach item="areaNo" index="index" collection="params.areaNo" 
+			                    open="(" separator="," close=")">
+			                    #{areaNo}
+			           </foreach>
+    					 </if> 
+                       <include refid="condition4BoxNo4Divide" />  
+                      ) t
+               group by t.box_no
+              having min(t.enoughqty) = 1 and sum(t.qty)>0
+	    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillImReceiptKey" >
+    delete from BILL_IM_RECEIPT
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and RECEIPT_NO = #{receiptNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillImReceipt" >
+    delete from BILL_IM_RECEIPT
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and RECEIPT_NO = #{receiptNo,jdbcType=VARCHAR}
+      <if test="null!=checkStatus and ''!=checkStatus" >
+	  		and status = #{checkStatus,jdbcType=VARCHAR}
+	  </if>
+  </delete>
+  
+  <!--权限过滤查询条件-->
+  <sql id="sqlDivideReceiptAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and brt.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <select id="selectReceiptByPage" resultMap="BaseResultMap" parameterType="map">
+
+		select B.* from (select A.*,rownum rn from(
+			<choose>
+			    <when test="receipt.businessType == 1">
+			    	<include refid="sqlStockDivideReceiptCondition" />
+				</when>
+				<otherwise>
+					<include refid="sqlDivideReceiptCondition" />
+				</otherwise>
+		    </choose>
+		) A where
+		rownum &lt; #{page.endRowNum}) B where rn &gt;
+		#{page.startRowNum}
+
+	</select>
+
+  <select id="selectCountMx" resultType="java.lang.Integer" >
+		select count(1) as s
+		from(
+			<choose>
+			    <when test="receipt.businessType == 1">
+			    	<include refid="sqlStockDivideReceiptCondition" />
+				</when>
+				<otherwise>
+					<include refid="sqlDivideReceiptConditionCount" />
+				</otherwise>
+		    </choose>
+		)
+  </select>
+  
+  <sql id="sqlDivideReceiptConditionInnerJoin" >
+  		<if test="null!=receipt.deliverNo and ''!=receipt.deliverNo" >
+  		inner join bill_im_import_dtl bit
+		    on bit.locno = bi.locno
+		    and bit.owner_no = bi.owner_no
+		    and bit.import_no = bi.import_no
+            and bit.box_no=brt.box_no
+            and bit.item_no=brt.item_no
+            and bit.size_no=brt.size_no
+		</if>
+  </sql>
+  
+  <sql id="sqlDivideReceiptCondition" >
+  		select br.receipt_no,
+               max(br.receipt_type) as receipt_type,
+               max(br.receipt_worker) as receipt_worker,
+               br.recivedate,
+               max(br.auditor) as auditor,
+               max(br.audittm) as audittm,
+               br.locno,
+               br.owner_no,
+               (select count(distinct rd.box_no)
+                  from bill_im_receipt_dtl rd
+                 where rd.locno = br.locno
+                   and rd.owner_no = br.owner_no
+                   and rd.receipt_no = br.receipt_no
+                   and rd.divide_qty = 0) totalBoxQty,
+               (select sum(rd.receipt_qty) as a
+                  from bill_im_receipt_dtl rd
+                 where rd.locno = br.locno
+                   and rd.owner_no = br.owner_no
+                   and rd.receipt_no = br.receipt_no
+                   and rd.divide_qty = 0
+                 group by rd.receipt_no) totalReciveQty
+		    from bill_im_receipt br
+		    inner join bill_im_receipt_dtl brt
+		    on br.locno = brt.locno
+		    and br.owner_no = brt.owner_no
+		    and br.receipt_no = brt.receipt_no
+		    
+		    inner join bill_im_import bi
+		    on br.locno = bi.locno
+		    and br.owner_no = bi.owner_no
+		    and brt.import_no = bi.import_no		    
+		    
+		    <include refid="sqlDivideReceiptConditionInnerJoin" />
+		    
+		    inner join con_box c
+            on c.locno = bi.locno
+           	and c.owner_no = bi.owner_no
+           	and c.box_no = brt.box_no
+            and c.status = '1'
+		    
+		    where <!-- br.status='20' -->  brt.divide_qty = 0
+		    and (bi.status='12' or bi.status='20' or bi.status='30')
+		    and br.business_type='0'
+			<include refid="conditionReceipt" />
+			<include refid="sqlDivideReceiptAuthorityCondition" />
+			group by br.receipt_no,
+                  br.locno,
+                  br.owner_no,
+                  br.recivedate,
+                  br.supplier_no
+			order by br.recivedate desc,br.receipt_no desc
+  </sql>
+  
+    <sql id="sqlDivideReceiptConditionCount" >
+  		select 1
+		    from bill_im_receipt br
+		    
+		    inner join bill_im_receipt_dtl brt
+		    on br.locno = brt.locno
+		    and br.owner_no = brt.owner_no
+		    and br.receipt_no = brt.receipt_no
+		    
+		    inner join bill_im_import bi
+		    on br.locno = bi.locno
+		    and br.owner_no = bi.owner_no
+		    and brt.import_no = bi.import_no	
+		     
+		    <include refid="sqlDivideReceiptConditionInnerJoin" />
+		     
+		    inner join con_box c
+            on c.locno = bi.locno
+           	and c.owner_no = bi.owner_no
+           	and c.box_no = brt.box_no
+            and c.status = '1'
+		    
+		    where <!-- br.status='20' -->  brt.divide_qty = 0
+		    and (bi.status='12' or bi.status='20' or bi.status='30')
+		    and br.business_type='0'
+			<include refid="conditionReceipt" />
+			<include refid="sqlDivideReceiptAuthorityCondition" />
+			group by br.receipt_no
+  </sql>
+  
+  <sql id="sqlStockDivideReceiptCondition" >
+  		select br.receipt_no,
+	       br.receipt_type,
+	       br.receipt_worker,
+	       br.recivedate,
+	       max(br.auditor) as auditor,
+	       max(br.audittm) as audittm,
+	       br.locno,
+	       br.owner_no,
+	       count(distinct brt.box_no) totalBoxQty,
+	       (select sum(rd.receipt_qty) as a
+	          from bill_im_receipt_dtl rd
+	         where rd.locno = br.locno
+	           and rd.owner_no = br.owner_no
+	           and rd.receipt_no = br.receipt_no
+	         group by rd.receipt_no, rd.locno, rd.owner_no) totalReciveQty
+		  from bill_im_receipt br
+		  inner join bill_im_receipt_dtl brt
+		  	 on br.locno = brt.locno
+		   	and br.owner_no = brt.owner_no
+		   	and br.receipt_no = brt.receipt_no
+		  left join bill_im_import bi
+             on br.locno = bi.locno
+            and br.owner_no = bi.owner_no
+            and brt.import_no = bi.import_no
+		  where br.status = '11' 
+		  	    and br.business_type='1'
+		  	    and exists(
+		  	    	select 'X' from con_box cb
+		  	    		where cb.locno = brt.locno
+		  	    		  and cb.box_no = brt.box_no
+		  	    		  and cb.status = '22'
+		  	    )
+		  		<include refid="conditionReceipt" /> 
+		  		<include refid="sqlDivideReceiptAuthorityCondition" />
+		  group by br.receipt_no,
+		          br.receipt_type,
+		          br.receipt_worker,
+		          br.recivedate,
+		          br.locno,
+		          br.owner_no
+		 order by br.recivedate desc
+  </sql>
+  
+  
+  
+ <!--权限过滤左连接子查询-->
+ <sql id="selectReciptNoCheckedByPageAuthorityLeftJoin" >
+   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+            left join (select locno, owner_no, receipt_no
+                         from BILL_IM_RECEIPT_DTL                         
+                        where brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+                         group by locno, owner_no, receipt_no
+                        ) sub1
+              on sub1.locno = B.locno
+             and sub1.owner_no = B.owner_no
+             and sub1.receipt_no = B.receipt_no
+                          
+             left join (select locno, owner_no, receipt_no
+                         from BILL_IM_RECEIPT_DTL   
+                         group by  locno, owner_no, receipt_no                      
+                        ) sub2
+              on sub2.locno = B.locno
+             and sub2.owner_no = B.owner_no
+             and sub2.receipt_no = B.receipt_no
+    </if>
+  </sql>
+  
+  
+<!--权限过滤查询条件-->
+  <sql id="selectReciptNoCheckedByPageAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and (sub1.receipt_no is not null or sub2.receipt_no is null)
+    </if>
+  </sql>
+
+<!--查询未验收的收货单 -->
+<select id="selectReciptNoChecked" resultType="com.yougou.logistics.city.common.model.BillImReceipt">
+select B.* from (
+	select A.*, rownum rn
+	  from (SELECT B.RECEIPT_NO RECEIPTNO,
+	               B.RECIVEDATE RECIVEDATE,
+	               B.RECEIPT_WORKER RECEIPTWORKER,
+	               B.RECEIPT_NAME RECEIPTNAME,
+	               B.CAR_PLATE CARPLATE,
+	               B.OWNER_NO OWNERNO,
+	               Max(bm.owner_name) ownerName,
+	               B.SUPPLIER_NO supplierNo,
+	               (select t.name
+			          from (select supplier_no as no, supplier_name as name
+			                  from SUPPLIER
+			                union
+			                select STORE_NO as no, store_name as name from store) t
+			         where t.no = b.supplier_no
+			           and rownum = 1) AS supplierName,
+	               sum(nvl(d.receipt_Qty, 0)) receiptqty
+	          FROM BILL_IM_RECEIPT B
+	          left outer join bill_im_receipt_dtl d
+	            on d.locno = b.locno
+	           and d.OWNER_NO = b.OWNER_NO
+	           and d.RECEIPT_NO = b.RECEIPT_NO
+	          <include refid="selectReciptNoCheckedByPageAuthorityLeftJoin" />
+	         INNER JOIN bm_defowner bm
+	            ON bm.owner_no = b.owner_no
+	         WHERE 1 = 1 and B.BUSINESS_TYPE = '0'
+	           <include refid="checkReciptCon" />
+	           <include refid="selectReciptNoCheckedByPageAuthorityCondition" />
+	           and (((b.status = '20' OR b.status = '50') and not exists
+	                (select 'X'
+	                    from bill_im_check ic
+	                   where ic.locno = B.LOCNO
+	                     AND ic.owner_no = B.Owner_No
+	                     and ic.s_import_no = B.Receipt_No
+	                     and ic.status='10')) )
+	           <!--当收货单中的明细中还有未手动关闭的入库通知单，则还可以继续验收 -->
+	           and exists (select 1
+	                  from Bill_Im_Receipt_Dtl rd, bill_im_import ii
+	                 where ii.import_no = rd.import_no
+	                   and ii.status != '91'
+	                   and rd.receipt_no = B.Receipt_No)
+	           <!-- su.yq20140813箱没有做验收才能做验收 -->
+	           and exists(
+	           		select 'x' from con_box cb
+	           			where cb.locno = d.locno
+	           				and cb.box_no = d.box_no
+	           				and cb.status = '1'
+	           )
+	         group by B.RECEIPT_NO,
+	                  B.RECIVEDATE,
+	                  B.RECEIPT_WORKER,
+	                  B.RECEIPT_NAME,
+	                  B.CAR_PLATE,
+	                  B.OWNER_NO,
+	                  B.SUPPLIER_NO,
+	                  B.BUSINESS_TYPE
+	        
+    		<if test="params.orderByField == null or ''==params.orderByField" >
+      	   order by B.RECEIPT_NO desc
+    		</if>
+    	) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+</select>
+
+<select id="selectReciptNoCheckedCount" resultType="java.lang.Integer" >
+	select count(1)
+  		from (SELECT B.RECEIPT_NO RECEIPTNO,
+               B.RECIVEDATE RECIVEDATE,
+               B.RECEIPT_WORKER RECEIPTWORKER,
+               B.CAR_PLATE CARPLATE,
+               B.OWNER_NO OWNERNO,
+               Max(bm.owner_name) ownerName,
+               B.SUPPLIER_NO supplierNo,
+               (CASE
+                 WHEN b.BUSINESS_TYPE = '0' THEN
+                  (select supplier_name
+                     from SUPPLIER s
+                    where s.supplier_no = b.supplier_no)
+                 WHEN b.BUSINESS_TYPE = '4' then
+                  (select store_name
+                     from store s
+                    where s.store_no = b.supplier_no)
+               END) AS supplierName,
+               sum(nvl(d.receipt_Qty, 0)) receiptqty
+          FROM BILL_IM_RECEIPT B
+          left outer join bill_im_receipt_dtl d
+            on d.locno = b.locno
+           and d.OWNER_NO = b.OWNER_NO
+           and d.RECEIPT_NO = b.RECEIPT_NO
+          <include refid="selectReciptNoCheckedByPageAuthorityLeftJoin" />
+         INNER JOIN bm_defowner bm
+            ON bm.owner_no = b.owner_no
+         WHERE 1 = 1
+	           <include refid="checkReciptCon" />
+	           <include refid="selectReciptNoCheckedByPageAuthorityCondition" />
+	           and (((b.status = '20' OR b.status = '50') and not exists
+	                (select 'X'
+	                    from bill_im_check ic
+	                   where ic.locno = B.LOCNO
+	                     AND ic.owner_no = B.Owner_No
+	                     and ic.s_import_no = B.Receipt_No
+	                     and ic.status='10')))
+	           <!--当收货单中的明细中还有未手动关闭的入库通知单，则还可以继续验收 -->
+	           and exists (select 1
+	                  from Bill_Im_Receipt_Dtl rd, bill_im_import ii
+	                 where ii.import_no = rd.import_no
+	                   and ii.status != '91'
+	                   and rd.receipt_no = B.Receipt_No)
+	           <!-- su.yq20140813箱没有做验收才能做验收 -->
+	           and exists(
+	           		select 'x' from con_box cb
+	           			where cb.locno = d.locno
+	           				and cb.box_no = d.box_no
+	           				and cb.status = '1'
+	           )
+	         group by B.RECEIPT_NO,
+	                  B.RECIVEDATE,
+	                  B.RECEIPT_WORKER,
+	                  B.CAR_PLATE,
+	                  B.OWNER_NO,
+	                  B.SUPPLIER_NO,
+	                  B.BUSINESS_TYPE) A
+  </select>
+
+		
+<!--查询未验收的收货单end -->
+  <sql id="extendconditionReceipt" >
+  	<if test="null!=params">
+	    <if test="null!=params.locno and ''!=params.locno" >
+	        and b.locno = #{params.locno,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.status and ''!=params.status" >
+	        and b.status = #{params.status,jdbcType=VARCHAR}
+		</if>
+		 <if test="null!=params.receiptNo and ''!=params.receiptNo" >
+	        and b.receipt_No = #{params.receiptNo,jdbcType=VARCHAR}
+		</if>
+		 <if test="null!=params.creator and ''!=params.creator" >
+	        and b.creator = #{params.creator,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.auditor and ''!=params.auditor" >
+	        and b.auditor = #{params.auditor,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.importNo and ''!=params.importNo" >
+	        and d.import_no = #{params.importNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.boxNo and ''!=params.boxNo" >
+	        and d.box_no = #{params.boxNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.createtmStart and ''!=params.createtmStart" >
+			<![CDATA[
+		    	and b.createtm >= to_date('${params.createtmStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+		     ]]>	 
+		 </if>
+		 <if test="null!=params.createtmEnd and ''!=params.createtmEnd" >
+		    <![CDATA[
+		        and b.createtm <= to_date('${params.createtmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+		    ]]>	 
+		 </if>
+		  <if test="null!=params.audittmStart and ''!=params.audittmStart" >
+		    <![CDATA[
+		        and b.audittm >= to_date('${params.audittmStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+		    ]]>	 
+		 </if>
+		  <if test="null!=params.audittmEnd and ''!=params.audittmEnd" >
+		    <![CDATA[
+		        and b.audittm <= to_date('${params.audittmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+		    ]]>	 
+		 </if>
+		 <if test="null!=params.transNo and ''!=params.transNo" >
+	        and im.trans_No = #{params.transNo,jdbcType=VARCHAR}
+		</if>
+		 <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+	        and b.owner_No = #{params.ownerNo,jdbcType=VARCHAR}
+		</if>
+		 <if test="null!=params.startTm and ''!=params.startTm" >
+	         <![CDATA[
+		        and b.RECIVEDATE >= to_date('${params.startTm} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+		    ]]>
+		</if>
+		 <if test="null!=params.endTm and ''!=params.endTm" >
+	         <![CDATA[
+		        and b.RECIVEDATE <= to_date('${params.endTm} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+		    ]]>
+		</if>
+		 <if test="null!=params.receiptType and ''!=params.receiptType" >
+	        and b.receipt_Type = #{params.receiptType}
+		</if>
+		 <if test="null!=params.receiptWorker and ''!=params.receiptWorker" >
+	        and b.receipt_Worker = #{params.receiptWorker,jdbcType=VARCHAR}
+		</if>
+		 <if test="null!=params.dockNo and ''!=params.dockNo" >
+	        and b.dock_No = #{params.dockNo,jdbcType=VARCHAR}
+		</if>
+		 <if test="null!=params.carPlate and ''!=params.carPlate" >
+	        and b.car_Plate = #{params.carPlate,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.brandNo and ''!=params.brandNo" >
+      		and i.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.sysNo and ''!=params.sysNo" >
+            and i.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.businessType and ''!=params.businessType" >
+            and b.BUSINESS_TYPE = #{params.businessType,jdbcType=VARCHAR}
+      </if>
+	 </if>
+  </sql>
+  
+   <sql id="selectMainReciptAuthorityLeftJoin" >
+   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+            left join (select locno, owner_no, receipt_no
+                         from bill_im_receipt_dtl                         
+                        where 
+                        locno = #{params.locno,jdbcType=VARCHAR}
+                        and brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+                         group by locno, owner_no, receipt_no
+                        ) sub1
+              on sub1.locno = b.locno
+             and sub1.owner_no = b.owner_no
+             and sub1.receipt_no = b.receipt_no
+                          
+             left join (select locno, owner_no, receipt_no
+                         from bill_im_receipt_dtl  
+                         where locno = #{params.locno,jdbcType=VARCHAR}   
+                         group by  locno, owner_no, receipt_no                   
+                        ) sub2
+              on sub2.locno = b.locno
+             and sub2.owner_no = b.owner_no
+             and sub2.receipt_no = b.receipt_no
+    </if>
+  </sql>
+  
+  <!--权限过滤查询条件-->
+  <sql id="selectMainReciptAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and (sub1.receipt_no is not null or sub2.receipt_no is null)
+    </if>
+  </sql>
+  
+  <select id="selectMainReciptCount" resultType="java.lang.Integer">
+		select  count(1) from(
+  			<include refid="selectMainRecipt_SQL" />
+       	) A
+  </select>
+  
+    <sql id="selectMainRecipt_SQL" >
+	    select da.locno,
+	       da.status,
+	       da.RECEIPT_NO,
+	       da.OWNER_NO,
+	       da.RECIVEDATE,
+	       da.RECEIPT_TYPE,
+	       da.CAR_PLATE,
+	       da.RECEIPT_WORKER,
+	       da.RECEIPT_NAME,
+	       da.DOCK_NO,
+	       (select ck.dock_name
+                  from BM_DEFDOCK ck
+                 where ck.dock_no = da.DOCK_NO
+                   and ck.locno = da.locno
+                   and rownum = 1) as dockName,
+           da.CREATOR, 
+           da.CREATOR_NAME,  
+	       da.CREATETM,
+	       da.AUDITOR,
+	       da.AUDITOR_NAME,
+	       da.AUDITTM,
+	       da.SHIP_DRIVER,
+	       da.REMARK,
+	       da.supplier_no,
+	       da.supplierName,
+	       sum(da.receiptqty) receiptqty,
+	       count(da.box_no) boxqty
+		  from (select b.locno,
+		               b.status,
+		               b.RECEIPT_NO,
+		               b.OWNER_NO,
+		               b.RECIVEDATE,
+		               b.RECEIPT_TYPE,
+		               b.CAR_PLATE,
+		               b.RECEIPT_WORKER,
+		               b.RECEIPT_NAME,
+		               b.DOCK_NO,
+		               b.CREATOR,
+		               b.CREATOR_NAME,
+		               b.CREATETM,
+		               b.AUDITOR,
+		               b.AUDITOR_NAME,
+		               b.AUDITTM,
+		               b.SHIP_DRIVER,
+		               b.REMARK,
+		               b.supplier_no,
+		               (select t.name from (select supplier_no as no, supplier_name as name
+                                                  from SUPPLIER
+                                                union
+                                                select STORE_NO as no, store_name as name from store) t
+                                         where t.no = b.supplier_no
+                                           and rownum = 1) AS supplierName,
+		               d.box_no,
+		               sum(nvl(d.receipt_Qty, 0)) receiptqty
+		          from bill_im_receipt b
+		          <include refid="selectMainReciptAuthorityLeftJoin" />		          
+		          left outer join bill_im_receipt_dtl d
+		            on d.locno = b.locno
+		           and d.OWNER_NO = b.OWNER_NO
+		           and d.RECEIPT_NO = b.RECEIPT_NO
+		          left outer join bill_im_import im
+		            on d.locno = b.locno
+		           and d.OWNER_NO = b.OWNER_NO
+		           and im.IMPORT_NO = d.IMPORT_NO
+		          left outer join item i
+		            on d.ITEM_NO = i.ITEM_NO
+		         where 1 = 1
+		           <include refid="extendconditionReceipt" />
+		           <include refid="selectMainReciptAuthorityCondition" />
+		         group by b.locno,
+		                  b.status,
+		                  b.RECEIPT_NO,
+		                  b.OWNER_NO,
+		                  b.RECIVEDATE,
+		                  b.RECEIPT_TYPE,
+		                  b.CAR_PLATE,
+		                  b.RECEIPT_WORKER,
+		                  b.RECEIPT_NAME,
+		                  b.DOCK_NO,
+		                  b.CREATOR,
+		                  b.CREATOR_NAME,
+		                  b.CREATETM,
+		                  b.AUDITOR,
+		                  b.AUDITOR_NAME,
+		                  b.AUDITTM,
+		                  b.SHIP_DRIVER,
+		                  b.REMARK,
+		                  b.supplier_no,
+		                  b.BUSINESS_TYPE,
+		                  d.box_no) da
+		 group by da.locno,
+		          da.status,
+		          da.RECEIPT_NO,
+		          da.OWNER_NO,
+		          da.RECIVEDATE,
+		          da.RECEIPT_TYPE,
+		          da.CAR_PLATE,
+		          da.RECEIPT_WORKER,
+		          da.RECEIPT_NAME,
+		          da.DOCK_NO,
+		          da.CREATOR,
+		          da.CREATOR_NAME,
+		          da.CREATETM,
+		          da.AUDITOR,
+		          da.AUDITOR_NAME,
+		          da.AUDITTM,
+		          da.SHIP_DRIVER,
+		          da.REMARK,
+		          da.supplier_no,
+		          da.supplierName
+    </sql>
+  
+  <select id="selectMainRecipt" resultMap="BaseResultMap" parameterType="map">
+  	select B.* from (select A.*,rownum rn from(
+  		<include refid="selectMainRecipt_SQL" />
+        <if test="params.sort!= null and ''!=params.sort" >
+	    	order by ${params.sort} ${params.order}
+    	</if>
+    	<if test="params.sort== null or ''==params.sort" >
+    	 	order by CREATETM desc,RECIVEDATE desc,RECEIPT_NO desc
+    	</if>
+  		) A where
+		rownum &lt; #{page.endRowNum}) B where rn &gt;
+		#{page.startRowNum}
+  </select>
+  <select id="selectMainReciptSum" resultMap="BaseResultMap" parameterType="map">
+  	
+  	select nvl(sum(A.receiptqty),0) receiptqty ,nvl(sum(A.boxqty),0) boxqty from (
+  		<include refid="selectMainRecipt_SQL" />
+        ) A
+        
+  </select>
+  
+  <!-- 是否有预到货通知单对应的状态为新建或审核的收货单 -->
+   <select id="selectIsReceiptByImportNo" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select r.status  from  BILL_IM_RECEIPT  r, Bill_Im_Receipt_Dtl  rd
+		where r.locno = rd.locno
+		and r.owner_no = rd.owner_no
+		and r.receipt_no = rd.receipt_no
+		and rd.import_no = #{importNo,jdbcType=VARCHAR}
+  </select>
+  
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillImReceipt" >
+    insert into BILL_IM_RECEIPT (LOCNO, OWNER_NO, RECEIPT_NO, 
+      RECEIPT_TYPE, STORE_NO_FROM, DOCK_NO, 
+      RECEIPT_WORKER, CAR_PLATE, SHIP_DRIVER, 
+      RECEIPT_START_DATE, RECEIPT_END_DATE, PRINTER_GROUP_NO, 
+      PRINT_TIMES, STATUS, STATUS_TRANS, 
+      REMARK, RECIVEDATE, TRANS_NO, 
+      CREATOR, CREATETM, EDITOR, 
+      EDITTM, AUDITOR, AUDITTM,SUPPLIER_NO
+      )
+    values (#{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, #{receiptNo,jdbcType=VARCHAR}, 
+      #{receiptType,jdbcType=VARCHAR}, #{storeNoFrom,jdbcType=VARCHAR}, #{dockNo,jdbcType=VARCHAR}, 
+      #{receiptWorker,jdbcType=VARCHAR}, #{carPlate,jdbcType=VARCHAR}, #{shipDriver,jdbcType=VARCHAR}, 
+      #{receiptStartDate,jdbcType=TIMESTAMP}, #{receiptEndDate,jdbcType=TIMESTAMP}, #{printerGroupNo,jdbcType=VARCHAR}, 
+      #{printTimes,jdbcType=DECIMAL}, #{status,jdbcType=VARCHAR}, #{statusTrans,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{recivedate,jdbcType=TIMESTAMP}, #{transNo,jdbcType=VARCHAR}, 
+      #{creator,jdbcType=VARCHAR}, #{createtm,jdbcType=TIMESTAMP}, #{editor,jdbcType=VARCHAR}, 
+      #{edittm,jdbcType=TIMESTAMP}, #{auditor,jdbcType=VARCHAR}, #{audittm,jdbcType=TIMESTAMP},#{supplierNo,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillImReceipt" >
+    insert into BILL_IM_RECEIPT
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="receiptNo != null" >
+        RECEIPT_NO,
+      </if>
+      <if test="receiptType != null" >
+        RECEIPT_TYPE,
+      </if>
+      <if test="storeNoFrom != null" >
+        STORE_NO_FROM,
+      </if>
+      <if test="dockNo != null" >
+        DOCK_NO,
+      </if>
+      <if test="receiptWorker != null" >
+        RECEIPT_WORKER,
+      </if>
+      <if test="receiptName != null" >
+        RECEIPT_NAME,
+      </if>
+      <if test="carPlate != null" >
+        CAR_PLATE,
+      </if>
+      <if test="shipDriver != null" >
+        SHIP_DRIVER,
+      </if>
+      <if test="receiptStartDate != null" >
+        RECEIPT_START_DATE,
+      </if>
+      <if test="receiptEndDate != null" >
+        RECEIPT_END_DATE,
+      </if>
+      <if test="printerGroupNo != null" >
+        PRINTER_GROUP_NO,
+      </if>
+      <if test="printTimes != null" >
+        PRINT_TIMES,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="statusTrans != null" >
+        STATUS_TRANS,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+      <if test="recivedate != null" >
+        RECIVEDATE,
+      </if>
+      <if test="transNo != null" >
+        TRANS_NO,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="creatorName != null" >
+        CREATOR_NAME,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="editorName != null" >
+        EDITOR_NAME,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="auditor != null" >
+        AUDITOR,
+      </if>
+      <if test="audittm != null" >
+        AUDITTM,
+      </if>
+      <if test="auditorName != null" >
+        AUDITOR_NAME,
+      </if>
+      <if test="supplierNo != null" >
+        SUPPLIER_NO,
+      </if>
+      <if test="businessType != null" >
+        BUSINESS_TYPE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="receiptNo != null" >
+        #{receiptNo,jdbcType=VARCHAR},
+      </if>
+      <if test="receiptType != null" >
+        #{receiptType,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNoFrom != null" >
+        #{storeNoFrom,jdbcType=VARCHAR},
+      </if>
+      <if test="dockNo != null" >
+        #{dockNo,jdbcType=VARCHAR},
+      </if>
+      <if test="receiptWorker != null" >
+        #{receiptWorker,jdbcType=VARCHAR},
+      </if>
+      <if test="receiptName != null" >
+       #{receiptName,jdbcType=VARCHAR},
+      </if>
+      <if test="carPlate != null" >
+        #{carPlate,jdbcType=VARCHAR},
+      </if>
+      <if test="shipDriver != null" >
+        #{shipDriver,jdbcType=VARCHAR},
+      </if>
+      <if test="receiptStartDate != null" >
+        #{receiptStartDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="receiptEndDate != null" >
+        #{receiptEndDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="printerGroupNo != null" >
+        #{printerGroupNo,jdbcType=VARCHAR},
+      </if>
+      <if test="printTimes != null" >
+        #{printTimes,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="statusTrans != null" >
+        #{statusTrans,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="recivedate != null" >
+        #{recivedate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="transNo != null" >
+        #{transNo,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+       <if test="creatorName != null" >
+         #{creatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null" >
+        #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditor != null" >
+        #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        #{audittm,jdbcType=TIMESTAMP},
+      </if>
+       <if test="auditorName != null" >
+        #{auditorName,jdbcType=VARCHAR},
+      </if>
+       <if test="supplierNo != null" >
+         #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="businessType != null" >
+        #{businessType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillImReceipt" >
+    update BILL_IM_RECEIPT
+    <set >
+      <if test="receiptType != null" >
+        RECEIPT_TYPE = #{receiptType,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNoFrom != null" >
+        STORE_NO_FROM = #{storeNoFrom,jdbcType=VARCHAR},
+      </if>
+      <if test="dockNo != null" >
+        DOCK_NO = #{dockNo,jdbcType=VARCHAR},
+      </if>
+      <if test="receiptWorker != null" >
+        RECEIPT_WORKER = #{receiptWorker,jdbcType=VARCHAR},
+      </if>
+      <if test="receiptName != null" >
+        RECEIPT_NAME = #{receiptName,jdbcType=VARCHAR},
+      </if>
+      <if test="carPlate != null" >
+        CAR_PLATE = #{carPlate,jdbcType=VARCHAR},
+      </if>
+      <if test="shipDriver != null" >
+        SHIP_DRIVER = #{shipDriver,jdbcType=VARCHAR},
+      </if>
+      <if test="receiptStartDate != null" >
+        RECEIPT_START_DATE = #{receiptStartDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="receiptEndDate != null" >
+        RECEIPT_END_DATE = #{receiptEndDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="printerGroupNo != null" >
+        PRINTER_GROUP_NO = #{printerGroupNo,jdbcType=VARCHAR},
+      </if>
+      <if test="printTimes != null" >
+        PRINT_TIMES = #{printTimes,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="statusTrans != null" >
+        STATUS_TRANS = #{statusTrans,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="recivedate != null" >
+        RECIVEDATE = #{recivedate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="transNo != null" >
+        TRANS_NO = #{transNo,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null" >
+        EDITOR_NAME = #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditor != null" >
+        AUDITOR = #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorName != null" >
+        AUDITOR_NAME = #{auditorName,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and RECEIPT_NO = #{receiptNo,jdbcType=VARCHAR}
+      <if test="null!=checkStatus and ''!=checkStatus" >
+	  		and status = #{checkStatus,jdbcType=VARCHAR}
+	  </if>
+      <if test="null!=uptStatus and ''!=uptStatus" >
+        and STATUS = #{uptStatus,jdbcType=VARCHAR}
+      </if>
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillImReceipt" >
+    update BILL_IM_RECEIPT
+    set RECEIPT_TYPE = #{receiptType,jdbcType=VARCHAR},
+      STORE_NO_FROM = #{storeNoFrom,jdbcType=VARCHAR},
+      DOCK_NO = #{dockNo,jdbcType=VARCHAR},
+      RECEIPT_WORKER = #{receiptWorker,jdbcType=VARCHAR},
+      CAR_PLATE = #{carPlate,jdbcType=VARCHAR},
+      SHIP_DRIVER = #{shipDriver,jdbcType=VARCHAR},
+      RECEIPT_START_DATE = #{receiptStartDate,jdbcType=TIMESTAMP},
+      RECEIPT_END_DATE = #{receiptEndDate,jdbcType=TIMESTAMP},
+      PRINTER_GROUP_NO = #{printerGroupNo,jdbcType=VARCHAR},
+      PRINT_TIMES = #{printTimes,jdbcType=DECIMAL},
+      STATUS = #{status,jdbcType=VARCHAR},
+      STATUS_TRANS = #{statusTrans,jdbcType=VARCHAR},
+      REMARK = #{remark,jdbcType=VARCHAR},
+      RECIVEDATE = #{recivedate,jdbcType=TIMESTAMP},
+      TRANS_NO = #{transNo,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      AUDITOR = #{auditor,jdbcType=VARCHAR},
+      AUDITTM = #{audittm,jdbcType=TIMESTAMP}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and RECEIPT_NO = #{receiptNo,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 打印收货单 -->
+	<select id="selectImReceiptPrint" resultMap="BaseResultMap" parameterType="map">
+		select da.RECEIPT_NO,
+			da.RECIVEDATE,
+			da.CREATETM,
+			da.AUDITOR,
+			da.supplier_no,
+			da.supplierName,
+			count(da.box_no) boxqty,
+			da.BRAND_NO,
+			sum(da.receiptqty) receiptqty
+		from (select b.RECEIPT_NO,
+				b.RECIVEDATE,
+				b.CREATETM,
+				b.AUDITOR,
+				b.supplier_no,
+				(select t.name
+					from (select supplier_no as no, supplier_name as name
+						from SUPPLIER
+					      union
+						select STORE_NO as no, store_name as name from store) t
+				where t.no = b.supplier_no
+				and rownum = 1) AS supplierName,
+				d.box_no,
+				d.brand_no,
+				sum(nvl(d.receipt_Qty, 0)) receiptqty
+			from bill_im_receipt b
+			<include refid="selectMainReciptAuthorityLeftJoin" />
+			left outer join bill_im_receipt_dtl d
+				on d.locno = b.locno
+				and d.OWNER_NO = b.OWNER_NO
+				and d.RECEIPT_NO = b.RECEIPT_NO
+				and brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+			left outer join bill_im_import im
+				on d.locno = b.locno
+				and d.OWNER_NO = b.OWNER_NO
+				and im.IMPORT_NO = d.IMPORT_NO
+			left outer join item i
+				on d.ITEM_NO = i.ITEM_NO
+			where 1 = 1
+			<include refid="extendconditionReceipt" />
+			<include refid="selectMainReciptAuthorityCondition" />
+			group by b.RECEIPT_NO,
+				b.RECIVEDATE,
+				b.CREATETM,
+				b.AUDITOR,
+				b.supplier_no,
+				d.box_no,
+				d.brand_no) da
+		group by da.RECEIPT_NO,
+			da.RECIVEDATE,
+			da.CREATETM,
+			da.AUDITOR,
+			da.supplier_no,
+			da.supplierName,
+			da.brand_no
+		<if test="params.sort!= null and ''!=params.sort">
+			order by ${params.sort} ${params.order}
+		</if>
+		<if test="params.sort== null or ''==params.sort">
+			order by CREATETM desc,RECIVEDATE desc,RECEIPT_NO desc
+		</if>
+    </select>
+    
+    
+	<!-- 预分货单手工关闭-->
+	<select id="procOmCancelPreparedivide" parameterType="java.util.Map"  resultType="java.util.Map" statementType="CALLABLE" >
+		<![CDATA[
+			{call PKG_OM_CITY_PREPAREDIVIDE.PROC_OM_CANCEL_PREPAREDIVIDE (
+				#{I_locno, mode=IN, jdbcType=VARCHAR},
+				#{I_ownerNo, mode=IN, jdbcType=VARCHAR},
+				#{I_receiptNo, mode=IN, jdbcType=VARCHAR},
+				#{I_creator, mode=IN, jdbcType=VARCHAR},
+				#{O_msg, mode=OUT, jdbcType=VARCHAR}
+			 )} 
+		]]>
+	 </select>
+  
+</mapper>

@@ -1,0 +1,1075 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.ItemMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.Item" >
+    <id column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR" />
+    <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+    <result column="ITEM_LNAME" property="itemLname" jdbcType="VARCHAR" />
+    <result column="ITEM_ENAME" property="itemEname" jdbcType="VARCHAR" />
+    <result column="SEARCH_CODE" property="searchCode" jdbcType="VARCHAR" />
+    <result column="BARCODE" property="barcode" jdbcType="VARCHAR" />
+    <result column="CATE_NO" property="cateNo" jdbcType="VARCHAR" />
+    <result column="COLOR_NO" property="colorNo" jdbcType="VARCHAR" />
+    <result column="SYS_NO" property="sysNo" jdbcType="VARCHAR" />
+    <result column="ITEM_SPEC" property="itemSpec" jdbcType="VARCHAR" />
+    <result column="UNIT_NAME" property="unitName" jdbcType="VARCHAR" />
+    <result column="PACK_UNIT" property="packUnit" jdbcType="VARCHAR" />
+    <result column="PACK_SPEC" property="packSpec" jdbcType="VARCHAR" />
+    <result column="QMIN_OPERATE_PACKING" property="qminOperatePacking" jdbcType="DECIMAL" />
+    <result column="SKU_L" property="skuL" jdbcType="DECIMAL" />
+    <result column="SKU_W" property="skuW" jdbcType="DECIMAL" />
+    <result column="SKU_H" property="skuH" jdbcType="DECIMAL" />
+    <result column="PRODUCING_AREA" property="producingArea" jdbcType="VARCHAR" />
+    <result column="STOCK_TYPE" property="stockType" jdbcType="DECIMAL" />
+    <result column="ITEM_TYPEID" property="itemTypeid" jdbcType="DECIMAL" />
+    <result column="ITEM_KIND" property="itemKind" jdbcType="DECIMAL" />
+    <result column="SALETAXRATE" property="saletaxrate" jdbcType="DECIMAL" />
+    <result column="ITEM_STATUS" property="itemStatus" jdbcType="VARCHAR" />
+    <result column="STYLE_NO" property="styleNo" jdbcType="VARCHAR" />
+    <result column="PRODAYS" property="prodays" jdbcType="DECIMAL" />
+    <result column="SALE_PRICE" property="salePrice" jdbcType="DECIMAL" />
+    <result column="LOCATION" property="location" jdbcType="VARCHAR" />
+    <result column="SIZE_KIND" property="sizeKind" jdbcType="VARCHAR" />
+    <result column="MAINQDB" property="mainqdb" jdbcType="VARCHAR" />
+    <result column="SUPPLIER_NO" property="supplierNo" jdbcType="VARCHAR" />
+    <result column="WORK_ITEM_NO" property="workItemNo" jdbcType="VARCHAR" />
+    <result column="SALE_DT" property="saleDt" jdbcType="TIMESTAMP" />
+    <result column="SALE_PRICE0" property="salePrice0" jdbcType="DECIMAL" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="REMARKS" property="remarks" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="BRAND_NO" property="brandNo" jdbcType="VARCHAR" />
+    <result column="COST" property="cost" jdbcType="DECIMAL" />
+    <result column="COST0" property="cost0" jdbcType="DECIMAL" />
+    <result column="colorNoStr" property="colorNoStr" jdbcType="VARCHAR" />
+    <result column="brandNoStr" property="brandNoStr" jdbcType="VARCHAR" />
+    <result column="cateNoStr" property="cateNoStr" jdbcType="VARCHAR" />
+    <result column="itemStatusStr" property="itemStatusStr" jdbcType="VARCHAR" />
+    <result column="supplierNoStr" property="supplierNoStr" jdbcType="VARCHAR" />
+    <result column="heeltypeStr" property="heeltypeStr" jdbcType="VARCHAR" />
+	<result column="bottomtypeStr" property="bottomtypeStr" jdbcType="VARCHAR" />
+	<result column="seasonStr" property="seasonStr" jdbcType="VARCHAR" />
+	<result column="genderStr" property="genderStr" jdbcType="VARCHAR" />
+	<result column="ingredientsStr" property="ingredientsStr" jdbcType="VARCHAR" />
+	<result column="yearsStr" property="yearsStr" jdbcType="VARCHAR" />
+	<result column="styleStr" property="styleStr" jdbcType="VARCHAR" />
+	<result column="specialfeaturesStr" property="specialfeaturesStr" jdbcType="VARCHAR" />
+	<result column="orderfromStr" property="orderfromStr" jdbcType="VARCHAR" />
+	<result column="liningStr" property="liningStr" jdbcType="VARCHAR" />
+	<result column="seriesStr" property="seriesStr" jdbcType="VARCHAR" />
+	<result column="repeatlistingStr" property="repeatlistingStr" jdbcType="VARCHAR" />
+	<result column="productlineStr" property="productlineStr" jdbcType="VARCHAR" />
+	<result column="monthStr" property="monthStr" jdbcType="VARCHAR" />
+	<result column="otclistingdateStr" property="otclistingdateStr" jdbcType="VARCHAR" />
+	<result column="brandstyleStr" property="brandstyleStr" jdbcType="VARCHAR" />
+	<result column="distributionmustStr" property="distributionmustStr" jdbcType="VARCHAR" />
+	<result column="marketsupportStr" property="marketsupportStr" jdbcType="VARCHAR" />
+	<result column="pricerangeStr" property="pricerangeStr" jdbcType="VARCHAR" />
+	<result column="maincolorStr" property="maincolorStr" jdbcType="VARCHAR" />
+	<result column="secondarycolorStr" property="secondarycolorStr" jdbcType="VARCHAR" />
+	<result column="supporttypeStr" property="supporttypeStr" jdbcType="VARCHAR" />
+	<result column="sysNoStr" property="sysNoStr" jdbcType="VARCHAR" />
+	<result column="CATE_NO1" property="cateNo1" jdbcType="VARCHAR" />
+	<result column="cateNo1Str" property="cateNo1Str" jdbcType="VARCHAR" />
+	<result column="size_no" property="sizeNo" jdbcType="VARCHAR" />
+	<result column="tBarcode" property="tBarcode" jdbcType="VARCHAR" />
+	<result column="itemNoFuzzy" property="itemNoFuzzy" jdbcType="VARCHAR" />
+	<result column="itemCodeFuzzy" property="itemCodeFuzzy" jdbcType="VARCHAR" />
+	<result column="searchCodeFuzzy" property="searchCodeFuzzy" jdbcType="VARCHAR" />
+	
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ITEM_NO, ITEM_CODE, ITEM_NAME, ITEM_LNAME, ITEM_ENAME, SEARCH_CODE, BARCODE, CATE_NO, 
+    COLOR_NO, SYS_NO, ITEM_SPEC, UNIT_NAME, PACK_UNIT, PACK_SPEC,QMIN_OPERATE_PACKING, SKU_L, SKU_W, 
+    SKU_H, PRODUCING_AREA, STOCK_TYPE, ITEM_TYPEID, ITEM_KIND, SALETAXRATE, ITEM_STATUS, 
+    STYLE_NO, PRODAYS, SALE_PRICE, LOCATION, SIZE_KIND, MAINQDB, SUPPLIER_NO, WORK_ITEM_NO, 
+    SALE_DT, SALE_PRICE0, CREATOR, CREATETM, REMARKS, EDITTM, EDITOR, BRAND_NO, 
+    COST, COST0, CATE_NO1
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.q and ''!=params.q" >
+        and ( 
+                 item_code  like CONCAT(CONCAT('%','${params.q}'),'%')  
+                 or  item_name like CONCAT(CONCAT('%','${params.q}'),'%') 
+                 or  item_no like CONCAT(CONCAT('%','${params.q}'),'%')
+                 or  item_lname like CONCAT(CONCAT('%','${params.q}'),'%')
+                 or  search_code like CONCAT(CONCAT('%','${params.q}'),'%')
+                 or  barcode like CONCAT(CONCAT('%','${params.q}'),'%')
+                 or  sys_no like CONCAT(CONCAT('%','${params.q}'),'%')
+                 
+          )
+      </if>
+      
+      <if test="null!=params.itemCode and ''!=params.itemCode" >
+            and ITEM_CODE=#{params.itemCode,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.sysNo and ''!=params.sysNo" >
+            and sys_no=#{params.sysNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.itemNo and ''!=params.itemNo" >
+            and ITEM_NO=#{params.itemNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.itemName and ''!=params.itemName" >
+            and ITEM_NAME LIKE '%${params.itemName}%'
+      </if>
+      <if test="null!=params.sysNoStr and ''!=params.sysNoStr" >
+            and sys_no in (select ld.itemval from LOOKUPDTL ld where SYS_NO = ld.itemval and ld.lookupcode = 'SYS_NO' and ld.ITEMNAME LIKE '%${params.sysNoStr}%')
+      </if>
+      <if test="null!=params.cateNoStr and ''!=params.cateNoStr" >
+           	and CATE_NO in (select cg.Cate_NO from Category cg where cg.Cate_NO = Cate_NO and cg.Cate_Name LIKE '%${params.cateNoStr}%')
+      </if>
+      <if test="null!=params.cateNoArray" >
+      		and CATE_NO in 
+      		<foreach collection="params.cateNoArray" index="index" item="item" open="(" separator="," close=")">
+ 				#{item}
+ 			</foreach>
+      </if>
+      <if test="null!=params.cateNo and ''!=params.cateNo" >
+           	and CATE_NO = #{params.cateNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.brandNoStr and ''!=params.brandNoStr" >
+           	and Brand_NO in (select br.Brand_NO from Brand br where br.Brand_NO = Brand_NO and br.Brand_Name LIKE '%${params.brandNoStr}%')
+      </if>
+      <if test="null!=params.brandNo and ''!=params.brandNo" >
+           	and Brand_NO in (select br.Brand_NO from Brand br where br.Brand_NO = Brand_NO and br.Brand_NO LIKE '%${params.brandNo}%')
+      </if>
+      <if test="null!=params.searchCode and ''!=params.searchCode" >
+            and SEARCH_CODE=#{params.searchCode,jdbcType=VARCHAR}
+      </if>
+      
+      
+      <if test="null!=params.itemNoFuzzy and ''!=params.itemNoFuzzy" >
+            and ITEM_NO LIKE '%${params.itemNoFuzzy}%'
+      </if>
+      
+      <if test="null!=params.itemCodeFuzzy and ''!=params.itemCodeFuzzy" >
+            and ITEM_CODE LIKE '%${params.itemCodeFuzzy}%'
+      </if>
+      
+      <if test="null!=params.searchCodeFuzzy and ''!=params.searchCodeFuzzy" >
+            and SEARCH_CODE LIKE '%${params.searchCodeFuzzy}%'
+      </if>
+      
+    </if>
+  </sql>
+
+
+ 	<sql id="ChPlanItemAndSizeCondition">
+       	<if test="null!=params">
+           <if test="null!=params.queryCondition and ''!=params.queryCondition">
+                ${params.queryCondition}
+           </if>
+           <if test="null!=params.locno and ''!=params.locno">
+                and v.locno=#{params.locno,jdbcType=VARCHAR}
+           </if>
+           <if test="null!=params.itemNo and ''!=params.itemNo">
+                and c.item_no like '%${params.itemNo}%'
+           </if>
+           <if test="null!=params.itemName and ''!=params.itemName">
+                and c.ITEM_NAME LIKE '%${params.itemName}%'
+           </if>
+           <if test="null!=params.tBarcode and ''!=params.tBarcode">
+                and v.barcode=#{params.tBarcode,jdbcType=VARCHAR}
+           </if>
+           <if test="null!=params.barcode and ''!=params.barcode">
+               and v.barcode=#{params.barcode,jdbcType=VARCHAR}
+           </if>
+           <if test="null!=params.supplierNo and ''!=params.supplierNo">
+               and c.SUPPLIER_NO=#{params.supplierNo,jdbcType=VARCHAR}
+           </if>
+           <if test="null!=params.sysNo and ''!=params.sysNo">
+               and c.sys_no=#{params.sysNo,jdbcType=VARCHAR}
+           </if>
+           <if test="null!=params.brandNo and ''!=params.brandNo">
+               and c.brand_no=#{params.brandNo,jdbcType=VARCHAR}
+           </if>
+           <if test="null!=params.quality and ''!=params.quality">
+               and v.quality=#{params.quality,jdbcType=VARCHAR}
+           </if>
+           <if test="null!=params.itemType and ''!=params.itemType">
+               and v.item_Type=#{params.itemType,jdbcType=VARCHAR}
+           </if>
+           <if test="null!=params.yearsStr and ''!=params.yearsStr">
+               and s3.itemname like '%${params.yearsStr}%'
+           </if>
+           <!-- 
+           <if test="null!=params.seasonStr and ''!=params.seasonStr">
+               and s1.itemname like '%${params.seasonStr}%'
+           </if>
+           <if test="null!=params.genderStr and ''!=params.genderStr">
+               and s2.itemname like '%${params.genderStr}%'
+           </if>
+           -->
+           
+		<if test="null!=params.seasonValues and ''!=params.seasonValues" >
+	    	and c.season in
+	    	<foreach collection="params.seasonValues" item="seasonStr" open="(" close=")" separator=",">
+				#{seasonStr}
+			</foreach>
+			
+	  	</if>
+	   	<if test="null!=params.genderValues and ''!=params.genderValues" >
+	   		and c.gender in
+	    	<foreach collection="params.genderValues" item="genderStr" open="(" close=")" separator=",">
+				#{genderStr}
+			</foreach>
+			
+	   	</if>
+           
+		</if>
+	</sql>
+	
+	
+  	<!-- su.yq modify 2014 11.11 品牌多选-->
+  	<sql id="AllChPlanItemAndSizeCondition">
+  		<if test="null!=params.locno and ''!=params.locno">
+     		and v.locno=#{params.locno,jdbcType=VARCHAR}
+    	</if>
+    	<if test="null!=params.sysNo and ''!=params.sysNo">
+            and c.sys_no=#{params.sysNo,jdbcType=VARCHAR}
+        </if>
+    	<if test="null!=params.brandNo and ''!=params.brandNo">
+        	and c.brand_no in (${params.brandNo})
+    	</if>
+    	<if test="null!=params.quality and ''!=params.quality">
+            and v.quality=#{params.quality,jdbcType=VARCHAR}
+     	</if>
+        <if test="null!=params.itemType and ''!=params.itemType">
+        	and v.item_Type=#{params.itemType,jdbcType=VARCHAR}
+        </if>
+  	</sql>
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />,
+    
+    (select ld.ITEMNAME from LOOKUPDTL ld where im.SYS_NO = ld.itemval and ld.lookupcode = 'SYS_NO'  and rownum = 1) as sysNoStr,
+    (select ld.ITEMNAME from LOOKUPDTL ld where im.HEELTYPE = ld.itemval and ld.lookupcode = 'HEELTYPE'  and rownum = 1) as heeltypeStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where im.BOTTOMTYPE = ld.itemval and ld.lookupcode = 'BOTTOMTYPE'  and rownum = 1) as bottomtypeStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where im.SEASON = ld.itemval and ld.lookupcode = 'SEASON'  and rownum = 1) as seasonStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where im.GENDER = ld.itemval and ld.lookupcode = 'GENDER'  and rownum = 1) as genderStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where im.INGREDIENTS = ld.itemval and ld.lookupcode = 'INGREDIENTS'  and rownum = 1) as ingredientsStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where im.YEARS = ld.itemval and ld.lookupcode = 'YEARS'  and rownum = 1) as yearsStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where im.STYLE = ld.itemval and ld.lookupcode = 'STYLE'  and rownum = 1) as styleStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where im.SPECIALFEATURES = ld.itemval and ld.lookupcode = 'SPECIALFEATURES'  and rownum = 1) as specialfeaturesStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where im.ORDERFROM = ld.itemval and ld.lookupcode = 'ORDERFROM'  and rownum = 1) as orderfromStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where im.LINING = ld.itemval and ld.lookupcode = 'LINING'  and rownum = 1) as liningStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where im.SERIES = ld.itemval and ld.lookupcode = 'SERIES'  and rownum = 1) as seriesStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where im.REPEATLISTING = ld.itemval and ld.lookupcode = 'REPEATLISTING'  and rownum = 1) as repeatlistingStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where im.PRODUCTLINE = ld.itemval and ld.lookupcode = 'PRODUCTLINE'  and rownum = 1) as productlineStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where im.MONTH = ld.itemval and ld.lookupcode = 'MONTH'  and rownum = 1) as monthStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where im.OTCLISTINGDATE = ld.itemval and ld.lookupcode = 'OTCLISTINGDATE'  and rownum = 1) as otclistingdateStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where im.BRANDSTYLE = ld.itemval and ld.lookupcode = 'BRANDSTYLE'  and rownum = 1) as brandstyleStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where im.DISTRIBUTIONMUST = ld.itemval and ld.lookupcode = 'DISTRIBUTIONMUST'  and rownum = 1) as distributionmustStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where im.MARKETSUPPORT = ld.itemval and ld.lookupcode = 'MARKETSUPPORT'  and rownum = 1) as marketsupportStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where im.PRICERANGE = ld.itemval and ld.lookupcode = 'PRICERANGE'  and rownum = 1) as pricerangeStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where im.MAINCOLOR = ld.itemval and ld.lookupcode = 'MAINCOLOR'  and rownum = 1) as maincolorStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where im.SECONDARYCOLOR = ld.itemval and ld.lookupcode = 'SECONDARYCOLOR'  and rownum = 1) as secondarycolorStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where im.SUPPORTTYPE = ld.itemval and ld.lookupcode = 'SUPPORTTYPE'  and rownum = 1) as supporttypeStr,
+    (select sp.Supplier_Name from Supplier sp where sp.Supplier_NO = im.Supplier_NO) as supplierNoStr,
+    (select ld.ITEMNAME from LOOKUPDTL ld where im.ITEM_STATUS = ld.itemval and ld.lookupcode = 'ITEM_STATUS'  and rownum = 1) as itemStatusStr,
+    
+    (select cg.Cate_Name from Category cg where cg.Cate_NO = im.Cate_NO) as cateNoStr,
+    (select cg.Cate_Name from Category cg where cg.Cate_NO = im.CATE_NO1) as cateNo1Str,
+    (select br.Brand_Name from Brand br where br.Brand_NO = im.Brand_NO) as brandNoStr,
+    (select ci.Color_Name from Color_Info ci where ci.Color_NO = im.COLOR_NO) as colorNoStr
+    from ITEM im
+    where ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 查询商品编码下的尺码的数量
+  1.过滤掉库区属性类型为进货、出库复核、发货；库存属性为暂存区的库存
+   -->
+  <select id="selectChPlanItemAndSizeCount" resultType="java.lang.Integer" >
+	 select count(1) as s
+	 from (
+		 select distinct v.size_no,v.barcode as tBarcode,c.*,
+		 s1.itemname seasonStr, s2.itemname genderStr, s3.itemname yearsStr,
+		 (select br.Brand_Name from Brand br where br.Brand_NO = c.Brand_NO) as brandNoStr,
+		 (select ci.Color_Name from Color_Info ci where ci.Color_NO = c.COLOR_NO) as colorNoStr
+		  from item c
+	  left join category ct 
+      on c.cate_no = ct.cate_no
+		  <include refid="selectChPlanItemFrom" />
+	 <include refid="ChPlanItemAndSizeCondition" />	
+	 <include refid="AuthorityCondition" />		
+	 <choose>
+	 	<when test="params.cateThree != null and params.cateThree != ''">
+	 		and ct.search_code like '${params.cateThree}%'
+	 	</when>
+	 	<when test="params.cateTwo != null and params.cateTwo != ''">
+	 		and ct.search_code like '${params.cateTwo}%'
+	 	</when>
+	 	<when test="params.cateOne != null and params.cateOne != ''">
+	 		and ct.search_code like '${params.cateOne}%'
+	 	</when>
+	 	<otherwise>
+	 	</otherwise>
+	 </choose>    
+	 )
+  </select>
+  
+  <sql id="selectChPlanItemFrom" >
+  	inner join v_content v
+	    on c.item_no = v.item_no
+	   and v.qty != 0
+	  left join bill_ch_plan_dtl pd
+	    on pd.item_no = c.item_no
+	   and pd.size_no = v.size_no
+	   and pd.plan_no = #{params.planNo,jdbcType=VARCHAR}
+	   and pd.locno = #{params.locno,jdbcType=VARCHAR}
+	  join cm_defcell c2
+	    on v.cell_no = c2.cell_no
+	   and v.locno = c2.locno
+	  join cm_defarea da2
+	    on c2.locno = da2.locno
+	   and c2.ware_no = da2.ware_no
+	   and c2.area_no = da2.area_no
+	  left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+	   from LOOKUPDTL ld
+	   where ld.lookupcode = 'SEASON') s1
+        on c.season = s1.itemval
+      left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+       from LOOKUPDTL ld
+       where ld.lookupcode = 'GENDER') s2
+        on c.gender = s2.itemval
+      left join (select ld.lookupcode, ld.itemval, ld.ITEMNAME
+        from LOOKUPDTL ld
+        where ld.lookupcode = 'YEARS') s3
+         on c.years = s3.itemval
+	 where pd.item_no is null
+	   and v.instock_qty = 0
+	   and v.outstock_qty = 0
+	   and v.hm_manual_flag = '1'
+	   and v.FLAG = '0'
+	   and v.status = '0'
+	   and c2.check_status = '0'
+	   and c2.cell_status = '0'
+	   and da2.attribute_Type not in ('1', '3', '5')  
+	   and da2.area_Attribute != '1'
+  </sql>
+  
+  <!-- 查询商品编码的尺码（带分页）
+  1.过滤掉库区属性类型为进货、出库复核、发货；库存属性为暂存区的库存
+   -->
+  <select id="selectChPlanItemAndSizeByPage" resultMap="BaseResultMap" >
+	 select B.* from (select A.*,rownum rn from(
+	 select distinct v.size_no,v.barcode as tBarcode,c.*,
+	 s1.itemname seasonStr, s2.itemname genderStr, s3.itemname yearsStr,
+	 (select br.Brand_Name from Brand br  where br.Brand_NO = c.Brand_NO) as brandNoStr,
+	 (select ci.Color_Name from Color_Info ci where ci.Color_NO = c.COLOR_NO) as colorNoStr
+	  from item c
+	  left join category ct 
+      on c.cate_no = ct.cate_no
+	  <include refid="selectChPlanItemFrom" />
+	 <include refid="ChPlanItemAndSizeCondition" />
+	 <include refid="AuthorityCondition" />
+	 <choose>
+	 	<when test="params.cateThree != null and params.cateThree != ''">
+	 		and ct.search_code like '${params.cateThree}%'
+	 	</when>
+	 	<when test="params.cateTwo != null and params.cateTwo != ''">
+	 		and ct.search_code like '${params.cateTwo}%'
+	 	</when>
+	 	<when test="params.cateOne != null and params.cateOne != ''">
+	 		and ct.search_code like '${params.cateOne}%'
+	 	</when>
+	 	<otherwise>
+	 	</otherwise>
+	 </choose>
+	 order by  c.sys_no,c.item_no,v.size_no			    
+	 ) A where 1=1 
+	 <if test="null!=page">
+	   and rownum &lt; #{page.endRowNum}
+	 </if>        
+	   ) B where 1=1         
+	 <if test="null!=page">
+	  and rn &gt; #{page.startRowNum}	
+	 </if>
+  </select>
+  
+  
+    <!-- 查询商品编码的尺码,盘点计划全盘 -->
+  <select id="selectChPlanItemAndSize4Brand" resultMap="BaseResultMap" >
+ select distinct v.size_no,v.barcode as tBarcode,c.*,
+ (select br.Brand_Name from Brand br  where br.Brand_NO = c.Brand_NO) as brandNoStr,
+ (select ci.Color_Name from Color_Info ci where ci.Color_NO = c.COLOR_NO) as colorNoStr
+ from item c
+ inner join v_content v
+ on c.item_no = v.item_no
+ and v.qty != 0
+  where 1 = 1
+ and not exists (select 1
+ from bill_ch_plan_dtl pd
+ where pd.plan_no = #{params.planNo,jdbcType=VARCHAR}
+ and pd.locno = #{params.locno,jdbcType=VARCHAR}
+ and pd.item_no = c.item_no
+ and pd.size_no = v.size_no
+ and rownum = 1) 
+ and not exists (select 1 from v_content v2,cm_defcell c2 where v2.item_no=c.item_no and v2.size_no=v.size_no and v2.cell_no=c2.cell_no and 
+ v2.locno=c2.locno and v2.locno=#{params.locno,jdbcType=VARCHAR} and v2.cell_no=v.cell_no  
+  and (v2.instock_qty>0 or v2.outstock_qty>0 or v2.hm_manual_flag!='1' or v2.FLAG!='0' or v2.status!='0' or c2.cell_status!='0' or c2.check_status!='0')) 
+ <include refid="AllChPlanItemAndSizeCondition" />
+  </select>
+  
+  <!-- 查询该商品是否允许盘点 -->
+  <select id="selectChPlanItemCheck"  resultMap="BaseResultMap" >
+  		select v.item_no as itemNo,v.cell_no as cellNo,c.brand_no as brandNo
+        	from item c
+          	inner join v_content v
+            	on c.item_no = v.item_no
+         	where 1 = 1
+         	and exists 
+         		(select 1 from v_content v2,cm_defcell c2 
+         				where v2.item_no=c.item_no 
+         				  and v2.size_no=v.size_no 
+         				  and v2.cell_no=c2.cell_no 
+         				  and v2.locno=c2.locno 
+         				  and v2.locno=v.locno 
+         				  and v2.quality=v.quality 
+         				  and v2.item_Type=v.item_Type 
+         				  and (
+         				  		v2.instock_qty>0 or v2.outstock_qty>0 
+         				  	 or v2.hm_manual_flag!='1' or v2.FLAG!='0' 
+         				  	 or v2.status!='0' or c2.cell_status!='0' 
+         				  	 or c2.check_status!='0')
+         		 ) 
+          <include refid="AllChPlanItemAndSizeCondition" />
+          and rownum = 1 
+  </select>
+  
+  
+  <!-- 查询商品编码下的尺码的数量 -->
+  <select id="countItemAndSize" resultType="java.lang.Integer" >
+     select count(1) as s
+		  from (select c.item_no
+		          from item c
+		         inner join size_info s
+		            on s.size_kind = c.size_kind
+		         inner join item_barcode t
+		            on t.item_no = c.item_no
+		           and t.size_no = s.size_no
+		           and t.package_id = 0
+		         where 1 = 1
+			    <if test="null!=params" >
+				      <if test="null!=params.itemNo and ''!=params.itemNo" >
+				            and c.item_no=#{params.itemNo,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.itemName and ''!=params.itemName" >
+				            and c.ITEM_NAME LIKE '%${params.itemName}%'
+				      </if>
+				      <if test="null!=params.tBarcode and ''!=params.tBarcode" >
+				            and t.barcode=#{params.tBarcode,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.supplierNo and ''!=params.supplierNo" >
+				            and c.SUPPLIER_NO=#{params.supplierNo,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.sysNo and ''!=params.sysNo" >
+				            and c.sys_no=#{params.sysNo,jdbcType=VARCHAR}
+				      </if>
+				      <include refid="AuthorityCondition" />
+				      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+				      ${params.queryCondition}
+				      </if>
+			    </if>
+			)
+  </select>
+  <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and c.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+     </if>
+  </sql>
+  <!-- 查询商品编码的尺码（带分页） -->
+  <select id="findItemAndSizePage" resultMap="BaseResultMap" >
+		select B.* from (select A.*,rownum rn from(  
+	          select distinct t.size_no,
+				                t.barcode as tBarcode,
+				                c.*,
+				                (select br.Brand_Name from Brand br  where br.Brand_NO = c.Brand_NO) as brandNoStr,
+				                (select ci.Color_Name from Color_Info ci where ci.Color_NO = c.COLOR_NO) as colorNoStr
+				  from item c
+				 inner join size_info s
+				    on s.size_kind = c.size_kind
+				 inner join item_barcode t
+				    on t.item_no = c.item_no
+				   and t.size_no = s.size_no
+				   and t.package_id = 0
+				 where 1 = 1
+			    <if test="null!=params" >
+				      <if test="null!=params.itemNo and ''!=params.itemNo" >
+				            and c.item_no=#{params.itemNo,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.itemName and ''!=params.itemName" >
+				            and c.ITEM_NAME LIKE '%${params.itemName}%'
+				      </if>
+				      <if test="null!=params.tBarcode and ''!=params.tBarcode" >
+				            and t.barcode=#{params.tBarcode,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.barcode and ''!=params.barcode" >
+				            and t.barcode=#{params.barcode,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.supplierNo and ''!=params.supplierNo" >
+				            and c.SUPPLIER_NO=#{params.supplierNo,jdbcType=VARCHAR}
+				      </if>
+				      <if test="null!=params.sysNo and ''!=params.sysNo" >
+				            and c.sys_no=#{params.sysNo,jdbcType=VARCHAR}
+				      </if>
+				      <include refid="AuthorityCondition" />
+				      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+				        ${params.queryCondition}
+				      </if>
+			    </if>
+			    order by  c.sys_no,c.item_no,t.size_no
+			    
+        ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}	
+  </select>
+  
+  
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from ITEM c where 1=1 
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />,
+    
+    (select ld.ITEMNAME from LOOKUPDTL ld where c.SYS_NO = ld.itemval and ld.lookupcode = 'SYS_NO'  and rownum = 1) as sysNoStr,
+    (select ld.ITEMNAME from LOOKUPDTL ld where c.HEELTYPE = ld.itemval and ld.lookupcode = 'HEELTYPE'  and rownum = 1) as heeltypeStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where c.BOTTOMTYPE = ld.itemval and ld.lookupcode = 'BOTTOMTYPE'  and rownum = 1) as bottomtypeStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where c.SEASON = ld.itemval and ld.lookupcode = 'SEASON'  and rownum = 1) as seasonStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where c.GENDER = ld.itemval and ld.lookupcode = 'GENDER'  and rownum = 1) as genderStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where c.INGREDIENTS = ld.itemval and ld.lookupcode = 'INGREDIENTS'  and rownum = 1) as ingredientsStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where c.YEARS = ld.itemval and ld.lookupcode = 'YEARS'  and rownum = 1) as yearsStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where c.STYLE = ld.itemval and ld.lookupcode = 'STYLE'  and rownum = 1) as styleStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where c.SPECIALFEATURES = ld.itemval and ld.lookupcode = 'SPECIALFEATURES'  and rownum = 1) as specialfeaturesStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where c.ORDERFROM = ld.itemval and ld.lookupcode = 'ORDERFROM'  and rownum = 1) as orderfromStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where c.LINING = ld.itemval and ld.lookupcode = 'LINING'  and rownum = 1) as liningStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where c.SERIES = ld.itemval and ld.lookupcode = 'SERIES'  and rownum = 1) as seriesStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where c.REPEATLISTING = ld.itemval and ld.lookupcode = 'REPEATLISTING'  and rownum = 1) as repeatlistingStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where c.PRODUCTLINE = ld.itemval and ld.lookupcode = 'PRODUCTLINE'  and rownum = 1) as productlineStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where c.MONTH = ld.itemval and ld.lookupcode = 'MONTH'  and rownum = 1) as monthStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where c.OTCLISTINGDATE = ld.itemval and ld.lookupcode = 'OTCLISTINGDATE'  and rownum = 1) as otclistingdateStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where c.BRANDSTYLE = ld.itemval and ld.lookupcode = 'BRANDSTYLE'  and rownum = 1) as brandstyleStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where c.DISTRIBUTIONMUST = ld.itemval and ld.lookupcode = 'DISTRIBUTIONMUST'  and rownum = 1) as distributionmustStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where c.MARKETSUPPORT = ld.itemval and ld.lookupcode = 'MARKETSUPPORT'  and rownum = 1) as marketsupportStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where c.PRICERANGE = ld.itemval and ld.lookupcode = 'PRICERANGE'  and rownum = 1) as pricerangeStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where c.MAINCOLOR = ld.itemval and ld.lookupcode = 'MAINCOLOR'  and rownum = 1) as maincolorStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where c.SECONDARYCOLOR = ld.itemval and ld.lookupcode = 'SECONDARYCOLOR'  and rownum = 1) as secondarycolorStr,
+	(select ld.ITEMNAME from LOOKUPDTL ld where c.SUPPORTTYPE = ld.itemval and ld.lookupcode = 'SUPPORTTYPE'  and rownum = 1) as supporttypeStr,
+    (select sp.Supplier_Name from Supplier sp where sp.Supplier_NO = c.Supplier_NO) as supplierNoStr,
+    (select ld.ITEMNAME from LOOKUPDTL ld where c.ITEM_STATUS = ld.itemval and ld.lookupcode = 'ITEM_STATUS'  and rownum = 1) as itemStatusStr,
+    
+    (select cg.Cate_Name from Category cg where cg.Cate_NO = c.Cate_NO) as cateNoStr,
+    (select cg.Cate_Name from Category cg where cg.Cate_NO = c.CATE_NO1) as cateNo1Str,
+    (select br.Brand_Name from Brand br where br.Brand_NO = c.Brand_NO) as brandNoStr,
+    (select ci.Color_Name from Color_Info ci where ci.Color_NO = c.COLOR_NO) as colorNoStr
+     from ITEM c where 1=1 
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+      <choose>
+		    <when test="orderByField != null and ''!=orderByField and orderBy != null and ''!=orderBy">
+		         order by ${orderByField} ${orderBy}
+		    </when>
+		    <otherwise>
+		         order by EDITTM desc,ITEM_NO asc
+		    </otherwise>
+     </choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from ITEM where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <select id="selectByCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from ITEM 
+    where ITEM_NO = #{code,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from ITEM
+    where ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.Item" >
+    delete from ITEM
+    where ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.Item" >
+    insert into ITEM (ITEM_NO, ITEM_CODE, ITEM_NAME, 
+      ITEM_LNAME, ITEM_ENAME, SEARCH_CODE, 
+      BARCODE, CATE_NO, COLOR_NO, 
+      SYS_NO, ITEM_SPEC, UNIT_NAME, 
+      PACK_UNIT, PACK_SPEC,QMIN_OPERATE_PACKING,
+      SKU_L, SKU_W, SKU_H, PRODUCING_AREA, 
+      STOCK_TYPE, ITEM_TYPEID, ITEM_KIND, 
+      SALETAXRATE, ITEM_STATUS, STYLE_NO, 
+      PRODAYS, SALE_PRICE, LOCATION, 
+      SIZE_KIND, MAINQDB, SUPPLIER_NO, 
+      WORK_ITEM_NO, SALE_DT, SALE_PRICE0, 
+      CREATOR, 
+      CREATETM, REMARKS, EDITTM, 
+      EDITOR, BRAND_NO, COST, 
+      COST0)
+    values (#{itemNo,jdbcType=VARCHAR}, #{itemCode,jdbcType=VARCHAR}, #{itemName,jdbcType=VARCHAR}, 
+      #{itemLname,jdbcType=VARCHAR}, #{itemEname,jdbcType=VARCHAR}, #{searchCode,jdbcType=VARCHAR}, 
+      #{barcode,jdbcType=VARCHAR}, #{cateNo,jdbcType=VARCHAR}, #{colorNo,jdbcType=VARCHAR}, 
+      #{sysNo,jdbcType=VARCHAR}, #{itemSpec,jdbcType=VARCHAR}, #{unitName,jdbcType=VARCHAR}, 
+      #{packUnit,jdbcType=VARCHAR}, #{packSpec,jdbcType=VARCHAR},#{qminOperatePacking,jdbcType=DECIMAL},
+      #{skuL,jdbcType=DECIMAL}, #{skuW,jdbcType=DECIMAL}, #{skuH,jdbcType=DECIMAL}, #{producingArea,jdbcType=VARCHAR}, 
+      #{stockType,jdbcType=DECIMAL}, #{itemTypeid,jdbcType=DECIMAL}, #{itemKind,jdbcType=DECIMAL}, 
+      #{saletaxrate,jdbcType=DECIMAL}, #{itemStatus,jdbcType=VARCHAR}, #{styleNo,jdbcType=VARCHAR}, 
+      #{prodays,jdbcType=DECIMAL}, #{salePrice,jdbcType=DECIMAL}, #{location,jdbcType=VARCHAR}, 
+      #{sizeKind,jdbcType=VARCHAR}, #{mainqdb,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR}, 
+      #{workItemNo,jdbcType=VARCHAR}, #{saleDt,jdbcType=TIMESTAMP}, #{salePrice0,jdbcType=DECIMAL}, 
+      #{creator,jdbcType=VARCHAR}, 
+      #{createtm,jdbcType=TIMESTAMP}, #{remarks,jdbcType=VARCHAR}, #{edittm,jdbcType=TIMESTAMP}, 
+      #{editor,jdbcType=VARCHAR}, #{brandNo,jdbcType=VARCHAR}, #{cost,jdbcType=DECIMAL}, 
+      #{cost0,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.Item" >
+    insert into ITEM
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="itemCode != null" >
+        ITEM_CODE,
+      </if>
+      <if test="itemName != null" >
+        ITEM_NAME,
+      </if>
+      <if test="itemLname != null" >
+        ITEM_LNAME,
+      </if>
+      <if test="itemEname != null" >
+        ITEM_ENAME,
+      </if>
+      <if test="searchCode != null" >
+        SEARCH_CODE,
+      </if>
+      <if test="barcode != null" >
+        BARCODE,
+      </if>
+      <if test="cateNo != null" >
+        CATE_NO,
+      </if>
+      <if test="colorNo != null" >
+        COLOR_NO,
+      </if>
+      <if test="sysNo != null" >
+        SYS_NO,
+      </if>
+      <if test="itemSpec != null" >
+        ITEM_SPEC,
+      </if>
+      <if test="unitName != null" >
+        UNIT_NAME,
+      </if>
+      <if test="packUnit != null" >
+        PACK_UNIT,
+      </if>
+      <if test="packSpec != null" >
+        PACK_SPEC,
+      </if>
+      <if test="qminOperatePacking != null" >
+        QMIN_OPERATE_PACKING,
+      </if>
+      <if test="skuL != null" >
+        SKU_L,
+      </if>
+      <if test="skuW != null" >
+        SKU_W,
+      </if>
+      <if test="skuH != null" >
+        SKU_H,
+      </if>
+      <if test="producingArea != null" >
+        PRODUCING_AREA,
+      </if>
+      <if test="stockType != null" >
+        STOCK_TYPE,
+      </if>
+      <if test="itemTypeid != null" >
+        ITEM_TYPEID,
+      </if>
+      <if test="itemKind != null" >
+        ITEM_KIND,
+      </if>
+      <if test="saletaxrate != null" >
+        SALETAXRATE,
+      </if>
+      <if test="itemStatus != null" >
+        ITEM_STATUS,
+      </if>
+      <if test="styleNo != null" >
+        STYLE_NO,
+      </if>
+      <if test="prodays != null" >
+        PRODAYS,
+      </if>
+      <if test="salePrice != null" >
+        SALE_PRICE,
+      </if>
+      <if test="location != null" >
+        LOCATION,
+      </if>
+      <if test="sizeKind != null" >
+        SIZE_KIND,
+      </if>
+      <if test="mainqdb != null" >
+        MAINQDB,
+      </if>
+      <if test="supplierNo != null" >
+        SUPPLIER_NO,
+      </if>
+      <if test="workItemNo != null" >
+        WORK_ITEM_NO,
+      </if>
+      <if test="saleDt != null" >
+        SALE_DT,
+      </if>
+      <if test="salePrice0 != null" >
+        SALE_PRICE0,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="remarks != null" >
+        REMARKS,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="brandNo != null" >
+        BRAND_NO,
+      </if>
+      <if test="cost != null" >
+        COST,
+      </if>
+      <if test="cost0 != null" >
+        COST0,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemCode != null" >
+        #{itemCode,jdbcType=VARCHAR},
+      </if>
+      <if test="itemName != null" >
+        #{itemName,jdbcType=VARCHAR},
+      </if>
+      <if test="itemLname != null" >
+        #{itemLname,jdbcType=VARCHAR},
+      </if>
+      <if test="itemEname != null" >
+        #{itemEname,jdbcType=VARCHAR},
+      </if>
+      <if test="searchCode != null" >
+        #{searchCode,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null" >
+        #{barcode,jdbcType=VARCHAR},
+      </if>
+      <if test="cateNo != null" >
+        #{cateNo,jdbcType=VARCHAR},
+      </if>
+      <if test="colorNo != null" >
+        #{colorNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sysNo != null" >
+        #{sysNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemSpec != null" >
+        #{itemSpec,jdbcType=VARCHAR},
+      </if>
+      <if test="unitName != null" >
+        #{unitName,jdbcType=VARCHAR},
+      </if>
+      <if test="packUnit != null" >
+        #{packUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="packSpec != null" >
+        #{packSpec,jdbcType=VARCHAR},
+      </if>
+      <if test="packSpec != null" >
+        #{qminOperatePacking,jdbcType=DECIMAL},
+      </if>
+      <if test="skuL != null" >
+        #{skuL,jdbcType=DECIMAL},
+      </if>
+      <if test="skuW != null" >
+        #{skuW,jdbcType=DECIMAL},
+      </if>
+      <if test="skuH != null" >
+        #{skuH,jdbcType=DECIMAL},
+      </if>
+      <if test="producingArea != null" >
+        #{producingArea,jdbcType=VARCHAR},
+      </if>
+      <if test="stockType != null" >
+        #{stockType,jdbcType=DECIMAL},
+      </if>
+      <if test="itemTypeid != null" >
+        #{itemTypeid,jdbcType=DECIMAL},
+      </if>
+      <if test="itemKind != null" >
+        #{itemKind,jdbcType=DECIMAL},
+      </if>
+      <if test="saletaxrate != null" >
+        #{saletaxrate,jdbcType=DECIMAL},
+      </if>
+      <if test="itemStatus != null" >
+        #{itemStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="styleNo != null" >
+        #{styleNo,jdbcType=VARCHAR},
+      </if>
+      <if test="prodays != null" >
+        #{prodays,jdbcType=DECIMAL},
+      </if>
+      <if test="salePrice != null" >
+        #{salePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="location != null" >
+        #{location,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeKind != null" >
+        #{sizeKind,jdbcType=VARCHAR},
+      </if>
+      <if test="mainqdb != null" >
+        #{mainqdb,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="workItemNo != null" >
+        #{workItemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="saleDt != null" >
+        #{saleDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="salePrice0 != null" >
+        #{salePrice0,jdbcType=DECIMAL},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remarks != null" >
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="brandNo != null" >
+        #{brandNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cost != null" >
+        #{cost,jdbcType=DECIMAL},
+      </if>
+      <if test="cost0 != null" >
+        #{cost0,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.Item" >
+    update ITEM
+    <set >
+      <if test="itemCode != null" >
+        ITEM_CODE = #{itemCode,jdbcType=VARCHAR},
+      </if>
+      <if test="itemName != null" >
+        ITEM_NAME = #{itemName,jdbcType=VARCHAR},
+      </if>
+      <if test="itemLname != null" >
+        ITEM_LNAME = #{itemLname,jdbcType=VARCHAR},
+      </if>
+      <if test="itemEname != null" >
+        ITEM_ENAME = #{itemEname,jdbcType=VARCHAR},
+      </if>
+      <if test="searchCode != null" >
+        SEARCH_CODE = #{searchCode,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null" >
+        BARCODE = #{barcode,jdbcType=VARCHAR},
+      </if>
+      <if test="cateNo != null" >
+        CATE_NO = #{cateNo,jdbcType=VARCHAR},
+      </if>
+      <if test="colorNo != null" >
+        COLOR_NO = #{colorNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sysNo != null" >
+        SYS_NO = #{sysNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemSpec != null" >
+        ITEM_SPEC = #{itemSpec,jdbcType=VARCHAR},
+      </if>
+      <if test="unitName != null" >
+        UNIT_NAME = #{unitName,jdbcType=VARCHAR},
+      </if>
+      <if test="packUnit != null" >
+        PACK_UNIT = #{packUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="packSpec != null" >
+        PACK_SPEC = #{packSpec,jdbcType=VARCHAR},
+      </if>
+      <if test="qminOperatePacking != null" >
+        QMIN_OPERATE_PACKING = #{qminOperatePacking,jdbcType=VARCHAR},
+      </if>
+      <if test="skuL != null" >
+        SKU_L = #{skuL,jdbcType=DECIMAL},
+      </if>
+      <if test="skuW != null" >
+        SKU_W = #{skuW,jdbcType=DECIMAL},
+      </if>
+      <if test="skuH != null" >
+        SKU_H = #{skuH,jdbcType=DECIMAL},
+      </if>
+      <if test="producingArea != null" >
+        PRODUCING_AREA = #{producingArea,jdbcType=VARCHAR},
+      </if>
+      <if test="stockType != null" >
+        STOCK_TYPE = #{stockType,jdbcType=DECIMAL},
+      </if>
+      <if test="itemTypeid != null" >
+        ITEM_TYPEID = #{itemTypeid,jdbcType=DECIMAL},
+      </if>
+      <if test="itemKind != null" >
+        ITEM_KIND = #{itemKind,jdbcType=DECIMAL},
+      </if>
+      <if test="saletaxrate != null" >
+        SALETAXRATE = #{saletaxrate,jdbcType=DECIMAL},
+      </if>
+      <if test="itemStatus != null" >
+        ITEM_STATUS = #{itemStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="styleNo != null" >
+        STYLE_NO = #{styleNo,jdbcType=VARCHAR},
+      </if>
+      <if test="prodays != null" >
+        PRODAYS = #{prodays,jdbcType=DECIMAL},
+      </if>
+      <if test="salePrice != null" >
+        SALE_PRICE = #{salePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="location != null" >
+        LOCATION = #{location,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeKind != null" >
+        SIZE_KIND = #{sizeKind,jdbcType=VARCHAR},
+      </if>
+      <if test="mainqdb != null" >
+        MAINQDB = #{mainqdb,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        SUPPLIER_NO = #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="workItemNo != null" >
+        WORK_ITEM_NO = #{workItemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="saleDt != null" >
+        SALE_DT = #{saleDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="salePrice0 != null" >
+        SALE_PRICE0 = #{salePrice0,jdbcType=DECIMAL},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remarks != null" >
+        REMARKS = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="brandNo != null" >
+        BRAND_NO = #{brandNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cost != null" >
+        COST = #{cost,jdbcType=DECIMAL},
+      </if>
+      <if test="cost0 != null" >
+        COST0 = #{cost0,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.Item" >
+    update ITEM
+    set ITEM_CODE = #{itemCode,jdbcType=VARCHAR},
+      ITEM_NAME = #{itemName,jdbcType=VARCHAR},
+      ITEM_LNAME = #{itemLname,jdbcType=VARCHAR},
+      ITEM_ENAME = #{itemEname,jdbcType=VARCHAR},
+      SEARCH_CODE = #{searchCode,jdbcType=VARCHAR},
+      BARCODE = #{barcode,jdbcType=VARCHAR},
+      CATE_NO = #{cateNo,jdbcType=VARCHAR},
+      COLOR_NO = #{colorNo,jdbcType=VARCHAR},
+      SYS_NO = #{sysNo,jdbcType=VARCHAR},
+      ITEM_SPEC = #{itemSpec,jdbcType=VARCHAR},
+      UNIT_NAME = #{unitName,jdbcType=VARCHAR},
+      PACK_UNIT = #{packUnit,jdbcType=VARCHAR},
+      PACK_SPEC = #{packSpec,jdbcType=VARCHAR},
+      QMIN_OPERATE_PACKING = #{qminOperatePacking,jdbcType=VARCHAR},
+      SKU_L = #{skuL,jdbcType=DECIMAL},
+      SKU_W = #{skuW,jdbcType=DECIMAL},
+      SKU_H = #{skuH,jdbcType=DECIMAL},
+      PRODUCING_AREA = #{producingArea,jdbcType=VARCHAR},
+      STOCK_TYPE = #{stockType,jdbcType=DECIMAL},
+      ITEM_TYPEID = #{itemTypeid,jdbcType=DECIMAL},
+      ITEM_KIND = #{itemKind,jdbcType=DECIMAL},
+      SALETAXRATE = #{saletaxrate,jdbcType=DECIMAL},
+      ITEM_STATUS = #{itemStatus,jdbcType=VARCHAR},
+      STYLE_NO = #{styleNo,jdbcType=VARCHAR},
+      PRODAYS = #{prodays,jdbcType=DECIMAL},
+      SALE_PRICE = #{salePrice,jdbcType=DECIMAL},
+      LOCATION = #{location,jdbcType=VARCHAR},
+      SIZE_KIND = #{sizeKind,jdbcType=VARCHAR},
+      MAINQDB = #{mainqdb,jdbcType=VARCHAR},
+      SUPPLIER_NO = #{supplierNo,jdbcType=VARCHAR},
+      WORK_ITEM_NO = #{workItemNo,jdbcType=VARCHAR},
+      SALE_DT = #{saleDt,jdbcType=TIMESTAMP},
+      SALE_PRICE0 = #{salePrice0,jdbcType=DECIMAL},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      REMARKS = #{remarks,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      BRAND_NO = #{brandNo,jdbcType=VARCHAR},
+      COST = #{cost,jdbcType=DECIMAL},
+      COST0 = #{cost0,jdbcType=DECIMAL}
+    where ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

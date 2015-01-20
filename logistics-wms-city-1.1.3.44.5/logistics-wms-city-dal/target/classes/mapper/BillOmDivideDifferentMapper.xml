@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BillOmDivideDifferentMapper" >
+  <!-- 
+  		BILL_OM_DIVIDE_DIFFERENT 别名固定用：bodd
+  		BILL_OM_DIVIDE_DIFFERENT_DTL 别名固定用：boddd
+   -->
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillOmDivideDifferent" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="DIFFERENT_NO" property="differentNo" jdbcType="VARCHAR" />
+    <result column="OPERATE_DATE" property="operateDate" jdbcType="TIMESTAMP" />
+    <result column="DIFFERENT_TYPE" property="differentType" jdbcType="VARCHAR" />
+    <result column="BATCH_NO" property="batchNo" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="AUDITOR" property="auditor" jdbcType="VARCHAR" />
+    <result column="AUDITTM" property="audittm" jdbcType="TIMESTAMP" />
+    <result column="STATUS_REPORT" property="statusReport" jdbcType="VARCHAR" />
+    <result column="SOURCE_NO" property="sourceNo" jdbcType="VARCHAR" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <!--中文名称显示 -->
+	<result column="creatorname" property="creatorName" jdbcType="CHAR" />
+	<result column="editorname" property="editorName" jdbcType="CHAR" />
+	<result column="auditorname" property="auditorName" jdbcType="CHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    bodd.LOCNO, bodd.DIFFERENT_NO, bodd.OPERATE_DATE, bodd.DIFFERENT_TYPE, 
+    bodd.BATCH_NO, bodd.STATUS, bodd.CREATOR, bodd.CREATETM, 
+    bodd.EDITOR, bodd.EDITTM, bodd.AUDITOR, bodd.AUDITTM, 
+    bodd.STATUS_REPORT, bodd.SOURCE_NO,bodd.REMARK,bodd.OWNER_NO,bodd.CREATORNAME,bodd.EDITORNAME,bodd.AUDITORNAME
+  </sql>
+  
+  <sql id="condition" >
+    <if test="null!=params" >
+    	<if test="null!=params.status and ''!=params.status" >
+        	and bodd.status = #{params.status,jdbcType=VARCHAR}
+      	</if>
+      	<if test="null!=params.differentNo and ''!=params.differentNo" >
+        	and bodd.different_no = #{params.differentNo,jdbcType=VARCHAR}
+      	</if>
+      	<if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        	and bodd.owner_no = #{params.ownerNo,jdbcType=VARCHAR}
+      	</if>
+      	<if test="null!=params.locno and ''!=params.locno" >
+        	and bodd.locno = #{params.locno,jdbcType=VARCHAR}
+      	</if>
+      	<if test="null!=params.creator and ''!=params.creator" >
+         	and bodd.creator = #{params.creator}
+      	</if>
+      	<if test="null!=params.sourceNo and ''!=params.sourceNo" >
+        	and bodd.source_no = #{params.sourceNo,jdbcType=VARCHAR}
+      	</if>
+      	<if test="null!=params.differentType and ''!=params.differentType" >
+        	and bodd.different_type = #{params.differentType,jdbcType=VARCHAR}
+      	</if>
+      	<!--创建日期-->
+      	<if test="null!=params.createtmStart and ''!=params.createtmStart" >
+			<![CDATA[
+	         	and bodd.CREATETM >=to_date('${params.createtmStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+			]]>	
+      	</if>
+      	<if test="null!=params.createtmEnd and ''!=params.createtmEnd" >
+	      	<![CDATA[
+	       	 	and bodd.CREATETM <=to_date('${params.createtmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+	        ]]>	
+      	</if>
+       	<if test="null!=params.auditor and ''!=params.auditor" >
+         	and bodd.AUDITOR = #{params.auditor}
+      	</if>
+       	<!--审核日期-->
+      	<if test="null!=params.audittmStart and ''!=params.audittmStart" >
+			<![CDATA[
+	         	and bodd.AUDITTM >=to_date('${params.audittmStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+			]]>	
+      	</if>
+      	<if test="null!=params.audittmEnd and ''!=params.audittmEnd" >
+      		<![CDATA[
+       	 		and bodd.AUDITTM <=to_date('${params.audittmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+       	 	]]>	
+      	</if>
+      	
+      	<!--所属品牌-->
+	    <if test="null!=params.brandNo and ''!=params.brandNo" >
+	      	<![CDATA[
+	      		and EXISTS (
+	      			select 1 from BILL_OM_DIVIDE_DIFFERENT_DTL boddd,item i
+	      				where boddd.LOCNO = bodd.LOCNO 
+	      				and boddd.DIFFERENT_NO = bodd.DIFFERENT_NO 
+	      				and boddd.S_ITEM_NO = i.ITEM_NO
+	      				and i.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+	      				and rownum=1
+	      		)
+	      	]]>
+		 </if>
+		 <if test="null!=params.sysNo and ''!=params.sysNo" >
+	        <![CDATA[
+	            and EXISTS (
+	                select 1 from BILL_OM_DIVIDE_DIFFERENT_DTL boddd,item i
+	                    where boddd.LOCNO = bodd.LOCNO 
+	                    and boddd.DIFFERENT_NO = bodd.DIFFERENT_NO 
+	                    and boddd.S_ITEM_NO = i.ITEM_NO
+	                    and i.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+	                    and rownum=1
+	            )
+	        ]]>
+	     </if>
+	     <if test="null!=params.barcode and ''!=params.barcode" >
+	        <![CDATA[
+	            and EXISTS (
+	                select 1 from BILL_OM_DIVIDE_DIFFERENT_DTL boddd
+	                    where boddd.LOCNO = bodd.LOCNO 
+	                    and boddd.DIFFERENT_NO = bodd.DIFFERENT_NO 
+	                    and boddd.S_BARCODE = #{params.barcode,jdbcType=VARCHAR}
+	                    and rownum=1
+	            )
+	        ]]>
+	     </if>
+    </if>
+  </sql>
+  
+  <!--权限过滤左连接子查询-->
+  <sql id="selectByPageAuthorityLeftJoin" >
+   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+            left join (select locno, owner_no, different_no
+                         from BILL_OM_DIVIDE_DIFFERENT_DTL                        
+                        where brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+                        and LOCNO=#{params.locno,jdbcType=VARCHAR}
+                         group by locno, owner_no, different_no
+                        ) sub1
+              on sub1.locno = bodd.locno
+             and sub1.different_no = bodd.different_no
+                          
+             left join (select locno, owner_no, different_no
+                         from BILL_OM_DIVIDE_DIFFERENT_DTL  
+                         where LOCNO=#{params.locno,jdbcType=VARCHAR}   
+                          group by locno, owner_no, different_no                    
+                        ) sub2
+              on sub2.locno = bodd.locno
+             and sub2.different_no = bodd.different_no
+    </if>
+  </sql>
+
+  <!--权限过滤查询条件-->
+  <sql id="selectByPageAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and (sub1.different_no is not null or sub2.different_no is null)
+    </if>
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillOmDivideDifferentKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_OM_DIVIDE_DIFFERENT bodd
+    where bodd.LOCNO = #{locno,jdbcType=VARCHAR}
+      and bodd.DIFFERENT_NO = #{differentNo,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_OM_DIVIDE_DIFFERENT bodd 
+    <include refid="selectByPageAuthorityLeftJoin" />
+    where 1=1 
+    <include refid="condition" />
+    <include refid="selectByPageAuthorityCondition" />
+  </select>
+  
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( 
+    	select 
+    		<include refid="Base_Column_List" />,
+    		(select ld.ITEMNAME from LOOKUPDTL ld where bodd.status = ld.itemval and ld.lookupcode = 'CITY_OM_DIVIDE_DIFFERENT_STATUS' and rownum = 1) as statusStr,
+     		(select ld.ITEMNAME from LOOKUPDTL ld where bodd.different_type = ld.itemval and ld.lookupcode = 'CITY_OM_DIVIDE_DIFFERENT_TYPE' and rownum = 1) as differentTypeStr,
+     		(select nvl(sum(boddd.item_qty),0) from bill_om_divide_different_dtl boddd where boddd.locno=bodd.locno and boddd.different_no=bodd.different_no) as differentQty
+     	from BILL_OM_DIVIDE_DIFFERENT bodd 
+     	<include refid="selectByPageAuthorityLeftJoin" />
+     	where 1=1 
+    	<include refid="condition" />
+    	<include refid="selectByPageAuthorityCondition" />
+	    <choose>
+			<when test="orderByField != null and ''!=orderByField">
+				order by ${orderByField}
+				<if test="orderByField">
+					${orderBy}
+				</if>
+			</when>
+			<otherwise>
+				order by bodd.CREATETM desc
+			</otherwise>
+		</choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_OM_DIVIDE_DIFFERENT bodd where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillOmDivideDifferentKey" >
+    delete from BILL_OM_DIVIDE_DIFFERENT
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and DIFFERENT_NO = #{differentNo,jdbcType=VARCHAR}
+  </delete>
+  
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillOmDivideDifferent" >
+    delete from BILL_OM_DIVIDE_DIFFERENT
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and DIFFERENT_NO = #{differentNo,jdbcType=VARCHAR}
+      <if test="null!=checkStatus and ''!=checkStatus" >
+      	and STATUS = #{checkStatus,jdbcType=VARCHAR}
+      </if>
+  </delete>
+  
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillOmDivideDifferent" >
+    insert into BILL_OM_DIVIDE_DIFFERENT (LOCNO, DIFFERENT_NO, OPERATE_DATE, 
+      DIFFERENT_TYPE, BATCH_NO, STATUS, 
+      CREATOR, CREATETM, EDITOR, 
+      EDITTM, AUDITOR, AUDITTM, 
+      STATUS_REPORT, SOURCE_NO)
+    values (#{locno,jdbcType=VARCHAR}, #{differentNo,jdbcType=VARCHAR}, #{operateDate,jdbcType=TIMESTAMP}, 
+      #{differentType,jdbcType=VARCHAR}, #{batchNo,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{creator,jdbcType=VARCHAR}, #{createtm,jdbcType=TIMESTAMP}, #{editor,jdbcType=VARCHAR}, 
+      #{edittm,jdbcType=TIMESTAMP}, #{auditor,jdbcType=VARCHAR}, #{audittm,jdbcType=TIMESTAMP}, 
+      #{statusReport,jdbcType=VARCHAR}, #{sourceNo,jdbcType=VARCHAR})
+  </insert>
+  <!--增加中文字段 -->
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillOmDivideDifferent" >
+    insert into BILL_OM_DIVIDE_DIFFERENT
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="differentNo != null" >
+        DIFFERENT_NO,
+      </if>
+      <if test="operateDate != null" >
+        OPERATE_DATE,
+      </if>
+      <if test="differentType != null" >
+        DIFFERENT_TYPE,
+      </if>
+      <if test="batchNo != null" >
+        BATCH_NO,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="creatorName != null" >
+        CREATORNAME,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="editorName != null" >
+        EDITORNAME,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="auditor != null" >
+        AUDITOR,
+      </if>
+      <if test="auditorName != null" >
+        AUDITORNAME,
+      </if>
+      <if test="audittm != null" >
+        AUDITTM,
+      </if>
+      <if test="statusReport != null" >
+        STATUS_REPORT,
+      </if>
+      <if test="sourceNo != null" >
+        SOURCE_NO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="differentNo != null" >
+        #{differentNo,jdbcType=VARCHAR},
+      </if>
+      <if test="operateDate != null" >
+        #{operateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="differentType != null" >
+        #{differentType,jdbcType=VARCHAR},
+      </if>
+      <if test="batchNo != null" >
+        #{batchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorName != null" >
+        #{creatorName},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+       <if test="editorName != null" >
+        #{editorName},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditor != null" >
+        #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorName != null" >
+        #{auditorName},
+      </if>
+      <if test="audittm != null" >
+        #{audittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="statusReport != null" >
+        #{statusReport,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceNo != null" >
+        #{sourceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <!--修改时增加中文名称 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillOmDivideDifferent" >
+    update BILL_OM_DIVIDE_DIFFERENT
+    <set >
+      <if test="operateDate != null" >
+        OPERATE_DATE = #{operateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="differentType != null" >
+        DIFFERENT_TYPE = #{differentType,jdbcType=VARCHAR},
+      </if>
+      <if test="batchNo != null" >
+        BATCH_NO = #{batchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorName != null" >
+        CREATORNAME = #{creatorName},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null" >
+        editorName = #{editorName},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditor != null" >
+        AUDITOR = #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorName != null" >
+        AUDITORNAME = #{auditorName},
+      </if>
+      <if test="audittm != null" >
+        AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="statusReport != null" >
+        STATUS_REPORT = #{statusReport,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceNo != null" >
+        SOURCE_NO = #{sourceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and DIFFERENT_NO = #{differentNo,jdbcType=VARCHAR}
+      <if test="null!=checkStatus and ''!=checkStatus" >
+      	and STATUS = #{checkStatus,jdbcType=VARCHAR}
+      </if>
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillOmDivideDifferent" >
+    update BILL_OM_DIVIDE_DIFFERENT
+    set OPERATE_DATE = #{operateDate,jdbcType=TIMESTAMP},
+      DIFFERENT_TYPE = #{differentType,jdbcType=VARCHAR},
+      BATCH_NO = #{batchNo,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      AUDITOR = #{auditor,jdbcType=VARCHAR},
+      AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      STATUS_REPORT = #{statusReport,jdbcType=VARCHAR},
+      SOURCE_NO = #{sourceNo,jdbcType=VARCHAR}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and DIFFERENT_NO = #{differentNo,jdbcType=VARCHAR}
+  </update>
+  
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	   xmlns:aop="http://www.springframework.org/schema/aop" 
+	   xmlns:context="http://www.springframework.org/schema/context" 
+	   xmlns:jee="http://www.springframework.org/schema/jee" 
+	   xmlns:tx="http://www.springframework.org/schema/tx" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd  
+	                      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	                      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd         
+	                      http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd         
+	                      http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+	             
+	<!-- 加载系统properties -->
+	<context:property-placeholder location="file:/D:/yougouconf/logistics/city/*.properties" ignore-unresolvable="true" ignore-resource-not-found="true" order="2" system-properties-mode="NEVER"/>
+	<context:property-placeholder location="file:/etc/yougouconf/logistics/city/*.properties" ignore-unresolvable="true" ignore-resource-not-found="true" order="2" system-properties-mode="NEVER"/>
+	
+	<context:property-placeholder location="file:/D:/yougouconf/logistics/city/base/*.properties" ignore-unresolvable="true" ignore-resource-not-found="true" order="2" system-properties-mode="NEVER"/>
+	<context:property-placeholder location="file:/etc/yougouconf/logistics/city/base/*.properties" ignore-unresolvable="true" ignore-resource-not-found="true" order="2" system-properties-mode="NEVER"/>
+	             
+	<!-- 加载注解功能 -->
+	<aop:aspectj-autoproxy />
+	<context:spring-configured />
+	<context:annotation-config />
+	<tx:annotation-driven order="1"/>
+	
+	<!-- 加载base工程配置 -->
+	<import resource="classpath*:META-INF/spring-base-dal-db.xml" />
+	
+	<!-- 扫描本工程bean -->
+	<context:component-scan base-package="com.yougou.logistics.city.dal">
+	</context:component-scan>
+	
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- <property name="annotationClass" value="org.springframework.stereotype.Repository" 
+			/> -->
+		<property name="basePackage" value="com.yougou.logistics.city.dal" />
+		<property name="sqlSessionTemplateBeanName" value="sqlSessionTemplate"></property>
+	</bean>
+	
+	<!-- VPD存储过程调用 -->
+	<bean id="procedureMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.yougou.logistics.base.dal.database.ProcedureMapper"/>
+        <property name="sqlSessionFactory" ref="sqlSessionFactoryForLogistics"/>
+    </bean>
+	<!-- 声明使用注解式事务
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	 -->
+</beans>

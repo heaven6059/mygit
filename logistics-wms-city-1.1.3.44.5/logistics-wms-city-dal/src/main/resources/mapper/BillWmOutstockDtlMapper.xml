@@ -1,0 +1,666 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillWmOutstockDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillWmOutstockDtl" >
+    <id column="OUTSTOCK_NO" property="outstockNo" jdbcType="VARCHAR" />
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="DIVIDE_ID" property="divideId" jdbcType="DECIMAL" />
+    <result column="SOURCE_NO" property="sourceNo" jdbcType="VARCHAR" />
+    <result column="PO_ID" property="poId" jdbcType="DECIMAL" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+    <result column="PACK_QTY" property="packQty" jdbcType="DECIMAL" />
+    <result column="ITEM_QTY" property="itemQty" jdbcType="DECIMAL" />
+    <result column="REAL_QTY" property="realQty" jdbcType="DECIMAL" />
+    <result column="S_CELL_NO" property="sCellNo" jdbcType="VARCHAR" />
+    <result column="S_CELL_ID" property="sCellId" jdbcType="DECIMAL" />
+    <result column="S_CONTAINER_NO" property="sContainerNo" jdbcType="VARCHAR" />
+    <result column="D_CELL_NO" property="dCellNo" jdbcType="VARCHAR" />
+    <result column="D_CELL_ID" property="dCellId" jdbcType="DECIMAL" />
+    <result column="D_CONTAINER_NO" property="dContainerNo" jdbcType="VARCHAR" />
+    <result column="OUTSTOCK_CELL_NO" property="outstockCellNo" jdbcType="VARCHAR" />
+    <result column="OUTSTOCK_CELL_ID" property="outstockCellId" jdbcType="DECIMAL" />
+    <result column="OUTSTOCK_CONTAINER_NO" property="outstockContainerNo" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="ASSIGN_NAME" property="assignName" jdbcType="VARCHAR" />
+    <result column="OUTSTOCK_NAME" property="outstockName" jdbcType="VARCHAR" />
+    <result column="OUTSTOCK_DATE" property="outstockDate" jdbcType="TIMESTAMP" />
+    <result column="STOCK_TYPE" property="stockType" jdbcType="VARCHAR" />
+    <result column="STOCK_VALUE" property="stockValue" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="BOX_NO" property="boxNo" jdbcType="VARCHAR" />
+    <result column="RECHECK_QTY" property="recheckQty" jdbcType="DECIMAL" />
+    <!--指定拣货人中文名 -->
+    <result column="ASSIGN_CH_NAME" property="assignChName" jdbcType="CHAR" />
+    <!--实际拣货人中文名 -->
+    <result column="OUTSTOCK_CH_NAME" property="outstockChName" jdbcType="CHAR" />
+  </resultMap>
+  
+  <resultMap id="ExtendResultMap" type="com.yougou.logistics.city.common.dto.BillWmOutstockDtlDto" >
+    <id column="OUTSTOCK_NO" property="outstockNo" jdbcType="VARCHAR" />
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="DIVIDE_ID" property="divideId" jdbcType="DECIMAL" />
+    <result column="SOURCE_NO" property="sourceNo" jdbcType="VARCHAR" />
+    <result column="PO_ID" property="poId" jdbcType="DECIMAL" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+    <result column="PACK_QTY" property="packQty" jdbcType="DECIMAL" />
+    <result column="ITEM_QTY" property="itemQty" jdbcType="DECIMAL" />
+    <result column="REAL_QTY" property="realQty" jdbcType="DECIMAL" />
+    <result column="S_CELL_NO" property="sCellNo" jdbcType="VARCHAR" />
+    <result column="S_CELL_ID" property="sCellId" jdbcType="DECIMAL" />
+    <result column="S_CONTAINER_NO" property="sContainerNo" jdbcType="VARCHAR" />
+    <result column="D_CELL_NO" property="dCellNo" jdbcType="VARCHAR" />
+    <result column="D_CELL_ID" property="dCellId" jdbcType="DECIMAL" />
+    <result column="D_CONTAINER_NO" property="dContainerNo" jdbcType="VARCHAR" />
+    <result column="OUTSTOCK_CELL_NO" property="outstockCellNo" jdbcType="VARCHAR" />
+    <result column="OUTSTOCK_CELL_ID" property="outstockCellId" jdbcType="DECIMAL" />
+    <result column="OUTSTOCK_CONTAINER_NO" property="outstockContainerNo" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="ASSIGN_NAME" property="assignName" jdbcType="VARCHAR" />
+    <result column="OUTSTOCK_NAME" property="outstockName" jdbcType="VARCHAR" />
+    <result column="OUTSTOCK_DATE" property="outstockDate" jdbcType="TIMESTAMP" />
+    <result column="STOCK_TYPE" property="stockType" jdbcType="VARCHAR" />
+    <result column="STOCK_VALUE" property="stockValue" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+    <result column="STYLE_NO" property="styleNo" jdbcType="VARCHAR" />
+    <result column="COLOR_NO" property="colorNo" jdbcType="VARCHAR" />
+    <result column="COLOR_NAME" property="colorName" jdbcType="VARCHAR" />
+    <result column="RECHECK_QTY" property="recheckQty" jdbcType="DECIMAL" />
+    <result column="diffQty" property="diffQty" jdbcType="DECIMAL" />
+    <result column="barcode" property="barcode" jdbcType="VARCHAR" />
+    <result column="RECEDE_TYPE" property="recedeType" jdbcType="VARCHAR" />
+    <result column="RECEDE_DATE" property="recedeDate" jdbcType="TIMESTAMP" />
+    <!--指定拣货人中文名 -->
+    <result column="ASSIGN_CH_NAME" property="assignChName" jdbcType="CHAR" />
+    <!--实际拣货人中文名 -->
+    <result column="OUTSTOCK_CH_NAME" property="outstockChName" jdbcType="CHAR" />
+  </resultMap>
+  
+  <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams" >
+       and i.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  <sql id="Base_Column_List" >
+    OUTSTOCK_NO, LOCNO, OWNER_NO, DIVIDE_ID, SOURCE_NO, PO_ID, ITEM_NO, ITEM_ID, PACK_QTY, 
+    ITEM_QTY, REAL_QTY, S_CELL_NO, S_CELL_ID, S_CONTAINER_NO, D_CELL_NO, D_CELL_ID, D_CONTAINER_NO, 
+    OUTSTOCK_CELL_NO, OUTSTOCK_CELL_ID, OUTSTOCK_CONTAINER_NO, STATUS, ASSIGN_NAME, OUTSTOCK_NAME, 
+    OUTSTOCK_DATE, STOCK_TYPE, STOCK_VALUE, SIZE_NO, BOX_NO,RECHECK_QTY
+  </sql>
+  
+   <sql id="Extend_Column_List" >
+    OUTSTOCK_NO,LOCNO,OWNER_NO,DIVIDE_ID,S_CELL_NO,ITEM_QTY,OUTSTOCK_NAME,RECHECK_QTY,
+    d.ITEM_NO,d.REAL_QTY,d.SIZE_NO,i.ITEM_NAME,i.STYLE_NO,c.COLOR_NAME,SOURCE_NO,ASSIGN_NAME,ASSIGN_CH_NAME,OUTSTOCK_CH_NAME
+  </sql>
+  
+  <sql id="condition" >
+     <if test="null!=params" >
+     	<if test="null!=params.ownerNo and ''!=params.ownerNo" >
+       		AND d.owner_no=#{params.ownerNo,jdbcType=VARCHAR}
+        </if>
+        <if test="null!=params.locno and ''!=params.locno" >
+       		AND d.locno=#{params.locno,jdbcType=VARCHAR}
+        </if>
+        <if test="null!=params.outstockNo and ''!=params.outstockNo" >
+       		AND d.OUTSTOCK_NO=#{params.outstockNo,jdbcType=VARCHAR}
+        </if>
+        <if test="null!=params.sourceNo and ''!=params.sourceNo" >
+		    and d.source_no =#{params.sourceNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.itemNo and ''!=params.itemNo" >
+		    and d.item_no =#{params.itemNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.sizeNo and ''!=params.sizeNo" >
+		    and d.size_no =#{params.sizeNo,jdbcType=VARCHAR}
+		</if>
+		
+     </if>
+  </sql>
+  
+  <sql id="wmRecheck4OutstockDtlCondition" >
+     	<if test="null!=params.sourceNo and ''!=params.sourceNo" >
+		        and dtl.source_no =#{params.sourceNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.locno and ''!=params.locno" >
+		        and dtl.locno=#{params.locno,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.ownerNo and ''!=params.ownerNo" >
+		 		and dtl.owner_no=#{params.ownerNo,jdbcType=VARCHAR}
+		</if>
+		<include refid="selectOutstockDtlItemAuthorityCondition" />
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillWmOutstockDtlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_WM_OUTSTOCK_DTL
+    where OUTSTOCK_NO = #{outstockNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and DIVIDE_ID = #{divideId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s 
+    	from BILL_WM_OUTSTOCK_DTL d
+         inner join item i
+            on i.item_no = d.item_no
+            and i.brand_no = d.brand_no
+            <include refid="AuthorityCondition" />
+          left outer join color_info c
+            on i.color_no = c.color_no
+         where 1 = 1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="ExtendResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Extend_Column_List" />
+    	from BILL_WM_OUTSTOCK_DTL d
+         inner join item i
+            on i.item_no = d.item_no
+            and i.brand_no = d.brand_no
+            <include refid="AuthorityCondition" />
+          left outer join color_info c
+            on i.color_no = c.color_no
+         where 1 = 1
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+	select nvl(SUM(d.ITEM_QTY), 0) ITEM_QTY,
+               nvl(SUM(d.REAL_QTY), 0) REAL_QTY
+          from BILL_WM_OUTSTOCK_DTL d
+         inner join item i
+            on i.item_no = d.item_no
+            and i.brand_no = d.brand_no
+            <include refid="AuthorityCondition" />
+          left outer join color_info c
+      	    on i.color_no = c.color_no
+         where 1 = 1
+    <include refid="condition" />
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_WM_OUTSTOCK_DTL d where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillWmOutstockDtlKey" >
+    delete from BILL_WM_OUTSTOCK_DTL
+    where OUTSTOCK_NO = #{outstockNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and DIVIDE_ID = #{divideId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillWmOutstockDtl" >
+    delete from BILL_WM_OUTSTOCK_DTL
+    where OUTSTOCK_NO = #{outstockNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and DIVIDE_ID = #{divideId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillWmOutstockDtl" >
+    insert into BILL_WM_OUTSTOCK_DTL (OUTSTOCK_NO, LOCNO, OWNER_NO, 
+      DIVIDE_ID, SOURCE_NO, PO_ID, 
+      ITEM_NO, ITEM_ID, PACK_QTY, 
+      ITEM_QTY, REAL_QTY, S_CELL_NO, 
+      S_CELL_ID, S_CONTAINER_NO, D_CELL_NO, 
+      D_CELL_ID, D_CONTAINER_NO, OUTSTOCK_CELL_NO, 
+      OUTSTOCK_CELL_ID, OUTSTOCK_CONTAINER_NO, STATUS, 
+      ASSIGN_NAME, OUTSTOCK_NAME, OUTSTOCK_DATE, 
+      STOCK_TYPE, STOCK_VALUE, SIZE_NO, BOX_NO
+      )
+    values (#{outstockNo,jdbcType=VARCHAR}, #{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, 
+      #{divideId,jdbcType=DECIMAL}, #{sourceNo,jdbcType=VARCHAR}, #{poId,jdbcType=DECIMAL}, 
+      #{itemNo,jdbcType=VARCHAR}, #{itemId,jdbcType=DECIMAL}, #{packQty,jdbcType=DECIMAL}, 
+      #{itemQty,jdbcType=DECIMAL}, #{realQty,jdbcType=DECIMAL}, #{sCellNo,jdbcType=VARCHAR}, 
+      #{sCellId,jdbcType=DECIMAL}, #{sContainerNo,jdbcType=VARCHAR}, #{dCellNo,jdbcType=VARCHAR}, 
+      #{dCellId,jdbcType=DECIMAL}, #{dContainerNo,jdbcType=VARCHAR}, #{outstockCellNo,jdbcType=VARCHAR}, 
+      #{outstockCellId,jdbcType=DECIMAL}, #{outstockContainerNo,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{assignName,jdbcType=VARCHAR}, #{outstockName,jdbcType=VARCHAR}, #{outstockDate,jdbcType=TIMESTAMP}, 
+      #{stockType,jdbcType=VARCHAR}, #{stockValue,jdbcType=VARCHAR}, #{sizeNo,jdbcType=VARCHAR}, #{boxNo,jdbcType=VARCHAR}
+      )
+  </insert>
+  <!--新增制定、实际拣货人中文名称 -->
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillWmOutstockDtl" >
+    insert into BILL_WM_OUTSTOCK_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="outstockNo != null" >
+        OUTSTOCK_NO,
+      </if>
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="divideId != null" >
+        DIVIDE_ID,
+      </if>
+      <if test="sourceNo != null" >
+        SOURCE_NO,
+      </if>
+      <if test="poId != null" >
+        PO_ID,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="itemId != null" >
+        ITEM_ID,
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY,
+      </if>
+      <if test="itemQty != null" >
+        ITEM_QTY,
+      </if>
+      <if test="realQty != null" >
+        REAL_QTY,
+      </if>
+      <if test="sCellNo != null" >
+        S_CELL_NO,
+      </if>
+      <if test="sCellId != null" >
+        S_CELL_ID,
+      </if>
+      <if test="sContainerNo != null" >
+        S_CONTAINER_NO,
+      </if>
+      <if test="dCellNo != null" >
+        D_CELL_NO,
+      </if>
+      <if test="dCellId != null" >
+        D_CELL_ID,
+      </if>
+      <if test="dContainerNo != null" >
+        D_CONTAINER_NO,
+      </if>
+      <if test="outstockCellNo != null" >
+        OUTSTOCK_CELL_NO,
+      </if>
+      <if test="outstockCellId != null" >
+        OUTSTOCK_CELL_ID,
+      </if>
+      <if test="outstockContainerNo != null" >
+        OUTSTOCK_CONTAINER_NO,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="assignName != null" >
+        ASSIGN_NAME,
+      </if>
+      <if test="assignChName != null" >
+        ASSIGN_CH_NAME,
+      </if>
+      <if test="outstockName != null" >
+        OUTSTOCK_NAME,
+      </if>
+      <if test="outstockChName != null" >
+        OUTSTOCK_CH_NAME,
+      </if>
+      <if test="outstockDate != null" >
+        OUTSTOCK_DATE,
+      </if>
+      <if test="stockType != null" >
+        STOCK_TYPE,
+      </if>
+      <if test="stockValue != null" >
+        STOCK_VALUE,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO,
+      </if>
+      <if test="brandNo != null" >
+        BRAND_NO,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="outstockNo != null" >
+        #{outstockNo,jdbcType=VARCHAR},
+      </if>
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="divideId != null" >
+        #{divideId,jdbcType=DECIMAL},
+      </if>
+      <if test="sourceNo != null" >
+        #{sourceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="poId != null" >
+        #{poId,jdbcType=DECIMAL},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=DECIMAL},
+      </if>
+      <if test="packQty != null" >
+        #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="itemQty != null" >
+        #{itemQty,jdbcType=DECIMAL},
+      </if>
+      <if test="realQty != null" >
+        #{realQty,jdbcType=DECIMAL},
+      </if>
+      <if test="sCellNo != null" >
+        #{sCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sCellId != null" >
+        #{sCellId,jdbcType=DECIMAL},
+      </if>
+      <if test="sContainerNo != null" >
+        #{sContainerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="dCellNo != null" >
+        #{dCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="dCellId != null" >
+        #{dCellId,jdbcType=DECIMAL},
+      </if>
+      <if test="dContainerNo != null" >
+        #{dContainerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outstockCellNo != null" >
+        #{outstockCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outstockCellId != null" >
+        #{outstockCellId,jdbcType=DECIMAL},
+      </if>
+      <if test="outstockContainerNo != null" >
+        #{outstockContainerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="assignName != null" >
+        #{assignName,jdbcType=VARCHAR},
+      </if>
+      <if test="assignChName != null" >
+        #{assignChName},
+      </if>
+      <if test="outstockName != null" >
+        #{outstockName,jdbcType=VARCHAR},
+      </if>
+      <if test="outstockChName != null" >
+        #{outstockChName},
+      </if>
+      <if test="outstockDate != null" >
+        #{outstockDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="stockType != null" >
+        #{stockType,jdbcType=VARCHAR},
+      </if>
+      <if test="stockValue != null" >
+        #{stockValue,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="boxNo != null" >
+        #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="brandNo != null" >
+        #{brandNo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <!--增加中文名称 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillWmOutstockDtl" >
+    update BILL_WM_OUTSTOCK_DTL
+    <set >
+      <if test="sourceNo != null" >
+        SOURCE_NO = #{sourceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="poId != null" >
+        PO_ID = #{poId,jdbcType=DECIMAL},
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        ITEM_ID = #{itemId,jdbcType=DECIMAL},
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="itemQty != null" >
+        ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+      </if>
+      <if test="realQty != null" >
+        REAL_QTY = #{realQty,jdbcType=DECIMAL},
+      </if>
+      <if test="sCellNo != null" >
+        S_CELL_NO = #{sCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sCellId != null" >
+        S_CELL_ID = #{sCellId,jdbcType=DECIMAL},
+      </if>
+      <if test="sContainerNo != null" >
+        S_CONTAINER_NO = #{sContainerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="dCellNo != null" >
+        D_CELL_NO = #{dCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="dCellId != null" >
+        D_CELL_ID = #{dCellId,jdbcType=DECIMAL},
+      </if>
+      <if test="dContainerNo != null" >
+        D_CONTAINER_NO = #{dContainerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outstockCellNo != null" >
+        OUTSTOCK_CELL_NO = #{outstockCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="outstockCellId != null" >
+        OUTSTOCK_CELL_ID = #{outstockCellId,jdbcType=DECIMAL},
+      </if>
+      <if test="outstockContainerNo != null" >
+        OUTSTOCK_CONTAINER_NO = #{outstockContainerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="assignName != null" >
+        ASSIGN_NAME = #{assignName,jdbcType=VARCHAR},
+      </if>
+      <if test="assignChName != null" >
+        ASSIGN_CH_NAME = #{assignChName},
+      </if>
+      <if test="outstockName != null" >
+        OUTSTOCK_NAME = #{outstockName,jdbcType=VARCHAR},
+      </if>
+       <if test="outstockChName != null" >
+        OUTSTOCK_CH_NAME = #{outstockChName},
+      </if>
+      <if test="outstockDate != null" >
+        OUTSTOCK_DATE = #{outstockDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="stockType != null" >
+        STOCK_TYPE = #{stockType,jdbcType=VARCHAR},
+      </if>
+      <if test="stockValue != null" >
+        STOCK_VALUE = #{stockValue,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO = #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="recheckQty != null" >
+        RECHECK_QTY = #{recheckQty,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where OUTSTOCK_NO = #{outstockNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and DIVIDE_ID = #{divideId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillWmOutstockDtl" >
+    update BILL_WM_OUTSTOCK_DTL
+    set SOURCE_NO = #{sourceNo,jdbcType=VARCHAR},
+      PO_ID = #{poId,jdbcType=DECIMAL},
+      ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      <!-- ITEM_ID = #{itemId,jdbcType=DECIMAL}, -->
+      PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+      REAL_QTY = #{realQty,jdbcType=DECIMAL},
+      S_CELL_NO = #{sCellNo,jdbcType=VARCHAR},
+      S_CELL_ID = #{sCellId,jdbcType=DECIMAL},
+      S_CONTAINER_NO = #{sContainerNo,jdbcType=VARCHAR},
+      D_CELL_NO = #{dCellNo,jdbcType=VARCHAR},
+      D_CELL_ID = #{dCellId,jdbcType=DECIMAL},
+      D_CONTAINER_NO = #{dContainerNo,jdbcType=VARCHAR},
+      OUTSTOCK_CELL_NO = #{outstockCellNo,jdbcType=VARCHAR},
+      OUTSTOCK_CELL_ID = #{outstockCellId,jdbcType=DECIMAL},
+      OUTSTOCK_CONTAINER_NO = #{outstockContainerNo,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      ASSIGN_NAME = #{assignName,jdbcType=VARCHAR},
+      OUTSTOCK_NAME = #{outstockName,jdbcType=VARCHAR},
+      OUTSTOCK_DATE = #{outstockDate,jdbcType=TIMESTAMP},
+      STOCK_TYPE = #{stockType,jdbcType=VARCHAR},
+      STOCK_VALUE = #{stockValue,jdbcType=VARCHAR},
+      SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      BOX_NO = #{boxNo,jdbcType=VARCHAR}
+    where OUTSTOCK_NO = #{outstockNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and DIVIDE_ID = #{divideId,jdbcType=DECIMAL}
+  </update>
+  
+  
+  <!--权限过滤查询条件-->
+  <sql id="selectOutstockDtlItemAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and br.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  <sql id="wmRecheck4OutstockDtlSql">
+  		select dtl.locno,
+		       dtl.owner_no,
+		       dtl.item_no,
+		       dtl.size_no,
+		       dtl.source_no,
+		       <!--dtl.po_id,-->
+		       <!-- dtl.divide_id,-->
+		       dtl.pack_qty,
+		       dtl.D_CELL_NO,
+		       dtl.D_CELL_ID,
+		       max(itm.item_name) item_name,
+		       itm.color_no,
+		       max(ci.color_name) color_name,
+		       b.barcode,
+		       bm.recede_type,
+		       bm.recede_date,
+		       br.brand_no as brandNo,
+		       sum(nvl(dtl.recheck_qty, 0)) as recheckQty,
+		       sum(nvl(dtl.real_qty, 0)) as realQty,
+		       sum(nvl(dtl.item_qty, 0)) as itemQty,
+		       abs(sum(nvl(dtl.RECHECK_QTY, 0)) - sum(nvl(dtl.REAL_QTY, 0))) as diffQty
+		  from bill_wm_outstock_dtl dtl
+		 inner join bill_wm_recede_dtl br
+		    on br.locno = dtl.locno
+		   and br.owner_no = dtl.owner_no
+		   and br.recede_no = dtl.source_no
+		   and br.item_no = dtl.item_no
+		   and br.size_no = dtl.size_no
+		 inner join bill_wm_recede bm
+		    on bm.locno = br.locno
+		   and bm.recede_no = br.recede_no
+		   and bm.owner_no = br.owner_no
+		 inner join item itm
+		    on dtl.item_no = itm.item_no
+		 inner join Size_Info s
+		    on itm.size_kind = s.size_kind
+		 inner join item_barcode b
+		    on b.size_no = s.size_no
+		   and itm.item_no = b.item_no
+		   and dtl.item_no = b.item_no
+		   and dtl.size_no = b.size_no
+		   and b.package_id = 0
+		  left join color_info ci
+		    on ci.color_no = itm.color_no
+		 where 1 = 1
+		 <include refid="wmRecheck4OutstockDtlCondition"/>
+		 group by dtl.locno,
+          	      dtl.owner_no,
+          		  dtl.item_no,
+          		  dtl.size_no,
+                  dtl.source_no,
+                  dtl.pack_qty,
+                  dtl.D_CELL_NO,
+		       	  dtl.D_CELL_ID,
+          		  itm.color_no,
+                  b.barcode,
+                  bm.recede_type,
+                  bm.recede_date,
+                  br.brand_no
+  </sql>
+  <!-- 退厂确认添加明细，根据对应条件查询所有复核明细列表 -->
+  <select id="selectOutstockDtlItem" resultMap="ExtendResultMap" parameterType="map" >
+  		<include refid="wmRecheck4OutstockDtlSql"/>
+  </select>
+  <!-- 退厂拣货单复核明细列表分页 -->
+  <select id="selectOutstockDtlItemByPage" resultMap="ExtendResultMap" parameterType="map" >
+  		select B.* from (select A.*,rownum rn from( 
+  				<include refid="wmRecheck4OutstockDtlSql"/>
+				order by recheckQty asc
+		    <if test="orderByField != null and ''!=orderByField" >
+		      order by ${orderByField}
+		      <if test="orderByField" >
+		        ${orderBy}
+		      </if>
+		    </if>
+	    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <!-- 退厂拣货单复核明细列表分页汇总 -->
+  <select id="selectOutstockDtlItemCount" resultType="java.lang.Integer" >
+    	select count(1) as s from(
+    		<include refid="wmRecheck4OutstockDtlSql"/>
+    	) 
+  </select>
+  <!-- 退厂拣货单复核明细列表分页汇总 -->
+  <select id="selectOutstockDtlItemSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+		select nvl(SUM(d.realQty), 0) REAL_QTY,
+               nvl(SUM(d.recheckQty), 0) RECHECK_QTY,
+               nvl(SUM(d.diffQty), 0) DIFF_QTY
+          from (
+          		<include refid="wmRecheck4OutstockDtlSql"/>
+          )d
+  </select>
+  
+  <update id="updateBillWmOutstockDtl" parameterType="com.yougou.logistics.city.common.model.BillWmOutstockDtl" >
+    update BILL_WM_OUTSTOCK_DTL d
+    <set>
+      <if test="recheckQty != null" >
+        recheck_qty = nvl(d.recheck_qty,0) + ${recheckQty}
+      </if>
+    </set>
+    where d.locno = #{locno,jdbcType=VARCHAR}
+       and d.source_no = #{sourceNo,jdbcType=VARCHAR}
+       and d.item_no = #{itemNo,jdbcType=VARCHAR}
+       and d.size_no = #{sizeNo,jdbcType=VARCHAR}
+       and d.divide_id = #{divideId,jdbcType=DECIMAL}
+       and d.status = '13'
+  </update>
+</mapper>

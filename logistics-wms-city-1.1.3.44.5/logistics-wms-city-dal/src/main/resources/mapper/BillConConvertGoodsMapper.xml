@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BillConConvertGoodsMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillConConvertGoods" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="CONVERT_GOODS_NO" property="convertGoodsNo" jdbcType="VARCHAR" />
+    <result column="CONVERT_TYPE" property="convertType" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="STORE_NO" property="storeNo" jdbcType="VARCHAR" />
+    <result column="S_QUALITY" property="sQuality" jdbcType="VARCHAR" />
+    <result column="D_QUALITY" property="dQuality" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="AUDITOR" property="auditor" jdbcType="VARCHAR" />
+    <result column="AUDITTM" property="audittm" jdbcType="TIMESTAMP" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="D_LOCNO" property="dLocno" jdbcType="VARCHAR" />
+    <result column="CREATOR_NAME" property="creatorName" jdbcType="VARCHAR" />
+    <result column="EDITOR_NAME" property="editorName" jdbcType="VARCHAR" />
+    <result column="AUDITOR_NAME" property="auditorName" jdbcType="VARCHAR" />
+    <result column="BUSINESS_TYPE" property="businessType" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    LOCNO, OWNER_NO, CONVERT_GOODS_NO, CONVERT_TYPE, STATUS, STORE_NO, S_QUALITY, D_QUALITY, 
+    CREATOR, CREATETM, EDITOR, EDITTM, AUDITOR, AUDITTM, REMARK, CREATOR_NAME, EDITOR_NAME, 
+    AUDITOR_NAME, BUSINESS_TYPE, D_LOCNO
+  </sql>
+  
+  <sql id="Base_Column_List_Page" >
+    g.LOCNO, g.OWNER_NO, g.CONVERT_GOODS_NO as convertGoodsNo, g.CONVERT_TYPE, g.STATUS, g.STORE_NO, g.D_LOCNO, g.S_QUALITY, g.D_QUALITY, 
+    g.CREATOR, g.CREATETM, g.EDITOR, g.EDITTM, g.AUDITOR, g.AUDITTM, g.REMARK, g.CREATOR_NAME, g.EDITOR_NAME, 
+    g.AUDITOR_NAME, g.BUSINESS_TYPE
+  </sql>
+  
+  <sql id="condition" >
+    <if test="null!=params" >
+       <if test="null!=params.status and ''!=params.status" >
+        and g.status = #{params.status,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+        and g.locno = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        and g.OWNER_NO = #{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.convertGoodsNo and ''!=params.convertGoodsNo" >
+        and g.convert_goods_no = #{params.convertGoodsNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.storeNo and ''!=params.storeNo" >
+        and g.STORE_NO = #{params.storeNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.storeNoLocno and ''!=params.storeNoLocno" >
+        and g.D_LOCNO = #{params.storeNoLocno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.convertType and ''!=params.convertType" >
+        and g.CONVERT_TYPE = #{params.convertType,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.creator and ''!=params.creator" >
+         and g.creator = #{params.creator}
+      </if>
+      <!--创建日期-->
+      <if test="null!=params.createtmStart and ''!=params.createtmStart" >
+		<![CDATA[
+         and g.CREATETM >=to_date('${params.createtmStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+		]]>	
+      </if>
+      <if test="null!=params.createtmEnd and ''!=params.createtmEnd" >
+      	<![CDATA[
+       	 and g.CREATETM <=to_date('${params.createtmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+        ]]>	
+      </if>
+       <if test="null!=params.auditor and ''!=params.auditor" >
+         and g.AUDITOR = #{params.auditor}
+      </if>
+       <!--审核日期-->
+      <if test="null!=params.audittmStart and ''!=params.audittmStart" >
+		<![CDATA[
+         and g.AUDITTM >=to_date('${params.audittmStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+		]]>	
+      </if>
+      <if test="null!=params.audittmEnd and ''!=params.audittmEnd" >
+      	<![CDATA[
+       	 and g.AUDITTM <=to_date('${params.audittmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+        ]]>	
+      </if>
+      <!--所属品牌-->
+      <if test="null!=params.brandNo and ''!=params.brandNo" >
+      	<![CDATA[
+      		and EXISTS (
+      			select 1 from bill_con_convert_goods_dtl dtl,item i
+      				where dtl.LOCNO = g.LOCNO 
+      				and dtl.CONVERT_GOODS_NO = g.CONVERT_GOODS_NO 
+      				and dtl.ITEM_NO = i.ITEM_NO
+      				and i.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+      				and rownum=1
+      		)
+      	]]>
+	  </if>
+	  <if test="null!=params.sysNo and ''!=params.sysNo" >
+        <![CDATA[
+            and EXISTS (
+                select 1 from bill_con_convert_goods_dtl dtl,item i
+                    where dtl.LOCNO = g.LOCNO 
+                    and dtl.CONVERT_GOODS_NO = g.CONVERT_GOODS_NO 
+                    and dtl.ITEM_NO = i.ITEM_NO
+                    and i.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+                    and rownum=1
+            )
+        ]]>
+      </if>
+      
+    </if>
+  </sql>
+  
+  <!-- 权限过滤明细查询条件 -->
+  <sql id="child_condition">
+  	<if test="null!=params" >
+      <if test="null!=params.locno and ''!=params.locno" >
+      	and locno = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.convertGoodsNo and ''!=params.convertGoodsNo" >
+      	and convert_goods_no = #{params.convertGoodsNo,jdbcType=VARCHAR}
+      </if>
+     </if>
+  </sql>
+  <!--权限过滤左连接子查询-->
+  <sql id="selectByPageAuthorityLeftJoin" >
+   <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+            left join (select convert_goods_no
+                         from bill_con_convert_goods_dtl                         
+                        where brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+                        <include refid="child_condition" />
+                         group by convert_goods_no
+                        ) sub1
+             ON sub1.convert_goods_no = g.convert_goods_no
+                          
+             left join (select convert_goods_no
+                         from bill_con_convert_goods_dtl where 1=1 
+                         <include refid="child_condition" />  
+                          group by convert_goods_no                     
+                        ) sub2
+             ON sub2.convert_goods_no = g.convert_goods_no
+    </if>
+  </sql>
+  <!--权限过滤查询条件-->
+  <sql id="selectByPageAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and (sub1.convert_goods_no is not null or sub2.convert_goods_no is null)
+    </if>
+  </sql>
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillConConvertGoodsKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_CON_CONVERT_GOODS
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and CONVERT_GOODS_NO = #{convertGoodsNo,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_CON_CONVERT_GOODS g
+    <include refid="selectByPageAuthorityLeftJoin" /> 
+     where 1=1 
+    <include refid="condition" />
+    <include refid="selectByPageAuthorityCondition" />
+  </select>
+  
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List_Page" />,
+    (select ld.ITEMNAME from LOOKUPDTL ld where g.status = ld.itemval and ld.lookupcode = 'CON_CONVERT_GOODS_STATUS' and rownum = 1) as statusStr,
+    (select ld.ITEMNAME from LOOKUPDTL ld where g.convert_type = ld.itemval and ld.lookupcode = 'CON_CONVERT_GOODS_CONVERT_TYPE' and rownum = 1) as convertTypeStr,
+    (select s.STORE_NAME from STORE s where s.STORE_NO = g.STORE_NO and s.store_type = '11') as storeName,
+    (select s.STORE_NAME from STORE s where s.STORE_NO = g.D_LOCNO and s.store_type = '22') as locnoName
+     from BILL_CON_CONVERT_GOODS g
+    <include refid="selectByPageAuthorityLeftJoin" /> 
+    where 1=1 
+    <include refid="condition" />
+    <include refid="selectByPageAuthorityCondition" />
+   	 	<choose>
+		    <when test="orderByField != null and ''!=orderByField">
+				order by ${orderByField}
+				<if test="orderByField">
+				${orderBy}
+				</if>
+			</when>
+			<otherwise>
+				order by g.CREATETM desc
+			</otherwise>
+	     </choose>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_CON_CONVERT_GOODS where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillConConvertGoodsKey" >
+    delete from BILL_CON_CONVERT_GOODS
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and CONVERT_GOODS_NO = #{convertGoodsNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillConConvertGoods" >
+    delete from BILL_CON_CONVERT_GOODS
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and CONVERT_GOODS_NO = #{convertGoodsNo,jdbcType=VARCHAR}
+      <if test="updStatus != null and '' != updStatus">
+          and STATUS = #{updStatus,jdbcType=VARCHAR}
+      </if>
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillConConvertGoods" >
+    insert into BILL_CON_CONVERT_GOODS (LOCNO, OWNER_NO, CONVERT_GOODS_NO, 
+      CONVERT_TYPE, STATUS, STORE_NO, D_LOCNO,
+      S_QUALITY, D_QUALITY, CREATOR, 
+      CREATETM, EDITOR, EDITTM, 
+      AUDITOR, AUDITTM, REMARK, 
+      CREATOR_NAME, EDITOR_NAME, AUDITOR_NAME, 
+      BUSINESS_TYPE)
+    values (#{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, #{convertGoodsNo,jdbcType=VARCHAR}, 
+      #{convertType,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{storeNo,jdbcType=VARCHAR}, #{dLocno,jdbcType=VARCHAR}, 
+      #{sQuality,jdbcType=VARCHAR}, #{dQuality,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
+      #{createtm,jdbcType=TIMESTAMP}, #{editor,jdbcType=VARCHAR}, #{edittm,jdbcType=TIMESTAMP}, 
+      #{auditor,jdbcType=VARCHAR}, #{audittm,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}, 
+      #{creatorName,jdbcType=VARCHAR}, #{editorName,jdbcType=VARCHAR}, #{auditorName,jdbcType=VARCHAR}, 
+      #{businessType,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillConConvertGoods" >
+    insert into BILL_CON_CONVERT_GOODS
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="convertGoodsNo != null" >
+        CONVERT_GOODS_NO,
+      </if>
+      <if test="convertType != null" >
+        CONVERT_TYPE,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO,
+      </if>
+      <if test="sQuality != null" >
+        S_QUALITY,
+      </if>
+      <if test="dQuality != null" >
+        D_QUALITY,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="auditor != null" >
+        AUDITOR,
+      </if>
+      <if test="audittm != null" >
+        AUDITTM,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+      <if test="creatorName != null" >
+        CREATOR_NAME,
+      </if>
+      <if test="editorName != null" >
+        EDITOR_NAME,
+      </if>
+      <if test="auditorName != null" >
+        AUDITOR_NAME,
+      </if>
+      <if test="businessType != null" >
+        BUSINESS_TYPE,
+      </if>
+      <if test="dLocno != null" >
+        D_LOCNO,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="convertGoodsNo != null" >
+        #{convertGoodsNo,jdbcType=VARCHAR},
+      </if>
+      <if test="convertType != null" >
+        #{convertType,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo != null" >
+        #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sQuality != null" >
+        #{sQuality,jdbcType=VARCHAR},
+      </if>
+      <if test="dQuality != null" >
+        #{dQuality,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditor != null" >
+        #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        #{audittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorName != null" >
+        #{creatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null" >
+        #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorName != null" >
+        #{auditorName,jdbcType=VARCHAR},
+      </if>
+      <if test="businessType != null" >
+        #{businessType,jdbcType=VARCHAR},
+      </if>
+      <if test="dLocno != null" >
+        #{dLocno,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillConConvertGoods" >
+    update BILL_CON_CONVERT_GOODS
+    <set >
+      <if test="convertType != null" >
+        CONVERT_TYPE = #{convertType,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sQuality != null" >
+        S_QUALITY = #{sQuality,jdbcType=VARCHAR},
+      </if>
+      <if test="dQuality != null" >
+        D_QUALITY = #{dQuality,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditor != null" >
+        AUDITOR = #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorName != null" >
+        CREATOR_NAME = #{creatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null" >
+        EDITOR_NAME = #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorName != null" >
+        AUDITOR_NAME = #{auditorName,jdbcType=VARCHAR},
+      </if>
+      <if test="businessType != null" >
+        BUSINESS_TYPE = #{businessType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and CONVERT_GOODS_NO = #{convertGoodsNo,jdbcType=VARCHAR}
+      <if test="updStatus != null and '' != updStatus">
+          and STATUS = #{updStatus,jdbcType=VARCHAR}
+      </if>
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillConConvertGoods" >
+    update BILL_CON_CONVERT_GOODS
+    set CONVERT_TYPE = #{convertType,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      S_QUALITY = #{sQuality,jdbcType=VARCHAR},
+      D_QUALITY = #{dQuality,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      AUDITOR = #{auditor,jdbcType=VARCHAR},
+      AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      REMARK = #{remark,jdbcType=VARCHAR},
+      CREATOR_NAME = #{creatorName,jdbcType=VARCHAR},
+      EDITOR_NAME = #{editorName,jdbcType=VARCHAR},
+      AUDITOR_NAME = #{auditorName,jdbcType=VARCHAR},
+      BUSINESS_TYPE = #{businessType,jdbcType=VARCHAR}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and CONVERT_GOODS_NO = #{convertGoodsNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

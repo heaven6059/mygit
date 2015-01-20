@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BillLmp2WmsMapper">
+	<resultMap id="BaseResultMapForApi"
+		type="com.yougou.logistics.city.common.api.dto.BillLmp2WmsDto">
+		<result column="BILL_NAME" property="billName" jdbcType="VARCHAR" />
+		<result column="BILL_TYPE" property="billType" jdbcType="VARCHAR" />
+		<result column="LMP_BILL_NO" property="lmpBillNo" jdbcType="VARCHAR" />
+		<result column="LOCNAME" property="locname" jdbcType="VARCHAR" />
+		<result column="LOCNO" property="locno" jdbcType="VARCHAR" />
+		<result column="OPERDATE" property="operdate" jdbcType="TIMESTAMP" />
+		<result column="QTY" property="qty" jdbcType="DECIMAL" />
+		<result column="SYS_NO" property="sysNo" jdbcType="VARCHAR" />
+		<result column="WMS_BILL_NO" property="wmsBillNo" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		v.BILL_NAME,v.BILL_TYPE,v.LMP_BILL_NO,v.LOCNAME,v.LOCNO,v.OPERDATE,v.QTY,v.SYS_NO,v.WMS_BILL_NO
+	</sql>
+
+	<select id="selectBill4Wms" resultMap="BaseResultMapForApi"
+		parameterType="map">
+		select
+		<include refid="Base_Column_List" />
+		from report_wms_downData v
+		where v.LOCNO = #{locno,jdbcType=VARCHAR}
+		and v.SYS_NO = #{sysNo,jdbcType=VARCHAR}
+		and v.OPERDATE >= to_date('${startDate} 00:00:00','yyyy-mm-dd
+		hh24:mi:ss')
+		and v.OPERDATE &lt;= to_date('${endDate} 23:59:59','yyyy-mm-dd
+		hh24:mi:ss')
+		<if test="billTypes != null and billTypes.size > 0">
+			and v.BILL_TYPE in
+			<foreach collection="billTypes" item="billType" open="("
+				close=")" separator=",">
+				#{billType}
+			</foreach>
+		</if>
+	</select>
+</mapper>

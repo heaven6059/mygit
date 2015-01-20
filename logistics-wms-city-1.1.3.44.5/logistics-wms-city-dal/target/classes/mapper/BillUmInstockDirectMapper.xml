@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillUmInstockDirectMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillUmInstockDirect" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="ROW_ID" property="rowId" jdbcType="DECIMAL" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+    <result column="CELL_ID" property="cellId" jdbcType="DECIMAL" />
+    <result column="DEST_CELL_NO" property="destCellNo" jdbcType="VARCHAR" />
+    <result column="DEST_CELL_ID" property="destCellId" jdbcType="DECIMAL" />
+    <result column="REAL_CELL_NO" property="realCellNo" jdbcType="VARCHAR" />
+    <result column="EST_QTY" property="estQty" jdbcType="DECIMAL" />
+    <result column="ITEM_TYPE" property="itemType" jdbcType="VARCHAR" />
+    <result column="QUALITY" property="quality" jdbcType="VARCHAR" />
+    <result column="PACK_QTY" property="packQty" jdbcType="DECIMAL" />
+    <result column="SOURCE_NO" property="sourceNo" jdbcType="VARCHAR" />
+    <result column="BOX_NO" property="boxNo" jdbcType="VARCHAR" />
+    <result column="item_name" property="itemName" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATORNAME" property="creatorName" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LOCNO, ROW_ID, OWNER_NO,SOURCE_NO,BOX_NO, STATUS,i.item_name,i.ITEM_NO, SIZE_NO, CELL_NO, CELL_ID, DEST_CELL_NO, 
+    DEST_CELL_ID, REAL_CELL_NO, EST_QTY, ITEM_TYPE, QUALITY, PACK_QTY, d.CREATOR, d.CREATORNAME, d.CREATETM
+  </sql>
+  <sql id="Base_Column_List_Params" >
+    LOCNO, ROW_ID, OWNER_NO,SOURCE_NO,BOX_NO, STATUS,ITEM_NO, SIZE_NO, CELL_NO, CELL_ID, DEST_CELL_NO, 
+    DEST_CELL_ID, REAL_CELL_NO, EST_QTY, ITEM_TYPE, QUALITY, PACK_QTY,CREATOR, CREATORNAME, CREATETM
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+       <if test="null!=params.locno and ''!=params.locno" >
+        AND locno = #{params.locno}
+      </if>
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        AND owner_No = #{params.ownerNo}
+      </if>
+      <if test="null!=params.cellNo and ''!=params.cellNo" >
+        AND cell_no = #{params.cellNo}
+      </if>
+      <if test="null!=params.cellId and ''!=params.cellId" >
+        AND cell_id = #{params.cellId}
+      </if>
+      
+      <if test="null!=params.itemType and ''!=params.itemType" >
+        AND ITEM_TYPE = #{params.itemType}
+      </if>
+      <if test="null!=params.quality and ''!=params.quality" >
+        AND QUALITY = #{params.quality}
+      </if>
+      
+      <if test="null!=params.status and ''!=params.status" >
+        AND STATUS = #{params.status}
+      </if>
+      <if test="null!=params.sourceNo and ''!=params.sourceNo" >
+        AND source_no = #{params.sourceNo}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillUmInstockDirectKey" >
+    select 
+    <include refid="Base_Column_List_Params" />
+    from BILL_UM_INSTOCK_DIRECT
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+  </select>
+  
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and d.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_UM_INSTOCK_DIRECT d where 1=1 
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from BILL_UM_INSTOCK_DIRECT  d
+  	 left join item i on i.item_no = d.item_no  where 1=1 
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    <if test="orderByField == null or ''==orderByField" >
+      order by ROW_ID desc
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+	select nvl(sum(d.EST_QTY), 0) EST_QTY
+     from BILL_UM_INSTOCK_DIRECT d where 1=1
+    <include refid="condition" />
+     <include refid="AuthorityCondition" />
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List_Params" />
+     from BILL_UM_INSTOCK_DIRECT where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillUmInstockDirectKey" >
+    delete from BILL_UM_INSTOCK_DIRECT
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillUmInstockDirect" >
+    delete from BILL_UM_INSTOCK_DIRECT
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillUmInstockDirect" >
+    insert into BILL_UM_INSTOCK_DIRECT (LOCNO, ROW_ID, OWNER_NO, 
+      STATUS, ITEM_NO, SIZE_NO, 
+      CELL_NO, CELL_ID, DEST_CELL_NO, 
+      DEST_CELL_ID, REAL_CELL_NO, EST_QTY, 
+      ITEM_TYPE, QUALITY, PACK_QTY
+      )
+    values (#{locno,jdbcType=VARCHAR}, #{rowId,jdbcType=DECIMAL}, #{ownerNo,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{itemNo,jdbcType=VARCHAR}, #{sizeNo,jdbcType=VARCHAR}, 
+      #{cellNo,jdbcType=VARCHAR}, #{cellId,jdbcType=DECIMAL}, #{destCellNo,jdbcType=VARCHAR}, 
+      #{destCellId,jdbcType=DECIMAL}, #{realCellNo,jdbcType=VARCHAR}, #{estQty,jdbcType=DECIMAL}, 
+      #{itemType,jdbcType=VARCHAR}, #{quality,jdbcType=VARCHAR}, #{packQty,jdbcType=DECIMAL}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillUmInstockDirect" >
+    insert into BILL_UM_INSTOCK_DIRECT
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="rowId != null" >
+        ROW_ID,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO,
+      </if>
+      <if test="cellId != null" >
+        CELL_ID,
+      </if>
+      <if test="destCellNo != null" >
+        DEST_CELL_NO,
+      </if>
+      <if test="destCellId != null" >
+        DEST_CELL_ID,
+      </if>
+      <if test="realCellNo != null" >
+        REAL_CELL_NO,
+      </if>
+      <if test="estQty != null" >
+        EST_QTY,
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE,
+      </if>
+      <if test="quality != null" >
+        QUALITY,
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="rowId != null" >
+        #{rowId,jdbcType=DECIMAL},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cellId != null" >
+        #{cellId,jdbcType=DECIMAL},
+      </if>
+      <if test="destCellNo != null" >
+        #{destCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="destCellId != null" >
+        #{destCellId,jdbcType=DECIMAL},
+      </if>
+      <if test="realCellNo != null" >
+        #{realCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="estQty != null" >
+        #{estQty,jdbcType=DECIMAL},
+      </if>
+      <if test="itemType != null" >
+        #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="packQty != null" >
+        #{packQty,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillUmInstockDirect" >
+    update BILL_UM_INSTOCK_DIRECT
+    <set >
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO = #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cellId != null" >
+        CELL_ID = #{cellId,jdbcType=DECIMAL},
+      </if>
+      <if test="destCellNo != null" >
+        DEST_CELL_NO = #{destCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="destCellId != null" >
+        DEST_CELL_ID = #{destCellId,jdbcType=DECIMAL},
+      </if>
+      <if test="realCellNo != null" >
+        REAL_CELL_NO = #{realCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="estQty != null" >
+        EST_QTY = #{estQty,jdbcType=DECIMAL},
+      </if>
+      <if test="itemType != null" >
+        ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        QUALITY = #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillUmInstockDirect" >
+    update BILL_UM_INSTOCK_DIRECT
+    set STATUS = #{status,jdbcType=VARCHAR},
+      ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      CELL_NO = #{cellNo,jdbcType=VARCHAR},
+      CELL_ID = #{cellId,jdbcType=DECIMAL},
+      DEST_CELL_NO = #{destCellNo,jdbcType=VARCHAR},
+      DEST_CELL_ID = #{destCellId,jdbcType=DECIMAL},
+      REAL_CELL_NO = #{realCellNo,jdbcType=VARCHAR},
+      EST_QTY = #{estQty,jdbcType=DECIMAL},
+      ITEM_TYPE = #{itemType,jdbcType=VARCHAR},
+      QUALITY = #{quality,jdbcType=VARCHAR},
+      PACK_QTY = #{packQty,jdbcType=DECIMAL}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and ROW_ID = #{rowId,jdbcType=DECIMAL}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

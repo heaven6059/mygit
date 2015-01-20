@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillChReportMapper">
+	<resultMap id="BaseResultMap"
+		type="com.yougou.logistics.city.common.model.BillChReport">
+		<result column="LOCNO" property="locno" jdbcType="VARCHAR" />
+		<result column="PLAN_NO" property="planNo" jdbcType="VARCHAR" />
+		<result column="PLAN_TYPE" property="planType" jdbcType="VARCHAR" />
+		<result column="PLAN_STATUS" property="planStatus" jdbcType="VARCHAR" />
+		<result column="CHECK_NO" property="checkNo" jdbcType="VARCHAR" />
+		<result column="brand_no" property="brandNo" jdbcType="VARCHAR" />
+		<result column="brand_name" property="brandName" jdbcType="VARCHAR" />
+		<result column="ware_no" property="wareNo" jdbcType="VARCHAR" />
+		<result column="area_no" property="areaNo" jdbcType="VARCHAR" />
+		<result column="stock_no" property="stockNo" jdbcType="VARCHAR" />
+		<result column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+		<result column="cate_no" property="cateNo" jdbcType="VARCHAR" />
+		<result column="cate_name" property="cateName" jdbcType="VARCHAR" />
+		<result column="YEARS" property="years" jdbcType="VARCHAR" />
+		<result column="SEASON" property="season" jdbcType="VARCHAR" />
+		<result column="GENDER" property="gender" jdbcType="VARCHAR" />
+		<result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+		<result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+		<result column="BARCODE" property="barcode" jdbcType="VARCHAR" />
+		<result column="ITEM_QTY" property="itemQty" jdbcType="DECIMAL" />
+		<result column="REAL_Qty" property="realQty" jdbcType="DECIMAL" />
+		<result column="diffQty" property="diffQty" jdbcType="DECIMAL" />
+	</resultMap>
+	<sql id="BaseColumn">
+		p.plan_no,p.plan_type,p.status plan_status,cd.check_no,cd.brand_no,b.brand_name,cdc.ware_no,cdc.area_no,cdc.stock_no,
+		cd.cell_no,i.cate_no,ca.cate_name,i.years,i.season,i.gender,cd.item_no,cd.size_no,cd.barcode,cd.item_qty
+	</sql>
+	
+	<sql id="BaseColumnC">
+		 ,nvl(cd.check_qty, 0)  real_qty,
+         abs(cd.item_qty - nvl(cd.check_qty, 0)) diffQty
+	</sql>
+	
+	<sql id="BaseColumnF">
+		 ,nvl(cd.recheck_qty, 0) real_qty,
+         abs(cd.item_qty - nvl(cd.recheck_qty, 0)) diffQty
+	</sql>
+
+	<sql id="condition">
+		<if test="null!=params">
+			<if test="null!=params.locno and ''!=params.locno">
+				and p.locno = #{params.locno,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=params.planNo and ''!=params.planNo">
+				and p.plan_no = #{params.planNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=params.planStatus and ''!=params.planStatus">
+				and p.status = #{params.planStatus,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=params.checkNo and ''!=params.checkNo">
+				and c.check_no = #{params.checkNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=params.sysNo and ''!=params.sysNo">
+				and i.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=params.brandNo and ''!=params.brandNo">
+				and cd.brand_no in (${params.brandNo})
+			</if>
+			<if test="null!=params.wareNo and ''!=params.wareNo">
+				and cdc.ware_no = #{params.wareNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=params.areaNo and ''!=params.areaNo">
+				and cdc.area_no = #{params.areaNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=params.stockNo and ''!=params.stockNo">
+				and cdc.stock_no = #{params.stockNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=params.cellNo and ''!=params.cellNo">
+				and cdc.cell_no = #{params.cellNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=params.years and ''!=params.years">
+				and i.years in (${params.years})
+			</if>
+			<if test="null!=params.season and ''!=params.season">
+				and i.season in (${params.season})
+			</if>
+			<if test="null!=params.gender and ''!=params.gender">
+				and i.gender in (${params.gender})
+			</if>
+			<if test="null!=params.itemNo and ''!=params.itemNo">
+				and i.item_no = #{params.itemNo,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=params.barcode and ''!=params.barcode">
+				and cd.barcode = #{params.barcode,jdbcType=VARCHAR}
+			</if>
+			<if test="null!=params.planDateStart and ''!=params.planDateStart" >
+		      <![CDATA[
+		        and p.plan_date >= to_date('${params.planDateStart} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+		        ]]>
+		    </if>
+		    <if test="null!=params.planDateEnd and ''!=params.planDateEnd" >
+		      <![CDATA[
+		        and p.plan_date <= to_date('${params.planDateEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+		        ]]>
+		    </if>
+			<if test="null!=authorityParams and null!=authorityParams.hasBrandNoList">
+				and cd.brand_no in
+				<include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+			</if>
+			<choose>
+			 		<when test="params.cateThreeValues != null">
+				 		<foreach collection="params.cateThreeValues" item="value" open=" and (" close=")" separator="or">
+							ca.search_code like '${value}%'
+						</foreach>
+			 		</when>
+			 		<when test="params.cateTwoValues != null">
+			 			<foreach collection="params.cateTwoValues" item="value" open="and (" close=")" separator="or">
+							ca.search_code like '${value}%'
+						</foreach>
+			 		</when>
+			 		<when test="params.cateOneValues != null">
+			 			<foreach collection="params.cateOneValues" item="value" open="and (" close=")" separator="or">
+							ca.search_code like '${value}%'
+						</foreach>
+			 		</when>
+			 		<otherwise>
+			 		</otherwise>
+	 		</choose> 
+		</if>
+	</sql>
+	
+	
+	<sql id="BaseQueryTabl">
+		         select k.* from  (select 
+		                  <include refid="BaseColumn" />
+		                  <include refid="BaseColumnC" />
+		                  from bill_ch_check_dtl cd
+		                 inner join bill_ch_check c
+		                    on c.locno = cd.locno
+		                   and c.check_no = cd.check_no
+		                 inner join bill_ch_plan p
+		                    on p.locno = c.locno
+		                   and p.plan_no = c.plan_no
+		                   and p.status in ('15','20','25','90')
+		                 inner join cm_defcell cdc
+		                    on cdc.locno = cd.locno
+		                   and cdc.cell_no = cd.cell_no
+		                 inner join item i
+		                    on i.item_no = cd.item_no
+		                 inner join brand b
+		                 	on b.brand_no = cd.brand_no
+		                 left join category ca
+		 					on i.cate_no = ca.cate_no
+		                 where 1 = 1
+		                   and not exists (select  1 from   bill_ch_recheck_dtl rcd  where rcd.check_no = c.check_no and rcd.locno = c.locno)
+		                   <include refid="condition" />
+		               union
+		                   select 
+		                  <include refid="BaseColumn" />
+		                  <include refid="BaseColumnF" />
+			              from bill_ch_recheck_dtl cd
+			                 inner join bill_ch_check c
+			                    on c.locno = cd.locno
+			                   and c.check_no = cd.check_no
+			                 inner join bill_ch_plan p
+			                    on p.locno = c.locno
+			                   and p.plan_no = c.plan_no
+			                   and p.status in ('15','20', '25', '90')
+			                 inner join cm_defcell cdc
+			                    on cdc.locno = cd.locno
+			                   and cdc.cell_no = cd.cell_no
+			                 inner join item i
+			                    on i.item_no = cd.item_no
+			                 inner join brand b
+			                    on b.brand_no = cd.brand_no
+			                  left join category ca
+			                    on i.cate_no = ca.cate_no
+			                 where 1 = 1
+		                        <include refid="condition" />)  k  order by k.plan_no desc 
+	</sql>
+	
+	<select id="selectCount" resultType="java.lang.Integer" >
+	    select count(1) as s
+		  from (<include refid="BaseQueryTabl" /> ) 
+	</select>
+	
+	<select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    	select B.*
+		  from (select A.*, rownum rn
+		          from ( <include refid="BaseQueryTabl" /> ) A
+		         where rownum &lt; #{page.endRowNum}) B
+		 where B.rn &gt; #{page.startRowNum}
+	</select>
+	
+	<select id="selectSumQty" resultType="map" parameterType="map">
+  		select sum(A.item_qty) item_qty,
+		       sum(A.real_qty)  real_qty,
+               sum(A.diffQty)   diff_qty
+		  from (<include refid="BaseQueryTabl" /> )  A
+	</select>
+</mapper>

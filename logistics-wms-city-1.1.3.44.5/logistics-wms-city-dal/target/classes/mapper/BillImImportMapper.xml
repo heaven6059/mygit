@@ -1,0 +1,1095 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillImImportMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillImImport" >
+    <id column="IMPORT_NO" property="importNo" jdbcType="VARCHAR" />
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="OWNER_NAME" property="ownerName" jdbcType="VARCHAR" />
+    <result column="IMPORT_TYPE" property="importType" jdbcType="VARCHAR" />
+    <result column="PO_TYPE" property="poType" jdbcType="VARCHAR" />
+    <result column="PO_NO" property="poNo" jdbcType="VARCHAR" />
+    <result column="TRANS_NO" property="transNo" jdbcType="VARCHAR" />
+    <result column="SUPPLIER_NO" property="supplierNo" jdbcType="VARCHAR" />
+    <result column="ORDER_DATE" property="orderDate" jdbcType="TIMESTAMP" />
+    <result column="REQUEST_DATE" property="requestDate" jdbcType="TIMESTAMP" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="CREATE_FLAG" property="createFlag" jdbcType="VARCHAR" />
+    <result column="IMPORT_REMARK" property="importRemark" jdbcType="VARCHAR" />
+    <result column="END_DATE" property="endDate" jdbcType="DECIMAL" />
+    <result column="RECEIVE_TYPE" property="receiveType" jdbcType="DECIMAL" />
+    <result column="PAY_TYPE_NAME" property="payTypeName" jdbcType="VARCHAR" />
+    <result column="ORDER_TYPE_NAME" property="orderTypeName" jdbcType="VARCHAR" />
+    <result column="LAY_TYPE" property="layType" jdbcType="VARCHAR" />
+    <result column="CLASS" property="typeClass" jdbcType="VARCHAR" />
+    <result column="ERROR_STATUS" property="errorStatus" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="SEND_FLAG" property="sendFlag" jdbcType="VARCHAR" />
+    <result column="ORDER_END_DATE" property="orderEndDate" jdbcType="TIMESTAMP" />
+    <result column="WITH_CODE_FLAG" property="withCodeFlag" jdbcType="VARCHAR" />
+    <result column="STOCK_TYPE" property="stockType" jdbcType="VARCHAR" />
+    <result column="STOCK_VALUE" property="stockValue" jdbcType="VARCHAR" />
+    <result column="QUALITY" property="quality" jdbcType="VARCHAR" />
+    <result column="SAMPLE_RATE" property="sampleRate" jdbcType="DECIMAL" />
+    <result column="SYS_NO" property="sysNo" jdbcType="VARCHAR" />
+    <result column="sysName" property="sysName" jdbcType="VARCHAR" />
+    <result column="supplier_name" property="supplierName" jdbcType="VARCHAR" />
+    <result column="CO_NO" property="coNo" jdbcType="VARCHAR" />
+    <result column="AUDITOR" property="auditor" jdbcType="VARCHAR" />
+    <result column="AUDITTM" property="audittm" jdbcType="TIMESTAMP" />
+    <result column="S_PO_NO" property="sPoNo" jdbcType="VARCHAR" />
+    <result column="BUSINESS_TYPE" property="businessType" jdbcType="VARCHAR" />
+    <result column="transTime" property="transTime" jdbcType="TIMESTAMP" />
+    <result column="receipt_Qty" property="receiptQty" jdbcType="DECIMAL" />
+    <result column="IMPORT_QTY" property="importQty" jdbcType="DECIMAL" />
+    <result column="differQty" property="differQty" jdbcType="DECIMAL" />
+    <result column="CREATORNAME" property="creatorName" jdbcType="VARCHAR" />
+    <result column="EDITORNAME" property="editorName" jdbcType="VARCHAR" />
+    <result column="AUDITORNAME" property="auditorName" jdbcType="VARCHAR" />
+    
+  </resultMap>
+  <sql id="Base_Column_List" >
+    m.IMPORT_NO, m.LOCNO, m.OWNER_NO, m.IMPORT_TYPE, m.PO_TYPE, m.PO_NO, m.TRANS_NO, m.SUPPLIER_NO, m.ORDER_DATE, 
+    m.REQUEST_DATE, m.STATUS, m.CREATE_FLAG, m.IMPORT_REMARK, m.END_DATE, m.RECEIVE_TYPE, m.PAY_TYPE_NAME, 
+    m.ORDER_TYPE_NAME, m.LAY_TYPE, m.CLASS, m.ERROR_STATUS, m.CREATOR, m.CREATETM, m.EDITOR, m.EDITTM, 
+    m.SEND_FLAG, m.ORDER_END_DATE, m.WITH_CODE_FLAG, m.STOCK_TYPE, m.STOCK_VALUE, m.QUALITY, m.SAMPLE_RATE, 
+    m.SYS_NO, m.CO_NO, m.AUDITOR, m.AUDITTM, m.S_PO_NO, m.BUSINESS_TYPE,m.CREATORNAME,m.EDITORNAME,m.AUDITORNAME
+  </sql>
+  
+  <sql id="Base_Column_List_2" >
+    vc.IMPORT_NO, vc.LOCNO, vc.OWNER_NO, vc.IMPORT_TYPE, vc.PO_TYPE, vc.PO_NO, vc.TRANS_NO, vc.SUPPLIER_NO, vc.ORDER_DATE, 
+    vc.REQUEST_DATE, vc.STATUS, vc.CREATE_FLAG, vc.IMPORT_REMARK, vc.END_DATE, vc.RECEIVE_TYPE, vc.PAY_TYPE_NAME, 
+    vc.ORDER_TYPE_NAME, vc.LAY_TYPE, vc.CLASS, vc.ERROR_STATUS, vc.CREATOR, vc.CREATETM, vc.EDITOR, vc.EDITTM, 
+    vc.SEND_FLAG, vc.ORDER_END_DATE, vc.WITH_CODE_FLAG, vc.STOCK_TYPE, vc.STOCK_VALUE, vc.QUALITY, vc.SAMPLE_RATE, 
+    vc.SYS_NO, vc.CO_NO, vc.AUDITOR, vc.AUDITTM, vc.S_PO_NO, vc.BUSINESS_TYPE,vc.CREATORNAME,vc.EDITORNAME,vc.AUDITORNAME
+  </sql>
+  
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.importNo and ''!=params.importNo" >
+        and IMPORT_NO=#{params.importNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+        and LOCNO=#{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        and OWNER_NO=#{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.status and ''!=params.status" >
+        and STATUS=#{params.status,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.creator and ''!=params.creator" >
+        and CREATOR like '%${params.creator}%'
+      </if>
+      <if test="null!=params.auditor and ''!=params.auditor" >
+        and AUDITOR like '%${params.auditor}%'
+      </if>
+      <if test="null!=params.transNo and ''!=params.transNo" >
+        and TRANS_NO like '%${params.transNo}%'
+      </if>
+      <if test="null!=params.supplierNo and ''!=params.supplierNo" >
+        and SUPPLIER_NO=#{params.supplierNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.poNo and ''!=params.poNo" >
+        and PO_NO like '%${params.poNo}%'
+      </if>
+      <if test="null!=params.sPoNo and ''!=params.sPoNo" >
+        and S_PO_NO like '%${params.sPoNo}%'
+      </if>
+       <if test="null!=params.createtmBegin and ''!=params.createtmBegin" >
+	       <![CDATA[
+	        and CREATETM >= to_date('${params.createtmBegin} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+	     	]]>	 
+	      </if>
+	      <if test="null!=params.createtmEnd and ''!=params.createtmEnd" >
+	       <![CDATA[
+	        and CREATETM <= to_date('${params.createtmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+	     	]]>	 
+	      </if>
+	      <if test="null!=params.audittmBegin and ''!=params.audittmBegin" >
+	       <![CDATA[
+	        and AUDITTM >= to_date('${params.audittmBegin} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+	     	]]>	
+	      </if>
+	      <if test="null!=params.audittmEnd and ''!=params.audittmEnd" >
+	        <![CDATA[
+	        and AUDITTM <= to_date('${params.audittmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+	     	]]>
+	   </if>
+	   <if test="null!=params.edittmBegin and ''!=params.edittmBegin" >
+	       <![CDATA[
+	        and m.EDITTM >= to_date('${params.edittmBegin} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+	     	]]>	
+	  	</if>
+	   	<if test="null!=params.edittmEnd and ''!=params.edittmEnd" >
+	        <![CDATA[
+	        and m.EDITTM <= to_date('${params.edittmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+	     	]]>
+	   	</if>
+      <if test="null!=params.requestDateBegin and ''!=params.requestDateBegin" >
+        <![CDATA[
+        and REQUEST_DATE >= to_date('${params.requestDateBegin} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+     	]]>
+      </if>
+      <if test="null!=params.requestDateEnd and ''!=params.requestDateEnd" >
+        <![CDATA[
+        and REQUEST_DATE <= to_date('${params.requestDateEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+     	]]>
+      </if>
+       <if test="null!=params.orderDateBegin and ''!=params.orderDateBegin" >
+        <![CDATA[
+        and ORDER_DATE >= to_date('${params.orderDateBegin} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+     	]]>
+      </if>
+      <if test="null!=params.orderDateEnd and ''!=params.orderDateEnd" >
+        <![CDATA[
+        and ORDER_DATE <= to_date('${params.orderDateEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+     	]]>
+      </if>
+    </if>
+  </sql>
+  
+  <!--预到货通知主页面列表查询、总数计算-->
+  <sql id="condition_for_main" >
+    <if test="null!=params" >
+      <if test="null!=params.importNo and ''!=params.importNo" >
+        and m.IMPORT_NO=#{params.importNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+        and m.LOCNO=#{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        and m.OWNER_NO=#{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.status and ''!=params.status" >
+        and m.STATUS=#{params.status,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.creator and ''!=params.creator" >
+        and m.CREATOR like '%${params.creator}%'
+      </if>
+      <if test="null!=params.auditor and ''!=params.auditor" >
+        and m.AUDITOR like '%${params.auditor}%'
+      </if>
+      <if test="null!=params.transNo and ''!=params.transNo" >
+        and m.TRANS_NO like '%${params.transNo}%'
+      </if>
+      <if test="null!=params.supplierNo and ''!=params.supplierNo" >
+        and m.SUPPLIER_NO=#{params.supplierNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.poNo and ''!=params.poNo" >
+        and m.PO_NO like '%${params.poNo}%'
+      </if>
+      <if test="null!=params.sPoNo and ''!=params.sPoNo" >
+        and m.S_PO_NO like '%${params.sPoNo}%'
+      </if>
+      <if test="null!=params.sysNo and ''!=params.sysNo" >
+        and m.sys_no = #{params.sysNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.businessType and ''!=params.businessType" >
+        and m.BUSINESS_TYPE = #{params.businessType,jdbcType=VARCHAR}
+      </if>
+      	<if test="null!=params.createtmBegin and ''!=params.createtmBegin" >
+	       <![CDATA[
+	        and m.CREATETM >= to_date('${params.createtmBegin} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+	     	]]>	 
+	  	</if>
+	  	<if test="null!=params.createtmEnd and ''!=params.createtmEnd" >
+	       <![CDATA[
+	        and m.CREATETM <= to_date('${params.createtmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+	     	]]>
+	  	</if>
+	  	<if test="null!=params.audittmBegin and ''!=params.audittmBegin" >
+	       <![CDATA[
+	        and m.AUDITTM >= to_date('${params.audittmBegin} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+	     	]]>	
+	  	</if>
+	   	<if test="null!=params.audittmEnd and ''!=params.audittmEnd" >
+	        <![CDATA[
+	        and m.AUDITTM <= to_date('${params.audittmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+	     	]]>
+	   	</if>
+	   	<if test="null!=params.edittmBegin and ''!=params.edittmBegin" >
+	       <![CDATA[
+	        and m.EDITTM >= to_date('${params.edittmBegin} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+	     	]]>	
+	  	</if>
+	   	<if test="null!=params.edittmEnd and ''!=params.edittmEnd" >
+	        <![CDATA[
+	        and m.EDITTM <= to_date('${params.edittmEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+	     	]]>
+	   	</if>
+      	<if test="null!=params.requestDateBegin and ''!=params.requestDateBegin" >
+        	<![CDATA[
+        	and m.REQUEST_DATE >= to_date('${params.requestDateBegin} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+     		]]>
+      	</if>
+      	<if test="null!=params.requestDateEnd and ''!=params.requestDateEnd" >
+        	<![CDATA[
+        	and m.REQUEST_DATE <= to_date('${params.requestDateEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+     		]]>
+      	</if>
+       	<if test="null!=params.orderDateBegin and ''!=params.orderDateBegin" >
+        	<![CDATA[
+        	and m.ORDER_DATE >= to_date('${params.orderDateBegin} 00:00:00','yyyy-mm-dd hh24:mi:ss')
+     		]]>
+      	</if>
+      	<if test="null!=params.orderDateEnd and ''!=params.orderDateEnd" >
+        	<![CDATA[
+        	and m.ORDER_DATE <= to_date('${params.orderDateEnd} 23:59:59','yyyy-mm-dd hh24:mi:ss')
+     		]]>
+      	</if>
+      	<if test="(null!=params.brandNo and ''!=params.brandNo)
+       		or (null!=params.deliverNo and ''!=params.deliverNo)
+       		or (null!=params.boxNo and ''!=params.boxNo)" >
+      		and EXISTS (
+      			select 1 from BILL_IM_IMPORT_DTL d,item i
+      				where d.LOCNO = m.LOCNO 
+      				and d.IMPORT_NO = m.IMPORT_NO 
+      				and d.ITEM_NO = i.ITEM_NO
+      				<if test="null!=params.brandNo and ''!=params.brandNo" >
+      					and i.BRAND_NO = #{params.brandNo,jdbcType=VARCHAR}
+      				</if>
+      				<if test="null!=params.deliverNo and ''!=params.deliverNo" >
+      					and d.deliver_no = #{params.deliverNo,jdbcType=VARCHAR}
+      				</if>
+      				<if test="null!=params.boxNo and ''!=params.boxNo" >
+      					and d.box_no = #{params.boxNo,jdbcType=VARCHAR}
+      				</if>
+      				  
+      				and rownum=1
+      		)
+	  	</if>
+    </if>
+  </sql>
+  
+  <sql id="condition_extend" >
+  	<if test="null!=params">
+  	  <if test="null!=params.poNo and ''!=params.poNo" >
+        and b.po_no=#{params.poNo,jdbcType=VARCHAR}
+      </if>
+       <if test="null!=params.spoNo and ''!=params.spoNo" >
+        and b.s_po_no like '%${params.spoNo}%'
+      </if>
+      <if test="null!=params.importNo and ''!=params.importNo" >
+        and b.IMPORT_NO=#{params.importNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+        and b.LOCNO=#{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+        and b.OWNER_NO=#{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.status and ''!=params.status" >
+        and b.STATUS=#{params.status,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.transNo and ''!=params.transNo" >
+        and b.TRANS_NO=#{params.transNo,jdbcType=VARCHAR}
+      </if>
+       <if test="null!=params.brandNo and ''!=params.brandNo" >
+        and br.BRAND_NO=#{params.brandNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.deliverNo and ''!=params.deliverNo" >
+        and d.DELIVER_NO=#{params.deliverNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.supplierNo and ''!=params.supplierNo" >
+        and b.supplier_no=#{params.supplierNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.requestDateStart and ''!=params.requestDateStart" >
+        <![CDATA[
+        and b.REQUEST_DATE >= to_date(#{params.requestDateStart,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+     	]]>
+      </if>
+      <if test="null!=params.requestDateEnd and ''!=params.requestDateEnd" >
+        <![CDATA[
+        and b.REQUEST_DATE <= to_date(#{params.requestDateEnd,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+     	]]>
+      </if>
+       <if test="null!=params.orderDateStart and ''!=params.orderDateStart" >
+        <![CDATA[
+        and b.ORDER_DATE >= to_date(#{params.orderDateStart,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+     	]]>
+      </if>
+      <if test="null!=params.orderDateEnd and ''!=params.orderDateEnd" >
+        <![CDATA[
+        and b.ORDER_DATE <= to_date(#{params.orderDateEnd,jdbcType=VARCHAR},'yyyy-mm-dd hh24:mi:ss')
+     	]]>
+      </if>
+     </if>
+  </sql>
+  
+  <!--权限过滤查询条件-->
+  <sql id="selectByPageAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and (sub1.import_no is not null or sub2.import_no is null)
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillImImportKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_IM_IMPORT m
+    where IMPORT_NO = #{importNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+  </select>
+  
+  
+  <!--权限过滤左连接子查询-->
+  <sql id="selectByPageAuthorityLeftJoin" >
+    left join (select locno, owner_no, import_no,
+    	sum(nvl(receipt_Qty, 0)) receipt_Qty,
+        sum(nvl(IMPORT_QTY, 0)) IMPORT_QTY,
+        sum(abs(nvl(receipt_Qty, 0) - nvl(IMPORT_QTY, 0))) differQty
+    	from BILL_IM_IMPORT_DTL                         
+        	where locno = #{params.locno,jdbcType=VARCHAR}
+            <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+            and brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    		</if>
+    	group by locno, owner_no, import_no
+  	) sub1
+     on sub1.locno = m.locno
+    and sub1.owner_no = m.owner_no
+    and sub1.import_no = m.import_no
+    left join (select locno, owner_no, import_no
+    	from BILL_IM_IMPORT_DTL  
+        	where locno = #{params.locno,jdbcType=VARCHAR}     
+        group by locno, owner_no, import_no                 
+  	) sub2
+     on sub2.locno = m.locno
+    and sub2.owner_no = m.owner_no
+   	and sub2.import_no = m.import_no
+  </sql>
+  <sql id="selectByPage_sql" >
+     select <include refid="Base_Column_List" />
+     	 , sub1.receipt_Qty,sub1.IMPORT_QTY,sub1.differQty
+	     from BILL_IM_IMPORT m 
+	     <include refid="selectByPageAuthorityLeftJoin" />
+	     where 1=1
+	     <include refid="condition_for_main" />
+	     <include refid="selectByPageAuthorityCondition" />
+	     
+  </sql>
+  
+	<select id="selectSumQty" resultType="java.util.Map" parameterType="map">
+ 		select SUM(nvl((select sum(nvl(d.po_Qty, 0))
+                 from bill_im_import_dtl d
+                where d.locno = A.locno
+                  and d.owner_no = A.owner_no
+                  and d.import_no = A.import_no),
+               0)) sumQty,
+       SUM(nvl((SELECT COUNT(DISTINCT box_no)
+                 FROM bill_im_import_dtl d
+                WHERE d.import_no = A.import_no),
+               0)) boxNoQty,
+       SUM(nvl((SELECT COUNT(DISTINCT box_no)
+                 FROM bill_im_import_dtl d
+                WHERE d.import_no = A.import_no
+                  and d.receipt_qty != 0),
+               0)) receiptBoxNoQty
+		from (
+    		<include refid="selectByPage_sql" />
+    	) A
+   </select>
+   
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from (
+    	<include refid="selectByPage_sql" />
+    ) A
+  </select>
+  
+  <!--  性能优化前的备份   add by zuo.sw 2014-11-24
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+  
+    select <include refid="Base_Column_List_2" />,
+       (select max(d.trans_time)
+          from bill_im_import_dtl d
+         where d.locno = vc.locno
+           and vc.owner_no = d.owner_no
+           and vc.import_no = d.import_no) transTime,
+       (CASE
+         WHEN vc.BUSINESS_TYPE = '0' THEN
+          (select supplier_name
+             from SUPPLIER s
+            where s.supplier_no = vc.supplier_no)
+         WHEN vc.BUSINESS_TYPE = '4' then
+          (select store_name from store s where s.store_no = vc.supplier_no)
+       END) AS supplierName,
+        nvl((select sum(nvl(d.po_Qty, 0))
+              from bill_im_import_dtl d
+             where d.locno = vc.locno
+               and vc.owner_no = vc.owner_no
+               and vc.import_no = d.import_no),0) sumQty,
+       (SELECT COUNT(DISTINCT box_no) FROM bill_im_import_dtl d WHERE d.import_no = vc.import_no ) boxNoQty,
+       (SELECT COUNT(DISTINCT box_no) FROM bill_im_import_dtl d WHERE d.import_no = vc.import_no and d.receipt_qty!=0 ) receiptBoxNoQty,
+       vc.receipt_Qty, vc.IMPORT_QTY,  vc.differQty
+  from (
+    select B.* from (
+      select A.*,rownum rn from( 
+	    <include refid="selectByPage_sql" />
+	    <if test="orderByField != null and ''!=orderByField" >
+	      order by ${orderByField}
+	      <if test="orderByField" >
+	        ${orderBy}
+	      </if>
+	    </if>
+	    <if test="orderByField == null or ''==orderByField" >
+	      order by m.IMPORT_NO desc
+	    </if>
+      ) A where rownum &lt; #{page.endRowNum}
+    ) B where rn &gt; #{page.startRowNum}
+   )vc
+    
+  </select>
+  -->
+  
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+  
+    select <include refid="Base_Column_List_2" />,
+       (select max(d.trans_time)
+          from bill_im_import_dtl d
+         where d.locno = vc.locno
+           and vc.owner_no = d.owner_no
+           and vc.import_no = d.import_no) transTime,
+       (CASE
+         WHEN vc.BUSINESS_TYPE = '0' THEN
+          (select supplier_name
+             from SUPPLIER s
+            where s.supplier_no = vc.supplier_no)
+         WHEN vc.BUSINESS_TYPE = '4' then
+          (select store_name from store s where s.store_no = vc.supplier_no)
+       END) AS supplierName,
+        nvl((select sum(nvl(d.po_Qty, 0))
+              from bill_im_import_dtl d
+             where d.locno = vc.locno
+               and vc.owner_no = vc.owner_no
+               and vc.import_no = d.import_no),0) sumQty,
+       (SELECT COUNT(DISTINCT box_no) FROM bill_im_import_dtl d WHERE d.import_no = vc.import_no ) boxNoQty,
+       (SELECT COUNT(DISTINCT box_no) FROM bill_im_import_dtl d WHERE d.import_no = vc.import_no and d.receipt_qty!=0 ) receiptBoxNoQty,
+       vc.receipt_Qty, vc.IMPORT_QTY,  vc.differQty
+  from (
+    select B.* from (
+      select A.*,rownum rn from( 
+	    <include refid="selectByPage_sql" />
+	    <if test="orderByField != null and ''!=orderByField" >
+	      order by ${orderByField}
+	      <if test="orderByField" >
+	        ${orderBy}
+	      </if>
+	    </if>
+	    <if test="orderByField == null or ''==orderByField" >
+	      order by m.IMPORT_NO desc
+	    </if>
+      ) A where rownum &lt; #{page.endRowNum}
+    ) B where rn &gt; #{page.startRowNum}
+   )vc
+    
+  </select>
+  
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_IM_IMPORT m where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <!--权限过滤查询条件-->
+  <sql id="d_AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and d.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+
+    <!--关联品牌分页查询主表-->
+  <select id="selectImpoertNoCount" resultType="java.lang.Integer">
+    select count(distinct d.IMPORT_NO) as s from BILL_IM_IMPORT b
+    	left outer join BILL_IM_IMPORT_DTL d on b.IMPORT_NO = d.IMPORT_NO and b.LOCNO=d.LOCNO
+	    left outer join con_box cb on cb.locno=d.locno and d.box_no=cb.box_no
+	    left outer join con_box_dtl cbd on cb.locno=cbd.locno and cbd.box_no=cb.box_no
+	    left outer join item i on i.item_no = d.item_no
+		left outer join brand br on i.brand_no = br.brand_no 
+		left outer join lookupdtl ld on ld.itemval = b.sys_no and ld.lookupcode = 'SYS_NO' and ld.systemid='21'
+        left outer join supplier s on b.supplier_no = s.supplier_no
+		where 1=1
+			and cb.status='0'
+			and cbd.import_no!=' '
+			<!--查询审核和部分收货的--> 
+			and (b.status='11' or b.status='12' or b.status='30') 
+			<include refid="condition_extend" />
+			<include refid="d_AuthorityCondition" />
+  </select>
+  
+  
+  <!--查询是否可以手动关闭(收货单校验)-->
+  <!--手工关单的厂商入库单如果存在状态为新建、收货完成、差异验收的情况不能做手工关单的操作-->
+  <select id="selectVerFlocByReceipt" resultType="java.lang.Integer" parameterType="com.yougou.logistics.city.common.model.BillImImport">
+    select count(*) from bill_im_import i
+    inner join bill_im_receipt_dtl rd on i.import_no=rd.import_no and i.locno=rd.locno and i.owner_no = rd.owner_no 
+	inner join bill_im_receipt r on rd.receipt_no=r.receipt_no and rd.locno=r.locno and rd.owner_no=r.owner_no 
+	where i.import_no=#{importNo,jdbcType=VARCHAR} 
+	and i.locno=#{locno,jdbcType=VARCHAR} 
+	and i.owner_no=#{ownerNo,jdbcType=VARCHAR} 
+	and r.status in ('10','20')  
+	and r.business_type = '0'
+  </select>
+  
+  <!--查询是否可以手动关闭（分货单校验）-->
+  <!--不是复核完成或手工关闭状态的不能手工关单-->
+  <select id="selectVerFlocByDivide" resultType="java.lang.Integer" parameterType="com.yougou.logistics.city.common.model.BillImImport">
+    select count(*) from bill_im_import i 
+	inner join bill_im_receipt_dtl rd on i.import_no=rd.import_no and i.locno=rd.locno and i.owner_no = rd.owner_no
+	inner join bill_im_receipt r on rd.receipt_no=r.receipt_no and rd.locno=r.locno and rd.owner_no=r.owner_no 
+	inner join bill_om_divide_dtl dd on r.receipt_no=dd.source_no and dd.locno=r.locno and dd.owner_no=r.owner_no 
+	inner join bill_om_divide d on d.divide_no=dd.divide_no and dd.locno=d.locno
+	where i.import_no=#{importNo,jdbcType=VARCHAR} 
+	and i.locno=#{locno,jdbcType=VARCHAR} 
+	and i.owner_no=#{ownerNo,jdbcType=VARCHAR} 
+	and d.status not in ('45','91')
+	and r.business_type = '0'
+  </select>
+  
+  <!--查询是否可以手动关闭（验收单校验）-->
+  <!--如果存在状态为新建的验收单，有则不能关闭-->
+  <select id="selectVerFlocByCheck" resultType="java.lang.Integer" parameterType="com.yougou.logistics.city.common.model.BillImImport">
+    select count(*) from bill_im_import i
+	  inner join bill_im_receipt_dtl rd on i.import_no=rd.import_no and i.locno=rd.locno and i.owner_no = rd.owner_no 
+	  inner join bill_im_receipt r on rd.receipt_no=r.receipt_no and rd.locno=r.locno and rd.owner_no=r.owner_no   
+	  inner join bill_im_check c on r.receipt_no=c.s_import_no and c.locno=r.locno and c.owner_no=r.owner_no 
+	  where i.import_no=#{importNo,jdbcType=VARCHAR} 
+	  and i.locno=#{locno,jdbcType=VARCHAR} 
+	  and i.owner_no=#{ownerNo,jdbcType=VARCHAR} 
+	  and r.status ='50' and c.status='10'
+	  and r.business_type = '0'
+  </select>
+  
+	<select id="selectImportNoByPage" resultMap="BaseResultMap">
+	    select B.* from (select A.*,rownum rn from( select 
+	     distinct b.LOCNO,
+	     b.IMPORT_NO,
+	     b.TRANS_NO,
+	     b.OWNER_NO,
+	     de.OWNER_NAME,
+	     b.ORDER_DATE,
+	     b.REQUEST_DATE,
+	     b.po_no,
+	     b.sys_no,
+         ld.itemname as sysName,
+         b.supplier_no,
+         (CASE WHEN b.BUSINESS_TYPE = '0' THEN
+                          (select supplier_name
+                             from SUPPLIER s
+                            where s.supplier_no = b.supplier_no and rownum=1)
+                         WHEN b.BUSINESS_TYPE = '4' then
+                          (select store_name
+                             from store s
+                            where s.store_no = b.supplier_no and rownum=1)
+                       END) AS supplierName,
+         b.s_po_no
+	     from BILL_IM_IMPORT b
+	     left outer join BILL_IM_IMPORT_DTL d on b.IMPORT_NO = d.IMPORT_NO and b.LOCNO=d.LOCNO
+	     left outer join con_box cb on cb.locno=d.locno and d.box_no=cb.box_no
+	     left outer join con_box_dtl cbd on cb.locno=cbd.locno and cbd.box_no=cb.box_no
+	     left outer join item i on i.item_no = d.item_no
+		 left outer join brand br on i.brand_no = br.brand_no 
+		 left outer join lookupdtl ld on ld.itemval = b.sys_no and ld.lookupcode = 'SYS_NO' and ld.systemid='21'
+         left outer join supplier s on b.supplier_no = s.supplier_no
+         left outer join bm_defowner  de on de.OWNER_NO = b.OWNER_NO
+		 where 1=1
+		  	and cb.status='0'
+		  	and cbd.import_no!=' '
+		  	<!--查询审核和部分收货的-->
+		  	and (b.status='11' or b.status='12' or b.status='30') 
+		  	<include refid="condition_extend" />
+		  	<include refid="d_AuthorityCondition" />
+	    	order by b.LOCNO, b.IMPORT_NO
+	    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+  <!--权限过滤查询条件-->
+  <sql id="s_SysNoAuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.queryParams and null!=authorityParams.queryParams.partSysNoList" >       
+       and s.sys_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_PartSysNo_Sql" />
+    </if>
+  </sql>
+  
+  <!-- 查询已经审核的通知单的供应商 -->
+  <select id="selectSupplierNo" resultType="com.yougou.logistics.city.common.model.Supplier">
+	 select distinct t.supplierNo, t.supplierName
+       from (SELECT distinct b.supplier_no   supplierNo,
+                        s.supplier_name AS supplierName
+          FROM bill_im_import b
+         inner join SUPPLIER s
+            on b.supplier_no = s.supplier_no
+         WHERE b.locno = #{dto.locno,jdbcType=VARCHAR}
+           and b.status in ('11', '12', '30')
+           and b.business_type = '0'
+           <include refid="s_SysNoAuthorityCondition" />
+        
+        union
+        
+        SELECT distinct b.supplier_no supplierNo,
+                        s.store_name  AS supplierName
+          FROM bill_im_import b
+         inner join store s
+            on b.supplier_no = s.store_no
+         WHERE b.locno = #{dto.locno,jdbcType=VARCHAR}
+           and b.status in ('11', '12', '30')
+           and b.business_type = '4') t 
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillImImportKey" >
+    delete from BILL_IM_IMPORT
+    where IMPORT_NO = #{importNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillImImport" >
+    delete from BILL_IM_IMPORT
+    where IMPORT_NO = #{importNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and STATUS = #{status,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillImImport" >
+    insert into BILL_IM_IMPORT (IMPORT_NO, LOCNO, OWNER_NO, 
+      IMPORT_TYPE, PO_TYPE, PO_NO, 
+      TRANS_NO, SUPPLIER_NO, ORDER_DATE, 
+      REQUEST_DATE, STATUS, CREATE_FLAG, 
+      IMPORT_REMARK, END_DATE, RECEIVE_TYPE, 
+      PAY_TYPE_NAME, ORDER_TYPE_NAME, LAY_TYPE, 
+      CLASS, ERROR_STATUS, CREATOR, 
+      CREATETM, EDITOR, EDITTM, 
+      SEND_FLAG, ORDER_END_DATE, WITH_CODE_FLAG, 
+      STOCK_TYPE, STOCK_VALUE, QUALITY, 
+      SAMPLE_RATE, SYS_NO, CO_NO, 
+      AUDITOR, AUDITTM,S_PO_NO, BUSINESS_TYPE,
+      CREATORNAME,EDITORNAME,AUDITORNAME)
+    values (#{importNo,jdbcType=VARCHAR}, #{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, 
+      #{importType,jdbcType=VARCHAR}, #{poType,jdbcType=VARCHAR}, #{poNo,jdbcType=VARCHAR}, 
+      #{transNo,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR}, #{orderDate,jdbcType=TIMESTAMP}, 
+      #{requestDate,jdbcType=TIMESTAMP}, #{status,jdbcType=VARCHAR}, #{createFlag,jdbcType=VARCHAR}, 
+      #{importRemark,jdbcType=VARCHAR}, #{endDate,jdbcType=DECIMAL}, #{receiveType,jdbcType=DECIMAL}, 
+      #{payTypeName,jdbcType=VARCHAR}, #{orderTypeName,jdbcType=VARCHAR}, #{layType,jdbcType=VARCHAR}, 
+      #{typeClass,jdbcType=VARCHAR}, #{errorStatus,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
+      #{createtm,jdbcType=TIMESTAMP}, #{editor,jdbcType=VARCHAR}, #{edittm,jdbcType=TIMESTAMP}, 
+      #{sendFlag,jdbcType=VARCHAR}, #{orderEndDate,jdbcType=TIMESTAMP}, #{withCodeFlag,jdbcType=VARCHAR}, 
+      #{stockType,jdbcType=VARCHAR}, #{stockValue,jdbcType=VARCHAR}, #{quality,jdbcType=VARCHAR}, 
+      #{sampleRate,jdbcType=DECIMAL}, #{sysNo,jdbcType=VARCHAR}, #{coNo,jdbcType=VARCHAR}, 
+      #{auditor,jdbcType=VARCHAR}, #{audittm,jdbcType=TIMESTAMP},#{sPoNo,jdbcType=VARCHAR},
+      #{businessType,jdbcType=VARCHAR},#{creatorName,jdbcType=VARCHAR},#{editorName,jdbcType=VARCHAR},
+      #{auditorName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillImImport" >
+    insert into BILL_IM_IMPORT
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="importNo != null" >
+        IMPORT_NO,
+      </if>
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="importType != null" >
+        IMPORT_TYPE,
+      </if>
+      <if test="poType != null" >
+        PO_TYPE,
+      </if>
+      <if test="poNo != null" >
+        PO_NO,
+      </if>
+      <if test="transNo != null" >
+        TRANS_NO,
+      </if>
+      <if test="supplierNo != null" >
+        SUPPLIER_NO,
+      </if>
+      <if test="orderDate != null" >
+        ORDER_DATE,
+      </if>
+      <if test="requestDate != null" >
+        REQUEST_DATE,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="createFlag != null" >
+        CREATE_FLAG,
+      </if>
+      <if test="importRemark != null" >
+        IMPORT_REMARK,
+      </if>
+      <if test="endDate != null" >
+        END_DATE,
+      </if>
+      <if test="receiveType != null" >
+        RECEIVE_TYPE,
+      </if>
+      <if test="payTypeName != null" >
+        PAY_TYPE_NAME,
+      </if>
+      <if test="orderTypeName != null" >
+        ORDER_TYPE_NAME,
+      </if>
+      <if test="layType != null" >
+        LAY_TYPE,
+      </if>
+      <if test="typeClass != null" >
+        CLASS,
+      </if>
+      <if test="errorStatus != null" >
+        ERROR_STATUS,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="sendFlag != null" >
+        SEND_FLAG,
+      </if>
+      <if test="orderEndDate != null" >
+        ORDER_END_DATE,
+      </if>
+      <if test="withCodeFlag != null" >
+        WITH_CODE_FLAG,
+      </if>
+      <if test="stockType != null" >
+        STOCK_TYPE,
+      </if>
+      <if test="stockValue != null" >
+        STOCK_VALUE,
+      </if>
+      <if test="quality != null" >
+        QUALITY,
+      </if>
+      <if test="sampleRate != null" >
+        SAMPLE_RATE,
+      </if>
+      <if test="sysNo != null" >
+        SYS_NO,
+      </if>
+      <if test="coNo != null" >
+        CO_NO,
+      </if>
+      <if test="auditor != null" >
+        AUDITOR,
+      </if>
+      <if test="audittm != null" >
+        AUDITTM,
+      </if>
+      <if test="sPoNo != null" >
+        S_PO_NO,
+      </if>
+      <if test="businessType != null" >
+        BUSINESS_TYPE,
+      </if>
+      <if test="creatorName != null">
+        CREATORNAME,
+      </if>
+      <if test="editorName != null">
+        EDITORNAME,
+      </if>
+      <if test="auditorName != null">
+        AUDITORNAME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="importNo != null" >
+        #{importNo,jdbcType=VARCHAR},
+      </if>
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="importType != null" >
+        #{importType,jdbcType=VARCHAR},
+      </if>
+      <if test="poType != null" >
+        #{poType,jdbcType=VARCHAR},
+      </if>
+      <if test="poNo != null" >
+        #{poNo,jdbcType=VARCHAR},
+      </if>
+      <if test="transNo != null" >
+        #{transNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderDate != null" >
+        #{orderDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="requestDate != null" >
+        #{requestDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createFlag != null" >
+        #{createFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="importRemark != null" >
+        #{importRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="endDate != null" >
+        #{endDate,jdbcType=DECIMAL},
+      </if>
+      <if test="receiveType != null" >
+        #{receiveType,jdbcType=DECIMAL},
+      </if>
+      <if test="payTypeName != null" >
+        #{payTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderTypeName != null" >
+        #{orderTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="layType != null" >
+        #{layType,jdbcType=VARCHAR},
+      </if>
+      <if test="typeClass != null" >
+        #{typeClass,jdbcType=VARCHAR},
+      </if>
+      <if test="errorStatus != null" >
+        #{errorStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sendFlag != null" >
+        #{sendFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="orderEndDate != null" >
+        #{orderEndDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="withCodeFlag != null" >
+        #{withCodeFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="stockType != null" >
+        #{stockType,jdbcType=VARCHAR},
+      </if>
+      <if test="stockValue != null" >
+        #{stockValue,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="sampleRate != null" >
+        #{sampleRate,jdbcType=DECIMAL},
+      </if>
+      <if test="sysNo != null" >
+        #{sysNo,jdbcType=VARCHAR},
+      </if>
+      <if test="coNo != null" >
+        #{coNo,jdbcType=VARCHAR},
+      </if>
+      <if test="auditor != null" >
+        #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        #{audittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sPoNo != null" >
+        #{sPoNo,jdbcType=VARCHAR},
+      </if>
+      <if test="businessType != null" >
+        #{businessType,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorName != null" >
+        #{creatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null" >
+        #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorName != null" >
+        #{auditorName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillImImport" >
+    update BILL_IM_IMPORT
+    <set >
+      <if test="importType != null" >
+        IMPORT_TYPE = #{importType,jdbcType=VARCHAR},
+      </if>
+      <if test="poType != null" >
+        PO_TYPE = #{poType,jdbcType=VARCHAR},
+      </if>
+      <if test="poNo != null" >
+        PO_NO = #{poNo,jdbcType=VARCHAR},
+      </if>
+      <if test="transNo != null" >
+        TRANS_NO = #{transNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        SUPPLIER_NO = #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderDate != null" >
+        ORDER_DATE = #{orderDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="requestDate != null" >
+        REQUEST_DATE = #{requestDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createFlag != null" >
+        CREATE_FLAG = #{createFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="importRemark != null" >
+        IMPORT_REMARK = #{importRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="endDate != null" >
+        END_DATE = #{endDate,jdbcType=DECIMAL},
+      </if>
+      <if test="receiveType != null" >
+        RECEIVE_TYPE = #{receiveType,jdbcType=DECIMAL},
+      </if>
+      <if test="payTypeName != null" >
+        PAY_TYPE_NAME = #{payTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderTypeName != null" >
+        ORDER_TYPE_NAME = #{orderTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="layType != null" >
+        LAY_TYPE = #{layType,jdbcType=VARCHAR},
+      </if>
+      <if test="typeClass != null" >
+        CLASS = #{typeClass,jdbcType=VARCHAR},
+      </if>
+      <if test="errorStatus != null" >
+        ERROR_STATUS = #{errorStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sendFlag != null" >
+        SEND_FLAG = #{sendFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="orderEndDate != null" >
+        ORDER_END_DATE = #{orderEndDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="withCodeFlag != null" >
+        WITH_CODE_FLAG = #{withCodeFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="stockType != null" >
+        STOCK_TYPE = #{stockType,jdbcType=VARCHAR},
+      </if>
+      <if test="stockValue != null" >
+        STOCK_VALUE = #{stockValue,jdbcType=VARCHAR},
+      </if>
+      <if test="quality != null" >
+        QUALITY = #{quality,jdbcType=VARCHAR},
+      </if>
+      <if test="sampleRate != null" >
+        SAMPLE_RATE = #{sampleRate,jdbcType=DECIMAL},
+      </if>
+      <if test="sysNo != null" >
+        SYS_NO = #{sysNo,jdbcType=VARCHAR},
+      </if>
+      <if test="coNo != null" >
+        CO_NO = #{coNo,jdbcType=VARCHAR},
+      </if>
+      <if test="auditor != null" >
+        AUDITOR = #{auditor,jdbcType=VARCHAR},
+      </if>
+      <if test="audittm != null" >
+        AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sPoNo != null" >
+        S_PO_NO = #{sPoNo,jdbcType=VARCHAR},
+      </if>
+      <if test="businessType != null" >
+       	BUSINESS_TYPE = #{businessType,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorName != null" >
+        CREATORNAME = #{creatorName,jdbcType=VARCHAR},
+      </if>
+      <if test="editorName != null" >
+        EDITORNAME = #{editorName,jdbcType=VARCHAR},
+      </if>
+      <if test="auditorName != null" >
+        AUDITORNAME = #{auditorName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where IMPORT_NO = #{importNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      <if test="uptStatus != null" >
+        and status = #{uptStatus,jdbcType=VARCHAR}
+      </if>
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillImImport" >
+    update BILL_IM_IMPORT
+    set IMPORT_TYPE = #{importType,jdbcType=VARCHAR},
+      PO_TYPE = #{poType,jdbcType=VARCHAR},
+      PO_NO = #{poNo,jdbcType=VARCHAR},
+      TRANS_NO = #{transNo,jdbcType=VARCHAR},
+      SUPPLIER_NO = #{supplierNo,jdbcType=VARCHAR},
+      ORDER_DATE = #{orderDate,jdbcType=TIMESTAMP},
+      REQUEST_DATE = #{requestDate,jdbcType=TIMESTAMP},
+      STATUS = #{status,jdbcType=VARCHAR},
+      CREATE_FLAG = #{createFlag,jdbcType=VARCHAR},
+      IMPORT_REMARK = #{importRemark,jdbcType=VARCHAR},
+      END_DATE = #{endDate,jdbcType=DECIMAL},
+      RECEIVE_TYPE = #{receiveType,jdbcType=DECIMAL},
+      PAY_TYPE_NAME = #{payTypeName,jdbcType=VARCHAR},
+      ORDER_TYPE_NAME = #{orderTypeName,jdbcType=VARCHAR},
+      LAY_TYPE = #{layType,jdbcType=VARCHAR},
+      CLASS = #{typeClass,jdbcType=VARCHAR},
+      ERROR_STATUS = #{errorStatus,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      SEND_FLAG = #{sendFlag,jdbcType=VARCHAR},
+      ORDER_END_DATE = #{orderEndDate,jdbcType=TIMESTAMP},
+      WITH_CODE_FLAG = #{withCodeFlag,jdbcType=VARCHAR},
+      STOCK_TYPE = #{stockType,jdbcType=VARCHAR},
+      STOCK_VALUE = #{stockValue,jdbcType=VARCHAR},
+      QUALITY = #{quality,jdbcType=VARCHAR},
+      SAMPLE_RATE = #{sampleRate,jdbcType=DECIMAL},
+      SYS_NO = #{sysNo,jdbcType=VARCHAR},
+      CO_NO = #{coNo,jdbcType=VARCHAR},
+      AUDITOR = #{auditor,jdbcType=VARCHAR},
+      AUDITTM = #{audittm,jdbcType=TIMESTAMP},
+      S_PO_NO = #{sPoNo,jdbcType=VARCHAR},
+      BUSINESS_TYPE = #{businessType,jdbcType=VARCHAR},
+      CREATORNAME = #{creatorName,jdbcType=VARCHAR},
+      EDITORNAME = #{editorName,jdbcType=VARCHAR},
+      AUDITORNAME = #{auditorName,jdbcType=VARCHAR}
+    where IMPORT_NO = #{importNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

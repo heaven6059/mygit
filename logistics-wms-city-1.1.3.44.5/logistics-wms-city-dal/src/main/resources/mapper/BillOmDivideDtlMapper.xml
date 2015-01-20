@@ -1,0 +1,1089 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BillOmDivideDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillOmDivideDtl" >
+    <id column="DIVIDE_NO" property="divideNo" jdbcType="VARCHAR" />
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="DIVIDE_ID" property="divideId" jdbcType="DECIMAL" />
+    <result column="BATCH_NO" property="batchNo" jdbcType="VARCHAR" />
+    <result column="SOURCE_NO" property="sourceNo" jdbcType="VARCHAR" />
+    <result column="OPERATE_DATE" property="operateDate" jdbcType="TIMESTAMP" />
+    <result column="STORE_NO" property="storeNo" jdbcType="VARCHAR" />
+    <result column="SUB_STORE_NO" property="subStoreNo" jdbcType="VARCHAR" />
+    <result column="EXP_TYPE" property="expType" jdbcType="VARCHAR" />
+    <result column="EXP_NO" property="expNo" jdbcType="VARCHAR" />
+    <result column="LOCATE_NO" property="locateNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="ITEM_ID" property="itemId" jdbcType="DECIMAL" />
+    <result column="PACK_QTY" property="packQty" jdbcType="DECIMAL" />
+    <result column="ITEM_QTY" property="itemQty" jdbcType="DECIMAL" />
+    <result column="REAL_QTY" property="realQty" jdbcType="DECIMAL" />
+    <result column="S_CELL_NO" property="sCellNo" jdbcType="VARCHAR" />
+    <result column="S_CELL_ID" property="sCellId" jdbcType="DECIMAL" />
+    <result column="S_CONTAINER_NO" property="sContainerNo" jdbcType="VARCHAR" />
+    <result column="D_CELL_NO" property="dCellNo" jdbcType="VARCHAR" />
+    <result column="D_CELL_ID" property="dCellId" jdbcType="DECIMAL" />
+    <result column="CUST_CONTAINER_NO" property="custContainerNo" jdbcType="VARCHAR" />
+    <result column="D_CONTAINER_NO" property="dContainerNo" jdbcType="VARCHAR" />
+    <result column="DELIVER_AREA" property="deliverArea" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="LINE_NO" property="lineNo" jdbcType="VARCHAR" />
+    <result column="TRUNCK_CELL_NO" property="trunckCellNo" jdbcType="VARCHAR" />
+    <result column="CHECK_CHUTE_NO" property="checkChuteNo" jdbcType="VARCHAR" />
+    <result column="DELIVER_OBJ" property="deliverObj" jdbcType="VARCHAR" />
+    <result column="OUTSTOCK_DATE" property="outstockDate" jdbcType="TIMESTAMP" />
+    <result column="ASSIGN_NAME" property="assignName" jdbcType="VARCHAR" />
+    <result column="ASSIGN_NAME_CH" property="assignNameCh" jdbcType="VARCHAR" />
+    <result column="DIVIDE_NAME" property="divideName" jdbcType="VARCHAR" />
+    <result column="DIVIDE_NAME_CH" property="divideNameCh" jdbcType="VARCHAR" />
+    <result column="DIVIDE_DATE" property="divideDate" jdbcType="TIMESTAMP" />
+    <result column="DPS_CELL_NO" property="dpsCellNo" jdbcType="VARCHAR" />
+    <result column="A_SORTER_CHUTE_NO" property="aSorterChuteNo" jdbcType="VARCHAR" />
+    <result column="EXP_DATE" property="expDate" jdbcType="TIMESTAMP" />
+    <result column="BOX_NO" property="boxNo" jdbcType="VARCHAR" />
+    <result column="SERIAL_NO" property="serialNo" jdbcType="VARCHAR" />
+    <result column="GROUP_NO" property="groupNo" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+    <result column="COLOR_NAME" property="colorName" jdbcType="VARCHAR" />
+    <result column="STYLE_NO" property="styleNo" jdbcType="VARCHAR" />
+    <result column="S_PO_NO" property="poNo" jdbcType="VARCHAR" />
+    <result column="group_name" property="groupName" jdbcType="VARCHAR" />
+    <result column="BRAND_NO" property="brandNo" jdbcType="VARCHAR" />
+    <result column="DIF_FLAG" property="difFlag" jdbcType="VARCHAR" />
+    
+    <result column="storeName" property="storeName" jdbcType="VARCHAR" />
+    <result column="statusStr" property="statusStr" jdbcType="VARCHAR" />
+    <result column="diffQty" property="diffQty" jdbcType="DECIMAL" />
+    
+    <result column="realQty" property="realQty" jdbcType="DECIMAL" />
+    <result column="itemQty" property="itemQty" jdbcType="DECIMAL" />
+    <result column="expNo" property="expNo" jdbcType="VARCHAR" />
+    <result column="itemNo" property="itemNo" jdbcType="VARCHAR" />
+    <result column="storeNo" property="storeNo" jdbcType="VARCHAR" /> 
+    <result column="serialNo" property="serialNo" jdbcType="VARCHAR" />
+    <result column="groupNo" property="groupNo" jdbcType="VARCHAR" />
+    <result column="sizeNo" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="boxNo" property="boxNo" jdbcType="VARCHAR" />
+    <result column="operateDate" property="operateDate" jdbcType="TIMESTAMP" />
+    <result column="assignName" property="assignName" jdbcType="VARCHAR" />
+    <result column="assignNameCh" property="assignNameCh" jdbcType="VARCHAR" />
+    <result column="itemName" property="itemName" jdbcType="VARCHAR" />
+    <result column="colorName" property="colorName" jdbcType="VARCHAR" />
+    <result column="groupName" property="groupName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    DIVIDE_NO, LOCNO, OWNER_NO, DIVIDE_ID, BATCH_NO, SOURCE_NO, OPERATE_DATE, STORE_NO, 
+    SUB_STORE_NO, EXP_TYPE, EXP_NO, LOCATE_NO, ITEM_NO, ITEM_ID, PACK_QTY, item_qty,
+    REAL_QTY, S_CELL_NO, S_CELL_ID, S_CONTAINER_NO, D_CELL_NO, D_CELL_ID, CUST_CONTAINER_NO, 
+    D_CONTAINER_NO, DELIVER_AREA, STATUS, LINE_NO, TRUNCK_CELL_NO, CHECK_CHUTE_NO, DELIVER_OBJ, 
+    OUTSTOCK_DATE, ASSIGN_NAME,ASSIGN_NAME_CH, DIVIDE_NAME,DIVIDE_NAME_CH, DIVIDE_DATE, DPS_CELL_NO, A_SORTER_CHUTE_NO, 
+    EXP_DATE,BOX_NO,SERIAL_NO,GROUP_NO,SIZE_NO
+  </sql>
+  
+  <sql id="Base_Column_List2" >
+	dtl.DIVIDE_NO, dtl.LOCNO, dtl.OWNER_NO, dtl.DIVIDE_ID, dtl.BATCH_NO, dtl.SOURCE_NO, dtl.OPERATE_DATE as operateDate, 
+	dtl.STORE_NO as storeNo, dtl.SUB_STORE_NO, dtl.EXP_TYPE, dtl.EXP_NO as expNo, dtl.LOCATE_NO, dtl.ITEM_NO as itemNo,
+	dtl.ITEM_ID, dtl.PACK_QTY, item_qty as itemQty, dtl.REAL_QTY as realQty, dtl.S_CELL_NO, dtl.S_CELL_ID, dtl.S_CONTAINER_NO, 
+	dtl.D_CELL_NO, dtl.D_CELL_ID, dtl.CUST_CONTAINER_NO, dtl.D_CONTAINER_NO, dtl.DELIVER_AREA, dtl.STATUS, dtl.LINE_NO,
+	dtl.TRUNCK_CELL_NO, dtl.CHECK_CHUTE_NO, dtl.DELIVER_OBJ, dtl.OUTSTOCK_DATE, dtl.ASSIGN_NAME as assignName,dtl.ASSIGN_NAME_CH as assignNameCh, dtl.DIVIDE_NAME,dtl.DIVIDE_NAME_CH,
+	dtl.DIVIDE_DATE, dtl.DPS_CELL_NO, dtl.A_SORTER_CHUTE_NO,dtl.EXP_DATE,dtl.BOX_NO as boxNo,dtl.SERIAL_NO as serialNo,
+	dtl.GROUP_NO as groupNo,dtl.SIZE_NO as sizeNo,item.ITEM_NAME as itemName,item.STYLE_NO,ci.COLOR_NAME as colorName,
+	bg.group_name as groupName
+  </sql>
+  
+  <sql id="Base_Column_List3" >
+    dtl.DIVIDE_NO, dtl.LOCNO, dtl.OWNER_NO, dtl.DIVIDE_ID, dtl.BATCH_NO, dtl.SOURCE_NO, dtl.OPERATE_DATE, dtl.STORE_NO, 
+    dtl.SUB_STORE_NO, dtl.EXP_TYPE, dtl.EXP_NO, dtl.LOCATE_NO, dtl.ITEM_NO, dtl.ITEM_ID, dtl.PACK_QTY, item_qty,
+    dtl.REAL_QTY, dtl.S_CELL_NO, dtl.S_CELL_ID, dtl.S_CONTAINER_NO, dtl.D_CELL_NO, dtl.D_CELL_ID, dtl.CUST_CONTAINER_NO, 
+    dtl.D_CONTAINER_NO, dtl.DELIVER_AREA, dtl.STATUS, dtl.LINE_NO, dtl.TRUNCK_CELL_NO, dtl.CHECK_CHUTE_NO, dtl.DELIVER_OBJ, 
+    dtl.OUTSTOCK_DATE, dtl.ASSIGN_NAME,dtl.ASSIGN_NAME_CH, dtl.DIVIDE_NAME,dtl.DIVIDE_NAME_CH, dtl.DIVIDE_DATE, dtl.DPS_CELL_NO, dtl.A_SORTER_CHUTE_NO, 
+    dtl.EXP_DATE,dtl.BOX_NO,dtl.SERIAL_NO,dtl.GROUP_NO,dtl.SIZE_NO,ii.S_PO_NO
+  </sql>
+  
+  <sql id="Base_Column_List4" >
+    dtl.DIVIDE_NO, dtl.LOCNO, dtl.OWNER_NO, dtl.DIVIDE_ID, dtl.BATCH_NO, dtl.SOURCE_NO, dtl.OPERATE_DATE, dtl.STORE_NO, 
+    dtl.SUB_STORE_NO, dtl.EXP_TYPE, dtl.EXP_NO, dtl.LOCATE_NO, dtl.ITEM_NO, dtl.ITEM_ID, dtl.PACK_QTY, dtl.item_qty,
+    dtl.REAL_QTY, dtl.S_CELL_NO, dtl.S_CELL_ID, dtl.S_CONTAINER_NO, dtl.D_CELL_NO, dtl.D_CELL_ID, dtl.CUST_CONTAINER_NO, 
+    dtl.D_CONTAINER_NO, dtl.DELIVER_AREA, dtl.STATUS, dtl.LINE_NO, dtl.TRUNCK_CELL_NO, dtl.CHECK_CHUTE_NO, dtl.DELIVER_OBJ, 
+    dtl.OUTSTOCK_DATE, dtl.ASSIGN_NAME,dtl.ASSIGN_NAME_CH, dtl.DIVIDE_NAME,dtl.DIVIDE_NAME_CH, dtl.DIVIDE_DATE, dtl.DPS_CELL_NO, dtl.A_SORTER_CHUTE_NO, 
+    dtl.EXP_DATE,dtl.BOX_NO,dtl.SERIAL_NO,dtl.GROUP_NO,dtl.SIZE_NO,dtl.BRAND_NO
+  </sql>
+  
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        	${params.queryCondition}
+      </if>
+      <if test="null!=params.divideNo and ''!=params.divideNo" >
+            and dtl.DIVIDE_NO = #{params.divideNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+            and dtl.LOCNO = #{params.locno,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+            and dtl.OWNER_NO = #{params.ownerNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.status and ''!=params.status" >
+            and dtl.STATUS = #{params.status,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.expNo and ''!=params.expNo" >
+            and dtl.EXP_NO = #{params.expNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.boxNo and ''!=params.boxNo" >
+            and dtl.BOX_NO = #{params.boxNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.itemNo and ''!=params.itemNo" >
+            and dtl.ITEM_NO = #{params.itemNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.groupNo and ''!=params.groupNo" >
+            and dtl.GROUP_NO = #{params.groupNo,jdbcType=VARCHAR}
+      </if>
+      <if test="params.filterDiffQty==1" >
+            and nvl(dtl.ITEM_QTY, 0) - nvl(dtl.REAL_QTY, 0) !=0
+      </if>
+      
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillOmDivideDtlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_OM_DIVIDE_DTL
+    where DIVIDE_NO = #{divideNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and DIVIDE_ID = #{divideId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select A.*,rownum rn from( select 
+    <include refid="Base_Column_List2" />,
+    cd.AREA_QUALITY as quality,
+    cd.ITEM_TYPE as itemType
+     from BILL_OM_DIVIDE_DTL dtl 
+     left join ITEM item on item.ITEM_NO = dtl.ITEM_NO
+     left join color_info ci on ci.color_no = item.color_no
+     left join bill_store_group bg
+    	on dtl.divide_no = bg.divide_no and dtl.store_no = bg.store_no
+   	 left join cm_defcell cd 
+   	 	on cd.locno = dtl.locno
+   	 	and cd.cell_no = dtl.s_cell_no
+     where 1=1 
+    <include refid="condition" />
+    order by dtl.GROUP_NO desc,dtl.BOX_NO desc,dtl.SERIAL_NO desc
+    ) A
+  </select>
+  
+  <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and dtl.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s 
+    from BILL_OM_DIVIDE_DTL dtl 
+     left join ITEM item on item.ITEM_NO = dtl.ITEM_NO
+     left join color_info ci on ci.color_no = item.color_no
+     left join bill_store_group bg
+    	on dtl.divide_no = bg.divide_no and dtl.store_no = bg.store_no
+     where 1=1
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List2" />,
+     abs(nvl(dtl.ITEM_QTY,0) - nvl(dtl.REAL_QTY,0)) as diffQty,
+    (select s.STORE_NAME from STORE s where s.STORE_NO = dtl.STORE_NO) as storeName,
+    (select ld.ITEMNAME from LOOKUPDTL ld where dtl.status = ld.itemval and ld.lookupcode = 'CITY_DIVIDE_STATUS_DTL' and rownum = 1) as statusStr
+    <!-- 
+    (select it.ITEM_NAME from item it where it.ITEM_NO = dtl.ITEM_NO) as itemName,
+    (select it.STYLE_NO from item it where it.ITEM_NO = dtl.ITEM_NO) as styleNo,
+    (select c.COLOR_NAME from COLOR_INFO c where dtl.ITEM_NO=item.ITEM_NO AND c.COLOR_NO=item.COLOR_NO and rownum = 1) as colorName
+    	(select itb.SIZE_NO from ITEM_BARCODE itb where dtl.ITEM_NO=item.ITEM_NO and item.QMIN_OPERATE_PACKING=itb.PACK_QTY and itb.ITEM_NO=item.ITEM_NO and rownum = 1) as sizeNo 
+     -->
+    
+     from BILL_OM_DIVIDE_DTL dtl 
+     left join ITEM item on item.ITEM_NO = dtl.ITEM_NO
+     left join color_info ci on ci.color_no = item.color_no
+     left join bill_store_group bg
+    	on dtl.divide_no = bg.divide_no and dtl.store_no = bg.store_no
+     where 1=1 
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+    <choose>
+	    <when test="orderByField != null and ''!=orderByField">
+	       <choose>
+		        <when test="orderByField == 'serialNo'">
+		            order by to_number(${orderByField})
+		            <if test="orderByField">
+					${orderBy}
+					</if>
+		        </when>
+		        <otherwise>
+		            order by ${orderByField}
+					<if test="orderByField">
+					${orderBy}
+					</if>
+		        </otherwise>
+	        </choose>
+		</when>
+		<otherwise>
+			order by dtl.SERIAL_NO,dtl.GROUP_NO,dtl.BOX_NO
+		</otherwise>
+    </choose>
+    
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  
+    <select id="selectAllDetail4Print" parameterType= "com.yougou.logistics.city.common.model.BillOmDivide" resultMap="BaseResultMap">
+	select * from (
+		SELECT TO_NUMBER(d.serial_no) serial_no,d.store_no,MAX(s.store_name) storeName,SUM(NVL(d.item_qty, 0)) item_qty FROM bill_om_divide_dtl d 
+		LEFT JOIN STORE s ON s.store_no = d.store_no   where DIVIDE_NO = #{divideNo,jdbcType=VARCHAR} and LOCNO = #{locno,jdbcType=VARCHAR} GROUP BY d.store_no,d.serial_no
+	) t ORDER BY t.serial_no ASC
+  </select>
+  
+  <select id="selectAllSourceNo" parameterType= "com.yougou.logistics.city.common.model.BillOmDivide" resultType="java.lang.String">
+		SELECT distinct(d.source_No) FROM bill_om_divide_dtl d  where DIVIDE_NO = #{divideNo,jdbcType=VARCHAR} and LOCNO = #{locno,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectBillOmDivideDtlIsComplete" resultMap="BaseResultMap" parameterType="map" >
+	    select 
+	    		itm.item_name,
+	    		itm.brand_no as brandNo,
+	    		nvl(dtl.item_qty,0) as itemQty,
+		        nvl(dtl.real_qty,0) as realQty,
+		        dtl.item_no,
+		        <!-- dtl.item_id, -->
+		        dtl.locno,
+		        dtl.owner_no,
+		        dtl.size_no,
+		        dtl.line_no,
+		        dtl.exp_no,
+		        dtl.exp_type,
+		        dtl.divide_no,
+		        dtl.divide_id,
+		        dtl.box_no,
+		        dtl.pack_qty,        
+		        dtl.status,
+		        abs(nvl(dtl.ITEM_QTY,0) - nvl(dtl.REAL_QTY,0)) as diffQty
+	    from bill_om_divide_dtl dtl
+	    inner join item itm on dtl.item_no = itm.item_no 
+	    left join color_info ci on ci.color_no = itm.color_no
+	    where (nvl(dtl.ITEM_QTY,0) > nvl(dtl.REAL_QTY,0))
+	    and dtl.status in ('10','14')
+	    
+	    <if test="null!=params.divideNo and ''!=params.divideNo" >
+		        and dtl.divide_no =#{params.divideNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.locno and ''!=params.locno" >
+		        and dtl.locno=#{params.locno,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.storeNo and ''!=params.storeNo" >
+		 		and dtl.store_no=#{params.storeNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.itemNo and ''!=params.itemNo" >
+		 		and dtl.item_no=#{params.itemNo,jdbcType=VARCHAR}
+		</if>
+		<if test="null!=params.sizeNo and ''!=params.sizeNo" >
+		 		and dtl.size_no=#{params.sizeNo,jdbcType=VARCHAR}
+		</if>
+		
+  </select>
+  
+  <!-- 查询分货单明细关联PONO单号 -->
+  <select id="selectBillOmDivideDtlAndPoNo" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    	<include refid="Base_Column_List3" />
+    	from BILL_OM_DIVIDE_DTL dtl
+    	left join con_box cb on cb.locno=dtl.locno and cb.owner_no=dtl.owner_no and cb.box_no=dtl.box_no
+      	left join bill_im_import ii on ii.locno=cb.locno and ii.owner_no=cb.owner_no and ii.import_no=cb.s_import_no
+    	where dtl.divide_no = #{params.divideNo,jdbcType=VARCHAR}
+	      	  and dtl.locno = #{params.locno,jdbcType=VARCHAR}
+  </select>
+  
+  
+  <!-- 查询客户分组 -->
+  <select id="selectBillOmDivideDtlStoreGroupBy" resultMap="BaseResultMap" parameterType="map" >
+    select dtl.store_no
+    	from BILL_OM_DIVIDE_DTL dtl
+    	where dtl.divide_no = #{params.divideNo,jdbcType=VARCHAR}
+	      	  and dtl.locno = #{params.locno,jdbcType=VARCHAR}
+	    group by dtl.store_no
+  </select>
+  
+  <select id="selectSumQty" resultType="com.yougou.logistics.city.common.utils.SumUtilMap" parameterType="map">
+	select nvl(sum(dtl.PACK_QTY), 0) PACK_QTY,
+       nvl(sum(dtl.ITEM_QTY), 0) ITEM_QTY,
+       nvl(sum(dtl.REAL_QTY), 0) REAL_QTY,
+       sum(abs(nvl(dtl.ITEM_QTY, 0) - nvl(dtl.REAL_QTY, 0))) diffQty,
+       '合计' statusStr
+	  from BILL_OM_DIVIDE_DTL dtl
+	  left join ITEM item
+	    on item.ITEM_NO = dtl.ITEM_NO
+	  left join color_info ci
+	    on ci.color_no = item.color_no
+	  left join bill_store_group bg
+	    on dtl.divide_no = bg.divide_no
+	   and dtl.store_no = bg.store_no
+	 where 1 = 1
+	  <include refid="condition" />
+	  <include refid="AuthorityCondition" />
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillOmDivideDtlKey" >
+    delete from BILL_OM_DIVIDE_DTL
+    where DIVIDE_NO = #{divideNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and DIVIDE_ID = #{divideId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillOmDivideDtl" >
+    delete from BILL_OM_DIVIDE_DTL
+    where DIVIDE_NO = #{divideNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and DIVIDE_ID = #{divideId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillOmDivideDtl" >
+    insert into BILL_OM_DIVIDE_DTL (DIVIDE_NO, LOCNO, OWNER_NO, 
+      DIVIDE_ID, BATCH_NO, SOURCE_NO, 
+      OPERATE_DATE, STORE_NO, SUB_STORE_NO, 
+      EXP_TYPE, EXP_NO, LOCATE_NO, 
+      ITEM_NO, ITEM_ID, PACK_QTY, 
+      ITEM_QTY, REAL_QTY, S_CELL_NO, 
+      S_CELL_ID, S_CONTAINER_NO, D_CELL_NO, 
+      D_CELL_ID, CUST_CONTAINER_NO, D_CONTAINER_NO, 
+      DELIVER_AREA, STATUS, LINE_NO, 
+      TRUNCK_CELL_NO, CHECK_CHUTE_NO, DELIVER_OBJ, 
+      OUTSTOCK_DATE, ASSIGN_NAME,ASSIGN_NAME_CH, DIVIDE_NAME, DIVIDE_NAME_CH, 
+      DIVIDE_DATE, DPS_CELL_NO, A_SORTER_CHUTE_NO, 
+      EXP_DATE,BOX_NO,SERIAL_NO,GROUP_NO)
+    values (#{divideNo,jdbcType=VARCHAR}, #{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, 
+      #{divideId,jdbcType=DECIMAL}, #{batchNo,jdbcType=VARCHAR}, #{sourceNo,jdbcType=VARCHAR}, 
+      #{operateDate,jdbcType=TIMESTAMP}, #{storeNo,jdbcType=VARCHAR}, #{subStoreNo,jdbcType=VARCHAR}, 
+      #{expType,jdbcType=VARCHAR}, #{expNo,jdbcType=VARCHAR}, #{locateNo,jdbcType=VARCHAR}, 
+      #{itemNo,jdbcType=VARCHAR}, #{itemId,jdbcType=DECIMAL}, #{packQty,jdbcType=DECIMAL}, 
+      #{itemQty,jdbcType=DECIMAL}, #{realQty,jdbcType=DECIMAL}, #{sCellNo,jdbcType=VARCHAR}, 
+      #{sCellId,jdbcType=DECIMAL}, #{sContainerNo,jdbcType=VARCHAR}, #{dCellNo,jdbcType=VARCHAR}, 
+      #{dCellId,jdbcType=DECIMAL}, #{custContainerNo,jdbcType=VARCHAR}, #{dContainerNo,jdbcType=VARCHAR}, 
+      #{deliverArea,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{lineNo,jdbcType=VARCHAR}, 
+      #{trunckCellNo,jdbcType=VARCHAR}, #{checkChuteNo,jdbcType=VARCHAR}, #{deliverObj,jdbcType=VARCHAR}, 
+      #{outstockDate,jdbcType=TIMESTAMP}, #{assignName,jdbcType=VARCHAR},#{assignNameCh,jdbcType=VARCHAR}, #{divideName,jdbcType=VARCHAR}, #{divideNameCh,jdbcType=VARCHAR},
+      #{divideDate,jdbcType=TIMESTAMP}, #{dpsCellNo,jdbcType=VARCHAR}, #{aSorterChuteNo,jdbcType=VARCHAR}, 
+      #{expDate,jdbcType=TIMESTAMP},#{boxNo,jdbcType=VARCHAR},#{serialNo,jdbcType=VARCHAR},#{groupNo,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillOmDivideDtl" >
+    insert into BILL_OM_DIVIDE_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="divideNo != null" >
+        DIVIDE_NO,
+      </if>
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="divideId != null" >
+        DIVIDE_ID,
+      </if>
+      <if test="batchNo != null" >
+        BATCH_NO,
+      </if>
+      <if test="sourceNo != null" >
+        SOURCE_NO,
+      </if>
+      <if test="operateDate != null" >
+        OPERATE_DATE,
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO,
+      </if>
+      <if test="subStoreNo != null" >
+        SUB_STORE_NO,
+      </if>
+      <if test="expType != null" >
+        EXP_TYPE,
+      </if>
+      <if test="expNo != null" >
+        EXP_NO,
+      </if>
+      <if test="locateNo != null" >
+        LOCATE_NO,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="itemId != null" >
+        ITEM_ID,
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY,
+      </if>
+      <if test="itemQty != null" >
+        ITEM_QTY,
+      </if>
+      <if test="realQty != null" >
+        REAL_QTY,
+      </if>
+      <if test="sCellNo != null" >
+        S_CELL_NO,
+      </if>
+      <if test="sCellId != null" >
+        S_CELL_ID,
+      </if>
+      <if test="sContainerNo != null" >
+        S_CONTAINER_NO,
+      </if>
+      <if test="dCellNo != null" >
+        D_CELL_NO,
+      </if>
+      <if test="dCellId != null" >
+        D_CELL_ID,
+      </if>
+      <if test="custContainerNo != null" >
+        CUST_CONTAINER_NO,
+      </if>
+      <if test="dContainerNo != null" >
+        D_CONTAINER_NO,
+      </if>
+      <if test="deliverArea != null" >
+        DELIVER_AREA,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="lineNo != null" >
+        LINE_NO,
+      </if>
+      <if test="trunckCellNo != null" >
+        TRUNCK_CELL_NO,
+      </if>
+      <if test="checkChuteNo != null" >
+        CHECK_CHUTE_NO,
+      </if>
+      <if test="deliverObj != null" >
+        DELIVER_OBJ,
+      </if>
+      <if test="outstockDate != null" >
+        OUTSTOCK_DATE,
+      </if>
+      <if test="assignName != null" >
+        ASSIGN_NAME,
+      </if>
+      <if test="assignNameCh != null" >
+        ASSIGN_NAME_CH,
+      </if>
+      <if test="divideName != null" >
+        DIVIDE_NAME,
+      </if>
+      <if test="divideNameCh != null" >
+        DIVIDE_NAME_CH,
+      </if>
+      <if test="divideDate != null" >
+        DIVIDE_DATE,
+      </if>
+      <if test="dpsCellNo != null" >
+        DPS_CELL_NO,
+      </if>
+      <if test="aSorterChuteNo != null" >
+        A_SORTER_CHUTE_NO,
+      </if>
+      <if test="expDate != null" >
+        EXP_DATE,
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO,
+      </if>
+      <if test="boxNo != null" >
+        SERIAL_NO,
+      </if>
+      <if test="boxNo != null" >
+        GROUP_NO,
+      </if>
+      <if test="difFlag != null" >
+        DIF_FLAG,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="brandNo != null" >
+        BRAND_NO,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="divideNo != null" >
+        #{divideNo,jdbcType=VARCHAR},
+      </if>
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="divideId != null" >
+        #{divideId,jdbcType=DECIMAL},
+      </if>
+      <if test="batchNo != null" >
+        #{batchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceNo != null" >
+        #{sourceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="operateDate != null" >
+        #{operateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="storeNo != null" >
+        #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="subStoreNo != null" >
+        #{subStoreNo,jdbcType=VARCHAR},
+      </if>
+      <if test="expType != null" >
+        #{expType,jdbcType=VARCHAR},
+      </if>
+      <if test="expNo != null" >
+        #{expNo,jdbcType=VARCHAR},
+      </if>
+      <if test="locateNo != null" >
+        #{locateNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=DECIMAL},
+      </if>
+      <if test="packQty != null" >
+        #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="itemQty != null" >
+        #{itemQty,jdbcType=DECIMAL},
+      </if>
+      <if test="realQty != null" >
+        #{realQty,jdbcType=DECIMAL},
+      </if>
+      <if test="sCellNo != null" >
+        #{sCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sCellId != null" >
+        #{sCellId,jdbcType=DECIMAL},
+      </if>
+      <if test="sContainerNo != null" >
+        #{sContainerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="dCellNo != null" >
+        #{dCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="dCellId != null" >
+        #{dCellId,jdbcType=DECIMAL},
+      </if>
+      <if test="custContainerNo != null" >
+        #{custContainerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="dContainerNo != null" >
+        #{dContainerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="deliverArea != null" >
+        #{deliverArea,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="lineNo != null" >
+        #{lineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="trunckCellNo != null" >
+        #{trunckCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="checkChuteNo != null" >
+        #{checkChuteNo,jdbcType=VARCHAR},
+      </if>
+      <if test="deliverObj != null" >
+        #{deliverObj,jdbcType=VARCHAR},
+      </if>
+      <if test="outstockDate != null" >
+        #{outstockDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="assignName != null" >
+        #{assignName,jdbcType=VARCHAR},
+      </if>
+      <if test="assignNameCh != null" >
+        #{assignNameCh,jdbcType=VARCHAR},
+      </if>
+      <if test="divideName != null" >
+        #{divideName,jdbcType=VARCHAR},
+      </if>
+      <if test="divideNameCh != null" >
+        #{divideNameCh,jdbcType=VARCHAR},
+      </if>
+      <if test="divideDate != null" >
+        #{divideDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dpsCellNo != null" >
+        #{dpsCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="aSorterChuteNo != null" >
+        #{aSorterChuteNo,jdbcType=VARCHAR},
+      </if>
+      <if test="expDate != null" >
+        #{expDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="boxNo != null" >
+        #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="serialNo != null" >
+        #{serialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="groupNo != null" >
+        #{groupNo,jdbcType=VARCHAR},
+      </if>
+      <if test="difFlag != null" >
+        #{difFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="brandNo != null" >
+        #{brandNo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillOmDivideDtl" >
+    update BILL_OM_DIVIDE_DTL
+    <set >
+      <if test="batchNo != null" >
+        BATCH_NO = #{batchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceNo != null" >
+        SOURCE_NO = #{sourceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="operateDate != null" >
+        OPERATE_DATE = #{operateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="subStoreNo != null" >
+        SUB_STORE_NO = #{subStoreNo,jdbcType=VARCHAR},
+      </if>
+      <if test="expType != null" >
+        EXP_TYPE = #{expType,jdbcType=VARCHAR},
+      </if>
+      <if test="expNo != null" >
+        EXP_NO = #{expNo,jdbcType=VARCHAR},
+      </if>
+      <if test="locateNo != null" >
+        LOCATE_NO = #{locateNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        ITEM_ID = #{itemId,jdbcType=DECIMAL},
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="itemQty != null" >
+        ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+      </if>
+      <if test="realQty != null" >
+        REAL_QTY = #{realQty,jdbcType=DECIMAL},
+      </if>
+      <if test="sCellNo != null" >
+        S_CELL_NO = #{sCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sCellId != null" >
+        S_CELL_ID = #{sCellId,jdbcType=DECIMAL},
+      </if>
+      <if test="sContainerNo != null" >
+        S_CONTAINER_NO = #{sContainerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="dCellNo != null" >
+        D_CELL_NO = #{dCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="dCellId != null" >
+        D_CELL_ID = #{dCellId,jdbcType=DECIMAL},
+      </if>
+      <if test="custContainerNo != null" >
+        CUST_CONTAINER_NO = #{custContainerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="dContainerNo != null" >
+        D_CONTAINER_NO = #{dContainerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="deliverArea != null" >
+        DELIVER_AREA = #{deliverArea,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="lineNo != null" >
+        LINE_NO = #{lineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="trunckCellNo != null" >
+        TRUNCK_CELL_NO = #{trunckCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="checkChuteNo != null" >
+        CHECK_CHUTE_NO = #{checkChuteNo,jdbcType=VARCHAR},
+      </if>
+      <if test="deliverObj != null" >
+        DELIVER_OBJ = #{deliverObj,jdbcType=VARCHAR},
+      </if>
+      <if test="outstockDate != null" >
+        OUTSTOCK_DATE = #{outstockDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="assignName != null" >
+        ASSIGN_NAME = #{assignName,jdbcType=VARCHAR},
+      </if>
+      <if test="assignNameCh != null" >
+        ASSIGN_NAME_CH = #{assignNameCh,jdbcType=VARCHAR},
+      </if>
+      <if test="divideName != null" >
+        DIVIDE_NAME = #{divideName,jdbcType=VARCHAR},
+      </if>
+      <if test="divideNameCh != null" >
+        DIVIDE_NAME_CH = #{divideNameCh,jdbcType=VARCHAR},
+      </if>
+      <if test="divideDate != null" >
+        DIVIDE_DATE = #{divideDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dpsCellNo != null" >
+        DPS_CELL_NO = #{dpsCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="aSorterChuteNo != null" >
+        A_SORTER_CHUTE_NO = #{aSorterChuteNo,jdbcType=VARCHAR},
+      </if>
+      <if test="expDate != null" >
+        EXP_DATE = #{expDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="boxNo != null" >
+        BOX_NO = #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="serialNo != null" >
+        SERIAL_NO = #{serialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="groupNo != null" >
+        GROUP_NO = #{groupNo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where DIVIDE_NO = #{divideNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and DIVIDE_ID = #{divideId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillOmDivideDtl" >
+    update BILL_OM_DIVIDE_DTL
+    set BATCH_NO = #{batchNo,jdbcType=VARCHAR},
+      SOURCE_NO = #{sourceNo,jdbcType=VARCHAR},
+      OPERATE_DATE = #{operateDate,jdbcType=TIMESTAMP},
+      STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      SUB_STORE_NO = #{subStoreNo,jdbcType=VARCHAR},
+      EXP_TYPE = #{expType,jdbcType=VARCHAR},
+      EXP_NO = #{expNo,jdbcType=VARCHAR},
+      LOCATE_NO = #{locateNo,jdbcType=VARCHAR},
+      ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      <!-- ITEM_ID = #{itemId,jdbcType=DECIMAL}, -->
+      PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+      REAL_QTY = #{realQty,jdbcType=DECIMAL},
+      S_CELL_NO = #{sCellNo,jdbcType=VARCHAR},
+      S_CELL_ID = #{sCellId,jdbcType=DECIMAL},
+      S_CONTAINER_NO = #{sContainerNo,jdbcType=VARCHAR},
+      D_CELL_NO = #{dCellNo,jdbcType=VARCHAR},
+      D_CELL_ID = #{dCellId,jdbcType=DECIMAL},
+      CUST_CONTAINER_NO = #{custContainerNo,jdbcType=VARCHAR},
+      D_CONTAINER_NO = #{dContainerNo,jdbcType=VARCHAR},
+      DELIVER_AREA = #{deliverArea,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      LINE_NO = #{lineNo,jdbcType=VARCHAR},
+      TRUNCK_CELL_NO = #{trunckCellNo,jdbcType=VARCHAR},
+      CHECK_CHUTE_NO = #{checkChuteNo,jdbcType=VARCHAR},
+      DELIVER_OBJ = #{deliverObj,jdbcType=VARCHAR},
+      OUTSTOCK_DATE = #{outstockDate,jdbcType=TIMESTAMP},
+      ASSIGN_NAME = #{assignName,jdbcType=VARCHAR},
+      ASSIGN_NAME_CH = #{assignNameCh,jdbcType=VARCHAR},
+      DIVIDE_NAME = #{divideName,jdbcType=VARCHAR},
+      DIVIDE_NAME_CH = #{divideNameCh,jdbcType=VARCHAR},
+      DIVIDE_DATE = #{divideDate,jdbcType=TIMESTAMP},
+      DPS_CELL_NO = #{dpsCellNo,jdbcType=VARCHAR},
+      A_SORTER_CHUTE_NO = #{aSorterChuteNo,jdbcType=VARCHAR},
+      EXP_DATE = #{expDate,jdbcType=TIMESTAMP},
+      BOX_NO = #{boxNo,jdbcType=VARCHAR},
+      SERIAL_NO = #{serialNo,jdbcType=VARCHAR},
+      GROUP_NO = #{groupNo,jdbcType=VARCHAR}
+    where DIVIDE_NO = #{divideNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and DIVIDE_ID = #{divideId,jdbcType=DECIMAL}
+  </update>
+  
+  
+  <update id="updateBillOmDivideByDivideNoAndlocno" parameterType="com.yougou.logistics.city.common.model.BillOmDivideDtl" >
+    update BILL_OM_DIVIDE_DTL
+    <set >
+      <if test="batchNo != null" >
+        BATCH_NO = #{batchNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceNo != null" >
+        SOURCE_NO = #{sourceNo,jdbcType=VARCHAR},
+      </if>
+      <if test="operateDate != null" >
+        OPERATE_DATE = #{operateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="storeNo != null" >
+        STORE_NO = #{storeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="subStoreNo != null" >
+        SUB_STORE_NO = #{subStoreNo,jdbcType=VARCHAR},
+      </if>
+      <if test="expType != null" >
+        EXP_TYPE = #{expType,jdbcType=VARCHAR},
+      </if>
+      <if test="expNo != null" >
+        EXP_NO = #{expNo,jdbcType=VARCHAR},
+      </if>
+      <if test="locateNo != null" >
+        LOCATE_NO = #{locateNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        ITEM_ID = #{itemId,jdbcType=DECIMAL},
+      </if>
+      <if test="packQty != null" >
+        PACK_QTY = #{packQty,jdbcType=DECIMAL},
+      </if>
+      <if test="itemQty != null" >
+        ITEM_QTY = #{itemQty,jdbcType=DECIMAL},
+      </if>
+      <if test="realQty != null" >
+        REAL_QTY = #{realQty,jdbcType=DECIMAL},
+      </if>
+      <if test="sCellNo != null" >
+        S_CELL_NO = #{sCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sCellId != null" >
+        S_CELL_ID = #{sCellId,jdbcType=DECIMAL},
+      </if>
+      <if test="sContainerNo != null" >
+        S_CONTAINER_NO = #{sContainerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="dCellNo != null" >
+        D_CELL_NO = #{dCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="dCellId != null" >
+        D_CELL_ID = #{dCellId,jdbcType=DECIMAL},
+      </if>
+      <if test="custContainerNo != null" >
+        CUST_CONTAINER_NO = #{custContainerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="dContainerNo != null" >
+        D_CONTAINER_NO = #{dContainerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="deliverArea != null" >
+        DELIVER_AREA = #{deliverArea,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="lineNo != null" >
+        LINE_NO = #{lineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="trunckCellNo != null" >
+        TRUNCK_CELL_NO = #{trunckCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="checkChuteNo != null" >
+        CHECK_CHUTE_NO = #{checkChuteNo,jdbcType=VARCHAR},
+      </if>
+      <if test="deliverObj != null" >
+        DELIVER_OBJ = #{deliverObj,jdbcType=VARCHAR},
+      </if>
+      <if test="outstockDate != null" >
+        OUTSTOCK_DATE = #{outstockDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="assignName != null" >
+        ASSIGN_NAME = #{assignName,jdbcType=VARCHAR},
+      </if>
+      <if test="assignNameCh != null" >
+        ASSIGN_NAME_CH = #{assignNameCh,jdbcType=VARCHAR},
+      </if>
+      <if test="divideName != null" >
+        DIVIDE_NAME = #{divideName,jdbcType=VARCHAR},
+      </if>
+      <if test="divideNameCh != null" >
+        DIVIDE_NAME_CH = #{divideNameCh,jdbcType=VARCHAR},
+      </if>
+      <if test="divideDate != null" >
+        DIVIDE_DATE = #{divideDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dpsCellNo != null" >
+        DPS_CELL_NO = #{dpsCellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="aSorterChuteNo != null" >
+        A_SORTER_CHUTE_NO = #{aSorterChuteNo,jdbcType=VARCHAR},
+      </if>
+      <if test="expDate != null" >
+        EXP_DATE = #{expDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="boxNo != null" >
+        BOX = #{boxNo,jdbcType=VARCHAR},
+      </if>
+      <if test="serialNo != null" >
+        SERIAL_NO = #{serialNo,jdbcType=VARCHAR},
+      </if>
+      <if test="groupNo != null" >
+        GROUP_NO = #{groupNo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where DIVIDE_NO = #{divideNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="selectBillOmDivideDtlBySourceNo" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillOmDivideDtl" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_OM_DIVIDE_DTL
+    where source_no = #{divideNo,jdbcType=VARCHAR}
+      and LOCNO = #{locno,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectDivideDtlSerialNo" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillOmDivideDtl" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_OM_DIVIDE_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and DIVIDE_NO = #{divideNo,jdbcType=VARCHAR}
+      and STORE_NO = #{storeNo,jdbcType=VARCHAR}
+      and ROWNUM = 1
+  </select>
+  
+  <select id="selectDivideDtl4Recheck" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_OM_DIVIDE_DTL
+    where LOCNO = #{params.locno,jdbcType=VARCHAR}
+      and DIVIDE_NO = #{params.divideNo,jdbcType=VARCHAR}
+      and STORE_NO = #{params.storeNo,jdbcType=VARCHAR}
+      and BOX_NO = #{params.boxNo,jdbcType=VARCHAR}
+      and ITEM_NO = #{params.itemNo,jdbcType=VARCHAR}
+      and SIZE_NO = #{params.sizeNo,jdbcType=VARCHAR}
+      and EXP_NO = #{params.expNo,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteDivideDtl4Recheck" parameterType="map" >
+    delete from BILL_OM_DIVIDE_DTL c
+    where c.LOCNO = #{params.locno,jdbcType=VARCHAR}
+      and c.DIVIDE_NO = #{params.divideNo,jdbcType=VARCHAR}
+      and c.STORE_NO = #{params.storeNo,jdbcType=VARCHAR}
+      and c.item_qty = 0
+      and c.real_qty = 0
+  </delete>
+  
+  <select id="selectDivideDtlItemQtySum" resultType="java.lang.Integer" >
+  		select nvl(sum(d.item_qty),0) item_qty
+  			from BILL_OM_DIVIDE_DTL d
+  		where d.LOCNO = #{params.locno,jdbcType=VARCHAR}
+		      and d.DIVIDE_NO = #{params.divideNo,jdbcType=VARCHAR}
+		      and d.STORE_NO = #{params.storeNo,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 查询完全没有分的箱号 -->
+  <select id="selectDivideDtlNotRecheckBox" resultMap="BaseResultMap" parameterType="map" >
+    	select odd.BOX_NO
+    	from BILL_OM_DIVIDE_DTL odd
+    	where odd.LOCNO = #{params.locno,jdbcType=VARCHAR}
+      		and odd.DIVIDE_NO = #{params.divideNo,jdbcType=VARCHAR}
+      	group by odd.BOX_NO 
+		having(max(nvl(odd.real_qty, 0)) = 0)
+  </select>
+  
+  <select id="selectDivideDtl4Different" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    	 <include refid="Base_Column_List4" />,
+    	 rd.quality as quality,
+         rd.ITEM_TYPE as itemType,
+    	 bar.barcode as barcode,
+    	 item.supplier_no as supplierNo,
+    	 abs(nvl(dtl.ITEM_QTY,0) - nvl(dtl.REAL_QTY,0)) as diffQty
+	  from BILL_OM_DIVIDE_DTL dtl
+	   left join bill_im_receipt_dtl rd
+	    on dtl.locno = rd.locno
+	   and dtl.owner_no = rd.owner_no
+	   and dtl.source_no = rd.receipt_no
+	   and dtl.box_no = rd.box_no
+	   and dtl.item_no = rd.item_no
+	   and dtl.size_no = rd.size_no
+	   and dtl.s_cell_no = rd.cell_no
+	   and dtl.s_cell_id = rd.cell_id
+	  left join ITEM item
+	    on item.ITEM_NO = rd.ITEM_NO
+	  left join item_barcode bar
+	    on bar.item_no = rd.item_no
+	   and bar.size_no = rd.size_no
+	   and bar.pack_qty = item.qmin_operate_packing
+	   and bar.package_id = 0
+     where 1=1 
+    <include refid="condition" />
+  </select>
+  
+  <!-- 更新分货单明细状态 -->
+  <update id="updateDivideDtl4Different" parameterType="com.yougou.logistics.city.common.model.BillOmDivideDtl" >
+  		update bill_om_divide_dtl d 
+  			set d.status = #{status,jdbcType=VARCHAR}
+  		where d.locno = #{locno,jdbcType=VARCHAR}
+  			and d.divide_no = #{divideNo,jdbcType=VARCHAR}
+  			and d.box_no = #{boxNo,jdbcType=VARCHAR}
+  			and d.item_no = #{itemNo,jdbcType=VARCHAR}
+  			and d.size_no = #{sizeNo,jdbcType=VARCHAR}
+  			and d.store_no = #{storeNo,jdbcType=VARCHAR}
+  			and d.exp_no = #{expNo,jdbcType=VARCHAR}
+  			and nvl(d.item_qty,0) != nvl(d.real_qty,0)
+  			and d.status = '14'
+  </update>
+  
+  <select id="selectDivideDtlByDifferent" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillOmDivideDtl" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_OM_DIVIDE_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and DIVIDE_NO = #{divideNo,jdbcType=VARCHAR}
+      and STORE_NO = #{storeNo,jdbcType=VARCHAR}
+      and BOX_NO = #{boxNo,jdbcType=VARCHAR}
+      and S_CELL_NO = #{sCellNo,jdbcType=VARCHAR}
+      and ITEM_NO = #{itemNo,jdbcType=VARCHAR}
+      and SIZE_NO = #{sizeNo,jdbcType=VARCHAR}
+      and EXP_NO = #{expNo,jdbcType=VARCHAR}
+      <!--  
+      <if test="difStatus == 0" >
+      	and STATUS = '14'
+      </if>
+      <if test="difStatus == 1" >
+      	and STATUS != '14'
+      </if>
+      <if test="null!=expNo and ''!=expNo" >
+      	and EXP_NO = #{expNo,jdbcType=VARCHAR}
+      </if>
+      -->
+      <!--  
+      and DIF_FLAG = #{difFlag,jdbcType=VARCHAR}
+      <if test="null!=quality and ''!=quality" >
+            and QUALITY = #{quality,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=itemType and ''!=itemType" >
+            and ITEM_TYPE = #{itemType,jdbcType=VARCHAR}
+      </if>
+      -->
+  </select>
+  
+  <select id="selectDivideId" resultType="java.lang.Long">
+  		select seq_om_outstock_direct.nextval as divideId from dual
+  </select>
+  
+</mapper>

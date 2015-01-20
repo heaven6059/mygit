@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.AuthorityResourcesMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.AuthorityResources" >
+    <result column="MENU_ID" property="menuId" jdbcType="DECIMAL" />
+    <result column="MENU_NAME" property="menuName" jdbcType="VARCHAR" />
+    <result column="MENU_URL" property="menuUrl" jdbcType="VARCHAR" />
+    <result column="PARENT_ID" property="parentId" jdbcType="DECIMAL" />
+    <result column="STRUCTURE" property="structure" jdbcType="VARCHAR" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="SORT" property="sort" jdbcType="DECIMAL" />
+    <result column="TYPE" property="type" jdbcType="VARCHAR" />
+    <result column="ISLEAF" property="isleaf" jdbcType="VARCHAR" />
+    <result column="FLAG" property="flag" jdbcType="VARCHAR" />
+    <result column="MENU_LEVEL" property="menuLevel" jdbcType="DECIMAL" />
+    <result column="checkstate" property="checkstate" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="selectById" resultMap="BaseResultMap">
+	  select menu_id,
+	       menu_name,
+	       menu_url,
+	       parent_id,
+	       structure,
+	       remark,
+	       sort,
+	       type,
+	       isleaf,
+	       flag,
+	       menu_level
+	  from AUTHORITY_RESOURCES
+	 where menu_id =#{menuId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectByParentId" resultMap="BaseResultMap">
+	  select menu_id,
+	       menu_name,
+	       menu_url,
+	       parent_id,
+	       structure,
+	       remark,
+	       sort,
+	       type,
+	       isleaf,
+	       flag,
+	       menu_level
+	  from AUTHORITY_RESOURCES
+	 where parent_id =#{parentId,jdbcType=DECIMAL} order by sort asc
+  </select>
+  
+  <select id="selectByIdRefRoleId" resultMap="BaseResultMap">
+	 select  r.menu_id,
+         r.menu_name,
+         r.menu_url,
+         r.parent_id,
+         r.structure,
+         r.remark,
+         r.sort,
+         r.type,
+         r.isleaf,
+         r.flag,
+         r.menu_level,
+         decode(m.role_id,null,'0','1') checkstate
+         from AUTHORITY_RESOURCES r
+         left join  authority_role_menu m on  r.menu_id=m.menu_id and m.role_id=#{roleId,jdbcType=DECIMAL}
+	    where r.menu_id =#{menuId,jdbcType=DECIMAL}
+  </select>
+  
+ 
+  
+  <select id="selectByParentIdRefRoleId" resultMap="BaseResultMap">
+	   select  r.menu_id,
+         r.menu_name,
+         r.menu_url,
+         r.parent_id,
+         r.structure,
+         r.remark,
+         r.sort,
+         r.type,
+         r.isleaf,
+         r.flag,
+         r.menu_level,
+         decode(m.role_id,null,'0','1') checkstate
+         from AUTHORITY_RESOURCES r
+         left join  authority_role_menu m on  r.menu_id=m.menu_id and m.role_id=#{roleId,jdbcType=DECIMAL}
+	 where r.parent_id =#{parentId,jdbcType=DECIMAL} order by r.sort asc
+  </select>
+  
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.AuthorityResources" >
+  	<selectKey keyProperty="menuId" order="BEFORE" resultType="java.lang.Long">
+  		select seq_authority_resources_id.nextval as menuId from dual 
+  	</selectKey>
+    insert into AUTHORITY_RESOURCES (MENU_ID, MENU_NAME, MENU_URL, 
+      PARENT_ID, STRUCTURE, REMARK, 
+      SORT, TYPE, ISLEAF, 
+      FLAG, MENU_LEVEL)
+    values (#{menuId,jdbcType=DECIMAL}, #{menuName,jdbcType=VARCHAR}, #{menuUrl,jdbcType=VARCHAR}, 
+      #{parentId,jdbcType=DECIMAL}, #{structure,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{sort,jdbcType=DECIMAL}, #{type,jdbcType=VARCHAR}, #{isleaf,jdbcType=VARCHAR}, 
+      #{flag,jdbcType=VARCHAR}, #{menuLevel,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.AuthorityResources" >
+  	<selectKey keyProperty="menuId" order="BEFORE" resultType="java.lang.Long">
+  		select seq_authority_resources_id.nextval as menuId from dual 
+  	</selectKey>
+    insert into AUTHORITY_RESOURCES
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="menuId != null" >
+        MENU_ID,
+      </if>
+      <if test="menuName != null" >
+        MENU_NAME,
+      </if>
+      <if test="menuUrl != null" >
+        MENU_URL,
+      </if>
+      <if test="parentId != null" >
+        PARENT_ID,
+      </if>
+      <if test="structure != null" >
+        STRUCTURE,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+      <if test="sort != null" >
+        SORT,
+      </if>
+      <if test="type != null" >
+        TYPE,
+      </if>
+      <if test="isleaf != null" >
+        ISLEAF,
+      </if>
+      <if test="flag != null" >
+        FLAG,
+      </if>
+      <if test="menuLevel != null" >
+        MENU_LEVEL,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="menuId != null" >
+        #{menuId,jdbcType=DECIMAL},
+      </if>
+      <if test="menuName != null" >
+        #{menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="menuUrl != null" >
+        #{menuUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=DECIMAL},
+      </if>
+      <if test="structure != null" >
+        #{structure,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=DECIMAL},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="isleaf != null" >
+        #{isleaf,jdbcType=VARCHAR},
+      </if>
+      <if test="flag != null" >
+        #{flag,jdbcType=VARCHAR},
+      </if>
+      <if test="menuLevel != null" >
+        #{menuLevel,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <delete id="removeById">
+  	delete from AUTHORITY_RESOURCES where menu_id=#{menuId}
+  </delete>
+  <update id="updateSelective" parameterType="com.yougou.logistics.city.common.model.AuthorityResources" >
+  	update AUTHORITY_RESOURCES
+     <set>
+      <if test="menuName != null" >
+        MENU_NAME=#{menuName},
+      </if>
+      <if test="menuUrl != null" >
+        MENU_URL=#{menuUrl},
+      </if>
+      <if test="parentId != null" >
+        PARENT_ID=#{parentId},
+      </if>
+      <if test="structure != null" >
+        STRUCTURE=#{structure},
+      </if>
+      <if test="remark != null" >
+        REMARK=#{remark},
+      </if>
+      <if test="sort != null" >
+        SORT=#{sort},
+      </if>
+      <if test="type != null" >
+        TYPE=#{type},
+      </if>
+      <if test="isleaf != null" >
+        ISLEAF=#{isleaf},
+      </if>
+      <if test="flag != null" >
+        FLAG=#{flag},
+      </if>
+      <if test="menuLevel != null" >
+        MENU_LEVEL=#{menuLevel},
+      </if>
+     </set>
+     where MENU_ID=#{menuId}
+  </update>
+</mapper>

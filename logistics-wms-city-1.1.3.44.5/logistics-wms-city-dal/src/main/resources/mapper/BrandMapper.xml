@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.BrandMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.Brand" >
+    <id column="BRAND_NO" property="brandNo" jdbcType="VARCHAR" />
+    <result column="BRAND_CODE" property="brandCode" jdbcType="VARCHAR" />
+    <result column="SEARCH_CODE" property="searchCode" jdbcType="VARCHAR" />
+    <result column="BRAND_NAME" property="brandName" jdbcType="VARCHAR" />
+    <result column="BRAND_ENAME" property="brandEname" jdbcType="VARCHAR" />
+    <result column="BRAND_TYPE" property="brandType" jdbcType="DECIMAL" />
+    <result column="BRAND_CLASS" property="brandClass" jdbcType="DECIMAL" />
+    <result column="BRAND_NO_HEAD" property="brandNoHead" jdbcType="VARCHAR" />
+    <result column="SYS_NO" property="sysNo" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="AUDIT_STATUS" property="auditStatus" jdbcType="VARCHAR" />
+    <result column="CREATOR" property="creator" jdbcType="VARCHAR" />
+    <result column="CREATETM" property="createtm" jdbcType="TIMESTAMP" />
+    <result column="REMARKS" property="remarks" jdbcType="VARCHAR" />
+    <result column="EDITTM" property="edittm" jdbcType="TIMESTAMP" />
+    <result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+    <result column="brandClassStr" property="brandClassStr" jdbcType="VARCHAR" />
+    <result column="brandNoHeadStr" property="brandNoHeadStr" jdbcType="VARCHAR" />
+    <result column="sysNoStr" property="sysNoStr" jdbcType="VARCHAR" />
+    <result column="childrenCount" property="childrenCount" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    BRAND_NO, BRAND_CODE, SEARCH_CODE, BRAND_NAME, BRAND_ENAME, BRAND_TYPE, BRAND_CLASS, 
+    BRAND_NO_HEAD, SYS_NO, STATUS, AUDIT_STATUS, CREATOR, CREATETM, REMARKS, EDITTM, EDITOR
+  </sql>
+  <sql id="condition" >
+	    <if test="null!=params" >
+	        <if test="null!=params.brandNoHead and ''!=params.brandNoHead">
+		         and BRAND_NO_HEAD=#{params.brandNoHead,jdbcType=VARCHAR}
+		    </if>
+		   <if test="null!=params.brandNo and ''!=params.brandNo">
+		         and BRAND_NO LIKE '%${params.brandNo}%'
+		    </if>
+		    <if test="null!=params.brandName and ''!=params.brandName">
+		         and BRAND_NAME LIKE '%${params.brandName}%'
+		    </if>
+		    <if test="null!=params.sysNo and ''!=params.sysNo">
+		         and SYS_NO=#{params.sysNo,jdbcType=VARCHAR}
+		  	</if>
+		    <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+		      ${params.queryCondition}
+		    </if>		     
+		 </if>
+  </sql>
+  
+   <!--权限过滤查询条件-->
+  <sql id="d_AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />,
+     (select cbt.BRAND_NAME from BRAND cbt where cbt.Brand_NO=bt.Brand_NO_Head) as brandNoHeadStr
+    from BRAND bt
+    where BRAND_NO = #{brandNo,jdbcType=VARCHAR}
+   
+  </select>
+  <select id="selectCount"  resultType="java.lang.Integer">
+    select count(1) as s from BRAND where 1=1 
+    <include refid="condition" />
+    <include refid="d_AuthorityCondition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />,
+     (select ld.ITEMNAME from LOOKUPDTL ld where bt.SYS_NO = ld.itemval and ld.lookupcode = 'SYS_NO' and rownum=1) as sysNoStr,
+     (select cbt.BRAND_NAME from BRAND cbt where cbt.Brand_NO=bt.Brand_NO_Head) as brandNoHeadStr,
+     (select ld.ITEMNAME from LOOKUPDTL ld where bt.BRAND_CLASS = ld.itemval and ld.lookupcode = 'BRAND_CLASS' and rownum=1) as brandClassStr
+     from BRAND bt where 1=1 
+    <include refid="condition" />
+    <include refid="d_AuthorityCondition" />
+    <choose>
+    	<when test="orderByField != null and ''!=orderByField">
+    		order by ${orderByField}
+    		<if test="orderByField" >
+	        	${orderBy}
+	      	</if>
+    	</when>
+    	<otherwise>
+    		order by edittm desc,BRAND_NO asc
+    	</otherwise>
+    </choose>
+    
+    <!-- 
+    	<if test="orderByField != null and ''!=orderByField" >
+	      order by ${orderByField}
+	      <if test="orderByField" >
+	        ${orderBy}
+	      </if>
+	    </if>
+    -->
+    
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />,
+    (select count(1) from BRAND cbr where cbr.BRAND_NO_HEAD=br.BRAND_NO) as childrenCount
+     from BRAND br where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectMyselfByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />,
+    (select count(1) from BRAND cbr where cbr.BRAND_NO_HEAD=br.BRAND_NO) as childrenCount
+     from BRAND br where 1=1 
+    <include refid="condition" />
+    <include refid="d_AuthorityCondition" />
+  </select>
+  
+  <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from BRAND 
+    where BRAND_NO = #{code,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from BRAND
+    where BRAND_NO = #{brandNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.Brand" >
+    delete from BRAND
+    where BRAND_NO = #{brandNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.Brand" >
+    insert into BRAND (BRAND_NO, BRAND_CODE, SEARCH_CODE, 
+      BRAND_NAME, BRAND_ENAME, BRAND_TYPE, 
+      BRAND_CLASS, BRAND_NO_HEAD, SYS_NO, STATUS, 
+      AUDIT_STATUS, CREATOR, CREATETM, 
+      REMARKS, EDITTM, EDITOR
+      )
+    values (#{brandNo,jdbcType=VARCHAR}, #{brandCode,jdbcType=VARCHAR}, #{searchCode,jdbcType=VARCHAR}, 
+      #{brandName,jdbcType=VARCHAR}, #{brandEname,jdbcType=VARCHAR}, #{brandType,jdbcType=DECIMAL}, 
+      #{brandClass,jdbcType=DECIMAL}, #{brandNoHead,jdbcType=VARCHAR}, #{sysNo,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{auditStatus,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{createtm,jdbcType=TIMESTAMP}, 
+      #{remarks,jdbcType=VARCHAR}, #{edittm,jdbcType=TIMESTAMP}, #{editor,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.Brand" >
+    insert into BRAND
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="brandNo != null" >
+        BRAND_NO,
+      </if>
+      <if test="brandCode != null" >
+        BRAND_CODE,
+      </if>
+      <if test="searchCode != null" >
+        SEARCH_CODE,
+      </if>
+      <if test="brandName != null" >
+        BRAND_NAME,
+      </if>
+      <if test="brandEname != null" >
+        BRAND_ENAME,
+      </if>
+      <if test="brandType != null" >
+        BRAND_TYPE,
+      </if>
+      <if test="brandClass != null" >
+        BRAND_CLASS,
+      </if>
+      <if test="brandNoHead != null" >
+        BRAND_NO_HEAD,
+      </if>
+      <if test="sysNo != null" >
+        SYS_NO,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="auditStatus != null" >
+        AUDIT_STATUS,
+      </if>
+      <if test="creator != null" >
+        CREATOR,
+      </if>
+      <if test="createtm != null" >
+        CREATETM,
+      </if>
+      <if test="remarks != null" >
+        REMARKS,
+      </if>
+      <if test="edittm != null" >
+        EDITTM,
+      </if>
+      <if test="editor != null" >
+        EDITOR,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="brandNo != null" >
+        #{brandNo,jdbcType=VARCHAR},
+      </if>
+      <if test="brandCode != null" >
+        #{brandCode,jdbcType=VARCHAR},
+      </if>
+      <if test="searchCode != null" >
+        #{searchCode,jdbcType=VARCHAR},
+      </if>
+      <if test="brandName != null" >
+        #{brandName,jdbcType=VARCHAR},
+      </if>
+      <if test="brandEname != null" >
+        #{brandEname,jdbcType=VARCHAR},
+      </if>
+      <if test="brandType != null" >
+        #{brandType,jdbcType=DECIMAL},
+      </if>
+      <if test="brandClass != null" >
+        #{brandClass,jdbcType=DECIMAL},
+      </if>
+      <if test="brandNoHead != null" >
+        #{brandNoHead,jdbcType=VARCHAR},
+      </if>
+      <if test="sysNo != null" >
+        #{sysNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="auditStatus != null" >
+        #{auditStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remarks != null" >
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        #{editor,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.Brand" >
+    update BRAND
+    <set >
+      <if test="brandCode != null" >
+        BRAND_CODE = #{brandCode,jdbcType=VARCHAR},
+      </if>
+      <if test="searchCode != null" >
+        SEARCH_CODE = #{searchCode,jdbcType=VARCHAR},
+      </if>
+      <if test="brandName != null" >
+        BRAND_NAME = #{brandName,jdbcType=VARCHAR},
+      </if>
+      <if test="brandEname != null" >
+        BRAND_ENAME = #{brandEname,jdbcType=VARCHAR},
+      </if>
+      <if test="brandType != null" >
+        BRAND_TYPE = #{brandType,jdbcType=DECIMAL},
+      </if>
+      <if test="brandClass != null" >
+        BRAND_CLASS = #{brandClass,jdbcType=DECIMAL},
+      </if>
+      <if test="brandNoHead != null" >
+        BRAND_NO_HEAD = #{brandNoHead,jdbcType=VARCHAR},
+      </if>
+      <if test="sysNo != null" >
+        SYS_NO = #{sysNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="auditStatus != null" >
+        AUDIT_STATUS = #{auditStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        CREATOR = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createtm != null" >
+        CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remarks != null" >
+        REMARKS = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="edittm != null" >
+        EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editor != null" >
+        EDITOR = #{editor,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where BRAND_NO = #{brandNo,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.Brand" >
+    update BRAND
+    set BRAND_CODE = #{brandCode,jdbcType=VARCHAR},
+      SEARCH_CODE = #{searchCode,jdbcType=VARCHAR},
+      BRAND_NAME = #{brandName,jdbcType=VARCHAR},
+      BRAND_ENAME = #{brandEname,jdbcType=VARCHAR},
+      BRAND_TYPE = #{brandType,jdbcType=DECIMAL},
+      BRAND_CLASS = #{brandClass,jdbcType=DECIMAL},
+      BRAND_NO_HEAD = #{brandNoHead,jdbcType=VARCHAR},
+      SYS_NO = #{sysNo,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      AUDIT_STATUS = #{auditStatus,jdbcType=VARCHAR},
+      CREATOR = #{creator,jdbcType=VARCHAR},
+      CREATETM = #{createtm,jdbcType=TIMESTAMP},
+      REMARKS = #{remarks,jdbcType=VARCHAR},
+      EDITTM = #{edittm,jdbcType=TIMESTAMP},
+      EDITOR = #{editor,jdbcType=VARCHAR}
+    where BRAND_NO = #{brandNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

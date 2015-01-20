@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.database.AuthorityModuleMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.AuthorityModule" >
+    <id column="MODULE_ID" property="moduleId" jdbcType="DECIMAL" />
+    <result column="MODULE_NAME" property="moduleName" jdbcType="VARCHAR" />
+    <result column="MODULE_URL" property="moduleUrl" jdbcType="VARCHAR" />
+    <result column="MODULE_REMARK" property="moduleRemark" jdbcType="VARCHAR" />
+    <result column="MODULE_SORT" property="moduleSort" jdbcType="DECIMAL" />
+    <result column="checkstate" property="checkstate" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="BaseResultMap_Dto" type="com.yougou.logistics.city.common.dto.AuthorityModuleDto">
+    <id column="MODULE_ID" property="moduleId" jdbcType="DECIMAL" />
+    <result column="MENU_ID" property="menuId" jdbcType="DECIMAL"/>
+    <result column="MODULE_NAME" property="moduleName" jdbcType="VARCHAR" />
+    <result column="MODULE_URL" property="moduleUrl" jdbcType="VARCHAR" />
+    <result column="MODULE_REMARK" property="moduleRemark" jdbcType="VARCHAR" />
+    <result column="MODULE_SORT" property="moduleSort" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    MODULE_ID, MODULE_NAME, MODULE_URL, MODULE_REMARK, MODULE_SORT
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from AUTHORITY_MODULE
+    where MODULE_ID = #{moduleId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from AUTHORITY_MODULE where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from AUTHORITY_MODULE where 1=1 
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+        r.MODULE_ID,
+       MODULE_NAME,
+       MODULE_URL,
+       MODULE_REMARK,
+       MODULE_SORT,
+      decode(m.role_id,null,'0','1') checkstate,
+      nvl(m.oper_permissions,'') operpermissions
+     from AUTHORITY_MODULE  r  
+     left join  authority_role_module m on  r.module_id=m.module_id and m.role_id=#{params.roleId,jdbcType=DECIMAL}
+     where 1=1
+    <include refid="condition" />
+     order by  r.module_sort 
+  </select>
+  <select id="selectAllByMenuId" resultMap="BaseResultMap" parameterType="int">
+	  select m.MODULE_ID,
+	       m.MODULE_NAME,
+	       m.MODULE_URL,
+	       m.MODULE_REMARK,
+	       m.MODULE_SORT
+	  from AUTHORITY_MODULE m
+	 inner join AUTHORITY_MENU_MODULE mm
+	    on (m.module_id = mm.module_id)
+	 where mm.MENU_ID = #{menuId} order by mm.rowid
+  </select>
+  <select id="selectAllMenusWithModules" resultMap="BaseResultMap_Dto" >
+  	select mm.MENU_ID,
+  		   m.MODULE_ID,
+	       m.MODULE_NAME,
+	       m.MODULE_URL,
+	       m.MODULE_REMARK,
+	       m.MODULE_SORT
+	  from AUTHORITY_MODULE m
+	 inner join AUTHORITY_MENU_MODULE mm
+	    on (m.module_id = mm.module_id)
+  </select>
+  <select id="selectModuleCountByMenuId" resultType="int" parameterType="int">
+	  	select count(1) as s
+	  from AUTHORITY_MODULE m
+	 inner join AUTHORITY_MENU_MODULE mm
+	    on (m.MODULE_ID = mm.MODULE_ID)
+	 where mm.MENU_ID = #{menuId}
+  </select>
+  <select id="selectUserHasModules" resultMap="BaseResultMap_Dto" parameterType="int">
+   select mm.MENU_ID,
+          m.MODULE_ID,
+          m.MODULE_NAME,
+          m.MODULE_URL,
+          m.MODULE_REMARK,
+          m.MODULE_SORT
+     from (select distinct (m.MODULE_ID)
+             from SYSTEM_USER_ROLE ur
+            inner join AUTHORITY_ROLE_MODULE rm
+               on (ur.ROLEID = rm.ROLE_ID)
+            inner join AUTHORITY_MODULE m
+               on (m.MODULE_ID = rm.MODULE_ID)
+            where ur.userid = #{userId}) usedModule
+    inner join AUTHORITY_MENU_MODULE mm
+       on (mm.MODULE_ID = usedModule.MODULE_ID)
+    inner join AUTHORITY_MODULE m
+       on (m.MODULE_ID = usedModule.MODULE_ID)
+     order by mm.rowid 
+  </select>
+  <select id="selectModuleIsExistByName" resultType="java.lang.Boolean" parameterType="com.yougou.logistics.city.common.model.AuthorityModule">
+  	select 1 as isExist from AUTHORITY_MODULE
+    where MODULE_NAME=#{moduleName}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from AUTHORITY_MODULE
+    where MODULE_ID = #{moduleId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.AuthorityModule" >
+    delete from AUTHORITY_MODULE
+    where MODULE_ID = #{moduleId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.AuthorityModule" >
+  	<selectKey keyProperty="moduleId" resultType="int" order="BEFORE">
+  		select SEQ_AUTHORITY_MENU_ID.nextval as moduleId from dual
+  	</selectKey>
+    insert into AUTHORITY_MODULE (MODULE_ID, MODULE_NAME, MODULE_URL, 
+      MODULE_REMARK, MODULE_SORT)
+    values (#{moduleId,jdbcType=DECIMAL}, #{moduleName,jdbcType=VARCHAR}, #{moduleUrl,jdbcType=VARCHAR}, 
+      #{moduleRemark,jdbcType=VARCHAR}, #{moduleSort,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.AuthorityModule" >
+  	<selectKey keyProperty="moduleId" resultType="int" order="BEFORE">
+  		select SEQ_AUTHORITY_MENU_ID.nextval as moduleId from dual
+  	</selectKey>
+    insert into AUTHORITY_MODULE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="moduleId != null" >
+        MODULE_ID,
+      </if>
+      <if test="moduleName != null" >
+        MODULE_NAME,
+      </if>
+      <if test="moduleUrl != null" >
+        MODULE_URL,
+      </if>
+      <if test="moduleRemark != null" >
+        MODULE_REMARK,
+      </if>
+      <if test="moduleSort != null" >
+        MODULE_SORT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="moduleId != null" >
+        #{moduleId,jdbcType=DECIMAL},
+      </if>
+      <if test="moduleName != null" >
+        #{moduleName,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleUrl != null" >
+        #{moduleUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleRemark != null" >
+        #{moduleRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleSort != null" >
+        #{moduleSort,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.AuthorityModule" >
+    update AUTHORITY_MODULE
+    <set >
+      <if test="moduleName != null" >
+        MODULE_NAME = #{moduleName,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleUrl != null" >
+        MODULE_URL = #{moduleUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleRemark != null" >
+        MODULE_REMARK = #{moduleRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleSort != null" >
+        MODULE_SORT = #{moduleSort,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where MODULE_ID = #{moduleId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.AuthorityModule" >
+    update AUTHORITY_MODULE
+    set MODULE_NAME = #{moduleName,jdbcType=VARCHAR},
+      MODULE_URL = #{moduleUrl,jdbcType=VARCHAR},
+      MODULE_REMARK = #{moduleRemark,jdbcType=VARCHAR},
+      MODULE_SORT = #{moduleSort,jdbcType=DECIMAL}
+    where MODULE_ID = #{moduleId,jdbcType=DECIMAL}
+  </update>
+</mapper>

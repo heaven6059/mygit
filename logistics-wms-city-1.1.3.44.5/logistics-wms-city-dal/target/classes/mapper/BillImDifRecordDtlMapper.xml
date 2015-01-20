@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillImDifRecordDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillImDifRecordDtl" >
+    <id column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <id column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <id column="DEF_RECORD_NO" property="defRecordNo" jdbcType="VARCHAR" />
+    <id column="PO_ID" property="poId" jdbcType="DECIMAL" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="QTY" property="qty" jdbcType="DECIMAL" />
+    <result column="BARCODE" property="barcode" jdbcType="VARCHAR" />
+    
+    <result column="itemName" property="itemName" jdbcType="VARCHAR" />
+    <result column="barcode" property="barcode" jdbcType="VARCHAR" />
+    <result column="color_no" property="colorNo" jdbcType="VARCHAR" />
+    <result column="colorName" property="colorName" jdbcType="VARCHAR" />
+    <result column="sys_no" property="sysNo" jdbcType="VARCHAR" />
+    <result column="sysNoStr" property="sysNoStr" jdbcType="VARCHAR" />
+    <result column="brand_No" property="brandNo" jdbcType="VARCHAR" />
+    <result column="brandNoStr" property="brandNoStr" jdbcType="VARCHAR" />
+    
+    <result column="receiptNo" property="receiptNo" jdbcType="VARCHAR" />
+    <result column="receiptQty" property="receiptQty" jdbcType="DECIMAL" />
+    
+    
+  </resultMap>
+  <sql id="Base_Column_List" >
+    dtl.LOCNO, dtl.OWNER_NO, dtl.DEF_RECORD_NO, dtl.PO_ID, dtl.STATUS, dtl.ITEM_NO, dtl.SIZE_NO, dtl.QTY, dtl.BARCODE
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+      <if test="null!=params.locno and ''!=params.locno" >
+			and dtl.locno = #{params.locno,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.ownerNo and ''!=params.ownerNo" >
+			and dtl.OWNER_NO = #{params.ownerNo,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.defRecordNo and ''!=params.defRecordNo" >
+			and dtl.DEF_RECORD_NO = #{params.defRecordNo,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.itemNo and ''!=params.itemNo" >
+			and dtl.ITEM_NO = #{params.itemNo,jdbcType=VARCHAR}
+	  </if>
+	  <if test="null!=params.sizeNo and ''!=params.sizeNo" >
+			and dtl.SIZE_NO = #{params.sizeNo,jdbcType=VARCHAR}
+	  </if>
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.yougou.logistics.city.common.model.BillImDifRecordDtlKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_IM_DIF_RECORD_DTL dtl
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and DEF_RECORD_NO = #{defRecordNo,jdbcType=VARCHAR}
+      and PO_ID = #{poId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s
+     from BILL_IM_DIF_RECORD_DTL dtl
+   	 inner join item c
+            on c.item_no = dtl.item_no
+     where 1=1 
+    <include refid="condition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,rownum rn from( select 
+    <include refid="Base_Column_List" />,
+    	c.item_name as itemName, c.brand_No, c.Color_NO,
+      	(select br.Brand_Name from Brand br where br.Brand_No = c.Brand_No) as brandNoStr,
+      	(select ci.Color_Name from Color_Info ci where ci.Color_No = c.COLOR_No) as colorName
+     from BILL_IM_DIF_RECORD_DTL dtl
+     inner join item c
+            on c.item_no = dtl.item_no
+     where 1=1
+    <include refid="condition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_IM_DIF_RECORD_DTL dtl where 1=1 
+    <include refid="condition" />
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillImDifRecordDtlKey" >
+    delete from BILL_IM_DIF_RECORD_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and DEF_RECORD_NO = #{defRecordNo,jdbcType=VARCHAR}
+      and PO_ID = #{poId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillImDifRecordDtl" >
+    delete from BILL_IM_DIF_RECORD_DTL
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and DEF_RECORD_NO = #{defRecordNo,jdbcType=VARCHAR}
+      and PO_ID = #{poId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillImDifRecordDtl" >
+    insert into BILL_IM_DIF_RECORD_DTL (LOCNO, OWNER_NO, DEF_RECORD_NO, 
+      PO_ID, STATUS, ITEM_NO, 
+      SIZE_NO, QTY, BARCODE
+      )
+    values (#{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, #{defRecordNo,jdbcType=VARCHAR}, 
+      #{poId,jdbcType=DECIMAL}, #{status,jdbcType=VARCHAR}, #{itemNo,jdbcType=VARCHAR}, 
+      #{sizeNo,jdbcType=VARCHAR}, #{qty,jdbcType=DECIMAL}, #{barcode,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillImDifRecordDtl" >
+    insert into BILL_IM_DIF_RECORD_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="defRecordNo != null" >
+        DEF_RECORD_NO,
+      </if>
+      <if test="poId != null" >
+        PO_ID,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="qty != null" >
+        QTY,
+      </if>
+      <if test="barcode != null" >
+        BARCODE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="defRecordNo != null" >
+        #{defRecordNo,jdbcType=VARCHAR},
+      </if>
+      <if test="poId != null" >
+        #{poId,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="qty != null" >
+        #{qty,jdbcType=DECIMAL},
+      </if>
+      <if test="barcode != null" >
+        #{barcode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillImDifRecordDtl" >
+    update BILL_IM_DIF_RECORD_DTL
+    <set >
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="qty != null" >
+        QTY = #{qty,jdbcType=DECIMAL},
+      </if>
+      <if test="barcode != null" >
+        BARCODE = #{barcode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and DEF_RECORD_NO = #{defRecordNo,jdbcType=VARCHAR}
+      and PO_ID = #{poId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillImDifRecordDtl" >
+    update BILL_IM_DIF_RECORD_DTL
+    set STATUS = #{status,jdbcType=VARCHAR},
+      ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      QTY = #{qty,jdbcType=DECIMAL},
+      BARCODE = #{barcode,jdbcType=VARCHAR}
+    where LOCNO = #{locno,jdbcType=VARCHAR}
+      and OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and DEF_RECORD_NO = #{defRecordNo,jdbcType=VARCHAR}
+      and PO_ID = #{poId,jdbcType=DECIMAL}
+  </update>
+  
+  
+  <select id="selectContentCount" resultType="java.lang.Integer" >
+     select count(1) as s from 
+    (select c.item_no, t.size_no, c.sys_no, t.barcode,c.item_name as itemName,
+          c.brand_No, c.Color_NO
+          from item c
+         inner join item_barcode t
+            on t.item_no = c.item_no
+            and t.package_id = 0
+         where 1 = 1
+           <if test="null!=params">
+		      <if test="null!=params.supplierNo and ''!=params.supplierNo" >
+		            and c.SUPPLIER_NO=#{params.supplierNo,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.sysNo and ''!=params.sysNo" >
+		            and c.sys_no=#{params.sysNo,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.itemNo and ''!=params.itemNo" >
+		      		and c.item_no=#{params.itemNo,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.barcode and ''!=params.barcode" >
+		        	and t.barcode=#{params.barcode,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.itemName and ''!=params.itemName" >
+		        	and c.item_name like '%${params.itemName}%'
+		      </if>
+		  </if>
+		  and not EXISTS (select od.ITEM_NO, od.size_no
+                  from BILL_IM_IMPORT_DTL od
+                 where 1 = 1
+                  <if test="null!=params.locno and ''!=params.locno" >
+		        	and od.locno=#{params.locno,jdbcType=VARCHAR}
+		      	</if>
+		       	<if test="null!=params.importNo and ''!=params.importNo" >
+		        	and od.IMPORT_NO=#{params.importNo,jdbcType=VARCHAR}
+		      	</if>
+		       	<if test="null!=params.ownerNo and ''!=params.ownerNo" >
+		        	and od.owner_no=#{params.ownerNo,jdbcType=VARCHAR}
+		      	</if>
+                   and od.item_no = c.item_no
+                   and od.size_no = t.size_no)
+         group by c.item_no, t.size_no, c.sys_no, t.barcode,c.item_name,
+                  c.Brand_NO, c.Color_NO) A
+  </select>
+  <select id="selectContent" resultMap="BaseResultMap" parameterType="Map" >
+	select B.* from (select A.*,rownum rn from( 
+    	select c.item_no, t.size_no, c.sys_no, t.barcode,c.item_name as itemName,
+               c.brand_No, c.Color_NO,
+               (select br.Brand_Name
+                  from Brand br
+                 where br.Brand_No = c.Brand_No) as brandNoStr,
+               (select ci.Color_Name
+                  from Color_Info ci
+                 where ci.Color_No = c.COLOR_No) as colorName
+          from item c
+         inner join item_barcode t
+            on t.item_no = c.item_no
+            and t.package_id = 0
+         where 1 = 1
+           <if test="null!=params">
+		      <if test="null!=params.supplierNo and ''!=params.supplierNo" >
+		            and c.SUPPLIER_NO=#{params.supplierNo,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.sysNo and ''!=params.sysNo" >
+		            and c.sys_no=#{params.sysNo,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.itemNo and ''!=params.itemNo" >
+		      		and c.item_no=#{params.itemNo,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.barcode and ''!=params.barcode" >
+		        	and t.barcode=#{params.barcode,jdbcType=VARCHAR}
+		      </if>
+		      <if test="null!=params.itemName and ''!=params.itemName" >
+		        	and c.item_name like '%${params.itemName}%'
+		      </if>
+		  </if>
+		  and not EXISTS (select od.ITEM_NO, od.size_no
+                  from BILL_IM_IMPORT_DTL od
+                 where 1 = 1
+                  <if test="null!=params.locno and ''!=params.locno" >
+		        	and od.locno=#{params.locno,jdbcType=VARCHAR}
+		      	</if>
+		       	<if test="null!=params.importNo and ''!=params.importNo" >
+		        	and od.IMPORT_NO=#{params.importNo,jdbcType=VARCHAR}
+		      	</if>
+		       	<if test="null!=params.ownerNo and ''!=params.ownerNo" >
+		        	and od.owner_no=#{params.ownerNo,jdbcType=VARCHAR}
+		      	</if>
+                   and od.item_no = c.item_no
+                   and od.size_no = t.size_no)
+         group by c.item_no, t.size_no, c.sys_no, t.barcode,c.item_name,
+                  c.Brand_NO, c.Color_NO
+         order by c.item_no, t.size_no, c.sys_no
+    ) A where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectMaxPid" resultType="java.lang.Integer" parameterType="com.yougou.logistics.city.common.model.BillImDifRecordDtl" >
+    select NVL(max(dtl.PO_ID),0) as s
+    from BILL_IM_DIF_RECORD_DTL dtl
+    where dtl.LOCNO = #{locno,jdbcType=VARCHAR}
+      and dtl.OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+      and dtl.DEF_RECORD_NO = #{defRecordNo,jdbcType=VARCHAR}
+  </select>
+</mapper>

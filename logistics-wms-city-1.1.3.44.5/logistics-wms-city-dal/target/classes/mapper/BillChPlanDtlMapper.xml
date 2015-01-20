@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yougou.logistics.city.dal.mapper.BillChPlanDtlMapper" >
+  <resultMap id="BaseResultMap" type="com.yougou.logistics.city.common.model.BillChPlanDtl" >
+    <id column="PLAN_ID" property="planId" jdbcType="DECIMAL" />
+    <result column="LOCNO" property="locno" jdbcType="VARCHAR" />
+    <result column="OWNER_NO" property="ownerNo" jdbcType="VARCHAR" />
+    <result column="PLAN_NO" property="planNo" jdbcType="VARCHAR" />
+    <result column="WARE_NO" property="wareNo" jdbcType="VARCHAR" />
+    <result column="AREA_NO" property="areaNo" jdbcType="VARCHAR" />
+    <result column="STOCK_NO" property="stockNo" jdbcType="VARCHAR" />
+    <result column="ITEM_NO" property="itemNo" jdbcType="VARCHAR" />
+    <result column="SIZE_NO" property="sizeNo" jdbcType="VARCHAR" />
+    <result column="CATE_NO" property="cateNo" jdbcType="VARCHAR" />
+    <result column="CELL_NO" property="cellNo" jdbcType="VARCHAR" />
+    <result column="BARCODE" property="barcode" jdbcType="VARCHAR" />
+    <result column="ware_name" property="wareName" jdbcType="VARCHAR" />
+	<result column="area_name" property="areaName" jdbcType="VARCHAR" />
+	<result column="style_no" property="styleNo" jdbcType="VARCHAR" />
+	<result column="item_name" property="itemName" jdbcType="VARCHAR" />
+	<result column="brand_no" property="brandNo" jdbcType="VARCHAR" />
+	<result column="brand_name" property="brandName" jdbcType="VARCHAR" />
+	<result column="color_name" property="colorName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    dtl.PLAN_ID, dtl.LOCNO, dtl.OWNER_NO, dtl.PLAN_NO, dtl.WARE_NO, dtl.AREA_NO, dtl.STOCK_NO, dtl.ITEM_NO, dtl.SIZE_NO, 
+    dtl.CATE_NO, dtl.CELL_NO, dtl.BARCODE, dtl.brand_no
+  </sql>
+  <sql id="condition" >
+    <if test="null!=params" >
+      <if test="null!=params.queryCondition and ''!=params.queryCondition" >
+        ${params.queryCondition}
+      </if>
+       <if test="null!=params.locno and ''!=params.locno" >
+        	and dtl.LOCNO = #{params.locno,jdbcType=VARCHAR}
+      </if>
+       <if test="null!=params.planNo and ''!=params.planNo" >
+        	and dtl.PLAN_NO = #{params.planNo,jdbcType=VARCHAR}
+      </if>
+      <if test="null!=params.excludeCannotCheckCell and 'true'==params.excludeCannotCheckCell" >
+        	and not exists (
+	   			  select 1 from v_content v2,cm_defcell c2 where v2.cell_no=c2.cell_no and v2.locno=c2.locno 
+	   			  and v2.locno=dtl.locno and v2.cell_no=dtl.cell_no 
+	              and (v2.instock_qty>0 or v2.outstock_qty>0 or v2.hm_manual_flag!='1' or v2.FLAG!='0' or v2.status!='0' or c2.cell_status!='0' or c2.check_status!='0')
+	              )
+      </if>
+    </if>
+  </sql>
+  <!--权限过滤查询条件-->
+  <sql id="AuthorityCondition" >
+     <if test="null!=authorityParams and null!=authorityParams.hasBrandNoList" >
+       and dtl.brand_no in <include refid="com.yougou.logistics.city.dal.database.AuthorityMapper.Verify_Authority_Brand_Sql" />
+    </if>
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from BILL_CH_PLAN_DTL dtl
+    where dtl.PLAN_ID = #{planId,jdbcType=DECIMAL}
+  </select>
+  <select id="selectCount" resultType="java.lang.Integer" >
+    select count(1) as s from BILL_CH_PLAN_DTL dtl where 1=1 
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+  </select>
+  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
+    select B.* from (select A.*,w.ware_name,da.area_name,i.style_no,i.item_name ,b.brand_name,c.color_name,rownum rn from( select 
+    <include refid="Base_Column_List" />
+     from BILL_CH_PLAN_DTL dtl where 1=1 
+    <include refid="condition" />
+    <include refid="AuthorityCondition" />
+    <if test="orderByField != null and ''!=orderByField" >
+      order by ${orderByField}
+      <if test="orderByField" >
+        ${orderBy}
+      </if>
+    </if>
+    ) A 
+    left join cm_defware w on w.ware_no = A.ware_no and w.locno = A.locno
+    left join cm_defarea da on da.ware_no = A.ware_no and da.locno = A.locno and da.area_no = A.area_no
+    left join item i on i.item_no = A.Item_No 
+    left join brand b on b.brand_no = i.brand_no
+    left join color_info c on c.color_no = i.color_no
+    where rownum &lt; #{page.endRowNum}) B where rn &gt; #{page.startRowNum}
+  </select>
+  <select id="selectByParams" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+     from BILL_CH_PLAN_DTL dtl where 1=1 
+    <include refid="condition" />
+  </select>
+
+	<select id="selectDuplicateRecord" resultMap="BaseResultMap" parameterType="map">
+        select p.cell_no, p.item_no, p.size_no
+        from bill_ch_plan_dtl p
+        where p.locno = #{params.locno,jdbcType=VARCHAR}
+        and p.plan_no = #{params.planNo,jdbcType=VARCHAR}
+        group by p.cell_no, p.item_no, p.size_no
+        having count(*) > 1
+	</select>
+  
+  <select id="selectCellNo" resultType="java.util.HashMap" parameterType="map">
+  	select d.cell_no from bill_ch_plan_dtl d where d.cell_no != 'N' and d.plan_no = #{params.planNo,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from BILL_CH_PLAN_DTL
+    where PLAN_ID = #{planId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByPrimarayKeyForModel" parameterType="com.yougou.logistics.city.common.model.BillChPlanDtl" >
+    delete from BILL_CH_PLAN_DTL
+    where PLAN_ID = #{planId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByBillKey" parameterType="com.yougou.logistics.city.common.model.BillChPlanDtl" >
+    delete from BILL_CH_PLAN_DTL
+    where PLAN_ID = #{planId,jdbcType=DECIMAL} 
+    and PLAN_NO = #{planNo,jdbcType=VARCHAR} 
+    and LOCNO = #{locno,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPlanNo" parameterType="com.yougou.logistics.city.common.model.BillChPlanDtl" >
+    delete from BILL_CH_PLAN_DTL
+    where PLAN_NO = #{planNo,jdbcType=VARCHAR}
+    <if test="locno != null and '' != locno" >
+    	and locno = #{locno,jdbcType=VARCHAR}
+    </if>
+    <if test="ownerNo != null and '' != ownerNo" >
+    	and owner_No = #{ownerNo,jdbcType=VARCHAR}
+    </if>
+  </delete>
+  <select id="selectMaxId" resultType="java.lang.Long">
+  	select NVL(max(plan_id), 0) from bill_ch_plan_dtl
+  </select>
+  <insert id="insert" parameterType="com.yougou.logistics.city.common.model.BillChPlanDtl" >
+    insert into BILL_CH_PLAN_DTL (PLAN_ID, LOCNO, OWNER_NO, 
+      PLAN_NO, WARE_NO, AREA_NO, 
+      STOCK_NO, ITEM_NO, SIZE_NO, 
+      CATE_NO, CELL_NO, BARCODE
+      )
+    values (#{planId,jdbcType=DECIMAL}, #{locno,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, 
+      #{planNo,jdbcType=VARCHAR}, #{wareNo,jdbcType=VARCHAR}, #{areaNo,jdbcType=VARCHAR}, 
+      #{stockNo,jdbcType=VARCHAR}, #{itemNo,jdbcType=VARCHAR}, #{sizeNo,jdbcType=VARCHAR}, 
+      #{cateNo,jdbcType=VARCHAR}, #{cellNo,jdbcType=VARCHAR}, #{barcode,jdbcType=VARCHAR}
+      )
+  </insert>
+  <!-- 批量插入盘点计划明细 -->	
+  <select id="batchInsertDtl" parameterType="java.util.List">
+  	insert into bill_ch_plan_dtl  
+        (LOCNO,OWNER_NO,PLAN_NO,PLAN_ID,WARE_NO,AREA_NO,STOCK_NO,ITEM_NO,SIZE_NO,CATE_NO,CELL_NO,BARCODE,BRAND_NO)  
+        <foreach collection="list" item="item" index="index"  
+            separator="union all">  
+            select
+             #{item.locno,jdbcType=VARCHAR},
+             #{item.ownerNo,jdbcType=VARCHAR},
+             #{item.planNo,jdbcType=VARCHAR},
+             #{item.planId,jdbcType=VARCHAR},
+             <if test="item.wareNo == null or item.wareNo == ''">
+             	'N',
+             </if>
+             <if test="item.wareNo != null and item.wareNo != ''">
+             	#{item.wareNo,jdbcType=VARCHAR},
+             </if>
+             <if test="item.areaNo == null or item.areaNo == ''">
+             	'N',
+             </if>
+             <if test="item.areaNo != null and item.areaNo != ''">
+             	#{item.areaNo,jdbcType=VARCHAR},
+             </if>
+             <if test="item.stockNo == null or item.stockNo == ''">
+             	'N',
+             </if>
+             <if test="item.stockNo != null and item.stockNo != ''">
+             	#{item.stockNo,jdbcType=VARCHAR},
+             </if>
+             <if test="item.itemNo == null or item.itemNo == ''">
+             	'N',
+             </if>
+             <if test="item.itemNo != null and item.itemNo != ''">
+             	#{item.itemNo,jdbcType=VARCHAR},
+             </if>
+             <if test="item.sizeNo == null or item.sizeNo == ''">
+             	'N',
+             </if>
+             <if test="item.sizeNo != null and item.sizeNo != ''">
+             	#{item.sizeNo,jdbcType=VARCHAR},
+             </if>
+             #{item.cateNo,jdbcType=VARCHAR},
+             <if test="item.cellNo == null or item.cellNo == ''">
+             	'N',
+             </if>
+             <if test="item.cellNo != null and item.cellNo != ''">
+             	#{item.cellNo,jdbcType=VARCHAR},
+             </if>
+             <if test="item.barcode == null or item.barcode == ''">
+             	'N',
+             </if>
+             <if test="item.barcode != null and item.barcode != ''">
+             	#{item.barcode,jdbcType=VARCHAR},
+             </if>
+             #{item.brandNo,jdbcType=VARCHAR}
+             from DUAL
+        </foreach>
+  </select>
+  <insert id="insertSelective" parameterType="com.yougou.logistics.city.common.model.BillChPlanDtl" >
+    insert into BILL_CH_PLAN_DTL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="planId != null" >
+        PLAN_ID,
+      </if>
+      <if test="locno != null" >
+        LOCNO,
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO,
+      </if>
+      <if test="planNo != null" >
+        PLAN_NO,
+      </if>
+      <if test="wareNo != null" >
+        WARE_NO,
+      </if>
+      <if test="areaNo != null" >
+        AREA_NO,
+      </if>
+      <if test="stockNo != null" >
+        STOCK_NO,
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO,
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO,
+      </if>
+      <if test="cateNo != null" >
+        CATE_NO,
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO,
+      </if>
+      <if test="barcode != null" >
+        BARCODE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="planId != null" >
+        #{planId,jdbcType=DECIMAL},
+      </if>
+      <if test="locno != null" >
+        #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="planNo != null" >
+        #{planNo,jdbcType=VARCHAR},
+      </if>
+      <if test="wareNo != null" >
+        #{wareNo,jdbcType=VARCHAR},
+      </if>
+      <if test="areaNo != null" >
+        #{areaNo,jdbcType=VARCHAR},
+      </if>
+      <if test="stockNo != null" >
+        #{stockNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cateNo != null" >
+        #{cateNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null" >
+        #{barcode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yougou.logistics.city.common.model.BillChPlanDtl" >
+    update BILL_CH_PLAN_DTL
+    <set >
+      <if test="locno != null" >
+        LOCNO = #{locno,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerNo != null" >
+        OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      </if>
+      <if test="planNo != null" >
+        PLAN_NO = #{planNo,jdbcType=VARCHAR},
+      </if>
+      <if test="wareNo != null" >
+        WARE_NO = #{wareNo,jdbcType=VARCHAR},
+      </if>
+      <if test="areaNo != null" >
+        AREA_NO = #{areaNo,jdbcType=VARCHAR},
+      </if>
+      <if test="stockNo != null" >
+        STOCK_NO = #{stockNo,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNo != null" >
+        ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeNo != null" >
+        SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cateNo != null" >
+        CATE_NO = #{cateNo,jdbcType=VARCHAR},
+      </if>
+      <if test="cellNo != null" >
+        CELL_NO = #{cellNo,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null" >
+        BARCODE = #{barcode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where PLAN_ID = #{planId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yougou.logistics.city.common.model.BillChPlanDtl" >
+    update BILL_CH_PLAN_DTL
+    set LOCNO = #{locno,jdbcType=VARCHAR},
+      OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      PLAN_NO = #{planNo,jdbcType=VARCHAR},
+      WARE_NO = #{wareNo,jdbcType=VARCHAR},
+      AREA_NO = #{areaNo,jdbcType=VARCHAR},
+      STOCK_NO = #{stockNo,jdbcType=VARCHAR},
+      ITEM_NO = #{itemNo,jdbcType=VARCHAR},
+      SIZE_NO = #{sizeNo,jdbcType=VARCHAR},
+      CATE_NO = #{cateNo,jdbcType=VARCHAR},
+      CELL_NO = #{cellNo,jdbcType=VARCHAR},
+      BARCODE = #{barcode,jdbcType=VARCHAR}
+    where PLAN_ID = #{planId,jdbcType=DECIMAL}
+  </update>
+  
+  <!-- 批量插入全部品牌库 -->
+  <insert id="batchInsertPlanDtl4AllCell" parameterType="map">
+  		insert into bill_ch_plan_dtl
+		  (locno,
+		   owner_no,
+		   plan_no,
+		   plan_id,
+		   ware_no,
+		   area_no,
+		   stock_no,
+		   cell_no)
+		select 
+		   c.LOCNO,
+	       c.OWNER_NO,
+	       #{params.planNo,jdbcType=VARCHAR},
+	       #{params.planId,jdbcType=DECIMAL} + rownum,
+	       c.WARE_NO,
+	       c.AREA_NO,
+	       c.STOCK_NO,
+	       c.CELL_NO
+	  from CM_DEFCELL c
+	 inner join CM_DEFWARE w
+	    on c.WARE_NO = w.WARE_NO
+	   and c.locno = w.locno
+	 inner join CM_DEFAREA a
+	    on c.AREA_NO = a.AREA_NO
+	   and c.locno = a.locno
+	   and c.ware_no = a.ware_no
+	 where not exists
+	 (select 1
+	          from v_content v
+	         where v.locno = c.locno
+	           and v.cell_no = c.cell_no
+	           and (v.instock_qty > 0 or v.outstock_qty > 0 or
+	               v.hm_manual_flag = '0' or v.FLAG = '1' or v.status = '1'))
+	   and c.CELL_STATUS = '0'
+	   and c.CHECK_STATUS = '0'
+	   and a.area_usetype != '7'
+	   and c.LOCNO = #{params.locno,jdbcType=VARCHAR}
+  </insert>
+  
+</mapper>
